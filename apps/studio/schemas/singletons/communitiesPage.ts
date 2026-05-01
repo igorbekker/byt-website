@@ -19,10 +19,12 @@ export const communitiesPage = defineType({
     }),
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
     defineField({ name: 'heroCta', title: 'Hero CTA', type: 'ctaLink' }),
+    defineField({ name: 'heroImage', title: 'Hero Image', type: 'imageWithAlt' }),
 
     // ── Process Steps ─────────────────────────────────────────────────────
     defineField({ name: 'processEyebrow', title: 'Process Eyebrow', type: 'string' }),
     defineField({ name: 'processHeading', title: 'Process Heading', type: 'string' }),
+    defineField({ name: 'processSubhead', title: 'Process Subhead', type: 'text' }),
     defineField({
       name: 'processSteps',
       title: 'Process Steps',
@@ -63,6 +65,10 @@ export const communitiesPage = defineType({
     defineField({ name: 'conditionsEyebrow', title: 'Conditions Eyebrow', type: 'string' }),
     defineField({ name: 'conditionsHeading', title: 'Conditions Heading', type: 'string' }),
     defineField({ name: 'conditionsSubhead', title: 'Conditions Subhead', type: 'text' }),
+
+    // ── Service Area ──────────────────────────────────────────────────────
+    defineField({ name: 'serviceAreaHeading', title: 'Service Area Heading', type: 'string' }),
+    defineField({ name: 'serviceAreaLede', title: 'Service Area Lede', type: 'text' }),
 
     // ── CTA Band ──────────────────────────────────────────────────────────
     defineField({ name: 'ctaHeading', title: 'CTA Heading', type: 'string' }),

@@ -4,82 +4,109 @@
  * Context: Block 6 on Homepage — cream background with white track cards
  * Source: design-source/pages/Homepage.html (.howitworks, .howitworks-grid, .howitworks-track, .step, .step-num, .step-text, .track-cta)
  */
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ProcessStep {
+  stepNumber: string;
+  heading: string;
+  body?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  teletherapyTrackLabel?: string;
+  teletherapySteps?: ProcessStep[];
+  teletherapyCta?: CtaLink;
+  facilityTrackLabel?: string;
+  facilitySteps?: ProcessStep[];
+  facilityCta?: CtaLink;
+}
+
+const {
+  eyebrow,
+  heading,
+  teletherapyTrackLabel,
+  teletherapySteps,
+  teletherapyCta,
+  facilityTrackLabel,
+  facilitySteps,
+  facilityCta,
+} = Astro.props;
+
+const teleCtaVariant = teletherapyCta?.variant ?? 'btn-sage';
+const facilityCtaVariant = facilityCta?.variant ?? 'btn-coral';
 ---
 
 <section class="howitworks">
   <div style="max-width:var(--max-w);margin:0 auto;">
     <div class="howitworks-header fade-up">
-      <p class="eyebrow" style="margin-bottom:.75rem">The Process</p>
-      <h2>Getting Started Is Simple &mdash; Either Way</h2>
+      {
+        eyebrow && (
+          <p class="eyebrow" style="margin-bottom:.75rem">
+            {eyebrow}
+          </p>
+        )
+      }
+      {heading && <h2>{heading}</h2>}
     </div>
 
     <div class="howitworks-grid fade-up">
       <div class="howitworks-track howitworks-track-tele">
-        <div class="howitworks-track-label">Online Therapy Track</div>
+        {teletherapyTrackLabel && <div class="howitworks-track-label">{teletherapyTrackLabel}</div>}
         <div class="steps-wrap">
-          <div class="step">
-            <div class="step-num tele-num">1</div>
-            <div class="step-text">
-              <h4>Tell Us What You're Looking For</h4>
-              <p>
-                A short intake &mdash; your needs, availability, and preferences. Under 5 minutes.
-              </p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num tele-num">2</div>
-            <div class="step-text">
-              <h4>We Match You With a Licensed Therapist</h4>
-              <p>We handle the matching. You get a therapist suited to your specific needs.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num tele-num">3</div>
-            <div class="step-text">
-              <h4>Your First Session Is Available This Week</h4>
-              <p>No waitlist. Secure video sessions on your schedule.</p>
-            </div>
-          </div>
+          {
+            teletherapySteps?.map((step) => (
+              <div class="step">
+                <div class="step-num tele-num">{step.stepNumber}</div>
+                <div class="step-text">
+                  <h4>{step.heading}</h4>
+                  {step.body && <p>{step.body}</p>}
+                </div>
+              </div>
+            ))
+          }
         </div>
-        <div class="track-cta">
-          <a href="/individual-therapy/" class="btn btn-sage">Book a Session &rarr;</a>
-        </div>
+        {
+          teletherapyCta?.label && teletherapyCta.href && (
+            <div class="track-cta">
+              <a href={teletherapyCta.href} class={`btn ${teleCtaVariant}`}>
+                {teletherapyCta.label}
+              </a>
+            </div>
+          )
+        }
       </div>
 
       <div class="howitworks-track howitworks-track-facility">
-        <div class="howitworks-track-label">In-Facility Track</div>
+        {facilityTrackLabel && <div class="howitworks-track-label">{facilityTrackLabel}</div>}
         <div class="steps-wrap">
-          <div class="step">
-            <div class="step-num facility-num">1</div>
-            <div class="step-text">
-              <h4>You Refer a Resident</h4>
-              <p>
-                A simple referral form. We take it from there &mdash; no paperwork burden for your
-                team.
-              </p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num facility-num">2</div>
-            <div class="step-text">
-              <h4>We Handle Scheduling and Medicare Billing</h4>
-              <p>Consent, credentialing, billing to Medicare Part B. All handled by BYT.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num facility-num">3</div>
-            <div class="step-text">
-              <h4>Your Therapist Arrives On-Site, Weekly</h4>
-              <p>
-                Your residents receive care in their own room. Weekly visits. Zero cost to the
-                facility.
-              </p>
-            </div>
-          </div>
+          {
+            facilitySteps?.map((step) => (
+              <div class="step">
+                <div class="step-num facility-num">{step.stepNumber}</div>
+                <div class="step-text">
+                  <h4>{step.heading}</h4>
+                  {step.body && <p>{step.body}</p>}
+                </div>
+              </div>
+            ))
+          }
         </div>
-        <div class="track-cta">
-          <a href="/referral/" class="btn btn-coral">Refer a Resident &rarr;</a>
-        </div>
+        {
+          facilityCta?.label && facilityCta.href && (
+            <div class="track-cta">
+              <a href={facilityCta.href} class={`btn ${facilityCtaVariant}`}>
+                {facilityCta.label}
+              </a>
+            </div>
+          )
+        }
       </div>
     </div>
   </div>
@@ -117,7 +144,7 @@
   .howitworks-track {
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: var(--white);
     border: 1px solid var(--border);
     border-radius: var(--r-card);
     padding: 2.25rem 2rem;
@@ -141,11 +168,11 @@
 
   .tele-num {
     background: var(--sage);
-    color: #fff;
+    color: var(--white);
   }
   .facility-num {
     background: var(--coral);
-    color: #fff;
+    color: var(--white);
   }
 
   .howitworks-track-label {

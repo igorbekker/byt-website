@@ -1,4 +1,12 @@
 ---
+/**
+ * Purpose: Homepage — fetches Sanity homePage singleton, conditions, and testimonials;
+ *          passes data to each section component
+ * Context: Route /
+ * Source: design-source/pages/Homepage.html, apps/studio/schemas/singletons/homePage.ts
+ */
+
+import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/home/HeroSection.astro';
 import AudienceRouter from '../components/home/AudienceRouter.astro';
@@ -8,18 +16,162 @@ import ConditionsScroll from '../components/home/ConditionsScroll.astro';
 import HowItWorks from '../components/home/HowItWorks.astro';
 import TestimonialsSection from '../components/home/TestimonialsSection.astro';
 import ProviderTeaser from '../components/home/ProviderTeaser.astro';
+import { HOME_PAGE_QUERY, CONDITIONS_HOME_QUERY, TESTIMONIALS_HOME_QUERY } from '../lib/queries';
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface SeoFields {
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+interface AudienceCard {
+  tagline: string;
+  heading: string;
+  bodyCollapsed: string;
+  bodyExpanded: string;
+  image?: ImageWithAlt;
+  cta?: CtaLink;
+}
+
+interface ServiceTrack {
+  label: string;
+  heading: string;
+  body?: string;
+  image?: ImageWithAlt;
+  cta?: CtaLink;
+}
+
+interface ProcessStep {
+  stepNumber: string;
+  heading: string;
+  body?: string;
+}
+
+interface HomePage {
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroSubhead?: string;
+  heroImage?: ImageWithAlt;
+  heroPrimaryCta?: CtaLink;
+  heroSecondaryCta?: CtaLink;
+  routerEyebrow?: string;
+  routerHeading?: string;
+  routerSubhead?: string;
+  routerCards?: AudienceCard[];
+  beliefQuote?: string;
+  beliefBody?: string;
+  twoWaysEyebrow?: string;
+  twoWaysHeading?: string;
+  twoWaysSubhead?: string;
+  twoWaysTracks?: ServiceTrack[];
+  conditionsEyebrow?: string;
+  conditionsHeading?: string;
+  conditionsSubhead?: string;
+  howItWorksEyebrow?: string;
+  howItWorksHeading?: string;
+  teletherapyTrackLabel?: string;
+  teletherapySteps?: ProcessStep[];
+  teletherapyCta?: CtaLink;
+  facilityTrackLabel?: string;
+  facilitySteps?: ProcessStep[];
+  facilityCta?: CtaLink;
+  testimonialsEyebrow?: string;
+  testimonialsHeading?: string;
+  testimonialsSubhead?: string;
+  providerTeaserEyebrow?: string;
+  providerTeaserHeading?: string;
+  providerTeaserBody?: string;
+  providerTeaserImage?: ImageWithAlt;
+  providerTeaserPrimaryCta?: CtaLink;
+  providerTeaserSecondaryCta?: CtaLink;
+  seo?: SeoFields;
+}
+
+interface Condition {
+  _id: string;
+  tagline: string;
+  heading: string;
+  body?: string;
+  image?: ImageWithAlt;
+}
+
+interface Testimonial {
+  _id: string;
+  quote: string;
+  authorName: string;
+  authorRole?: string;
+  authorOrg?: string;
+  authorInitials?: string;
+  audienceType?: string;
+}
+
+const [page, conditions, testimonials] = await Promise.all([
+  sanityClient.fetch<HomePage>(HOME_PAGE_QUERY),
+  sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY),
+  sanityClient.fetch<Testimonial[]>(TESTIMONIALS_HOME_QUERY),
+]);
 ---
 
-<BaseLayout
-  title="Better You Therapy | Licensed Mental Health Care in Southeast Florida"
-  description="Licensed mental health care placed on-site at assisted living and skilled nursing facilities across Southeast Florida. Teletherapy statewide."
->
-  <HeroSection />
-  <AudienceRouter />
-  <BeliefBand />
-  <TwoWaysSection />
-  <ConditionsScroll />
-  <HowItWorks />
-  <TestimonialsSection />
-  <ProviderTeaser />
+<BaseLayout seo={page?.seo ?? null}>
+  <HeroSection
+    eyebrow={page?.heroEyebrow}
+    headline={page?.heroHeadline}
+    subhead={page?.heroSubhead}
+    image={page?.heroImage}
+    primaryCta={page?.heroPrimaryCta}
+    secondaryCta={page?.heroSecondaryCta}
+  />
+  <AudienceRouter
+    eyebrow={page?.routerEyebrow}
+    heading={page?.routerHeading}
+    subhead={page?.routerSubhead}
+    cards={page?.routerCards}
+  />
+  <BeliefBand quote={page?.beliefQuote} body={page?.beliefBody} />
+  <TwoWaysSection
+    eyebrow={page?.twoWaysEyebrow}
+    heading={page?.twoWaysHeading}
+    subhead={page?.twoWaysSubhead}
+    tracks={page?.twoWaysTracks}
+  />
+  <ConditionsScroll
+    eyebrow={page?.conditionsEyebrow}
+    heading={page?.conditionsHeading}
+    subhead={page?.conditionsSubhead}
+    conditions={conditions}
+  />
+  <HowItWorks
+    eyebrow={page?.howItWorksEyebrow}
+    heading={page?.howItWorksHeading}
+    teletherapyTrackLabel={page?.teletherapyTrackLabel}
+    teletherapySteps={page?.teletherapySteps}
+    teletherapyCta={page?.teletherapyCta}
+    facilityTrackLabel={page?.facilityTrackLabel}
+    facilitySteps={page?.facilitySteps}
+    facilityCta={page?.facilityCta}
+  />
+  <TestimonialsSection
+    eyebrow={page?.testimonialsEyebrow}
+    heading={page?.testimonialsHeading}
+    subhead={page?.testimonialsSubhead}
+    testimonials={testimonials}
+  />
+  <ProviderTeaser
+    eyebrow={page?.providerTeaserEyebrow}
+    heading={page?.providerTeaserHeading}
+    body={page?.providerTeaserBody}
+    image={page?.providerTeaserImage}
+    primaryCta={page?.providerTeaserPrimaryCta}
+    secondaryCta={page?.providerTeaserSecondaryCta}
+  />
 </BaseLayout>

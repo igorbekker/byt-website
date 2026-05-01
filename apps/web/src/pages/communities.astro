@@ -1,0 +1,1440 @@
+---
+/**
+ * Purpose: Communities page — BYT in-facility therapy program for wellness directors
+ * Context: Route /communities/
+ * Source: design-source/pages/Communities.html
+ * Schema: apps/studio/schemas/singletons/communitiesPage.ts
+ */
+
+import { sanityClient } from 'sanity:client';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMMUNITIES_PAGE_QUERY, CONDITIONS_COMMUNITIES_QUERY } from '../lib/queries';
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface SeoFields {
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+interface ProcessStep {
+  stepNumber: string;
+  heading: string;
+  body?: string;
+}
+
+interface HandlesItem {
+  heading: string;
+  body?: string;
+}
+
+interface CommunitiesPage {
+  heroHeading?: string;
+  heroSubhead?: string;
+  heroCta?: CtaLink;
+  heroImage?: ImageWithAlt;
+  processEyebrow?: string;
+  processHeading?: string;
+  processSubhead?: string;
+  processSteps?: ProcessStep[];
+  handlesEyebrow?: string;
+  handlesHeading?: string;
+  handlesSubhead?: string;
+  handlesItems?: HandlesItem[];
+  conditionsEyebrow?: string;
+  conditionsHeading?: string;
+  conditionsSubhead?: string;
+  serviceAreaHeading?: string;
+  serviceAreaLede?: string;
+  ctaHeading?: string;
+  ctaSubhead?: string;
+  ctaCta?: CtaLink;
+  seo?: SeoFields;
+}
+
+interface Condition {
+  _id: string;
+  tagline: string;
+  heading: string;
+  body?: string;
+}
+
+const [page, conditions] = await Promise.all([
+  sanityClient.fetch<CommunitiesPage>(COMMUNITIES_PAGE_QUERY),
+  sanityClient.fetch<Condition[]>(CONDITIONS_COMMUNITIES_QUERY),
+]);
+---
+
+<BaseLayout seo={page?.seo ?? null}>
+  <!-- ══════════════════════ Hero (Header84) ══════════════════════ -->
+  <section class="h84">
+    <div class="h84-grid">
+      <div class="h84-text">
+        <h1>{page?.heroHeading}</h1>
+        {page?.heroSubhead && <p class="lede">{page.heroSubhead}</p>}
+        {
+          page?.heroCta && (
+            <div class="h84-actions">
+              <a href={page.heroCta.href} class={`btn btn-${page.heroCta.variant ?? 'primary'}`}>
+                {page.heroCta.label}
+              </a>
+            </div>
+          )
+        }
+      </div>
+      <div class="h84-image">
+        {
+          page?.heroImage?.asset?.url ? (
+            <img src={page.heroImage.asset.url} alt={page.heroImage.alt ?? ''} loading="eager" />
+          ) : (
+            <div class="h84-image-placeholder" aria-hidden="true" />
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Process Steps (Layout521) ══════════════════════ -->
+  {
+    page?.processSteps && page.processSteps.length > 0 && (
+      <section id="l521-section" class="section">
+        <div class="max-w">
+          <div class="l521-head">
+            {page?.processEyebrow && <span class="l521-eyebrow">{page.processEyebrow}</span>}
+            {page?.processHeading && <h2>{page.processHeading}</h2>}
+            {page?.processSubhead && <p class="text-md">{page.processSubhead}</p>}
+          </div>
+          <div class="l521-grid">
+            {page.processSteps.map((step) => (
+              <article class="l521-card">
+                <div class="l521-step">
+                  <span class="num">{step.stepNumber}</span> Step
+                </div>
+                <div class="l521-card-content">
+                  <h3>{step.heading}</h3>
+                  {step.body && <p>{step.body}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ Handles Grid (Layout526) ══════════════════════ -->
+  {
+    page?.handlesItems && page.handlesItems.length > 0 && (
+      <section id="l526-section" class="section">
+        <div class="max-w">
+          <div class="l526-head">
+            {page?.handlesEyebrow && <span class="l526-eyebrow">{page.handlesEyebrow}</span>}
+            {page?.handlesHeading && <h2>{page.handlesHeading}</h2>}
+            {page?.handlesSubhead && <p class="text-md">{page.handlesSubhead}</p>}
+          </div>
+          <div class="l526-cols">
+            {/* Split items across 3 columns */}
+            {[0, 1, 2].map((colIdx) => (
+              <div class="l526-col">
+                {(page?.handlesItems ?? [])
+                  .filter((_, i) => i % 3 === colIdx)
+                  .map((item, itemIdx) => (
+                    <article class={`l526-card${itemIdx === 0 && colIdx !== 1 ? ' large' : ''}`}>
+                      <h3>{item.heading}</h3>
+                      {item.body && <p>{item.body}</p>}
+                    </article>
+                  ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ Conditions Tabs (Layout505) ══════════════════════ -->
+  {
+    conditions && conditions.length > 0 && (
+      <section id="l505-section" class="section">
+        <div class="max-w">
+          <div class="l505-head">
+            {page?.conditionsEyebrow && <p class="eyebrow">{page.conditionsEyebrow}</p>}
+            {page?.conditionsHeading && <h2>{page.conditionsHeading}</h2>}
+            {page?.conditionsSubhead && <p class="text-md">{page.conditionsSubhead}</p>}
+          </div>
+
+          <div class="l505-tabs" id="l505">
+            <div class="l505-list" role="tablist">
+              {conditions.map((cond, idx) => (
+                <button
+                  class={`l505-trigger${idx === 0 ? ' active' : ''}`}
+                  data-tab={`l505-tab-${cond._id}`}
+                  role="tab"
+                  aria-selected={idx === 0 ? 'true' : 'false'}
+                  aria-controls={`panel-${cond._id}`}
+                  id={`tab-${cond._id}`}
+                >
+                  {cond.tagline}
+                </button>
+              ))}
+            </div>
+
+            {conditions.map((cond, idx) => (
+              <div
+                class={`l505-panel${idx === 0 ? ' active' : ''}`}
+                id={`panel-${cond._id}`}
+                role="tabpanel"
+                aria-labelledby={`tab-${cond._id}`}
+              >
+                <div class="l505-panel-inner">
+                  <div class="l505-icon" aria-hidden="true">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </div>
+                  <h3>{cond.heading}</h3>
+                  {cond.body && <p>{cond.body}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ Service Area (Layout192) ══════════════════════ -->
+  <section class="section l192">
+    <div class="max-w">
+      <div class="l192-grid">
+        <div class="l192-image-wrap">
+          <div class="l192-image">
+            <!-- Static SVG map — design-source/pages/Communities.html -->
+            <svg
+              class="map"
+              viewBox="0 0 480 600"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Map of Palm Beach, Martin, St. Lucie, and Okeechobee counties in Southeast Florida"
+            >
+              <defs>
+                <pattern id="m192-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#E4EAF0" stroke-width="0.6"
+                  ></path>
+                </pattern>
+                <linearGradient id="m192-ocean" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#DCE6EF"></stop>
+                  <stop offset="100%" stop-color="#C8D8E8"></stop>
+                </linearGradient>
+                <filter id="m192-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feGaussianBlur in="SourceAlpha" stdDeviation="2"></feGaussianBlur>
+                  <feOffset dx="0" dy="2" result="off"></feOffset>
+                  <feComponentTransfer
+                    ><feFuncA type="linear" slope="0.18"></feFuncA></feComponentTransfer
+                  >
+                  <feMerge
+                    ><feMergeNode></feMergeNode><feMergeNode in="SourceGraphic"
+                    ></feMergeNode></feMerge
+                  >
+                </filter>
+              </defs>
+
+              <rect x="0" y="0" width="480" height="600" fill="url(#m192-ocean)"></rect>
+              <rect x="0" y="0" width="480" height="600" fill="url(#m192-grid)"></rect>
+
+              <g stroke="#A8BED2" stroke-width="1" fill="none" opacity=".55" stroke-linecap="round">
+                <path d="M 360 90 q 14 -6 28 0 t 28 0 t 28 0"></path>
+                <path d="M 370 150 q 14 -6 28 0 t 28 0"></path>
+                <path d="M 380 230 q 14 -6 28 0 t 28 0"></path>
+                <path d="M 360 320 q 14 -6 28 0 t 28 0 t 28 0"></path>
+                <path d="M 370 410 q 14 -6 28 0 t 28 0"></path>
+                <path d="M 380 500 q 14 -6 28 0 t 28 0"></path>
+              </g>
+
+              <g filter="url(#m192-shadow)">
+                <path
+                  d="M 30 30 L 360 30 L 360 70 Q 348 95 342 130 L 348 175 Q 352 210 348 240 L 352 290 Q 358 330 352 370 L 348 420 Q 342 470 336 510 L 332 560 L 30 560 Z"
+                  fill="#F5F7FA"
+                  stroke="#0A2D52"
+                  stroke-width="1.5"
+                  stroke-linejoin="round"></path>
+
+                <path
+                  id="m192-stlucie"
+                  d="M 80 80 L 358 80 L 350 130 L 80 130 Z"
+                  fill="#E8EEF4"
+                  stroke="#0A2D52"
+                  stroke-width="1"
+                  opacity=".95"></path>
+
+                <path
+                  id="m192-martin"
+                  d="M 80 130 L 350 130 L 348 175 L 352 230 L 80 230 Z"
+                  fill="#DDE6EF"
+                  stroke="#0A2D52"
+                  stroke-width="1"
+                  opacity=".95"></path>
+
+                <path
+                  id="m192-palmbeach"
+                  d="M 80 230 L 352 230 L 358 320 L 352 410 L 348 470 L 336 510 L 332 560 L 80 560 Z"
+                  fill="#CAD8E5"
+                  stroke="#0A2D52"
+                  stroke-width="1"
+                  opacity=".95"></path>
+
+                <path
+                  id="m192-okeechobee"
+                  d="M 30 30 L 290 30 L 285 80 L 80 80 L 30 80 Z"
+                  fill="#EFF3F8"
+                  stroke="#0A2D52"
+                  stroke-width="1"
+                  opacity=".95"></path>
+
+                <ellipse
+                  cx="115"
+                  cy="200"
+                  rx="42"
+                  ry="36"
+                  fill="#B8CDDD"
+                  stroke="#7DA0BD"
+                  stroke-width="1"></ellipse>
+                <text
+                  x="115"
+                  y="205"
+                  text-anchor="middle"
+                  font-family="Manrope,sans-serif"
+                  font-size="9"
+                  font-weight="600"
+                  fill="#3A5C7E"
+                  letter-spacing=".5">LAKE</text
+                >
+              </g>
+
+              <g
+                font-family="Manrope,sans-serif"
+                font-weight="700"
+                fill="#0A2D52"
+                letter-spacing=".02em"
+              >
+                <text x="195" y="58" text-anchor="middle" font-size="13">OKEECHOBEE</text>
+                <text x="220" y="110" text-anchor="middle" font-size="14">ST. LUCIE</text>
+                <text x="220" y="185" text-anchor="middle" font-size="14">MARTIN</text>
+                <text x="225" y="395" text-anchor="middle" font-size="18" letter-spacing=".04em"
+                  >PALM BEACH</text
+                >
+              </g>
+
+              <g>
+                <g transform="translate(195 50)">
+                  <circle r="14" fill="#E05555" opacity=".18"></circle>
+                  <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"></circle>
+                </g>
+                <g transform="translate(255 105)">
+                  <circle r="14" fill="#E05555" opacity=".18"></circle>
+                  <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"></circle>
+                </g>
+                <g transform="translate(245 180)">
+                  <circle r="14" fill="#E05555" opacity=".18"></circle>
+                  <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"></circle>
+                </g>
+                <g transform="translate(260 380)">
+                  <circle r="20" fill="#E05555" opacity=".18"></circle>
+                  <circle r="14" fill="#E05555" opacity=".30"></circle>
+                  <circle r="8" fill="#E05555" stroke="#fff" stroke-width="2.5"></circle>
+                </g>
+              </g>
+
+              <g transform="translate(420 40)">
+                <circle r="16" fill="#fff" stroke="#0A2D52" stroke-width="1"></circle>
+                <path d="M 0 -10 L 4 4 L 0 1 L -4 4 Z" fill="#E05555"></path>
+                <text
+                  x="0"
+                  y="-19"
+                  text-anchor="middle"
+                  font-family="Manrope,sans-serif"
+                  font-size="9"
+                  font-weight="700"
+                  fill="#0A2D52">N</text
+                >
+              </g>
+
+              <g transform="translate(40 510)" font-family="Manrope,sans-serif">
+                <rect
+                  x="-8"
+                  y="-8"
+                  width="200"
+                  height="44"
+                  rx="8"
+                  fill="#fff"
+                  opacity=".92"
+                  stroke="#E4EAF0"></rect>
+                <circle cx="6" cy="6" r="5" fill="#E05555" stroke="#fff" stroke-width="1.5"
+                ></circle>
+                <text x="20" y="9" font-size="11" font-weight="600" fill="#0A2D52"
+                  >Active service area</text
+                >
+                <text
+                  x="-2"
+                  y="26"
+                  font-size="9"
+                  font-weight="600"
+                  fill="#5A7290"
+                  letter-spacing=".1em">SOUTHEAST FLORIDA</text
+                >
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="l192-text">
+          {page?.serviceAreaHeading && <h2>{page.serviceAreaHeading}</h2>}
+          {page?.serviceAreaLede && <p class="lede text-md">{page.serviceAreaLede}</p>}
+          <div class="l192-pills">
+            <span class="l192-pill coral">Palm Beach</span>
+            <span class="l192-pill coral">Martin</span>
+            <span class="l192-pill coral">St. Lucie</span>
+            <span class="l192-pill coral">Okeechobee</span>
+          </div>
+          <div class="l192-pills">
+            <span class="l192-pill">Assisted Living (ALF)</span>
+            <span class="l192-pill">Skilled Nursing (SNF)</span>
+            <span class="l192-pill">Continuing Care (CCRC)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ CTA Band (Cta25) ══════════════════════ -->
+  {
+    (page?.ctaHeading || page?.ctaCta) && (
+      <section id="cta" class="section cta25-section">
+        <div class="max-w">
+          <div class="cta25-inner">
+            {page?.ctaHeading && <h2>{page.ctaHeading}</h2>}
+            {page?.ctaSubhead && <p>{page.ctaSubhead}</p>}
+            {page?.ctaCta && (
+              <div class="cta25-actions">
+                <a href={page.ctaCta.href} class={`btn btn-${page.ctaCta.variant ?? 'primary'}`}>
+                  {page.ctaCta.label}
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  /* ── Hero ────────────────────────────────────────────────────── */
+  .h84 {
+    padding: 0;
+  }
+
+  .h84-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .h84-grid {
+      grid-template-columns: 1fr 1fr;
+      min-height: 640px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .h84-grid {
+      min-height: 720px;
+    }
+  }
+
+  .h84-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .h84-text {
+      padding: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .h84-text {
+      padding: 4rem;
+    }
+  }
+
+  .h84 h1 {
+    margin-bottom: 1.25rem;
+    font-size: 2.5rem;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 768px) {
+    .h84 h1 {
+      margin-bottom: 1.5rem;
+      font-size: 3.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .h84 h1 {
+      font-size: 4.25rem;
+    }
+  }
+
+  .h84 .lede {
+    color: var(--slate);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    max-width: 34rem;
+  }
+
+  @media (min-width: 768px) {
+    .h84 .lede {
+      font-size: 1.125rem;
+    }
+  }
+
+  .h84-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  @media (min-width: 768px) {
+    .h84-actions {
+      margin-top: 2rem;
+    }
+  }
+
+  .h84-image {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+    min-height: 320px;
+  }
+
+  @media (min-width: 1024px) {
+    .h84-image {
+      min-height: auto;
+    }
+  }
+
+  .h84-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .h84-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(10, 45, 82, 0.08) 0%, rgba(10, 45, 82, 0) 35%);
+  }
+
+  .h84-image-placeholder {
+    width: 100%;
+    min-height: 320px;
+  }
+
+  /* ── Process Steps (Layout521) ───────────────────────────────── */
+  #l521-section {
+    background: var(--off-white);
+  }
+
+  .l521-head {
+    margin-inline: auto;
+    margin-bottom: 48px;
+    width: 100%;
+    max-width: 48rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .l521-head {
+      margin-bottom: 72px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l521-head {
+      margin-bottom: 80px;
+    }
+  }
+
+  .l521-eyebrow {
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+
+  .l521-head h2 {
+    margin-bottom: 1.25rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 768px) {
+    .l521-head h2 {
+      margin-bottom: 1.5rem;
+      font-size: 2.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l521-head h2 {
+      font-size: 3.25rem;
+    }
+  }
+
+  .l521-head .text-md {
+    color: var(--slate);
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .l521-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .l521-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .l521-grid {
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l521-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .l521-card {
+    position: relative;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    min-height: 360px;
+    color: var(--white);
+    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 100%);
+    box-shadow: var(--shadow-md);
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s;
+  }
+
+  .l521-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .l521-step {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.5rem;
+    z-index: 1;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .l521-step {
+      top: 1.5rem;
+      left: 2rem;
+    }
+  }
+
+  .l521-step .num {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    letter-spacing: 0;
+    color: var(--white);
+  }
+
+  .l521-card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    min-height: 360px;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .l521-card-content {
+      padding: 2rem;
+    }
+  }
+
+  .l521-card h3 {
+    margin-bottom: 0.625rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+
+  @media (min-width: 768px) {
+    .l521-card h3 {
+      font-size: 1.375rem;
+    }
+  }
+
+  .l521-card p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  /* ── Handles Grid (Layout526) ────────────────────────────────── */
+  #l526-section {
+    background: var(--off-white);
+  }
+
+  .l526-head {
+    margin-inline: auto;
+    margin-bottom: 48px;
+    width: 100%;
+    max-width: 36rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .l526-head {
+      margin-bottom: 72px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l526-head {
+      margin-bottom: 80px;
+    }
+  }
+
+  .l526-eyebrow {
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+
+  .l526-head h2 {
+    margin-bottom: 1.25rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 768px) {
+    .l526-head h2 {
+      margin-bottom: 1.5rem;
+      font-size: 2.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l526-head h2 {
+      font-size: 3.25rem;
+    }
+  }
+
+  .l526-head .text-md {
+    color: var(--slate);
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .l526-cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .l526-cols {
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l526-cols {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .l526-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .l526-col {
+      gap: 2rem;
+    }
+  }
+
+  .l526-card {
+    position: relative;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    color: var(--white);
+    background: linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 100%);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    min-height: 18rem;
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s;
+  }
+
+  .l526-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  @media (min-width: 768px) {
+    .l526-card {
+      padding: 2rem;
+      min-height: 20rem;
+    }
+  }
+
+  .l526-card.large {
+    justify-content: center;
+    min-height: 24rem;
+  }
+
+  @media (min-width: 1024px) {
+    .l526-card.large {
+      min-height: 32rem;
+    }
+  }
+
+  .l526-card h3 {
+    margin-bottom: 0.625rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+
+  @media (min-width: 768px) {
+    .l526-card h3 {
+      font-size: 1.625rem;
+      margin-bottom: 0.875rem;
+    }
+  }
+
+  .l526-card p {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ── Conditions Tabs (Layout505) ─────────────────────────────── */
+  .l505-head {
+    margin-inline: auto;
+    margin-bottom: 48px;
+    width: 100%;
+    max-width: 48rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .l505-head {
+      margin-bottom: 72px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l505-head {
+      margin-bottom: 80px;
+    }
+  }
+
+  .l505-head h2 {
+    margin-bottom: 1.25rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 768px) {
+    .l505-head h2 {
+      margin-bottom: 1.5rem;
+      font-size: 2.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l505-head h2 {
+      font-size: 3.25rem;
+    }
+  }
+
+  .l505-head .text-md {
+    color: var(--slate);
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+
+  .l505-tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  @media (min-width: 768px) {
+    .l505-tabs {
+      grid-template-columns: 1fr 1.5fr;
+    }
+  }
+
+  .l505-list {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    background: var(--off-white);
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (min-width: 768px) {
+    .l505-list {
+      border-bottom: 0;
+      border-right: 1px solid var(--border);
+    }
+  }
+
+  .l505-trigger {
+    text-align: left;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: var(--navy-deep);
+    cursor: pointer;
+    transition:
+      background-color var(--t-hover),
+      color var(--t-hover);
+  }
+
+  .l505-trigger:last-child {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 768px) {
+    .l505-trigger {
+      padding: 1.5rem 2rem;
+      font-size: 1.125rem;
+    }
+  }
+
+  .l505-trigger.active {
+    background: var(--white);
+    color: var(--navy-deep);
+    position: relative;
+  }
+
+  .l505-trigger.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--coral);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .l505-trigger:not(.active) {
+    color: var(--mist);
+  }
+
+  .l505-trigger:hover:not(.active) {
+    color: var(--navy);
+    background: var(--white);
+  }
+
+  .l505-panel {
+    display: none;
+    animation: l505fade 0.25s ease;
+  }
+
+  .l505-panel.active {
+    display: block;
+  }
+
+  @keyframes l505fade {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .l505-panel-inner {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .l505-panel-inner {
+      padding: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l505-panel-inner {
+      padding: 4rem;
+    }
+  }
+
+  .l505-icon {
+    margin-bottom: 1.25rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--coral-light);
+    color: var(--coral);
+    border-radius: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .l505-icon {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .l505-panel h3 {
+    margin-bottom: 1.25rem;
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--navy-deep);
+  }
+
+  @media (min-width: 768px) {
+    .l505-panel h3 {
+      margin-bottom: 1.5rem;
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l505-panel h3 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .l505-panel p {
+    color: var(--slate);
+    line-height: 1.55;
+  }
+
+  /* ── Service Area (Layout192) ────────────────────────────────── */
+  .l192-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .l192-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l192-grid {
+      gap: 5rem;
+    }
+  }
+
+  .l192-image-wrap {
+    order: 2;
+  }
+
+  .l192-text {
+    order: 1;
+  }
+
+  @media (min-width: 768px) {
+    .l192-image-wrap {
+      order: 1;
+    }
+
+    .l192-text {
+      order: 2;
+    }
+  }
+
+  .l192-image {
+    position: relative;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    aspect-ratio: 4 / 5;
+    background: var(--off-white);
+  }
+
+  @media (min-width: 768px) {
+    .l192-image {
+      aspect-ratio: auto;
+      min-height: 32rem;
+      height: 100%;
+    }
+  }
+
+  .l192-image svg.map {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .l192 h2 {
+    margin-bottom: 1.25rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 768px) {
+    .l192 h2 {
+      margin-bottom: 1.5rem;
+      font-size: 2.75rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .l192 h2 {
+      font-size: 3.25rem;
+    }
+  }
+
+  .l192 .lede {
+    color: var(--slate);
+  }
+
+  @media (min-width: 768px) {
+    .l192 .lede {
+      font-size: 1.125rem;
+    }
+  }
+
+  .l192-pills {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .l192-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-pill);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--navy-deep);
+    background: var(--white);
+    letter-spacing: 0.01em;
+  }
+
+  .l192-pill.coral {
+    border-color: var(--coral);
+    color: var(--coral);
+  }
+
+  /* ── CTA Band (Cta25) ────────────────────────────────────────── */
+  .cta25-section {
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta25-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .cta25-section .max-w {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta25-inner {
+    margin-inline: auto;
+    max-width: 36rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta25-section h2 {
+    margin-bottom: 1.25rem;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+
+  @media (min-width: 768px) {
+    .cta25-section h2 {
+      margin-bottom: 1.5rem;
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cta25-section h2 {
+      font-size: 3.5rem;
+    }
+  }
+
+  .cta25-section p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+
+  @media (min-width: 768px) {
+    .cta25-section p {
+      font-size: 1.125rem;
+    }
+  }
+
+  .cta25-actions {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .cta25-actions {
+      margin-top: 2rem;
+    }
+  }
+
+  /* ── Shared button styles ────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 1.5px solid var(--navy);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    background: var(--white);
+    color: var(--navy-deep);
+    border-radius: var(--r-btn);
+    transition:
+      background-color var(--t-hover),
+      color var(--t-hover),
+      border-color var(--t-hover),
+      box-shadow var(--t-hover),
+      transform var(--t-hover);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: var(--coral);
+    color: var(--white);
+    border-color: var(--coral);
+  }
+
+  .btn-primary:hover {
+    background: var(--coral-hover);
+    border-color: var(--coral-hover);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy-deep);
+    border-color: var(--navy-deep);
+  }
+
+  .btn-secondary:hover {
+    background: var(--navy-deep);
+    color: var(--white);
+  }
+
+  .btn-secondary-alt {
+    background: transparent;
+    color: var(--white);
+    border-color: var(--white);
+  }
+
+  .btn-secondary-alt:hover {
+    background: var(--white);
+    color: var(--navy-deep);
+  }
+
+  /* ── Section utility ─────────────────────────────────────────── */
+  .section {
+    padding: 64px 5%;
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding: 96px 5%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section {
+      padding: 112px 5%;
+    }
+  }
+</style>
+
+<script>
+  const tabContainer = document.getElementById('l505');
+  if (tabContainer) {
+    const triggers = tabContainer.querySelectorAll<HTMLButtonElement>('.l505-trigger');
+    const panels = tabContainer.querySelectorAll<HTMLElement>('.l505-panel');
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const panelId = trigger.getAttribute('aria-controls');
+        if (!panelId) return;
+
+        triggers.forEach((t) => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        panels.forEach((p) => {
+          p.classList.remove('active');
+        });
+
+        trigger.classList.add('active');
+        trigger.setAttribute('aria-selected', 'true');
+
+        const targetPanel = document.getElementById(panelId);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+        }
+      });
+    });
+  }
+</script>

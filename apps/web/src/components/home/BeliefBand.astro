@@ -4,16 +4,20 @@
  * Context: Block 3 on Homepage — cream background, between router and two-ways
  * Source: design-source/pages/Homepage.html (.belief, .belief-inner, .belief-rule)
  */
+
+interface Props {
+  quote?: string;
+  body?: string;
+}
+
+const { quote, body } = Astro.props;
 ---
 
 <section class="belief">
   <div class="belief-inner fade-up">
     <div class="belief-rule"></div>
-    <h2>&ldquo;Mental health care belongs to everyone.&rdquo;</h2>
-    <p>
-      Mental health care shouldn't depend on where you live, how much you earn, or how well you can
-      navigate the system. We built Better You Therapy to close that gap.
-    </p>
+    {quote && <h2>&ldquo;{quote}&rdquo;</h2>}
+    {body && <p>{body}</p>}
   </div>
 </section>
 

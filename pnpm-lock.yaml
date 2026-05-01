@@ -78,6 +78,9 @@ importers:
       astro:
         specifier: ^6.0.0
         version: 6.2.1(@types/node@25.6.0)(jiti@2.6.1)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3)
+      astro-portabletext:
+        specifier: ^0.13.0
+        version: 0.13.0(astro@6.2.1(@types/node@25.6.0)(jiti@2.6.1)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3))
       react:
         specifier: ^19.0.0
         version: 19.2.5
@@ -3105,6 +3108,12 @@ packages:
   astro-eslint-parser@1.4.0:
     resolution: {integrity: sha512-+QDcgc7e+au6EZ0YjMmRRjNoQo5bDMlaR45aWDoFsuxQTCM9qmCHRoiKJPELgckJ8Wmr7vcfpa9eCDHBFh6G4w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  astro-portabletext@0.13.0:
+    resolution: {integrity: sha512-Z9N32H7eRP8tuSavnJqUm4vKqHj59oYEyhqq4YiwsAcFnwDbepbb6cmIRGG5S+eejvHibrjyAKdQxhVINYXCbA==}
+    engines: {node: '>=20.19 <22 || >=22.12'}
+    peerDependencies:
+      astro: '>=4.6.0'
 
   astro@6.2.1:
     resolution: {integrity: sha512-3g1sYNly+QAkuO5ErNEQBYvsxorNDSCUNIeStBs+kcXGchvKQl1Q9EuDNOvSg010XLlHJFLVFZs9LV18Jjp4Hg==}
@@ -10164,6 +10173,12 @@ snapshots:
       semver: 7.7.4
     transitivePeerDependencies:
       - supports-color
+
+  astro-portabletext@0.13.0(astro@6.2.1(@types/node@25.6.0)(jiti@2.6.1)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3)):
+    dependencies:
+      '@portabletext/toolkit': 5.0.2
+      '@portabletext/types': 4.0.2
+      astro: 6.2.1(@types/node@25.6.0)(jiti@2.6.1)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3)
 
   astro@6.2.1(@types/node@25.6.0)(jiti@2.6.1)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.3):
     dependencies:

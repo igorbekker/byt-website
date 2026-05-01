@@ -4,32 +4,56 @@
  * Context: First visible section on the Homepage
  * Source: design-source/pages/Homepage.html (.hero, .hero-image, .hero-content, .hero-eyebrow, .hero-subhead, .hero-actions)
  */
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  subhead?: string;
+  image?: ImageWithAlt;
+  primaryCta?: CtaLink;
+  secondaryCta?: CtaLink;
+}
+
+const { eyebrow, headline, subhead, image, primaryCta, secondaryCta } = Astro.props;
+
+const primaryVariant = primaryCta?.variant ?? 'btn-coral';
+const secondaryVariant = secondaryCta?.variant ?? 'btn-outline-ink';
 ---
 
 <section class="hero">
   <div class="hero-image">
-    <img
-      src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=1400&q=85&auto=format&fit=crop&crop=faces"
-      alt="Licensed therapist in warm conversation with a senior patient"
-      onerror="this.style.display='none'"
-    />
+    {image?.asset?.url ? <img src={image.asset.url} alt={image.alt ?? ''} /> : null}
   </div>
   <div class="hero-content">
-    <div class="hero-eyebrow">
-      Licensed Mental Health Care &middot; Southeast Florida &amp; Statewide
-    </div>
-    <h1>
-      Mental health care should reach people where they are &mdash; not just the ones whose families
-      can navigate the system.
-    </h1>
-    <p class="hero-subhead">
-      We bring licensed therapists on-site to assisted living and skilled nursing facilities across
-      Southeast Florida, and connect adults and families with therapists online &mdash; anywhere in
-      Florida. We handle everything.
-    </p>
+    {eyebrow && <div class="hero-eyebrow">{eyebrow}</div>}
+    {headline && <h1>{headline}</h1>}
+    {subhead && <p class="hero-subhead">{subhead}</p>}
     <div class="hero-actions">
-      <a href="/patients/" class="btn btn-coral">Book a Session &rarr;</a>
-      <a href="/referral/" class="btn btn-outline-ink">Refer a Resident &rarr;</a>
+      {
+        primaryCta?.label && primaryCta.href && (
+          <a href={primaryCta.href} class={`btn ${primaryVariant}`}>
+            {primaryCta.label}
+          </a>
+        )
+      }
+      {
+        secondaryCta?.label && secondaryCta.href && (
+          <a href={secondaryCta.href} class={`btn ${secondaryVariant}`}>
+            {secondaryCta.label}
+          </a>
+        )
+      }
     </div>
   </div>
 </section>

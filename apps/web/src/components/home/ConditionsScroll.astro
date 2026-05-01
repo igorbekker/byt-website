@@ -4,149 +4,97 @@
  * Context: Block 5 on Homepage — alternating white/off-white rows, sticky image panel on right
  * Source: design-source/pages/Homepage.html (.l349, .l349-left, .l349-section, .l349-right, .l349-img-wrap, .l349-img)
  */
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface Condition {
+  _id: string;
+  tagline: string;
+  heading: string;
+  body?: string;
+  image?: ImageWithAlt;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  subhead?: string;
+  conditions?: Condition[];
+}
+
+const { eyebrow, heading, subhead, conditions } = Astro.props;
+
+// Fallback booking/referral links — these are internal navigation, not editable copy
+const BOOK_URL = '/individual-therapy/';
+const REFER_URL = '/referral/';
 ---
 
 <div class="l349-section-header fade-up">
-  <p class="eyebrow" style="margin-bottom:.75rem">What We Treat</p>
-  <h2>Conditions We Treat</h2>
-  <p>
-    Our licensed therapists work with adults, seniors, couples, and families across a wide range of
-    mental health conditions.
-  </p>
+  {
+    eyebrow && (
+      <p class="eyebrow" style="margin-bottom:.75rem">
+        {eyebrow}
+      </p>
+    )
+  }
+  {heading && <h2>{heading}</h2>}
+  {subhead && <p>{subhead}</p>}
 </div>
 
-<section class="l349" id="l349">
-  <div class="l349-left">
-    <div class="l349-section" data-section="0">
-      <p class="l349-tagline">Depression</p>
-      <h2 class="l349-h2">Depression &amp; Anxiety</h2>
-      <p class="l349-body">
-        Persistent sadness, worry, and overwhelm are treatable. Our licensed therapists provide
-        evidence-based care that meets you or your loved one where they are.
-      </p>
-      <div class="l349-actions">
-        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-        <a href="/referral/" class="l349-btn-ghost">
-          Refer a resident
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
+{
+  conditions && conditions.length > 0 && (
+    <section class="l349" id="l349">
+      <div class="l349-left">
+        {conditions.map((condition, idx) => (
+          <div class="l349-section" data-section={idx}>
+            {condition.tagline && <p class="l349-tagline">{condition.tagline}</p>}
+            {condition.heading && <h2 class="l349-h2">{condition.heading}</h2>}
+            {condition.body && <p class="l349-body">{condition.body}</p>}
+            <div class="l349-actions">
+              <a href={BOOK_URL} class="l349-btn-outline">
+                Book a session
+              </a>
+              <a href={REFER_URL} class="l349-btn-ghost">
+                Refer a resident
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
 
-    <div class="l349-section" data-section="1">
-      <p class="l349-tagline">Grief &amp; Loss</p>
-      <h2 class="l349-h2">Grief, Loss &amp; Life Transitions</h2>
-      <p class="l349-body">
-        Loss of a loved one, a role, or a way of life &mdash; grief takes many forms. We provide a
-        safe space to process and move forward.
-      </p>
-      <div class="l349-actions">
-        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-        <a href="/referral/" class="l349-btn-ghost">
-          Refer a resident
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
+      <div class="l349-right">
+        <div class="l349-img-wrap" id="l349Images">
+          {conditions.map((condition, idx) => (
+            <div
+              class={`l349-img${idx === 0 ? ' active' : ''}`}
+              data-img={idx}
+              style={
+                condition.image?.asset?.url
+                  ? `background:url('${condition.image.asset.url}') center/cover;`
+                  : 'background:var(--off-white);'
+              }
+              role="img"
+              aria-label={condition.image?.alt ?? condition.heading}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-
-    <div class="l349-section" data-section="2">
-      <p class="l349-tagline">Trauma</p>
-      <h2 class="l349-h2">PTSD &amp; Trauma</h2>
-      <p class="l349-body">
-        Trauma-informed care from licensed therapists who understand how past experiences shape
-        present wellbeing.
-      </p>
-      <div class="l349-actions">
-        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-        <a href="/referral/" class="l349-btn-ghost">
-          Refer a resident
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-
-    <div class="l349-section" data-section="3">
-      <p class="l349-tagline">Relationships</p>
-      <h2 class="l349-h2">Relationships, Couples &amp; Family</h2>
-      <p class="l349-body">
-        Communication, conflict, and connection &mdash; for couples, families, and caregivers
-        navigating change together.
-      </p>
-      <div class="l349-actions">
-        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-        <a href="/referral/" class="l349-btn-ghost">
-          Refer a resident
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="l349-right">
-    <div class="l349-img-wrap" id="l349Images">
-      <div
-        class="l349-img active"
-        data-img="0"
-        style="background:url('https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=700&q=85&auto=format&fit=crop') center/cover;"
-      >
-      </div>
-      <div
-        class="l349-img"
-        data-img="1"
-        style="background:url('https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=700&q=85&auto=format&fit=crop') center/cover;"
-      >
-      </div>
-      <div
-        class="l349-img"
-        data-img="2"
-        style="background:url('https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?w=700&q=85&auto=format&fit=crop') center/cover;"
-      >
-      </div>
-      <div
-        class="l349-img"
-        data-img="3"
-        style="background:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&auto=format&fit=crop') center/cover;"
-      >
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
+  )
+}
 
 <style>
   .l349-section-header {
@@ -247,7 +195,7 @@
   }
   .l349-btn-outline:hover {
     background: var(--navy-deep);
-    color: #fff;
+    color: var(--white);
   }
 
   .l349-btn-ghost {

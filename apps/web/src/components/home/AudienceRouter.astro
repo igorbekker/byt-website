@@ -4,216 +4,106 @@
  * Context: Block 2 on Homepage — navy background, three expanding audience cards
  * Source: design-source/pages/Homepage.html (.router-section, .router-row, .r-card, .r-card-wide, .r-card-narrow, .r-wide-content, .r-wide-image, .r-narrow-content, .r-tagline, .r-heading, .r-body, .r-icon, .r-cta)
  */
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface AudienceCard {
+  tagline: string;
+  heading: string;
+  bodyCollapsed: string;
+  bodyExpanded: string;
+  image?: ImageWithAlt;
+  cta?: CtaLink;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  subhead?: string;
+  cards?: AudienceCard[];
+}
+
+const { eyebrow, heading, subhead, cards } = Astro.props;
+
+// Arrow SVG shared across CTAs
+const arrowSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>`;
 ---
 
 <section class="router-section">
   <div class="router-header fade-up">
-    <p class="eyebrow">Your path starts here</p>
-    <h2>Who are you here to help?</h2>
-    <p>Everyone deserves care that meets them where they are.</p>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    {heading && <h2>{heading}</h2>}
+    {subhead && <p>{subhead}</p>}
   </div>
 
-  <div class="router-row" id="routerRow">
-    <!-- Card 1: Facilities — starts ACTIVE (wide) -->
-    <div class="r-card r-card-wide r-active" data-idx="0">
-      <div class="r-wide-content">
-        <div>
-          <p class="r-tagline">Facilities</p>
-          <h3 class="r-heading">For Wellness Directors &amp; Facility Admins</h3>
-          <p class="r-body">
-            Your residents deserve mental health care. We make sure nothing stands in the way. Zero
-            cost. We handle billing, scheduling, and documentation.
-          </p>
-        </div>
-        <a href="/communities/" class="r-cta">
-          Refer a Resident
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
+  {
+    cards && cards.length > 0 && (
+      <div class="router-row" id="routerRow">
+        {cards.map((card, idx) => (
+          <div
+            class={`r-card ${idx === 0 ? 'r-card-wide r-active' : 'r-card-narrow r-inactive'}`}
+            data-idx={idx}
           >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-      <div
-        class="r-wide-image"
-        style="background-image:url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=700&q=85&auto=format&fit=crop');background-size:cover;background-position:center;"
-      >
-      </div>
-      <div class="r-narrow-content" style="display:none">
-        <div class="r-icon">
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"></path>
-          </svg>
-        </div>
-        <div>
-          <p class="r-tagline">Facilities</p>
-          <h3 class="r-heading">For Wellness Directors &amp; Facility Admins</h3>
-          <p class="r-body">
-            Zero cost to your facility. We handle billing, scheduling, and documentation.
-          </p>
-        </div>
-        <a href="/communities/" class="r-cta">
-          Refer a Resident
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
+            {/* Wide (expanded) state */}
+            <div class="r-wide-content" style={idx === 0 ? '' : 'display:none'}>
+              <div>
+                <p class="r-tagline">{card.tagline}</p>
+                <h3 class="r-heading">{card.heading}</h3>
+                <p class="r-body">{card.bodyExpanded}</p>
+              </div>
+              {card.cta?.label && card.cta.href && (
+                <a href={card.cta.href} class="r-cta" set:html={card.cta.label + ' ' + arrowSvg} />
+              )}
+            </div>
+            {card.image?.asset?.url && (
+              <div
+                class="r-wide-image"
+                style={`background-image:url('${card.image.asset.url}');background-size:cover;background-position:center;${idx !== 0 ? 'display:none' : ''}`}
+                role="img"
+                aria-label={card.image.alt ?? ''}
+              />
+            )}
 
-    <!-- Card 2: Patients -->
-    <div class="r-card r-card-narrow r-inactive" data-idx="1">
-      <div class="r-wide-content" style="display:none">
-        <div>
-          <p class="r-tagline">Patients &amp; Families</p>
-          <h3 class="r-heading">For Adults, Families &amp; Caregivers</h3>
-          <p class="r-body">
-            You've decided it's time to get help — or someone you love has. Let's make that happen
-            this week. No waitlist. No runaround.
-          </p>
-        </div>
-        <a href="/patients/" class="r-cta">
-          Book a Session
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
+            {/* Narrow (collapsed) state */}
+            <div class="r-narrow-content" style={idx === 0 ? 'display:none' : ''}>
+              <div class="r-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <div>
+                <p class="r-tagline">{card.tagline}</p>
+                <h3 class="r-heading">{card.heading}</h3>
+                <p class="r-body">{card.bodyCollapsed}</p>
+              </div>
+              {card.cta?.label && card.cta.href && (
+                <a href={card.cta.href} class="r-cta" set:html={card.cta.label + ' ' + arrowSvg} />
+              )}
+            </div>
+          </div>
+        ))}
       </div>
-      <div
-        class="r-wide-image"
-        style="display:none;background-image:url('https://images.unsplash.com/photo-1527137342181-19aab11a8ee8?w=700&q=85&auto=format&fit=crop');background-size:cover;background-position:center;"
-      >
-      </div>
-      <div class="r-narrow-content">
-        <div class="r-icon">
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </div>
-        <div>
-          <p class="r-tagline">Patients &amp; Families</p>
-          <h3 class="r-heading">For Adults, Families &amp; Caregivers</h3>
-          <p class="r-body">No waitlist. No runaround. Let's get you started this week.</p>
-        </div>
-        <a href="/patients/" class="r-cta">
-          Book a Session
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Card 3: Providers -->
-    <div class="r-card r-card-narrow r-inactive" data-idx="2">
-      <div class="r-wide-content" style="display:none">
-        <div>
-          <p class="r-tagline">Providers</p>
-          <h3 class="r-heading">For Licensed Therapists in Florida</h3>
-          <p class="r-body">
-            Facility-based positions in Southeast Florida and teletherapy statewide. Transparent
-            revenue split from day one. We source the patients.
-          </p>
-        </div>
-        <a href="/providers/" class="r-cta">
-          See Open Positions
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-      <div
-        class="r-wide-image"
-        style="display:none;background-image:url('https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=700&q=85&auto=format&fit=crop');background-size:cover;background-position:center;"
-      >
-      </div>
-      <div class="r-narrow-content">
-        <div class="r-icon">
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <path d="M12 2a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5 5 5 0 0 1-5-5v0a5 5 0 0 1 5-5z"></path>
-            <path d="M2 21a8 8 0 0 1 16 0"></path>
-          </svg>
-        </div>
-        <div>
-          <p class="r-tagline">Providers</p>
-          <h3 class="r-heading">For Licensed Therapists in Florida</h3>
-          <p class="r-body">Transparent split. We source the patients — you deliver care.</p>
-        </div>
-        <a href="/providers/" class="r-cta">
-          See Open Positions
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
+    )
+  }
 </section>
 
 <style>
@@ -234,7 +124,7 @@
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(2rem, 3.5vw, 2.8rem);
-    color: #fff;
+    color: var(--white);
     margin-bottom: 1rem;
     letter-spacing: -0.02em;
   }
@@ -378,7 +268,7 @@
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
-    color: #fff;
+    color: var(--white);
     background: var(--coral);
     letter-spacing: 0.01em;
     padding: 12px 20px;
@@ -462,7 +352,7 @@
         card.style.flexDirection = '';
       } else if (i === idx) {
         if (wc) wc.style.display = 'flex';
-        if (wi) wi.style.display = 'block';
+        if (wi) wi.style.display = wi ? 'block' : 'none';
         if (nc) nc.style.display = 'none';
         card.style.display = 'flex';
         card.style.flexDirection = 'row';
