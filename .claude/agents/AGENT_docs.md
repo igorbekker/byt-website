@@ -36,6 +36,8 @@ Create an entry when: architecture choice made/changed, source-of-truth conflict
 
 Entries are append-only. Never edit existing entries (typo fixes excepted). Superseding decisions get a new ID and link back.
 
+NEVER set "Approved by: Claude". Only Igor approves decisions.
+
 ## Obstacle Log (`docs/obstacle-log/`)
 
 Create an entry when: live site diverges from design-source, build fails non-trivially, external blocker hit, dependency conflict, test fails with unclear cause, any rollback occurs, AGENT_qa reports P0 or P1.
