@@ -302,3 +302,90 @@ All 38 Astro components built, global.css fully populated with design token syst
 **Bug fixed during execution:**
 
 - FadeUp.astro: Dynamic `tag` prop caused TypeScript error ts(2322); simplified to hardcoded `<div>` wrapper.
+
+---
+
+## Phase 3 — Sanity Studio Setup
+
+**Branch:** `feat/phase-3-sanity-studio`
+
+---
+
+### A — Schema Files to Create
+
+#### Objects (shared reusable structures)
+
+- [x] `apps/studio/schemas/objects/seoFields.ts` — `metaTitle`, `metaDescription`, `ogImage`
+- [x] `apps/studio/schemas/objects/ctaLink.ts` — `label`, `href`, `variant` (8-option enum)
+- [x] `apps/studio/schemas/objects/imageWithAlt.ts` — hotspot image + `alt` (required)
+- [x] `apps/studio/schemas/objects/audienceCard.ts` — `tagline`, `heading`, `bodyCollapsed`, `bodyExpanded`, `image`, `cta`
+- [x] `apps/studio/schemas/objects/serviceTrack.ts` — `label`, `heading`, `body`, `cta`, `image`
+- [x] `apps/studio/schemas/objects/processStep.ts` — `stepNumber`, `heading`, `body`
+
+#### Singletons (one instance per page or global)
+
+- [x] `apps/studio/schemas/singletons/siteSettings.ts` — extended with 10 new fields (additive only)
+- [x] `apps/studio/schemas/singletons/homePage.ts`
+- [x] `apps/studio/schemas/singletons/aboutPage.ts`
+- [x] `apps/studio/schemas/singletons/patientsPage.ts`
+- [x] `apps/studio/schemas/singletons/communitiesPage.ts`
+- [x] `apps/studio/schemas/singletons/providersPage.ts`
+- [x] `apps/studio/schemas/singletons/careersPage.ts`
+- [x] `apps/studio/schemas/singletons/contactPage.ts`
+- [x] `apps/studio/schemas/singletons/blogIndexPage.ts`
+
+#### Documents (repeating content collections)
+
+- [x] `apps/studio/schemas/documents/testimonial.ts`
+- [x] `apps/studio/schemas/documents/condition.ts`
+- [x] `apps/studio/schemas/documents/blogPost.ts`
+- [x] `apps/studio/schemas/documents/blogCategory.ts`
+- [x] `apps/studio/schemas/documents/author.ts`
+- [x] `apps/studio/schemas/documents/jobPosting.ts`
+
+---
+
+### B — schemas/index.ts Update
+
+- [x] All 21 schemas imported and exported in `apps/studio/schemas/index.ts`
+
+---
+
+### C — Desk Structure
+
+- [x] `apps/studio/structure/index.ts` — singletons group + document collections
+- [x] `apps/studio/sanity.config.ts` — wired `structureTool({ structure })`
+
+---
+
+### D — siteSettings Population
+
+- [x] **OBS-006 resolved (Option A)**: Igor will populate siteSettings manually via `/admin` Studio UI after merging. Values: Business Name "Better You Therapy LLC", Phone 754-999-0011, Email info@getbetteryou.com, City Boca Raton FL, Booking URL /contact, Referral URL /communities.
+
+---
+
+### E — GROQ Query Updates
+
+- [x] `SITE_SETTINGS_QUERY` extended with all 10 new fields in `apps/web/src/lib/queries.ts`
+
+---
+
+### F — Quality Gates
+
+- [x] `pnpm --filter studio dev` — Studio starts, `http://localhost:3333/` ready in 524ms, no errors
+- [x] `pnpm --filter web build` — PASS
+- [x] `pnpm --filter web check` — 0 errors, 0 warnings
+- [x] `pnpm typecheck` — PASS (both apps/web and apps/studio)
+- [x] `pnpm lint` — PASS
+- [x] `npx prettier --check` — PASS
+- [x] No `any` in TypeScript — all schema files use `defineType` + `defineField`
+
+---
+
+### Phase 3 Review
+
+**Status:** COMPLETE (2026-05-01)
+**Branch:** feat/phase-3-sanity-studio
+**OBS logged:** OBS-006 (sanity documents create requires interactive login — resolved via Option A)
+
+All 21 schema types created and registered, desk structure wired into structureTool, all 5 quality gates pass, Studio starts cleanly at localhost:3333. siteSettings seeding deferred to Igor via /admin UI (Option A approved). queries.ts updated with all 10 new siteSettings fields.
