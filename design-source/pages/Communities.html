@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Facilities — Better You Therapy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════════════════════
+   Faithful HTML port of the 6 uploaded Relume components for /communities/:
+   Navbar1 → Header84 → Layout521 → Layout16 → Layout526 → Layout192 → Cta25 → Footer3
+   STRUCTURE/UX is unchanged from Relume. Only the visual tokens
+   (colors, fonts, headings) have been swapped to the BYT design system.
+════════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* BYT design system tokens */
+  --byt-navy:        #104378;
+  --byt-navy-deep:   #0A2D52;
+  --byt-navy-footer: #2d2d52;
+  --byt-coral:       #E05555;
+  --byt-coral-hover: #C94444;
+  --byt-coral-light: #FCE8E8;
+  --byt-sage:        #9CAF88;
+  --byt-sage-light:  #E8EFE3;
+  --byt-slate:       #5A7194;
+  --byt-mist:        #8FA3BF;
+  --byt-border:      #E4EAF0;
+  --byt-off-white:   #F5F7FA;
+  --byt-cream:       #FFFCF0;
+
+  /* Radii */
+  --r-btn:6px;
+  --r-card:12px;
+  --r-pill:999px;
+
+  /* Shadows */
+  --shadow-sm:0 1px 2px rgba(16,67,120,.04);
+  --shadow-md:0 4px 12px rgba(16,67,120,.08);
+  --shadow-lg:0 8px 24px rgba(16,67,120,.10);
+
+  /* Relume token names mapped to BYT palette */
+  --bg-primary:#ffffff;
+  --bg-alt:#F5F7FA;
+  --text-primary:#0A2D52;
+  --text-alt:#ffffff;
+  --border-primary:#E4EAF0;
+}
+
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:var(--byt-slate);background:var(--bg-primary);
+  line-height:1.5;font-size:16px;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+h1,h2,h3,h4,h5,h6{
+  font-family:'Manrope',system-ui,-apple-system,sans-serif;
+  font-weight:800;
+  letter-spacing:-.01em;
+  color:var(--byt-navy-deep);
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:transparent;color:inherit}
+ul{list-style:none}
+
+/* Container */
+.container{width:100%;margin-inline:auto;max-width:80rem}
+.section{padding:64px 5%}
+@media(min-width:768px){.section{padding:96px 5%}}
+@media(min-width:1024px){.section{padding:112px 5%}}
+
+/* Type scale */
+.text-md{font-size:1.125rem;line-height:1.5}
+.text-sm{font-size:.875rem;line-height:1.4}
+.text-xl{font-size:1.25rem;line-height:1.4}
+.text-2xl{font-size:1.5rem;line-height:1.3}
+.text-4xl{font-size:2.25rem;line-height:1.2}
+.text-5xl{font-size:3rem;line-height:1.1}
+.font-bold{font-weight:700}
+.font-semibold{font-weight:600}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.75rem 1.5rem;border:1.5px solid var(--byt-navy);
+  font-family:'Montserrat',sans-serif;
+  font-size:.9375rem;font-weight:600;line-height:1.2;letter-spacing:.01em;
+  background:var(--bg-primary);color:var(--byt-navy-deep);
+  border-radius:var(--r-btn);
+  transition:background-color .15s,color .15s,border-color .15s,box-shadow .15s,transform .15s;
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--byt-coral);color:#fff;border-color:var(--byt-coral)}
+.btn-primary:hover{background:var(--byt-coral-hover);border-color:var(--byt-coral-hover);box-shadow:var(--shadow-md)}
+.btn-secondary{background:transparent;color:var(--byt-navy-deep);border-color:var(--byt-navy-deep)}
+.btn-secondary:hover{background:var(--byt-navy-deep);color:#fff}
+.btn-secondary-alt{background:transparent;color:#fff;border-color:#fff}
+.btn-secondary-alt:hover{background:#fff;color:var(--byt-navy-deep)}
+.btn-link{
+  background:transparent;border:0;padding:0;
+  display:inline-flex;align-items:center;gap:.25rem;
+  font-family:'Montserrat',sans-serif;
+  font-weight:600;color:var(--byt-coral);
+  text-decoration:underline;text-underline-offset:3px;
+  transition:color .2s;
+}
+.btn-link:hover{color:var(--byt-coral-hover)}
+.btn-link.alt{color:#fff}
+.btn-link.alt:hover{color:rgba(255,255,255,.8)}
+.btn-link svg{width:1em;height:1em}
+
+/* ════════════════════════════════════════════════════════════════
+   NAV — synced with Homepage.html / Providers.html
+══════════════════════════════════════════════════════════════════ */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: #fff;
+  height: 84px; display: flex; align-items: center;
+  padding: 0 5%;
+  border-bottom: 1px solid var(--byt-border);
+  box-shadow: var(--shadow-sm);
+}
+.nav-inner {
+  max-width: 1400px; margin: 0 auto; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { display:flex; align-items:center; text-decoration:none; height:68px; }
+.nav-logo img { height: 64px; width: auto; display:block; }
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a { color: var(--byt-navy-deep); font-size: 15px; font-weight: 500; transition: color .2s; letter-spacing: .01em; }
+.nav-links a:hover, .nav-links a.active { color: var(--byt-coral); }
+.nav-actions { display: flex; gap: .75rem; align-items: center; }
+.nav-cta {
+  background: var(--byt-coral); color: #fff; padding: 12px 20px;
+  border-radius: var(--r-btn); font-size: 14px; font-weight: 600;
+  letter-spacing: .01em; transition: background-color .2s;
+}
+.nav-cta:hover { background: var(--byt-coral-hover); }
+.nav-cta-secondary {
+  color: var(--byt-navy-deep); font-size: 14px; font-weight: 500;
+  padding: 12px 20px; border-radius: var(--r-btn);
+  transition: color .2s;
+}
+.nav-cta-secondary:hover { color: var(--byt-coral); }
+
+.nav-hamburger{
+  display:none; background:transparent; border:none; cursor:pointer;
+  width:44px; height:44px; align-items:center; justify-content:center;
+  padding:0; margin-right:-8px; color:var(--byt-navy-deep);
+}
+.nav-hamburger svg{ width:26px; height:26px; }
+
+.mobile-menu{
+  position:fixed; inset:0; z-index:200; display:none;
+  background:rgba(10,45,82,.5); backdrop-filter:blur(4px);
+}
+.mobile-menu.open{ display:block; }
+.mobile-menu-panel{
+  position:absolute; top:0; right:0; bottom:0; width:min(86vw, 360px);
+  background:#fff; padding:20px 24px 32px;
+  display:flex; flex-direction:column; gap:4px;
+  box-shadow:-8px 0 32px rgba(10,45,82,.15);
+  animation:mmSlide .25s ease-out;
+}
+@keyframes mmSlide{ from{transform:translateX(100%)} to{transform:none} }
+.mobile-menu-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding-bottom:16px; margin-bottom:12px;
+  border-bottom:1px solid var(--byt-border);
+}
+.mobile-menu-close{
+  background:transparent; border:none; cursor:pointer;
+  width:40px; height:40px; display:flex; align-items:center; justify-content:center;
+  color:var(--byt-navy-deep); margin-right:-8px;
+}
+.mobile-menu-close svg{ width:22px; height:22px; }
+.mobile-menu a.mm-link{
+  display:block; padding:14px 4px; font-family:'Manrope',sans-serif;
+  font-size:18px; font-weight:700; color:var(--byt-navy-deep);
+  border-bottom:1px solid var(--byt-border);
+  transition:color .2s;
+}
+.mobile-menu a.mm-link:hover{ color:var(--byt-coral); }
+.mobile-menu-actions{
+  display:flex; flex-direction:column; gap:10px; margin-top:20px;
+}
+.mobile-menu-actions .btn{ width:100%; justify-content:center; }
+
+.mobile-cta-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;
+  background:#fff;border-top:1px solid var(--byt-border);box-shadow:0 -4px 20px rgba(10,45,82,.08);
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));gap:8px;align-items:stretch;}
+.mobile-cta-bar .btn{flex:1;justify-content:center;padding:14px 12px;font-size:14px;margin:0;}
+
+@media(max-width:1024px){
+  .nav{height:72px!important; padding:0 32px}
+  .nav-logo{height:52px!important}
+  .nav-logo img{height:48px!important;width:auto!important;max-width:none!important}
+  .nav-links{display:none!important}
+  .nav-actions{display:none!important}
+  .nav-hamburger{display:flex!important; margin-left:auto!important; margin-right:-8px!important}
+}
+@media(max-width:768px){
+  body{padding-bottom:78px}
+  .nav{height:64px!important; padding:0 20px}
+  .nav-logo{height:48px!important}
+  .nav-logo img{height:44px!important;width:auto!important;max-width:none!important}
+  .nav-actions{display:none!important}
+  .nav-hamburger{display:flex!important}
+  .mobile-cta-bar{display:flex!important}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Header84 — split hero (text left, image right) inside bordered card
+══════════════════════════════════════════════════════════════════ */
+.h84{padding:0}
+.h84 > .container{max-width:none;padding:0}
+
+.h84-grid{
+  display:grid;grid-auto-columns:1fr;grid-template-columns:1fr;
+  overflow:hidden;
+  border-radius:0;
+  border:0;
+}
+@media(min-width:1024px){.h84-grid{grid-template-columns:1fr 1fr; min-height:640px}}
+@media(min-width:1280px){.h84-grid{min-height:720px}}
+
+.h84-text{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:2rem;
+}
+@media(min-width:768px){.h84-text{padding:3rem}}
+@media(min-width:1024px){.h84-text{padding:4rem}}
+
+.h84-eyebrow{
+  display:inline-block;align-self:flex-start;margin-bottom:1.25rem;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--byt-coral);
+}
+
+.h84 h1{
+  margin-bottom:1.25rem;
+  font-size:2.5rem;line-height:1.05;font-weight:800;letter-spacing:-.02em;
+}
+@media(min-width:768px){.h84 h1{margin-bottom:1.5rem;font-size:3.5rem}}
+@media(min-width:1024px){.h84 h1{font-size:4.25rem}}
+
+.h84 .lede{
+  color:var(--byt-slate);font-size:1.0625rem;line-height:1.55;max-width:34rem;
+}
+@media(min-width:768px){.h84 .lede{font-size:1.125rem}}
+
+.h84-actions{
+  margin-top:1.5rem;display:flex;flex-wrap:wrap;align-items:center;gap:.875rem;
+}
+@media(min-width:768px){.h84-actions{margin-top:2rem}}
+
+.h84-image{
+  position:relative;display:flex;align-items:stretch;justify-content:stretch;
+  background:linear-gradient(135deg,var(--byt-navy-deep) 0%,var(--byt-navy) 100%);
+  min-height:320px;
+}
+@media(min-width:1024px){.h84-image{min-height:auto}}
+.h84-image img{width:100%;height:100%;object-fit:cover;display:block}
+.h84-image::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,45,82,.08) 0%,rgba(10,45,82,.0) 35%);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Layout521 — 4-step process with image-bg dark cards
+══════════════════════════════════════════════════════════════════ */
+#l521-section{background:var(--byt-off-white)}
+
+.l521-head{margin-inline:auto;margin-bottom:48px;width:100%;max-width:48rem;text-align:center}
+@media(min-width:768px){.l521-head{margin-bottom:72px}}
+@media(min-width:1024px){.l521-head{margin-bottom:80px}}
+.l521-eyebrow{
+  display:inline-block;margin-bottom:1rem;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--byt-coral);
+}
+.l521-head h2{
+  margin-bottom:1.25rem;font-size:2.25rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;
+}
+@media(min-width:768px){.l521-head h2{margin-bottom:1.5rem;font-size:2.75rem}}
+@media(min-width:1024px){.l521-head h2{font-size:3.25rem}}
+.l521-head .text-md{color:var(--byt-slate)}
+
+.l521-grid{
+  display:grid;grid-template-columns:1fr;gap:1.5rem;
+}
+@media(min-width:640px){.l521-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:768px){.l521-grid{gap:2rem}}
+@media(min-width:1024px){.l521-grid{grid-template-columns:repeat(4,1fr)}}
+
+.l521-card{
+  position:relative;border-radius:var(--r-card);overflow:hidden;
+  min-height:360px;color:#fff;
+  box-shadow:var(--shadow-md);
+  transition:transform .25s,box-shadow .25s;
+}
+.l521-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.l521-card-img{position:absolute;inset:0;z-index:0}
+.l521-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.l521-card-img::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,45,82,.45) 0%,rgba(10,45,82,.7) 60%,rgba(10,45,82,.92) 100%);
+}
+.l521-card-content{
+  position:relative;z-index:1;display:flex;flex-direction:column;justify-content:flex-end;
+  height:100%;min-height:360px;padding:1.5rem;
+}
+@media(min-width:768px){.l521-card-content{padding:2rem}}
+
+.l521-step{
+  position:absolute;top:1.25rem;left:1.5rem;z-index:1;
+  font-family:'Manrope',sans-serif;font-weight:800;font-size:.875rem;
+  letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.85);
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.l521-step .num{
+  width:2rem;height:2rem;border-radius:9999px;border:1.5px solid rgba(255,255,255,.6);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.875rem;letter-spacing:0;color:#fff;
+}
+@media(min-width:768px){.l521-step{top:1.5rem;left:2rem}}
+
+.l521-icon{
+  margin-bottom:.875rem;width:2.5rem;height:2.5rem;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;background:rgba(255,255,255,.12);color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+}
+.l521-icon svg{width:1.25rem;height:1.25rem}
+.l521-card h3{
+  margin-bottom:.625rem;font-size:1.25rem;font-weight:800;line-height:1.2;color:#fff;letter-spacing:-.01em;
+}
+@media(min-width:768px){.l521-card h3{font-size:1.375rem}}
+.l521-card p{color:rgba(255,255,255,.85);font-size:.9375rem;line-height:1.5}
+
+/* ════════════════════════════════════════════════════════════════
+   Layout16 — split content: text + checklist | image
+══════════════════════════════════════════════════════════════════ */
+.l16-grid{
+  display:grid;grid-template-columns:1fr;gap:3rem;align-items:center;
+}
+@media(min-width:768px){.l16-grid{grid-template-columns:1fr 1fr;gap:3rem}}
+@media(min-width:1024px){.l16-grid{gap:5rem}}
+
+.l16-eyebrow{
+  display:inline-block;margin-bottom:1rem;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--byt-coral);
+}
+.l16 h2{
+  margin-bottom:1.25rem;font-size:2.25rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;
+}
+@media(min-width:768px){.l16 h2{margin-bottom:1.5rem;font-size:2.75rem}}
+@media(min-width:1024px){.l16 h2{font-size:3.25rem}}
+.l16 .lede{margin-bottom:1.25rem;color:var(--byt-slate)}
+@media(min-width:768px){.l16 .lede{margin-bottom:1.5rem;font-size:1.125rem}}
+
+.l16-list{display:grid;grid-template-columns:1fr;gap:1rem;padding:.5rem 0 0;list-style:none;margin:0}
+.l16-list li{display:flex;align-items:flex-start;gap:.875rem;color:var(--byt-navy-deep);font-weight:500;line-height:1.45}
+.l16-check{
+  flex-shrink:0;width:1.5rem;height:1.5rem;border-radius:9999px;
+  background:var(--byt-coral-light);color:var(--byt-coral);
+  display:inline-flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.l16-check svg{width:.875rem;height:.875rem}
+
+.l16-image{
+  position:relative;border-radius:var(--r-card);overflow:hidden;
+  box-shadow:var(--shadow-md);
+  background:linear-gradient(135deg,var(--byt-navy-deep) 0%,var(--byt-navy) 100%);
+  aspect-ratio:4/5;
+}
+@media(min-width:768px){.l16-image{aspect-ratio:auto;height:100%;min-height:32rem}}
+.l16-image img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ════════════════════════════════════════════════════════════════
+   Layout526 — 3 columns × 2 rows = 6 dark photo bento cards
+══════════════════════════════════════════════════════════════════ */
+#l526-section{background:var(--byt-off-white)}
+
+.l526-head{margin-inline:auto;margin-bottom:48px;width:100%;max-width:36rem;text-align:center}
+@media(min-width:768px){.l526-head{margin-bottom:72px}}
+@media(min-width:1024px){.l526-head{margin-bottom:80px}}
+.l526-eyebrow{
+  display:inline-block;margin-bottom:1rem;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--byt-coral);
+}
+.l526-head h2{
+  margin-bottom:1.25rem;font-size:2.25rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;
+}
+@media(min-width:768px){.l526-head h2{margin-bottom:1.5rem;font-size:2.75rem}}
+@media(min-width:1024px){.l526-head h2{font-size:3.25rem}}
+.l526-head .text-md{color:var(--byt-slate)}
+
+.l526-cols{
+  display:grid;grid-template-columns:1fr;gap:1.5rem;
+}
+@media(min-width:768px){.l526-cols{gap:2rem}}
+@media(min-width:1024px){.l526-cols{grid-template-columns:repeat(3,1fr)}}
+
+.l526-col{display:grid;grid-template-columns:1fr;gap:1.5rem}
+@media(min-width:768px){.l526-col{gap:2rem}}
+
+.l526-card{
+  position:relative;border-radius:var(--r-card);overflow:hidden;color:#fff;
+  box-shadow:var(--shadow-md);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:1.5rem;min-height:18rem;
+  transition:transform .25s,box-shadow .25s;
+}
+.l526-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+@media(min-width:768px){.l526-card{padding:2rem;min-height:20rem}}
+.l526-card.large{justify-content:center;min-height:24rem}
+@media(min-width:1024px){.l526-card.large{min-height:32rem}}
+
+.l526-card-img{position:absolute;inset:0;z-index:0}
+.l526-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.l526-card-img::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(10,30,55,.55) 0%,rgba(10,30,55,.78) 100%);
+}
+.l526-card > *:not(.l526-card-img){position:relative;z-index:1}
+
+.l526-tag{
+  display:inline-block;margin-bottom:.625rem;
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.92);
+}
+.l526-icon{
+  margin-bottom:1.25rem;width:3rem;height:3rem;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;background:rgba(255,255,255,.14);color:#fff;
+  border:1px solid rgba(255,255,255,.28);
+}
+.l526-icon svg{width:1.5rem;height:1.5rem}
+.l526-card h3{
+  margin-bottom:.625rem;font-size:1.375rem;font-weight:800;line-height:1.2;color:#fff;letter-spacing:-.01em;
+}
+@media(min-width:768px){.l526-card h3{font-size:1.625rem;margin-bottom:.875rem}}
+.l526-card.large h3{font-size:1.625rem}
+@media(min-width:768px){.l526-card.large h3{font-size:2rem}}
+@media(min-width:1024px){.l526-card.large h3{font-size:2.25rem}}
+.l526-card p{color:rgba(255,255,255,.92);font-size:.9375rem;line-height:1.55;margin:0}
+.l526-actions{margin-top:1rem;display:flex;align-items:center}
+
+/* ════════════════════════════════════════════════════════════════
+   Layout505 — vertical Tabs (list LEFT, panel RIGHT)
+══════════════════════════════════════════════════════════════════ */
+.l505-head{margin-inline:auto;margin-bottom:48px;width:100%;max-width:48rem;text-align:center}
+@media(min-width:768px){.l505-head{margin-bottom:72px}}
+@media(min-width:1024px){.l505-head{margin-bottom:80px}}
+.l505-head h2{
+  margin-bottom:1.25rem;font-size:2.25rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;
+}
+@media(min-width:768px){.l505-head h2{margin-bottom:1.5rem;font-size:2.75rem}}
+@media(min-width:1024px){.l505-head h2{font-size:3.25rem}}
+.l505-head .text-md{color:var(--byt-slate)}
+.l505-head .eyebrow{
+  display:inline-block;margin-bottom:1rem;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--byt-coral);
+}
+
+.l505-tabs{
+  position:relative;display:grid;grid-auto-columns:1fr;grid-template-columns:1fr;
+  border:1px solid var(--border-primary);background:#fff;
+  border-radius:var(--r-card);overflow:hidden;box-shadow:var(--shadow-sm);
+}
+@media(min-width:768px){.l505-tabs{grid-template-columns:1fr 1.5fr}}
+
+.l505-list{
+  position:relative;display:grid;grid-auto-columns:1fr;grid-template-columns:1fr;
+  background:var(--byt-off-white);border-bottom:1px solid var(--border-primary);
+}
+@media(min-width:768px){.l505-list{border-bottom:0;border-right:1px solid var(--border-primary)}}
+.l505-trigger{
+  text-align:left;padding:1.25rem 1.5rem;font-family:'Manrope',sans-serif;
+  font-size:1.0625rem;font-weight:700;letter-spacing:-.01em;
+  border:0;border-bottom:1px solid var(--border-primary);
+  background:transparent;color:var(--text-primary);cursor:pointer;
+  transition:background-color .15s,color .15s;
+}
+.l505-trigger:last-child{border-bottom:0}
+@media(min-width:768px){.l505-trigger{padding:1.5rem 2rem;font-size:1.125rem}}
+.l505-trigger.active{background:#fff;color:var(--text-primary);position:relative}
+.l505-trigger.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--byt-coral);border-radius:0 2px 2px 0;
+}
+.l505-trigger:not(.active){color:var(--byt-mist)}
+.l505-trigger:hover:not(.active){color:var(--byt-navy);background:#fff}
+
+.l505-panel{display:none;animation:l505fade .25s ease}
+.l505-panel.active{display:block}
+@keyframes l505fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.l505-panel-inner{
+  display:flex;height:100%;flex-direction:column;justify-content:center;padding:1.5rem;
+}
+@media(min-width:768px){.l505-panel-inner{padding:2rem}}
+@media(min-width:1024px){.l505-panel-inner{padding:4rem}}
+.l505-icon{
+  margin-bottom:1.25rem;width:3rem;height:3rem;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--byt-coral-light);color:var(--byt-coral);border-radius:12px;
+}
+@media(min-width:768px){.l505-icon{margin-bottom:1.5rem}}
+.l505-panel h3{
+  margin-bottom:1.25rem;font-size:1.75rem;font-weight:800;line-height:1.15;letter-spacing:-.01em;color:var(--byt-navy-deep);
+}
+@media(min-width:768px){.l505-panel h3{margin-bottom:1.5rem;font-size:2.25rem}}
+@media(min-width:1024px){.l505-panel h3{font-size:2.5rem}}
+.l505-panel p{color:var(--byt-slate);line-height:1.55}
+
+/* ════════════════════════════════════════════════════════════════
+   Layout192 — image-left + text-right: service area
+══════════════════════════════════════════════════════════════════ */
+.l192-grid{
+  display:grid;grid-template-columns:1fr;gap:3rem;align-items:center;
+}
+@media(min-width:768px){.l192-grid{grid-template-columns:1fr 1fr;gap:3rem}}
+@media(min-width:1024px){.l192-grid{gap:5rem}}
+
+.l192-image-wrap{order:2}
+.l192-text{order:1}
+@media(min-width:768px){
+  .l192-image-wrap{order:1}
+  .l192-text{order:2}
+}
+
+.l192-image{
+  position:relative;border-radius:var(--r-card);overflow:hidden;
+  box-shadow:var(--shadow-md);
+  aspect-ratio:4/5;background:var(--byt-off-white);
+}
+@media(min-width:768px){.l192-image{aspect-ratio:auto;min-height:32rem;height:100%}}
+.l192-image img{width:100%;height:100%;object-fit:cover;display:block}
+.l192-image svg.map{width:100%;height:100%;display:block}
+
+.l192-eyebrow{
+  display:inline-block;margin-bottom:1rem;
+  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--byt-coral);
+}
+.l192 h2{
+  margin-bottom:1.25rem;font-size:2.25rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;
+}
+@media(min-width:768px){.l192 h2{margin-bottom:1.5rem;font-size:2.75rem}}
+@media(min-width:1024px){.l192 h2{font-size:3.25rem}}
+.l192 .lede{color:var(--byt-slate)}
+@media(min-width:768px){.l192 .lede{font-size:1.125rem}}
+
+.l192-pills{margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.5rem}
+.l192-pill{
+  display:inline-flex;align-items:center;padding:.4rem .9rem;
+  border:1.5px solid var(--byt-border);border-radius:var(--r-pill);
+  font-family:'Montserrat',sans-serif;font-size:.8125rem;font-weight:600;
+  color:var(--byt-navy-deep);background:#fff;letter-spacing:.01em;
+}
+.l192-pill.coral{border-color:var(--byt-coral);color:var(--byt-coral)}
+
+/* ════════════════════════════════════════════════════════════════
+   Cta25 — centered closer
+══════════════════════════════════════════════════════════════════ */
+.cta25-section{
+  background:linear-gradient(135deg,var(--byt-navy-deep) 0%,var(--byt-navy) 100%);
+  position:relative;overflow:hidden;
+}
+.cta25-section::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:28px 28px;opacity:.5;pointer-events:none;
+}
+.cta25-section .container{position:relative;z-index:1}
+.cta25-inner{
+  margin-inline:auto;max-width:36rem;text-align:center;
+  display:flex;flex-direction:column;align-items:center;
+}
+.cta25-section h2{
+  margin-bottom:1.25rem;font-size:2.25rem;font-weight:800;line-height:1.1;letter-spacing:-.02em;color:#fff;
+}
+@media(min-width:768px){.cta25-section h2{margin-bottom:1.5rem;font-size:3rem}}
+@media(min-width:1024px){.cta25-section h2{font-size:3.5rem}}
+.cta25-section p{color:rgba(255,255,255,.85);font-size:1.0625rem;line-height:1.55}
+@media(min-width:768px){.cta25-section p{font-size:1.125rem}}
+.cta25-actions{
+  margin-top:1.75rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;
+}
+@media(min-width:768px){.cta25-actions{margin-top:2rem}}
+
+/* ════════════════════════════════════════════════════════════════
+   FOOTER — synced
+══════════════════════════════════════════════════════════════════ */
+.footer { background:var(--byt-navy-deep); color:rgba(255,255,255,.68); padding:4rem 5% 2rem; }
+.footer-inner { max-width:1400px; margin:0 auto; }
+.footer-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr 1.2fr; gap:3rem; margin-bottom:3rem; }
+.footer-logo { margin-bottom:1rem; display:block; }
+.footer-logo img { height:100px; width:auto; display:block; }
+.footer-tagline { font-size:14px; color:rgba(255,255,255,.55); line-height:1.65; margin-bottom:1.5rem; max-width:360px; }
+.footer-contact { font-size:14px; line-height:1.85; color:rgba(255,255,255,.6); }
+.footer-contact a { color:rgba(255,255,255,.6); transition:color .2s; }
+.footer-contact a:hover { color:#fff; }
+.footer h4 { color:#fff; font-family:'Montserrat',sans-serif; font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; margin-bottom:1.25rem; }
+.footer-links { list-style:none; display:flex; flex-direction:column; gap:.7rem; padding:0; margin:0; }
+.footer-links li { padding:0; font-size:14px; font-weight:400; }
+.footer-links a { color:rgba(255,255,255,.6); font-size:14px; transition:color .2s; }
+.footer-links a:hover { color:#fff; }
+
+
+
+/* ── Footer Newsletter (column variant) ───────── */
+.footer-newsletter-pitch { font-size:14px; line-height:1.55; color:rgba(255,255,255,.62); margin:-.25rem 0 1rem; }
+.footer-newsletter-form { display:flex; flex-direction:column; gap:.55rem; }
+.footer-newsletter-form input { width:100%; min-width:0; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color:#fff; font-size:14px; font-family:inherit; padding:11px 14px; border-radius:var(--r-btn); transition:border-color var(--t-hover), background-color var(--t-hover); }
+.footer-newsletter-form input::placeholder { color:rgba(255,255,255,.42); }
+.footer-newsletter-form input:focus { outline:none; border-color:var(--coral); background:rgba(255,255,255,.1); }
+.footer-newsletter-form button { width:100%; padding:11px 16px; font-size:14px; font-family:'Montserrat',sans-serif; font-weight:600; }
+.footer-newsletter-form button:disabled { opacity:.85; cursor:default; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+/* ──────────────────────────────────────────────── */
+
+.footer-divider { height:1px; background:rgba(255,255,255,.1); margin-bottom:1.5rem; }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; font-size:13px; color:rgba(255,255,255,.45); }
+.footer-legal { display:flex; gap:1.5rem; list-style:none; padding:0; margin:0; }
+.footer-legal li { text-decoration:none; }
+.footer-legal a { color:rgba(255,255,255,.45); transition:color .2s; }
+.footer-legal a:hover { color:#fff; }
+.social-links { display:flex; gap:.6rem; margin-top:1.25rem; }
+.social-link { width:36px; height:36px; border-radius:var(--r-btn); border:1px solid rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; transition:all .2s; color:rgba(255,255,255,.55); }
+.social-link:hover { border-color:rgba(255,255,255,.4); color:#fff; background:rgba(255,255,255,.06); }
+
+@media(max-width:1024px){ .footer-grid{grid-template-columns:1fr 1fr; gap:2.5rem} }
+@media(max-width:768px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column; gap:1rem; align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Homepage.html" class="nav-logo" aria-label="Better You Therapy"><img src="assets/logo-multi-tight.png" alt="Better You Therapy" onerror="this.outerHTML='<span style=&quot;font-family:Manrope,sans-serif;font-weight:800;font-size:18px;color:var(--byt-navy-deep);letter-spacing:-.01em&quot;>Better You Therapy</span>'"></a>
+    <div class="nav-links">
+      <a href="Communities.html" class="active">For Facilities</a>
+      <a href="Homepage.html">For Patients</a>
+      <a href="Providers.html">For Therapists</a>
+      <a href="Homepage.html">About</a>
+    </div>
+    <div class="nav-actions">
+      <a href="Homepage.html" class="nav-cta">Refer a Resident</a>
+      <a href="tel:7549990011" class="nav-cta-secondary">754-999-0011</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Open menu" onclick="document.getElementById('mobileMenu').classList.add('open');document.body.style.overflow='hidden'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu drawer -->
+<div class="mobile-menu" id="mobileMenu" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow=''}">
+  <div class="mobile-menu-panel" role="dialog" aria-label="Main menu">
+    <div class="mobile-menu-head">
+      <span style="font-family:'Manrope',sans-serif;font-weight:800;color:var(--byt-navy-deep);font-size:17px;letter-spacing:-.01em">Better You Therapy</span>
+      <button class="mobile-menu-close" aria-label="Close menu" onclick="document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow=''">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <a href="Communities.html" class="mm-link">For Facilities</a>
+    <a href="Homepage.html" class="mm-link">For Patients</a>
+    <a href="Providers.html" class="mm-link">For Therapists</a>
+    <a href="Homepage.html" class="mm-link">About</a>
+    <div class="mobile-menu-actions">
+      <a href="Homepage.html" class="btn btn-primary">Refer a Resident</a>
+      <a href="tel:7549990011" class="btn btn-secondary">754-999-0011</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ Header84 ══════════════════════ -->
+<section id="relume" class="h84">
+  <div class="container">
+    <div class="h84-grid">
+      <div class="h84-text">
+        <span class="h84-eyebrow">For Wellness Directors</span>
+        <h1>Every resident deserves mental health support</h1>
+        <p class="lede">We place licensed therapists—Psychologists, LCSWs, LMHCs, LPCs, and LMFTs—on-site at your facility weekly. We handle Medicare billing, scheduling, and all documentation. Zero cost to your facility.</p>
+        <div class="h84-actions">
+          <a href="#cta" class="btn btn-primary">Refer a Resident</a>
+        </div>
+      </div>
+      <div class="h84-image">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1400&q=80" alt="Therapist meeting with senior resident" loading="eager">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ Layout521 ══════════════════════ -->
+<section id="l521-section" class="section">
+  <div class="container">
+    <div class="l521-head">
+      <h2>How the in-facility therapy program works</h2>
+      <p class="text-md">Simple steps from referral to care.</p>
+    </div>
+
+    <div class="l521-grid">
+      <!-- Step 1 -->
+      <article class="l521-card">
+        <div class="l521-card-img">
+          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80" alt="Wellness Director reviewing resident notes">
+        </div>
+        <div class="l521-step"><span class="num">1</span> Step</div>
+        <div class="l521-card-content">
+          <div class="l521-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
+          </div>
+          <h3>You submit a resident referral</h3>
+        </div>
+      </article>
+
+      <!-- Step 2 -->
+      <article class="l521-card">
+        <div class="l521-card-img">
+          <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=80" alt="Therapist credentialing paperwork">
+        </div>
+        <div class="l521-step"><span class="num">2</span> Step</div>
+        <div class="l521-card-content">
+          <div class="l521-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/><path d="M16 11l2 2 4-4"/></svg>
+          </div>
+          <h3>We credential, schedule, and assign a therapist</h3>
+        </div>
+      </article>
+
+      <!-- Step 3 -->
+      <article class="l521-card">
+        <div class="l521-card-img">
+          <img src="https://images.unsplash.com/photo-1568377210220-151e1d7f42c7?auto=format&fit=crop&w=900&q=80" alt="Therapist arriving at senior living community">
+        </div>
+        <div class="l521-step"><span class="num">3</span> Step</div>
+        <div class="l521-card-content">
+          <div class="l521-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3>Your therapist arrives on-site weekly</h3>
+        </div>
+      </article>
+
+      <!-- Step 4 -->
+      <article class="l521-card">
+        <div class="l521-card-img">
+          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80" alt="Medical billing documentation">
+        </div>
+        <div class="l521-step"><span class="num">4</span> Step</div>
+        <div class="l521-card-content">
+          <div class="l521-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>
+          </div>
+          <h3>We bill Medicare and private insurance directly</h3>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ Layout16 ══════════════════════ -->
+<section class="section l16">
+  <div class="container">
+    <div class="l16-grid">
+      <div>
+        <h2>We handle everything your staff shouldn't</h2>
+        <p class="lede text-md">Your team refers a resident. We manage scheduling, documentation, Medicare billing, and progress reporting. No additional forms, no insurance calls, no outside coordination required. We're on-site, on your schedule, every week.</p>
+        <ul class="l16-list">
+          <li>
+            <span class="l16-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+            Scheduling and credentialing handled
+          </li>
+          <li>
+            <span class="l16-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+            Documentation and billing processed automatically
+          </li>
+          <li>
+            <span class="l16-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+            Clinical integration with your care team
+          </li>
+          <li>
+            <span class="l16-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg></span>
+            Progress reporting back to your nursing &amp; wellness staff
+          </li>
+        </ul>
+      </div>
+      <div class="l16-image">
+        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80" alt="Therapist coordinating with care team">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ Layout526 ══════════════════════ -->
+<section id="l526-section" class="section">
+  <div class="container">
+    <div class="l526-head">
+      <h2>No cost to your facility</h2>
+      <p class="text-md">We bill Medicare and private insurance directly.</p>
+    </div>
+
+    <div class="l526-cols">
+      <!-- Column 1 -->
+      <div class="l526-col">
+        <article class="l526-card large">
+          <div class="l526-card-img">
+            <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1100&q=80" alt="Therapist with senior resident">
+          </div>
+          <span class="l526-tag">Sessions</span>
+          <h3>Weekly on-site therapy sessions</h3>
+          <p>Licensed therapist visits residents on a consistent schedule.</p>
+        </article>
+        <article class="l526-card">
+          <div class="l526-card-img">
+            <img src="https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&w=1100&q=80" alt="Secure EHR documentation">
+          </div>
+          <div class="l526-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>HIPAA-compliant documentation</h3>
+          <p>Progress notes and treatment plans in secure EHR.</p>
+        </article>
+      </div>
+
+      <!-- Column 2 -->
+      <div class="l526-col">
+        <article class="l526-card">
+          <div class="l526-card-img">
+            <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1100&q=80" alt="Insurance billing paperwork">
+          </div>
+          <div class="l526-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>
+          </div>
+          <h3>Medicare and insurance billing</h3>
+          <p>All claims filed by our billing team.</p>
+        </article>
+        <article class="l526-card large">
+          <div class="l526-card-img">
+            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1100&q=80" alt="Care team coordinating">
+          </div>
+          <span class="l526-tag">Coordination</span>
+          <h3>Clinical team communication and care planning</h3>
+          <p>Your therapist integrates with nursing and wellness staff.</p>
+        </article>
+      </div>
+
+      <!-- Column 3 -->
+      <div class="l526-col">
+        <article class="l526-card large">
+          <div class="l526-card-img">
+            <img src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?auto=format&fit=crop&w=1100&q=80" alt="Staff in-service training session">
+          </div>
+          <span class="l526-tag">Education</span>
+          <h3>Staff training on mental health recognition</h3>
+          <p>In-service resources available upon request.</p>
+        </article>
+        <article class="l526-card">
+          <div class="l526-card-img">
+            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1100&q=80" alt="Senior resident smiling">
+          </div>
+          <div class="l526-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3>Zero cost to your residents</h3>
+          <p>Medicare and insurance cover all therapy sessions.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ Layout505 — Conditions We Treat ══════════════════════ -->
+<section id="l505-section" class="section">
+  <div class="container">
+    <div class="l505-head">
+      <p class="eyebrow">Conditions we treat</p>
+      <h2>Clinical care for the realities of aging</h2>
+      <p class="text-md">Our licensed therapists treat the most common mental-health needs in senior living — with assessment, ongoing therapy, and family support built in.</p>
+    </div>
+
+    <div class="l505-tabs" id="l505">
+      <div class="l505-list" role="tablist">
+        <button class="l505-trigger active" data-tab="l505-tab-1">Depression</button>
+        <button class="l505-trigger" data-tab="l505-tab-2">Anxiety disorders</button>
+        <button class="l505-trigger" data-tab="l505-tab-3">Anger management</button>
+        <button class="l505-trigger" data-tab="l505-tab-4">Behavior problems</button>
+        <button class="l505-trigger" data-tab="l505-tab-5">Grief &amp; loss</button>
+        <button class="l505-trigger" data-tab="l505-tab-6">Memory loss</button>
+        <button class="l505-trigger" data-tab="l505-tab-7">Transition &amp; adjustment</button>
+        <button class="l505-trigger" data-tab="l505-tab-8">Post-surgical mental health</button>
+        <button class="l505-trigger" data-tab="l505-tab-9">Post-traumatic stress</button>
+        <button class="l505-trigger" data-tab="l505-tab-10">Chronic disease coping</button>
+        <button class="l505-trigger" data-tab="l505-tab-11">Substance dependency</button>
+      </div>
+
+      <div class="l505-panel active" data-panel="l505-tab-1">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <h3>Depression</h3>
+          <p>Late-life depression often shows up as withdrawal, sleep disruption, low energy, or somatic complaints — not the textbook presentation. We assess, treat, and coordinate with the medical team using evidence-based therapy adapted for older adults.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-2">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg></div>
+          <h3>Anxiety disorders</h3>
+          <p>Generalized anxiety, panic, health anxiety, and worry about family, finances, or independence. We use cognitive-behavioral and acceptance-based approaches calibrated to age-related concerns and any cognitive changes.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-3">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div>
+          <h3>Anger management</h3>
+          <p>Irritability, frustration, and outbursts often signal underlying pain, fear, or loss of control. We help residents identify triggers, build coping skills, and reduce conflict with caregivers and family.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-4">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <h3>Behavior problems</h3>
+          <p>Resistance to care, agitation, wandering, and disruptive behaviors. We work with residents and your care team to identify causes, adjust environmental triggers, and apply behavior-management strategies that protect everyone's dignity.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-5">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Grief &amp; loss</h3>
+          <p>Loss of a spouse, friends, siblings, or one's prior self. Complicated grief, anticipatory grief, and bereavement are common in senior living — and respond well to therapy when addressed directly.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-6">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24A2.5 2.5 0 0 1 7 4.5a2.5 2.5 0 0 1 2.5-2.5z"/><path d="M14.5 2a2.5 2.5 0 0 0-2.5 2.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24A2.5 2.5 0 0 0 17 4.5 2.5 2.5 0 0 0 14.5 2z"/></svg></div>
+          <h3>Memory loss</h3>
+          <p>Mild cognitive impairment and early-to-moderate dementia respond to reminiscence work, supportive therapy, and behavioral interventions. We coordinate with care teams and family, and adapt our approach as needs change.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-7">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3v18"/></svg></div>
+          <h3>Transition &amp; adjustment disorder</h3>
+          <p>Moving into a community, leaving a long-time home, role changes, loss of independence — all real, all treatable. We help residents process the transition and find meaning in this chapter, not just cope with it.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-8">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"/></svg></div>
+          <h3>Post-surgical mental health</h3>
+          <p>Recovery brings pain, fear, frustration, and sometimes depression. We support residents through orthopedic, cardiac, oncologic, and other post-surgical recovery — keeping them engaged in rehab and on track to baseline.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-9">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Post-traumatic stress</h3>
+          <p>Past combat, abuse, accidents, or medical trauma can resurface in late life. Trauma-informed therapy — including evidence-based PTSD modalities — helps residents process and reduce symptom burden at any age.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-10">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3>Chronic disease coping</h3>
+          <p>Cancer, cardiovascular disease, chronic pain, COPD, post-stroke adjustment. We help residents process the emotional weight of chronic illness, manage pain-related distress, and stay engaged in their medical care.</p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-11">
+        <div class="l505-panel-inner">
+          <div class="l505-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg></div>
+          <h3>Drug &amp; alcohol dependency</h3>
+          <p>Substance-use issues in older adults are under-recognized and treatable. We provide assessment, motivational and cognitive-behavioral therapy, and coordination with medical providers — confidentially and without stigma.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ Layout192 ══════════════════════ -->
+<section class="section l192">
+  <div class="container">
+    <div class="l192-grid">
+      <div class="l192-image-wrap">
+        <div class="l192-image">
+          <svg class="map" viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of Palm Beach, Martin, St. Lucie, and Okeechobee counties in Southeast Florida">
+            <defs>
+              <pattern id="m192-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#E4EAF0" stroke-width="0.6"/>
+              </pattern>
+              <linearGradient id="m192-ocean" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#DCE6EF"/>
+                <stop offset="100%" stop-color="#C8D8E8"/>
+              </linearGradient>
+              <filter id="m192-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                <feOffset dx="0" dy="2" result="off"/>
+                <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+                <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Background: ocean + grid -->
+            <rect x="0" y="0" width="480" height="600" fill="url(#m192-ocean)"/>
+            <rect x="0" y="0" width="480" height="600" fill="url(#m192-grid)"/>
+
+            <!-- Subtle wave lines on the ocean (right side) -->
+            <g stroke="#A8BED2" stroke-width="1" fill="none" opacity=".55" stroke-linecap="round">
+              <path d="M 360 90 q 14 -6 28 0 t 28 0 t 28 0"/>
+              <path d="M 370 150 q 14 -6 28 0 t 28 0"/>
+              <path d="M 380 230 q 14 -6 28 0 t 28 0"/>
+              <path d="M 360 320 q 14 -6 28 0 t 28 0 t 28 0"/>
+              <path d="M 370 410 q 14 -6 28 0 t 28 0"/>
+              <path d="M 380 500 q 14 -6 28 0 t 28 0"/>
+            </g>
+
+            <!-- Land mass: simplified silhouette of the 4-county region.
+                 Coastline runs along the right; inland ragged edge on the left. -->
+            <g filter="url(#m192-shadow)">
+              <!-- Outer land shape -->
+              <path d="
+                M 30 30
+                L 360 30
+                L 360 70
+                Q 348 95 342 130
+                L 348 175
+                Q 352 210 348 240
+                L 352 290
+                Q 358 330 352 370
+                L 348 420
+                Q 342 470 336 510
+                L 332 560
+                L 30 560
+                Z"
+                fill="#F5F7FA" stroke="#0A2D52" stroke-width="1.5" stroke-linejoin="round"/>
+
+              <!-- County 1: St. Lucie (north) -->
+              <path id="m192-stlucie" d="
+                M 80 80
+                L 358 80
+                L 350 130
+                L 80 130 Z"
+                fill="#E8EEF4" stroke="#0A2D52" stroke-width="1" opacity=".95"/>
+
+              <!-- County 2: Martin (mid-north, narrower) -->
+              <path id="m192-martin" d="
+                M 80 130
+                L 350 130
+                L 348 175
+                L 352 230
+                L 80 230 Z"
+                fill="#DDE6EF" stroke="#0A2D52" stroke-width="1" opacity=".95"/>
+
+              <!-- County 3: Palm Beach (largest, south) -->
+              <path id="m192-palmbeach" d="
+                M 80 230
+                L 352 230
+                L 358 320
+                L 352 410
+                L 348 470
+                L 336 510
+                L 332 560
+                L 80 560 Z"
+                fill="#CAD8E5" stroke="#0A2D52" stroke-width="1" opacity=".95"/>
+
+              <!-- County 4: Okeechobee (inland, top-left) -->
+              <path id="m192-okeechobee" d="
+                M 30 30
+                L 290 30
+                L 285 80
+                L 80 80
+                L 30 80 Z"
+                fill="#EFF3F8" stroke="#0A2D52" stroke-width="1" opacity=".95"/>
+
+              <!-- Lake Okeechobee (sits where Palm Beach / Martin / Okeechobee meet) -->
+              <ellipse cx="115" cy="200" rx="42" ry="36" fill="#B8CDDD" stroke="#7DA0BD" stroke-width="1"/>
+              <text x="115" y="205" text-anchor="middle" font-family="Manrope,sans-serif" font-size="9" font-weight="600" fill="#3A5C7E" letter-spacing=".5">LAKE</text>
+            </g>
+
+            <!-- County labels -->
+            <g font-family="Manrope,sans-serif" font-weight="700" fill="#0A2D52" letter-spacing=".02em">
+              <text x="195" y="58" text-anchor="middle" font-size="13">OKEECHOBEE</text>
+              <text x="220" y="110" text-anchor="middle" font-size="14">ST. LUCIE</text>
+              <text x="220" y="185" text-anchor="middle" font-size="14">MARTIN</text>
+              <text x="225" y="395" text-anchor="middle" font-size="18" letter-spacing=".04em">PALM BEACH</text>
+            </g>
+
+            <!-- Service pins (coral) -->
+            <g>
+              <!-- Okeechobee pin -->
+              <g transform="translate(195 50)">
+                <circle r="14" fill="#E05555" opacity=".18"/>
+                <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"/>
+              </g>
+              <!-- St. Lucie pin -->
+              <g transform="translate(255 105)">
+                <circle r="14" fill="#E05555" opacity=".18"/>
+                <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"/>
+              </g>
+              <!-- Martin pin -->
+              <g transform="translate(245 180)">
+                <circle r="14" fill="#E05555" opacity=".18"/>
+                <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"/>
+              </g>
+              <!-- Palm Beach pin (larger - largest service area) -->
+              <g transform="translate(260 380)">
+                <circle r="20" fill="#E05555" opacity=".18"/>
+                <circle r="14" fill="#E05555" opacity=".30"/>
+                <circle r="8" fill="#E05555" stroke="#fff" stroke-width="2.5"/>
+              </g>
+            </g>
+
+            <!-- Compass + scale -->
+            <g transform="translate(420 40)">
+              <circle r="16" fill="#fff" stroke="#0A2D52" stroke-width="1"/>
+              <path d="M 0 -10 L 4 4 L 0 1 L -4 4 Z" fill="#E05555"/>
+              <text x="0" y="-19" text-anchor="middle" font-family="Manrope,sans-serif" font-size="9" font-weight="700" fill="#0A2D52">N</text>
+            </g>
+
+            <!-- Legend -->
+            <g transform="translate(40 510)" font-family="Manrope,sans-serif">
+              <rect x="-8" y="-8" width="200" height="44" rx="8" fill="#fff" opacity=".92" stroke="#E4EAF0"/>
+              <circle cx="6" cy="6" r="5" fill="#E05555" stroke="#fff" stroke-width="1.5"/>
+              <text x="20" y="9" font-size="11" font-weight="600" fill="#0A2D52">Active service area</text>
+              <text x="-2" y="26" font-size="9" font-weight="600" fill="#5A7290" letter-spacing=".1em">SOUTHEAST FLORIDA</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="l192-text">
+        <h2>Facilities we serve in Southeast Florida</h2>
+        <p class="lede text-md">We place licensed therapists at ALFs, SNFs, and CCRCs across Palm Beach, Martin, St. Lucie, and Okeechobee counties. Expanding coverage every quarter.</p>
+        <div class="l192-pills">
+          <span class="l192-pill coral">Palm Beach</span>
+          <span class="l192-pill coral">Martin</span>
+          <span class="l192-pill coral">St. Lucie</span>
+          <span class="l192-pill coral">Okeechobee</span>
+        </div>
+        <div class="l192-pills">
+          <span class="l192-pill">Assisted Living (ALF)</span>
+          <span class="l192-pill">Skilled Nursing (SNF)</span>
+          <span class="l192-pill">Continuing Care (CCRC)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ Cta25 ══════════════════════ -->
+<section id="cta" class="section cta25-section">
+  <div class="container">
+    <div class="cta25-inner">
+      <h2>Ready to start</h2>
+      <p>Submit a resident referral. We handle scheduling, credentialing, and billing from day one.</p>
+      <div class="cta25-actions">
+        <a href="Homepage.html" class="btn btn-primary">Refer a Resident</a>
+        <a href="tel:7549990011" class="btn btn-secondary-alt">Call 754-999-0011</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-inner">
+        <div class="footer-grid">
+      <div>
+        <a href="/" class="footer-logo" aria-label="Better You Therapy"><img src="data:image/png;base64,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" alt="Better You Therapy"></a></a>
+        <p class="footer-tagline">Licensed mental health care placed on-site at assisted living, skilled nursing, and continuing care facilities across Southeast Florida. Teletherapy statewide.</p>
+        <div class="footer-contact">
+          <div>Boca Raton, FL</div>
+          <div><a href="tel:7549990011">754-999-0011</a></div>
+          <div><a href="mailto:hello@getbetteryou.com">hello@getbetteryou.com</a></div>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Facebook"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          <a href="#" class="social-link" aria-label="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="#" class="social-link" aria-label="LinkedIn"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul class="footer-links">
+          <li><a href="/patients/seniors/">For Seniors &amp; Families</a></li>
+          <li><a href="/individual-therapy/">Individual Therapy</a></li>
+          <li><a href="/communities/">For Facilities</a></li>
+          <li><a href="/providers/">For Therapists</a></li>
+          <li><a href="/service-area/">Service Area</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="/about/">About Us</a></li>
+          <li><a href="/faq/">FAQ</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/referral/">Refer a Resident</a></li>
+          <li><a href="tel:7549990011">754-999-0011</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Stay in touch</h4>
+        <p class="footer-newsletter-pitch">One thoughtful email a month — practical mental health resources, no spam.</p>
+        <form class="footer-newsletter-form" onsubmit="event.preventDefault(); var b=this.querySelector('button'); var i=this.querySelector('input'); if(!i.value) return; b.textContent='Subscribed ✓'; b.disabled=true; i.value=''; setTimeout(function(){b.textContent='Subscribe'; b.disabled=false;}, 2400);" novalidate>
+          <label class="sr-only" for="footer-newsletter-email">Email address</label>
+          <input id="footer-newsletter-email" type="email" required placeholder="you@example.com" autocomplete="email">
+          <button type="submit" class="btn btn-coral">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <span>© 2026 Better You Therapy LLC · getbetteryou.com</span>
+      <div class="footer-legal">
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root = document.getElementById('l505');
+  if(!root) return;
+  var triggers = root.querySelectorAll('.l505-trigger');
+  var panels = root.querySelectorAll('.l505-panel');
+  triggers.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var key = btn.getAttribute('data-tab');
+      triggers.forEach(function(b){ b.classList.toggle('active', b===btn); });
+      panels.forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===key); });
+    });
+  });
+})();
+</script>
+
+<!-- Mobile sticky CTA bar -->
+<div class="mobile-cta-bar" aria-label="Primary actions">
+  <a href="#cta" class="btn btn-primary">Refer a Resident</a>
+  <a href="tel:7549990011" class="btn btn-secondary">Call</a>
+</div>
+
+</body>
+</html>
