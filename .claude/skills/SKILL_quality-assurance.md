@@ -71,7 +71,7 @@ grep -o '<script type="application/ld+json">.*</script>' dist/<page>/index.html 
   sed 's/<[^>]*>//g' | python3 -m json.tool
 ```
 
-Check: valid JSON, required fields present, no hardcoded values (phone/email/address from Sanity), consistent `@id` references.
+Check: valid JSON, required fields present, no hardcoded values, consistent `@id` references.
 
 ---
 
@@ -82,7 +82,7 @@ Every QA pass must verify no hardcoded values leaked:
 | Type | Scan for |
 |---|---|
 | Colors | Hex values outside `global.css` and `design-source/` |
-| Phone | `754-999-0011` or any phone literal in templates |
+| Phone | Any phone literal in templates |
 | Email | Any email literal in templates |
 | URLs | Site URL not from env var |
 | Copy | Inline strings that should come from Sanity |
@@ -91,40 +91,14 @@ Every QA pass must verify no hardcoded values leaked:
 
 ---
 
-## Build Verification
-
-```bash
-pnpm --filter web build
-```
-
-Post-build checks:
-- All expected pages exist as `dist/<page>/index.html`
-- No internal 404 links
-- `dist/sitemap-index.xml` exists
-- `dist/robots.txt` exists
-
----
-
-## Smoke Tests (Pre-Deploy)
-
-- Homepage loads
-- All Tier 1 pages load
-- At least one blog post loads (if blog live)
-- Sanity Studio at `/admin`
-- Contact form submits
-- Schema validates on homepage + one article
-- No console errors
-
----
-
 ## Lighthouse Diagnostic Guide
 
 | Symptom | Likely Cause | Where to Look |
 |---|---|---|
-| LCP > 2.5s | Hero image, font loading, render-blocking | `<Image>` component, font links in `BaseLayout` |
+| LCP > 2.5s | Hero image, font loading, render-blocking | `<Image>` component, font links |
 | CLS > 0.1 | Images without dimensions, dynamic injection | `<img>` tags, client-side JS |
-| INP > 200ms | JS execution | Should be ~0 for Astro static — check `<script>` tags |
-| a11y < 95 | Missing alt, contrast, heading gaps, missing labels | axe-core, WCAG checklist |
+| INP > 200ms | JS execution | Should be ~0 for Astro static |
+| a11y < 95 | Missing alt, contrast, heading gaps | axe-core, WCAG checklist |
 | SEO < 95 | Missing meta, schema, sitemap | `<head>`, JSON-LD, `robots.txt` |
 
 ---

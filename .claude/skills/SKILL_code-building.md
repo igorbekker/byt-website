@@ -1,6 +1,22 @@
 # SKILL: Code Building
 
-Domain knowledge for the builder agent. Coding standards, patterns, and constraints for the BYT website codebase.
+Domain knowledge for the builder agent. Coding standards, patterns, and constraints.
+
+---
+
+## Blocker Detection — STOP and log OBS if any occur
+
+These are architectural decisions. The builder does NOT resolve them.
+
+- Dependency version conflict (peer dep mismatch, version not supporting Astro 6)
+- Need to add a dependency not in the task brief
+- Need to add or change an adapter (e.g., Cloudflare, Node, Vercel)
+- Need to create a config file not in the task brief (e.g., sanity.config.ts in a new location)
+- An API renamed or removed in installed version (e.g., defineCli → defineCliConfig)
+- Build fails for a reason outside task scope
+- Output mode change needed (static → hybrid → server)
+
+Create `OBS-XXX-<short-name>.md`, stop, report to AGENT_pm.
 
 ---
 

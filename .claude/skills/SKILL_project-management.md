@@ -4,34 +4,14 @@ Domain knowledge for the PM agent. Operating model, delegation, phased delivery,
 
 ---
 
-## Operating Model
-
-| Agent | Role | Does | Never Does |
-|---|---|---|---|
-| Igor | Director | Business decisions, approves gates, owns timeline | Writes code |
-| Claude.ai | Strategic agent | Authors scope, writes prompts, audits output | Implementation code |
-| Claude Code | Implementation agent | Writes code, builds, Git ops, PRs | Architectural decisions unilaterally; merges without Igor |
-
-### Workflow
-
-1. Igor states a goal
-2. PM decomposes into task briefs
-3. PM delegates to builder/docs/qa agents
-4. Builder executes, QA validates, docs logs
-5. PM reports status to Igor
-6. Igor reviews and approves
-
----
-
 ## Source-of-Truth Hierarchy
 
 When information conflicts, top wins:
 
 1. `docs/decision-log/` — explicit Igor-approved decisions
-2. `BYT_Website_Master_Playbook.docx` — business strategy
-3. `design-source/` — visual design truth
-4. Sanity content — runtime content
-5. Existing code — current implementation
+2. `design-source/` — visual design truth
+3. Sanity content — runtime content
+4. Existing code — current implementation
 
 ---
 
@@ -61,7 +41,7 @@ Each phase produces something deployable. No phase starts without prior gate cle
 |---|---|---|
 | 0 | Foundations & Accounts | All credentials active |
 | 1 | Repository Bootstrap | First PR merges, CI green, CLAUDE.md present |
-| 2 | Design Source Ingestion | Styleguide at `/styleguide/` matches design-source |
+| 2 | Design Source Ingestion | Styleguide matches design-source |
 | 3 | Sanity Studio | Editors can log in, edit, see changes |
 | 4 | Static Pages (CMS-Driven) | Each page: parity + Lighthouse 95+ + a11y + Igor approval |
 | 5 | Forms | Submissions arrive, honeypot works |
@@ -74,67 +54,28 @@ Each phase produces something deployable. No phase starts without prior gate cle
 ## Quality Gates
 
 ### Pre-Commit
-
-- Prettier format
-- ESLint
-- TypeScript type-check
-- Astro check
-- Forbidden-string scan (hex colors, phone numbers, emails)
+- Prettier format, ESLint, TypeScript type-check, Astro check
 
 ### Pre-Push
-
-- Full type-check
-- Full build (`pnpm --filter web build`)
+- Full type-check, full build (`pnpm --filter web build`)
 
 ### PR CI
-
-- Lint + type-check + build (web + studio)
-- Preview deploy to Cloudflare Pages
-- Lighthouse CI
-- Schema validation
-- Igor approves before merge
+- Lint + type-check + build (web + studio), preview deploy, Lighthouse CI, Igor approves
 
 ### Post-Deploy Smoke
-
-- Homepage loads
-- All Tier 1 pages load
-- Sanity Studio loads at `/admin`
-- Contact form posts to Formspree
-- Sitemap reachable
-- Schema validates
-
-Failure of any: rollback, log obstacle.
-
----
-
-## Folder Structure (High-Level)
-
-```
-├── .claude/          # Skills, agents, hooks, commands
-├── apps/web/         # Astro frontend
-├── apps/studio/      # Sanity Studio
-├── design-source/    # READ ONLY — Igor uploads
-├── docs/             # Scope, logs, runbooks
-├── tasks/            # todo.md, lessons.md
-├── backups/          # Gitignored snapshots
-├── scripts/          # Backup, deploy, parity scripts
-```
+- Homepage loads, all Tier 1 pages load, Studio at `/admin`, contact form posts, sitemap reachable
+- Failure of any: rollback, log obstacle.
 
 ---
 
 ## Backup Protocol
 
 ### Code
-
 - Primary: GitHub (the repo)
 - Secondary: daily Git bundle to `/backups/git/`
-- Tertiary: weekly off-VPS sync
 
 ### Sanity Content
-
 - Daily export to `/backups/sanity/`
-- 30 daily, 12 monthly, indefinite annual retention
 
 ### Pre-Risky-Operation
-
-Before schema migrations, major dependency bumps, or content type renames: run `./scripts/backup-pre-op.sh "<description>"` to create tagged snapshot.
+Before schema migrations, major dependency bumps: run `./scripts/backup-pre-op.sh "<description>"`
