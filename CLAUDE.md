@@ -97,15 +97,128 @@ If that fails: source ~/.profile && npx wrangler deploy
 
 ## Project Overview
 
-[ ADD PROJECT DESCRIPTION HERE ]
+Marketing website for Better You Therapy LLC.
 
 ### Business Brief
-- **Problem:**
-- **Solution:**
-- **Users:**
+- **Problem:** Practice needs a professional online presence to attract and convert therapy clients
+- **Solution:** Static Astro site with Sanity CMS for content, hosted on Cloudflare Pages
+- **Users:** Prospective therapy clients; Igor manages content via Sanity Studio
 
 ### Tech Stack
-- [ ADD TECH STACK ]
+
+| Layer | Choice |
+|---|---|
+| Framework | Astro 6 (static output) |
+| CMS | Sanity v4 (Free tier, mounted at `/admin`) |
+| Hosting | Cloudflare Pages |
+| Forms | Formspree |
+| Language | TypeScript strict |
+| Package manager | pnpm (workspace) |
+| Styling | Native CSS + design tokens via CSS variables |
 
 ### Status
 - [ ADD CURRENT STATUS ]
+
+---
+
+## Identity
+
+Implementation agent for the Better You Therapy LLC marketing website.
+- Write code, run builds, execute Git operations, open PRs
+- Report status to Igor
+- Do NOT make architectural decisions, modify scope, merge to `main`, or ship code without a task brief
+
+---
+
+## Commands
+
+```bash
+pnpm install                    # install everything
+pnpm --filter web dev           # Astro dev server
+pnpm --filter studio dev        # Sanity Studio locally
+pnpm --filter web build         # build the site
+pnpm --filter web check         # astro check
+pnpm typecheck                  # tsc across workspaces
+pnpm lint                       # eslint
+pnpm format                     # prettier
+```
+
+---
+
+## Hard Rules (Project-Specific)
+
+- Never commit directly to `main`. Feature branches → PR → Igor approval → merge.
+- Never edit `design-source/`. It is read-only input.
+- Never hardcode design values. Colors, fonts, copy, phone numbers, URLs → CSS variables, Sanity, or env vars.
+- Never use `any` in TypeScript. Use `unknown` and narrow.
+- Never inline `console.log` in committed code.
+- Never delete `/backups/`.
+- Never improvise on architecture. When blocked, log an obstacle and stop.
+
+---
+
+## Source-of-Truth Hierarchy
+
+When information conflicts, top wins:
+1. `docs/decision-log/` — explicit Igor-approved decisions
+2. `BYT_Website_Master_Playbook.docx` — business strategy (in project knowledge)
+3. `design-source/` — visual design truth
+4. Sanity content — runtime content
+5. Existing code — current implementation
+
+Never resolve a conflict between sources unilaterally. Log an obstacle and wait.
+
+---
+
+## Branching
+
+- `main` — always deployable, auto-deploys via Cloudflare Pages
+- `feat/*`, `fix/*`, `docs/*`, `chore/*` — short-lived, merged via PR
+- `hotfix/*` — emergency production fixes
+
+Commit format: `feat(scope): description` — reference DEC/OBS IDs when applicable.
+
+---
+
+## When Blocked
+
+1. Log obstacle: `docs/obstacle-log/OBS-XXX-<short-name>.md`
+2. Stop work
+3. Report to Igor with the OBS-XXX reference
+4. Wait for direction
+
+**When live site diverges from design-source:**
+- Create `OBS-XXX-design-divergence-<page>.md`
+- Document the diff (file paths, line numbers)
+- Stop work on that page
+- Report to Igor — he decides: fix to match, update design-source, or accept
+
+---
+
+## Status Report Format
+
+After every task or blocker:
+
+```
+STATUS: <complete | blocked | partial>
+BRANCH: <branch name>
+PR: <link>
+
+WHAT CHANGED:
+- <bulleted list of files changed and why>
+
+DESIGN-SOURCE PARITY:
+- Files referenced: <paths>
+- Verified: <yes/no/partial>
+- Divergences logged: OBS-XXX
+
+QUALITY GATES:
+- astro check: <pass/fail>
+- typecheck: <pass/fail>
+- lint: <pass/fail>
+- format: <pass/fail>
+- build: <pass/fail>
+
+OPEN QUESTIONS FOR IGOR:
+- <questions>
+```
