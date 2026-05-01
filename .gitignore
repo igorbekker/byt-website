@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.dev.vars
+.env.local
+*.local
+.claude/settings.json
+.claude/settings.local.json
+.wrangler/
+*.bak
