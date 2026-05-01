@@ -1,0 +1,58 @@
+---
+/**
+ * Purpose: Horizontal scrolling pill row for filtering blog posts by category
+ * Context: Blog listing page above the article grid
+ * Source: design-source/styles/blog.css (.pill-row, .pill)
+ */
+
+interface Props {
+  categories: string[];
+  active?: string;
+}
+
+const { categories = [], active = 'All' } = Astro.props;
+---
+
+<div class="pill-row">
+  {
+    ['All', ...categories].map((cat) => (
+      <button class={`pill${cat === active ? ' active' : ''}`} data-cat={cat}>
+        {cat}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all var(--t-hover);
+    letter-spacing: 0.01em;
+  }
+  .pill:hover {
+    border-color: var(--coral);
+    color: var(--coral);
+  }
+  .pill.active {
+    background: var(--navy-deep);
+    color: #fff;
+    border-color: var(--navy-deep);
+  }
+</style>

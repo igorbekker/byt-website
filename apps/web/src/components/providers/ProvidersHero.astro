@@ -1,0 +1,138 @@
+---
+/**
+ * Purpose: Providers page hero — split layout, photo 55% left / navy panel 45% right
+ * Context: Top of the Providers/For Therapists page
+ * Source: design-source/styles/providers.css (.p-hero, .p-hero-photo, .p-hero-panel, .p-hero-eyebrow, .p-hero-sub, .p-hero-actions)
+ */
+---
+
+<section class="p-hero">
+  <div class="p-hero-photo">
+    <img
+      src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=1400&q=85&auto=format&fit=crop"
+      alt="Licensed therapist in a professional setting"
+    />
+  </div>
+  <div class="p-hero-panel">
+    <p class="p-hero-eyebrow">For Licensed Therapists in Florida</p>
+    <h1>Join the Better You Therapy Network</h1>
+    <p class="p-hero-sub">
+      Facility-based positions in Southeast Florida and teletherapy statewide. Transparent revenue
+      split from day one. We source the patients &mdash; you deliver the clinical care.
+    </p>
+    <div class="p-hero-actions">
+      <a href="/providers/apply/" class="btn btn-spec-blue">See Open Positions &rarr;</a>
+      <a href="#tracks" class="btn btn-outline-white">Learn More</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .p-hero {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    min-height: 88vh;
+    max-height: 760px;
+    background: var(--navy);
+  }
+
+  .p-hero-photo {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy-deep);
+  }
+  .p-hero-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .p-hero-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 70%, rgba(16, 67, 120, 0.18) 100%);
+    pointer-events: none;
+  }
+
+  .p-hero-panel {
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3.5rem;
+    color: #fff;
+  }
+
+  .p-hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1.5rem;
+  }
+
+  .p-hero-panel h1 {
+    font-family: var(--font-heading);
+    color: #fff;
+    font-size: clamp(2rem, 3.4vw, 2.85rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-wrap: balance;
+  }
+
+  .p-hero-sub {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 2.25rem;
+    max-width: 520px;
+  }
+
+  .p-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1100px) {
+    .p-hero {
+      grid-template-columns: 50fr 50fr;
+    }
+    .p-hero-panel {
+      padding: 3rem 2.25rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .p-hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      max-height: none;
+    }
+    .p-hero-photo {
+      aspect-ratio: 16 / 10;
+      max-height: 380px;
+    }
+    .p-hero-panel {
+      padding: 3rem var(--pad-x);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .p-hero-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .p-hero-panel {
+      padding: 2.5rem 1.5rem;
+    }
+  }
+</style>

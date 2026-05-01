@@ -1,0 +1,48 @@
+---
+/**
+ * Purpose: Fixed bottom CTA bar shown only on mobile viewports
+ * Context: Rendered in BaseLayout above </body>; hidden on desktop via CSS
+ * Source: design-source/partials/mobile-bar.html, design-source/styles/base.css (.mobile-cta-bar)
+ */
+---
+
+<div class="mobile-cta-bar" aria-label="Primary actions">
+  <a href="/patients/" class="btn btn-coral">Book a Session</a>
+  <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
+</div>
+
+<style>
+  .mobile-cta-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background: #fff;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(10, 45, 82, 0.08);
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .mobile-cta-bar .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 14px 12px;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-cta-bar {
+      display: flex !important;
+    }
+
+    /* Extra body padding so content isn't hidden behind bar */
+    :global(body) {
+      padding-bottom: 78px;
+    }
+  }
+</style>

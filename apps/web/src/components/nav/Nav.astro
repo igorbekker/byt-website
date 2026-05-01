@@ -1,0 +1,325 @@
+---
+/**
+ * Purpose: Site-wide navigation bar with desktop links and mobile hamburger drawer
+ * Context: Rendered in BaseLayout at top of every page
+ * Source: design-source/partials/nav.html, design-source/styles/base.css (.nav, .nav-inner, .nav-links, .nav-actions, .nav-cta, .nav-cta-secondary, .nav-hamburger, .mobile-menu, .mobile-menu-panel)
+ */
+---
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="Better You Therapy">
+      <img src="/assets/logo.png" alt="Better You Therapy" />
+    </a>
+    <div class="nav-links">
+      <a href="/communities/">For Facilities</a>
+      <a href="/patients/">For Patients</a>
+      <a href="/providers/">For Therapists</a>
+      <a href="/about/">About</a>
+    </div>
+    <div class="nav-actions">
+      <a href="/individual-therapy/" class="nav-cta">Book a Session</a>
+      <a href="/referral/" class="nav-cta-secondary">Refer a Resident</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Open menu" id="navHamburger">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+      >
+        <path d="M4 7h16M4 12h16M4 17h16"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu drawer -->
+<div
+  class="mobile-menu"
+  id="mobileMenu"
+  role="dialog"
+  aria-label="Navigation menu"
+  aria-modal="true"
+>
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-head">
+      <a href="/" aria-label="Better You Therapy home">
+        <img src="/assets/logo.png" alt="Better You Therapy" height="36" />
+      </a>
+      <button class="mobile-menu-close" aria-label="Close menu" id="mobileMenuClose">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+        >
+          <path d="M18 6 6 18M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <a href="/communities/" class="mm-link">For Facilities</a>
+    <a href="/patients/" class="mm-link">For Patients</a>
+    <a href="/providers/" class="mm-link">For Therapists</a>
+    <a href="/about/" class="mm-link">About</a>
+    <div class="mobile-menu-actions">
+      <a href="/individual-therapy/" class="btn btn-coral">Book a Session</a>
+      <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    height: 84px;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--pad-x);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .nav-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    height: 68px;
+  }
+  .nav-logo img {
+    height: 64px;
+    width: auto;
+    display: block;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+  }
+  .nav-links a {
+    color: var(--navy-deep);
+    font-size: 15px;
+    font-weight: 500;
+    transition: color var(--t-hover);
+    letter-spacing: 0.01em;
+  }
+  .nav-links a:hover {
+    color: var(--coral);
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .nav-cta {
+    background: var(--coral);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--r-btn);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: background-color var(--t-hover);
+  }
+  .nav-cta:hover {
+    background: var(--coral-hover);
+  }
+
+  .nav-cta-secondary {
+    color: var(--navy-deep);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: var(--r-btn);
+    transition: color var(--t-hover);
+  }
+  .nav-cta-secondary:hover {
+    color: var(--coral);
+  }
+
+  .nav-hamburger {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-right: -8px;
+    color: var(--navy-deep);
+  }
+  .nav-hamburger svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Mobile menu overlay */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    background: rgba(10, 45, 82, 0.5);
+    backdrop-filter: blur(4px);
+  }
+  .mobile-menu.open {
+    display: block;
+  }
+
+  .mobile-menu-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(86vw, 360px);
+    background: #fff;
+    padding: 20px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: -8px 0 32px rgba(10, 45, 82, 0.15);
+    animation: mmSlide 0.25s ease-out;
+  }
+
+  @keyframes mmSlide {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-menu-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy-deep);
+    margin-right: -8px;
+  }
+  .mobile-menu-close svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mobile-menu a.mm-link {
+    display: block;
+    padding: 14px 4px;
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy-deep);
+    border-bottom: 1px solid var(--border);
+    transition: color var(--t-hover);
+  }
+  .mobile-menu a.mm-link:hover {
+    color: var(--coral);
+  }
+
+  .mobile-menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .mobile-menu-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .nav {
+      height: 72px !important;
+    }
+    .nav-logo {
+      height: 52px !important;
+    }
+    .nav-logo img {
+      height: 48px !important;
+      width: auto !important;
+      max-width: none !important;
+    }
+    .nav-links {
+      display: none !important;
+    }
+    .nav-actions {
+      display: none !important;
+    }
+    .nav-hamburger {
+      display: flex !important;
+      margin-left: auto !important;
+      margin-right: -8px !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .nav {
+      height: 64px !important;
+    }
+    .nav-logo {
+      height: 48px !important;
+    }
+    .nav-logo img {
+      height: 44px !important;
+      width: auto !important;
+      max-width: none !important;
+    }
+  }
+</style>
+
+<script>
+  const hamburger = document.getElementById('navHamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const closeBtn = document.getElementById('mobileMenuClose');
+
+  function openMenu(): void {
+    mobileMenu?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu(): void {
+    mobileMenu?.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  hamburger?.addEventListener('click', openMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+
+  // Close on overlay click (outside panel)
+  mobileMenu?.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) closeMenu();
+  });
+</script>

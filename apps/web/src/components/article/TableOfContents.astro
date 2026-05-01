@@ -1,0 +1,90 @@
+---
+/**
+ * Purpose: Sticky sidebar table of contents with numbered links
+ * Context: Article sidebar — visible on desktop only (hidden on mobile via ArticleBody)
+ * Source: design-source/styles/article.css (.toc, .toc-label, .toc ol, .toc a)
+ */
+
+interface TocItem {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="toc" aria-label="Table of contents">
+  <p class="toc-label">In this article</p>
+  <ol>
+    {
+      items.map((item) => (
+        <li>
+          <a href={`#${item.id}`}>{item.label}</a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .toc {
+    border-left: 1px solid var(--border);
+    padding-left: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .toc-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 1rem;
+  }
+
+  .toc ol {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    counter-reset: toc;
+  }
+
+  .toc li {
+    counter-increment: toc;
+  }
+
+  .toc a {
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    color: var(--slate);
+    display: block;
+    line-height: 1.4;
+    transition: color var(--t-hover);
+  }
+
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    color: var(--mist);
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+
+  .toc a:hover {
+    color: var(--coral);
+  }
+  .toc a:hover::before {
+    color: var(--coral);
+  }
+
+  .toc a.active {
+    color: var(--coral);
+    font-weight: 600;
+  }
+</style>

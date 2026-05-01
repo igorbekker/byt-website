@@ -1,0 +1,78 @@
+---
+/**
+ * Purpose: Off-white breadcrumb bar for navigating back from blog/article pages
+ * Context: Top of blog listing and article pages
+ * Source: design-source/styles/blog.css (.crumb, .crumb-inner, .crumb a, .crumb .sep, .crumb .here)
+ */
+
+interface CrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: CrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="crumb" aria-label="Breadcrumb">
+  <div class="crumb-inner">
+    {
+      items.map((item, i) => (
+        <>
+          {i > 0 && (
+            <span class="sep" aria-hidden="true">
+              /
+            </span>
+          )}
+          {item.href ? (
+            <a href={item.href}>{item.label}</a>
+          ) : (
+            <span class="here" aria-current="page">
+              {item.label}
+            </span>
+          )}
+        </>
+      ))
+    }
+  </div>
+</nav>
+
+<style>
+  .crumb {
+    background: var(--off-white);
+    border-bottom: 1px solid var(--border);
+    padding: 14px var(--pad-x);
+    font-family: var(--font-body);
+    font-size: 13px;
+  }
+
+  .crumb-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--slate);
+    flex-wrap: wrap;
+  }
+
+  .crumb a {
+    color: var(--slate);
+    transition: color var(--t-hover);
+  }
+  .crumb a:hover {
+    color: var(--coral);
+  }
+
+  .sep {
+    color: var(--mist);
+  }
+
+  .here {
+    color: var(--navy-deep);
+    font-weight: 600;
+  }
+</style>

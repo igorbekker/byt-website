@@ -4,5 +4,15 @@ export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   businessName,
   phone,
   email,
-  address
+  fax,
+  address,
+  bookingUrl,
+  referralUrl,
+  navCtaLabel,
+  navCtaSecondaryLabel,
+  footerTagline,
+  copyrightEntity,
+  newsletterHeading,
+  newsletterBody,
+  seo
 }`;

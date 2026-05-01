@@ -1,0 +1,93 @@
+---
+/**
+ * Purpose: Blog section hero — dark navy, coral accent line, centered heading
+ * Context: Top of blog listing page
+ * Source: design-source/styles/blog.css (.blog-hero, .blog-hero-inner)
+ */
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+}
+
+const {
+  eyebrow = 'Resources & Insights',
+  title = 'The <em>Better You</em> Blog',
+  description = 'Mental health resources, therapy guidance, and insights from our licensed clinicians.',
+} = Astro.props;
+---
+
+<div class="blog-hero">
+  <div class="blog-hero-inner">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 set:html={title} />
+    {description && <p>{description}</p>}
+  </div>
+</div>
+
+<style>
+  .blog-hero {
+    background: var(--navy-deep);
+    padding: clamp(3.5rem, 6vh, 5rem) var(--pad-x) clamp(3rem, 5vh, 4.5rem);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blog-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgba(224, 85, 85, 0.1) 0%, transparent 60%),
+      radial-gradient(40% 60% at 80% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .blog-hero::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 1.25rem;
+    width: 1px;
+    height: 36px;
+    background: var(--coral);
+    opacity: 0.8;
+  }
+
+  .blog-hero-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .blog-hero .eyebrow {
+    color: var(--coral);
+    margin-bottom: 1.5rem;
+  }
+
+  .blog-hero h1 {
+    color: #fff;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+  }
+
+  .blog-hero h1 :global(em) {
+    color: var(--coral);
+    font-style: normal;
+  }
+
+  .blog-hero p {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 620px;
+    margin: 0 auto;
+    text-wrap: balance;
+  }
+</style>

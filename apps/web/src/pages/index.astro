@@ -1,17 +1,25 @@
 ---
-// Phase 1 placeholder — real content wired in Phase 2
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/home/HeroSection.astro';
+import AudienceRouter from '../components/home/AudienceRouter.astro';
+import BeliefBand from '../components/home/BeliefBand.astro';
+import TwoWaysSection from '../components/home/TwoWaysSection.astro';
+import ConditionsScroll from '../components/home/ConditionsScroll.astro';
+import HowItWorks from '../components/home/HowItWorks.astro';
+import TestimonialsSection from '../components/home/TestimonialsSection.astro';
+import ProviderTeaser from '../components/home/ProviderTeaser.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Better You Therapy</title>
-    <link rel="stylesheet" href="/styles/global.css" />
-  </head>
-  <body>
-    <h1>Better You Therapy</h1>
-    <p>Site launching soon.</p>
-  </body>
-</html>
+<BaseLayout
+  title="Better You Therapy | Licensed Mental Health Care in Southeast Florida"
+  description="Licensed mental health care placed on-site at assisted living and skilled nursing facilities across Southeast Florida. Teletherapy statewide."
+>
+  <HeroSection />
+  <AudienceRouter />
+  <BeliefBand />
+  <TwoWaysSection />
+  <ConditionsScroll />
+  <HowItWorks />
+  <TestimonialsSection />
+  <ProviderTeaser />
+</BaseLayout>

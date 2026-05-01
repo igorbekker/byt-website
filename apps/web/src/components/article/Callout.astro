@@ -1,0 +1,52 @@
+---
+/**
+ * Purpose: Inline callout block for key takeaways or important notes within article prose
+ * Context: Embedded within ArticleBody prose content
+ * Source: design-source/styles/article.css (.callout, .callout-label)
+ * Note: Callout gold colors (#b18a2e, #f3e9c4) are LOCAL per Q2 — defined as scoped CSS vars here, NOT in global.css
+ */
+
+interface Props {
+  label?: string;
+}
+
+const { label = 'Key Takeaway' } = Astro.props;
+---
+
+<div class="callout">
+  <p class="callout-label">{label}</p>
+  <slot />
+</div>
+
+<style>
+  /* Callout gold — scoped local vars per Q2, intentionally NOT in global.css */
+  .callout {
+    --callout-gold: #b18a2e;
+    --callout-border: #f3e9c4;
+
+    background: var(--cream);
+    border: 1px solid var(--callout-border);
+    border-radius: var(--r-card);
+    padding: 1.5rem 1.6rem;
+    margin: 2rem 0;
+  }
+
+  .callout-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--callout-gold);
+    margin-bottom: 0.65rem;
+  }
+
+  .callout :global(p) {
+    font-family: var(--font-heading) !important;
+    font-size: 17px !important;
+    line-height: 1.55 !important;
+    color: var(--navy-deep) !important;
+    font-weight: 500;
+    margin: 0 !important;
+  }
+</style>

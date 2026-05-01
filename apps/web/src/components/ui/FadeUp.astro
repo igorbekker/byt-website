@@ -1,0 +1,35 @@
+---
+/**
+ * Purpose: Scroll animation wrapper that fades+slides children into view
+ * Context: Used on section headers and content blocks throughout the site
+ * Source: design-source/styles/base.css (.fade-up, .fade-up.visible)
+ * Note: Uses .visible class exclusively per Q9 — .fade-up.in removed from providers.css alignment
+ */
+
+interface Props {
+  class?: string;
+}
+
+const { class: extraClass } = Astro.props;
+const classes = ['fade-up', extraClass].filter(Boolean).join(' ');
+---
+
+<div class={classes}>
+  <slot />
+</div>
+
+<script>
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+  );
+
+  document.querySelectorAll('.fade-up').forEach((el) => obs.observe(el));
+</script>

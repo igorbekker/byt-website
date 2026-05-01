@@ -1,0 +1,356 @@
+---
+/**
+ * Purpose: Sticky-scroll layout showing conditions BYT treats — left content scrolls, right image fades between sections
+ * Context: Block 5 on Homepage — alternating white/off-white rows, sticky image panel on right
+ * Source: design-source/pages/Homepage.html (.l349, .l349-left, .l349-section, .l349-right, .l349-img-wrap, .l349-img)
+ */
+---
+
+<div class="l349-section-header fade-up">
+  <p class="eyebrow" style="margin-bottom:.75rem">What We Treat</p>
+  <h2>Conditions We Treat</h2>
+  <p>
+    Our licensed therapists work with adults, seniors, couples, and families across a wide range of
+    mental health conditions.
+  </p>
+</div>
+
+<section class="l349" id="l349">
+  <div class="l349-left">
+    <div class="l349-section" data-section="0">
+      <p class="l349-tagline">Depression</p>
+      <h2 class="l349-h2">Depression &amp; Anxiety</h2>
+      <p class="l349-body">
+        Persistent sadness, worry, and overwhelm are treatable. Our licensed therapists provide
+        evidence-based care that meets you or your loved one where they are.
+      </p>
+      <div class="l349-actions">
+        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
+        <a href="/referral/" class="l349-btn-ghost">
+          Refer a resident
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="l349-section" data-section="1">
+      <p class="l349-tagline">Grief &amp; Loss</p>
+      <h2 class="l349-h2">Grief, Loss &amp; Life Transitions</h2>
+      <p class="l349-body">
+        Loss of a loved one, a role, or a way of life &mdash; grief takes many forms. We provide a
+        safe space to process and move forward.
+      </p>
+      <div class="l349-actions">
+        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
+        <a href="/referral/" class="l349-btn-ghost">
+          Refer a resident
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="l349-section" data-section="2">
+      <p class="l349-tagline">Trauma</p>
+      <h2 class="l349-h2">PTSD &amp; Trauma</h2>
+      <p class="l349-body">
+        Trauma-informed care from licensed therapists who understand how past experiences shape
+        present wellbeing.
+      </p>
+      <div class="l349-actions">
+        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
+        <a href="/referral/" class="l349-btn-ghost">
+          Refer a resident
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="l349-section" data-section="3">
+      <p class="l349-tagline">Relationships</p>
+      <h2 class="l349-h2">Relationships, Couples &amp; Family</h2>
+      <p class="l349-body">
+        Communication, conflict, and connection &mdash; for couples, families, and caregivers
+        navigating change together.
+      </p>
+      <div class="l349-actions">
+        <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
+        <a href="/referral/" class="l349-btn-ghost">
+          Refer a resident
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="l349-right">
+    <div class="l349-img-wrap" id="l349Images">
+      <div
+        class="l349-img active"
+        data-img="0"
+        style="background:url('https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=700&q=85&auto=format&fit=crop') center/cover;"
+      >
+      </div>
+      <div
+        class="l349-img"
+        data-img="1"
+        style="background:url('https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=700&q=85&auto=format&fit=crop') center/cover;"
+      >
+      </div>
+      <div
+        class="l349-img"
+        data-img="2"
+        style="background:url('https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?w=700&q=85&auto=format&fit=crop') center/cover;"
+      >
+      </div>
+      <div
+        class="l349-img"
+        data-img="3"
+        style="background:url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85&auto=format&fit=crop') center/cover;"
+      >
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .l349-section-header {
+    text-align: center;
+    padding: 2.5rem var(--pad-x) 2rem;
+    background: var(--white);
+  }
+  .l349-section-header .eyebrow {
+    margin-bottom: 1rem;
+  }
+  .l349-section-header h2 {
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    color: var(--navy-deep);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  .l349-section-header p {
+    color: var(--slate);
+    max-width: 560px;
+    margin: 0 auto;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .l349 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+  }
+
+  .l349-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .l349-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px clamp(3rem, 6vw, 6rem) 80px var(--pad-x);
+  }
+  .l349-section:nth-child(odd) {
+    background: var(--white);
+  }
+  .l349-section:nth-child(even) {
+    background: var(--off-white);
+  }
+
+  .l349-tagline {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 1rem;
+  }
+
+  .l349-h2 {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    color: var(--navy-deep);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+  }
+
+  .l349-body {
+    font-size: 17px;
+    color: var(--slate);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+    max-width: 460px;
+  }
+
+  .l349-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .l349-btn-outline {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy-deep);
+    border: 1.5px solid var(--navy-deep);
+    padding: 12px 22px;
+    border-radius: var(--r-btn);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition:
+      background-color var(--t-hover),
+      color var(--t-hover);
+  }
+  .l349-btn-outline:hover {
+    background: var(--navy-deep);
+    color: #fff;
+  }
+
+  .l349-btn-ghost {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--coral);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color var(--t-hover);
+  }
+  .l349-btn-ghost:hover {
+    color: var(--coral-hover);
+  }
+  .l349-btn-ghost svg {
+    transition: transform var(--t-hover);
+  }
+  .l349-btn-ghost:hover svg {
+    transform: translateX(3px);
+  }
+
+  .l349-right {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: var(--off-white);
+    overflow: hidden;
+  }
+
+  .l349-img-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .l349-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    box-shadow: none;
+    background-size: cover;
+    background-position: center;
+  }
+  .l349-img.active {
+    opacity: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .l349 {
+      grid-template-columns: 1fr;
+    }
+    .l349-right {
+      display: none;
+    }
+    .l349-section {
+      min-height: auto;
+      padding: 72px var(--pad-x);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .l349-section {
+      padding: 56px var(--pad-x);
+    }
+  }
+</style>
+
+<script>
+  const l349Imgs = document.querySelectorAll<HTMLElement>('[data-img]');
+
+  function updateConditionImage(): void {
+    const vh = window.innerHeight;
+    const l349 = document.getElementById('l349');
+    if (!l349) return;
+
+    const rect = l349.getBoundingClientRect();
+    const scrolledInto = -rect.top;
+    if (scrolledInto < 0) return;
+
+    const active = Math.min(Math.floor(scrolledInto / vh), l349Imgs.length - 1);
+    l349Imgs.forEach((img, i) => {
+      img.style.opacity = i === active ? '1' : '0';
+      img.classList.toggle('active', i === active);
+    });
+  }
+
+  l349Imgs.forEach((img, i) => {
+    img.style.transition = 'opacity 0.35s ease';
+    if (i > 0) img.style.opacity = '0';
+  });
+
+  window.addEventListener('scroll', updateConditionImage, { passive: true });
+  updateConditionImage();
+</script>
