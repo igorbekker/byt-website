@@ -10,6 +10,7 @@ After ANY correction from Igor, add an entry below. Do NOT fabricate "seed" less
 
 **Context:** Phase 1 bootstrap — monorepo scaffold, Astro + Sanity setup
 **What went wrong:**
+
 1. Never ran /begin — skipped session start protocol entirely
 2. Never wrote plan to todo.md before implementing — jumped straight to writing files
 3. Never waited for Igor's approval before executing
@@ -24,6 +25,7 @@ After ANY correction from Igor, add an entry below. Do NOT fabricate "seed" less
 12. Wrote wrong business description in CLAUDE.md ("Prospective therapy clients" — wrong)
 
 **Rule for next time:**
+
 - Run /begin at session start. Every time. No exceptions.
 - Write plan to todo.md. Wait for approval. Then execute.
 - /pre before every commit. /post after every push.

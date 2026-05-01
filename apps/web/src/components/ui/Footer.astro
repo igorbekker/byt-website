@@ -1,0 +1,312 @@
+---
+/**
+ * Purpose: Site-wide footer with 4-column grid, social links, and legal bar
+ * Context: Rendered in BaseLayout at bottom of every page
+ * Source: design-source/partials/footer.html, design-source/styles/base.css (.footer, .footer-grid, .footer-col, .footer-links, .footer-bottom, .footer-legal, .social-links, .social-link)
+ */
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <a href="/" class="footer-logo" aria-label="Better You Therapy">
+          <img src="/assets/logo-white.png" alt="Better You Therapy" />
+        </a>
+        <p class="footer-tagline">
+          Licensed mental health care placed on-site at assisted living, skilled nursing, and
+          continuing care facilities across Southeast Florida. Teletherapy statewide.
+        </p>
+        <div class="footer-contact">
+          <div>Boca Raton, FL</div>
+          <div><a href="tel:7549990011">754-999-0011</a></div>
+          <div><a href="mailto:hello@getbetteryou.com">hello@getbetteryou.com</a></div>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Facebook">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </a>
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+              ></path>
+              <rect x="2" y="9" width="4" height="12"></rect>
+              <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul class="footer-links">
+          <li><a href="/patients/seniors/">For Seniors &amp; Families</a></li>
+          <li><a href="/individual-therapy/">Individual Therapy</a></li>
+          <li><a href="/communities/">For Facilities</a></li>
+          <li><a href="/providers/">For Therapists</a></li>
+          <li><a href="/service-area/">Service Area</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="/about/">About Us</a></li>
+          <li><a href="/faq/">FAQ</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/referral/">Refer a Resident</a></li>
+          <li><a href="tel:7549990011">754-999-0011</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Stay in touch</h4>
+        <p class="footer-newsletter-pitch">
+          One thoughtful email a month — practical mental health resources, no spam.
+        </p>
+        <form class="footer-newsletter-form" id="footerNewsletterForm" novalidate>
+          <label class="sr-only" for="footer-newsletter-email">Email address</label>
+          <input
+            id="footer-newsletter-email"
+            type="email"
+            required
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+          <button type="submit" class="btn btn-coral">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Better You Therapy LLC &middot; getbetteryou.com</span>
+      <div class="footer-legal">
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--navy-deep);
+    color: rgba(255, 255, 255, 0.68);
+    padding: 4rem var(--pad-x) 2rem;
+  }
+
+  .footer-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  .footer-logo {
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .footer-logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+  }
+
+  .footer-tagline {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+    max-width: 360px;
+  }
+
+  .footer-contact {
+    font-size: 14px;
+    line-height: 1.85;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .footer-contact a {
+    color: rgba(255, 255, 255, 0.6);
+    transition: color var(--t-hover);
+  }
+  .footer-contact a:hover {
+    color: #fff;
+  }
+
+  .footer-col h4 {
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .footer-links a {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    transition: color var(--t-hover);
+  }
+  .footer-links a:hover {
+    color: #fff;
+  }
+
+  .footer-newsletter-pitch {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .footer-newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer-newsletter-form input {
+    padding: 12px 14px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--r-btn);
+    background: rgba(255, 255, 255, 0.07);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    transition: border-color var(--t-hover);
+  }
+  .footer-newsletter-form input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+  }
+  .footer-newsletter-form input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .footer-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .footer-legal {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-legal a {
+    color: rgba(255, 255, 255, 0.45);
+    transition: color var(--t-hover);
+  }
+  .footer-legal a:hover {
+    color: #fff;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+  }
+  .social-link {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-btn);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--t-hover);
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .social-link:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('footerNewsletterForm') as HTMLFormElement | null;
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button') as HTMLButtonElement | null;
+    const input = form.querySelector('input') as HTMLInputElement | null;
+    if (!input?.value) return;
+    if (btn) {
+      btn.textContent = 'Subscribed ✓';
+      btn.disabled = true;
+    }
+    if (input) input.value = '';
+    setTimeout(() => {
+      if (btn) {
+        btn.textContent = 'Subscribe';
+        btn.disabled = false;
+      }
+    }, 2400);
+  });
+</script>

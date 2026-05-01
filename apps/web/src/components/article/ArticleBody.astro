@@ -1,0 +1,164 @@
+---
+/**
+ * Purpose: Article body layout — prose column with sticky sidebar (TOC + share buttons)
+ * Context: Main content area of every article page
+ * Source: design-source/styles/article.css (.article-body, .article-body-grid, .article-prose, .article-side)
+ */
+---
+
+<div class="article-body">
+  <div class="article-body-grid">
+    <div class="article-prose">
+      <slot />
+    </div>
+    <aside class="article-side">
+      <slot name="sidebar" />
+    </aside>
+  </div>
+</div>
+
+<style>
+  .article-body {
+    padding: clamp(2.5rem, 5vh, 4rem) var(--pad-x) var(--pad-s);
+    background: #fff;
+  }
+
+  .article-body-grid {
+    max-width: 980px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .article-prose {
+    max-width: 680px;
+    min-width: 0;
+  }
+
+  .article-prose p,
+  .article-prose ul,
+  .article-prose ol,
+  .article-prose blockquote {
+    margin-bottom: 1.4rem;
+  }
+
+  .article-prose p {
+    font-family: var(--font-body);
+    font-size: 17.5px;
+    line-height: 1.75;
+    color: var(--color-prose-text);
+    text-wrap: pretty;
+  }
+
+  .article-prose :global(.lede) {
+    font-size: 20px;
+    color: var(--navy-deep);
+    font-weight: 500;
+    line-height: 1.55;
+  }
+
+  .article-prose h2 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+    color: var(--navy-deep);
+    margin: 2.75rem 0 1rem;
+    line-height: 1.2;
+    scroll-margin-top: 110px;
+  }
+  .article-prose h2:first-child {
+    margin-top: 0;
+  }
+
+  .article-prose h3 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+    color: var(--navy-deep);
+    margin: 2rem 0 0.85rem;
+    line-height: 1.25;
+  }
+
+  .article-prose ul,
+  .article-prose ol {
+    padding-left: 1.4rem;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-prose-text);
+  }
+
+  .article-prose li {
+    margin-bottom: 0.55rem;
+  }
+  .article-prose li::marker {
+    color: var(--coral);
+  }
+
+  .article-prose strong {
+    color: var(--navy-deep);
+    font-weight: 700;
+  }
+
+  .article-prose a {
+    color: var(--coral);
+    border-bottom: 1px solid var(--coral-light);
+    transition:
+      color var(--t-hover),
+      border-color var(--t-hover);
+  }
+  .article-prose a:hover {
+    color: var(--coral-hover);
+    border-color: var(--coral);
+  }
+
+  .article-prose blockquote {
+    border-left: 3px solid var(--coral);
+    padding: 0.25rem 0 0.25rem 1.5rem;
+    margin: 2rem 0;
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--navy-deep);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .article-side {
+    position: sticky;
+    top: 110px;
+  }
+
+  @media (max-width: 1024px) {
+    .article-body-grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .article-side {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .article-prose p,
+    .article-prose ul,
+    .article-prose ol {
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .article-prose h2 {
+      font-size: 1.45rem;
+    }
+    .article-prose h3 {
+      font-size: 1.15rem;
+    }
+    .article-prose blockquote {
+      font-size: 1.2rem;
+      padding-left: 1rem;
+    }
+  }
+</style>

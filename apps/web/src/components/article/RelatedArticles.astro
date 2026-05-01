@@ -1,0 +1,110 @@
+---
+/**
+ * Purpose: 3-column related posts grid shown at the bottom of article pages
+ * Context: Below AuthorCard at end of article page
+ * Source: design-source/styles/article.css (.related, .related-inner, .related-header, .related-grid)
+ */
+
+import ArticleCard from '../blog/ArticleCard.astro';
+
+interface RelatedPost {
+  href: string;
+  category?: string;
+  date?: string;
+  title: string;
+  snippet?: string;
+  authorName?: string;
+  authorInitials?: string;
+}
+
+interface Props {
+  posts: RelatedPost[];
+  eyebrow?: string;
+  title?: string;
+}
+
+const { posts = [], eyebrow = 'Keep Reading', title = 'Related Articles' } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <div class="related">
+      <div class="related-inner">
+        <div class="related-header">
+          <div>
+            <p class="eyebrow" style="margin-bottom:.75rem">
+              {eyebrow}
+            </p>
+            <h2>{title}</h2>
+          </div>
+          <a href="/blog/">View all articles &rarr;</a>
+        </div>
+        <div class="related-grid">
+          {posts.map((post) => (
+            <ArticleCard {...post} />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .related {
+    background: var(--off-white);
+    padding: var(--pad-s) var(--pad-x);
+    border-top: 1px solid var(--border);
+  }
+
+  .related-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  .related-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .related-header .eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .related-header h2 {
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    letter-spacing: -0.02em;
+  }
+
+  .related-header a {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral);
+    transition: color var(--t-hover);
+  }
+  .related-header a:hover {
+    color: var(--coral-hover);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 1024px) {
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

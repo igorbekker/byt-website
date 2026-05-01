@@ -1,0 +1,168 @@
+---
+/**
+ * Purpose: Grid of cards showing what conditions/areas BYT handles for providers
+ * Context: Providers page — Block 4 "What BYT Handles"
+ * Source: design-source/styles/providers.css (.p-handles, .p-handles-inner, .p-handles-grid, .p-handle, .p-handle-icon)
+ */
+
+interface HandleItem {
+  title: string;
+  description: string;
+  iconSvg?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  items?: HandleItem[];
+}
+
+const {
+  eyebrow = 'Scope of Care',
+  title = 'What BYT Handles',
+  description = 'Our platform supports a wide range of mental health conditions across our facility and teletherapy networks.',
+  items = [],
+} = Astro.props;
+---
+
+<section class="p-handles">
+  <div class="p-handles-inner">
+    <div class="p-handles-head fade-up">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div class="p-handles-grid fade-up">
+      {
+        items.map((item) => (
+          <div class="p-handle">
+            <div class="p-handle-icon">
+              {item.iconSvg ? (
+                <Fragment set:html={item.iconSvg} />
+              ) : (
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                </svg>
+              )}
+            </div>
+            <h4>{item.title}</h4>
+            <p>{item.description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .p-handles {
+    background: var(--off-white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .p-handles-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  .p-handles-head {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .p-handles-head .eyebrow {
+    color: var(--coral);
+    margin-bottom: 1rem;
+  }
+  .p-handles-head h2 {
+    color: var(--navy-deep);
+    font-size: clamp(2rem, 3.5vw, 2.6rem);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .p-handles-head p {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .p-handles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .p-handle {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition:
+      box-shadow var(--t-hover),
+      border-color var(--t-hover),
+      transform var(--t-hover);
+  }
+  .p-handle:hover {
+    box-shadow: var(--shadow-md);
+    border-color: rgba(224, 85, 85, 0.4);
+  }
+
+  .p-handle-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--coral-light);
+    color: var(--coral);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+  }
+  .p-handle-icon :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .p-handle h4 {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--navy-deep);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .p-handle p {
+    font-size: 14px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 1100px) {
+    .p-handles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .p-handles {
+      padding: 64px var(--pad-x);
+    }
+    .p-handles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

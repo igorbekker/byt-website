@@ -1,0 +1,175 @@
+---
+/**
+ * Purpose: Minimum qualifications table with scope badges and requirement rows
+ * Context: Providers page — Block 5 "Minimum Qualifications"
+ * Source: design-source/styles/providers.css (.p-quals, .p-quals-inner, .p-quals-list, .p-qual, .p-qual-scope, .p-qual-body)
+ */
+
+type QualScope = 'all' | 'facility' | 'tele';
+
+interface QualItem {
+  scope: QualScope;
+  scopeLabel?: string;
+  body: string;
+  note?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  items?: QualItem[];
+}
+
+const {
+  eyebrow = 'Requirements',
+  title = 'Minimum Qualifications',
+  description = 'We partner with licensed professionals who meet our clinical and compliance standards.',
+  items = [],
+} = Astro.props;
+
+const scopeLabelDefaults: Record<QualScope, string> = {
+  all: 'All',
+  facility: 'Facility',
+  tele: 'Telehealth',
+};
+---
+
+<section class="p-quals">
+  <div class="p-quals-inner">
+    <div class="p-quals-head fade-up">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+
+    <div class="p-quals-list fade-up">
+      {
+        items.map((item) => {
+          const label = item.scopeLabel ?? scopeLabelDefaults[item.scope];
+          const scopeClass =
+            item.scope === 'facility'
+              ? 'scope-facility'
+              : item.scope === 'tele'
+                ? 'scope-tele'
+                : 'scope-all';
+          return (
+            <div class="p-qual">
+              <span class={`p-qual-scope ${scopeClass}`}>{label}</span>
+              <div class="p-qual-body">
+                <span set:html={item.body} />
+                {item.note && <span class="p-qual-note">{item.note}</span>}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .p-quals {
+    background: var(--white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .p-quals-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .p-quals-head .eyebrow {
+    color: var(--coral);
+    margin-bottom: 1rem;
+  }
+  .p-quals-head h2 {
+    color: var(--navy-deep);
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+  }
+  .p-quals-head p {
+    color: var(--slate);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .p-quals-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border);
+  }
+
+  .p-qual {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+  }
+
+  .p-qual-scope {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    width: fit-content;
+  }
+
+  .scope-all {
+    background: var(--off-white);
+    color: var(--navy-deep);
+  }
+  .scope-facility {
+    background: var(--coral-light);
+    color: var(--coral-hover);
+  }
+  .scope-tele {
+    background: var(--sage-light);
+    color: var(--sage-hover);
+  }
+
+  .p-qual-body {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--navy-deep);
+    font-weight: 500;
+  }
+
+  .p-qual-note {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 13px;
+    color: var(--slate);
+    font-weight: 400;
+  }
+
+  @media (max-width: 900px) {
+    .p-quals-inner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .p-quals {
+      padding: 64px var(--pad-x);
+    }
+    .p-qual {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+  }
+</style>

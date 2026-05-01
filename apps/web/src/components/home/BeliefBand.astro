@@ -1,0 +1,57 @@
+---
+/**
+ * Purpose: Centered quote/belief statement section with coral rule accent
+ * Context: Block 3 on Homepage — cream background, between router and two-ways
+ * Source: design-source/pages/Homepage.html (.belief, .belief-inner, .belief-rule)
+ */
+---
+
+<section class="belief">
+  <div class="belief-inner fade-up">
+    <div class="belief-rule"></div>
+    <h2>&ldquo;Mental health care belongs to everyone.&rdquo;</h2>
+    <p>
+      Mental health care shouldn't depend on where you live, how much you earn, or how well you can
+      navigate the system. We built Better You Therapy to close that gap.
+    </p>
+  </div>
+</section>
+
+<style>
+  .belief {
+    background: var(--cream);
+    padding: var(--pad-s) var(--pad-x);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .belief-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .belief-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--coral);
+    margin: 0 auto 1.75rem;
+    border-radius: 2px;
+  }
+
+  .belief h2 {
+    color: var(--navy-deep);
+    font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .belief p {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+</style>

@@ -1,0 +1,130 @@
+---
+/**
+ * Purpose: Homepage hero — split column layout, photo left, belief statement right on cream background
+ * Context: First visible section on the Homepage
+ * Source: design-source/pages/Homepage.html (.hero, .hero-image, .hero-content, .hero-eyebrow, .hero-subhead, .hero-actions)
+ */
+---
+
+<section class="hero">
+  <div class="hero-image">
+    <img
+      src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=1400&q=85&auto=format&fit=crop&crop=faces"
+      alt="Licensed therapist in warm conversation with a senior patient"
+      onerror="this.style.display='none'"
+    />
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      Licensed Mental Health Care &middot; Southeast Florida &amp; Statewide
+    </div>
+    <h1>
+      Mental health care should reach people where they are &mdash; not just the ones whose families
+      can navigate the system.
+    </h1>
+    <p class="hero-subhead">
+      We bring licensed therapists on-site to assisted living and skilled nursing facilities across
+      Southeast Florida, and connect adults and families with therapists online &mdash; anywhere in
+      Florida. We handle everything.
+    </p>
+    <div class="hero-actions">
+      <a href="/patients/" class="btn btn-coral">Book a Session &rarr;</a>
+      <a href="/referral/" class="btn btn-outline-ink">Refer a Resident &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    max-height: 760px;
+    background: var(--cream);
+  }
+
+  .hero-image {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy);
+  }
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .hero-content {
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3.5rem;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-content h1 {
+    font-family: var(--font-heading);
+    color: var(--navy-deep);
+    font-size: clamp(2.2rem, 3.6vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-subhead {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 2.25rem;
+    font-weight: 400;
+    max-width: 520px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1024px) {
+    .hero {
+      grid-template-columns: 1fr;
+      max-height: none;
+      min-height: 0;
+    }
+    .hero-image {
+      height: 520px;
+    }
+    .hero-content {
+      padding: 3rem 2.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-image {
+      height: 280px;
+    }
+    .hero-content {
+      padding: 2.5rem 1.75rem;
+    }
+    .hero-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

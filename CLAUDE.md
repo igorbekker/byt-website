@@ -105,22 +105,26 @@ If you encounter ANY of these: create `OBS-XXX-<short-name>.md`, stop, report to
 ## Workflow
 
 ### Plan Mode
+
 - Enter plan mode for ANY task with 3+ steps or architectural decisions
 - If something goes sideways: STOP and re-plan. Do not keep pushing.
 - Write detailed specs upfront to reduce ambiguity
 - WAIT for Igor's approval before executing the plan
 
 ### Bug Fixing
+
 - When given a bug report: fix it. No hand-holding required.
 - Trace the full path before fixing: input → processing → output
 - Fix all broken links in one pass, not one at a time
 - When fixing multiple bugs in sequence: STOP after each fix and run `/pre` before moving to the next
 
 ### Subagents
+
 - Use subagents to keep main context clean — one task per subagent
 - Offload research, exploration, and parallel analysis
 
 ### Self-Improvement Loop
+
 - After ANY correction: stop → log to `tasks/lessons.md` → resume
 - Review `lessons.md` at every session start
 
@@ -140,9 +144,11 @@ NEVER ask the user for credentials. If `.env.local` is missing, say so and stop.
 Cloudflare Pages auto-deploys from GitHub on merge to `main`. No manual deploy needed.
 
 For manual testing:
+
 ```bash
 npx wrangler deploy
 ```
+
 If deploy fails with auth error: `source ~/.profile` first, then retry.
 
 NEVER ask the user for the Cloudflare API token.
@@ -153,15 +159,15 @@ NEVER hardcode the token. NEVER print the token value.
 
 ## Tech Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | Astro 6 (static output) |
-| CMS | Sanity v4 (mounted at `/admin`) |
-| Hosting | Cloudflare Pages |
-| Forms | Formspree |
-| Language | TypeScript strict |
-| Package manager | pnpm (workspace) |
-| Styling | Native CSS + design tokens via CSS variables |
+| Layer           | Choice                                       |
+| --------------- | -------------------------------------------- |
+| Framework       | Astro 6 (static output)                      |
+| CMS             | Sanity v4 (mounted at `/admin`)              |
+| Hosting         | Cloudflare Pages                             |
+| Forms           | Formspree                                    |
+| Language        | TypeScript strict                            |
+| Package manager | pnpm (workspace)                             |
+| Styling         | Native CSS + design tokens via CSS variables |
 
 ---
 

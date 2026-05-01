@@ -1,0 +1,146 @@
+---
+/**
+ * Purpose: Social proof quote cards grid with teal quote marks
+ * Context: Providers page — Block 6 "Social Proof"
+ * Source: design-source/styles/providers.css (.p-social, .p-social-grid, .p-quote-card, .p-quote-mark, .p-quote-text, .p-quote-attr)
+ * Note: Uses --color-teal (#4fb7a6) for quote mark per Q3
+ */
+
+interface QuoteItem {
+  text: string;
+  attribution: string;
+  isPending?: boolean;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  quotes?: QuoteItem[];
+}
+
+const {
+  eyebrow = 'From the Field',
+  title = 'What Providers Are Saying',
+  quotes = [],
+} = Astro.props;
+---
+
+<section class="p-social">
+  <div class="p-social-inner">
+    <div class="p-social-head fade-up">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+    </div>
+    <div class="p-social-grid fade-up">
+      {
+        quotes.map((quote) => (
+          <div class="p-quote-card">
+            <div class="p-quote-mark">&ldquo;</div>
+            {quote.isPending && <span class="p-quote-pending">Testimonial pending approval</span>}
+            <p class="p-quote-text">{quote.text}</p>
+            <div class="p-quote-attr">{quote.attribution}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .p-social {
+    background: var(--off-white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .p-social-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  .p-social-head {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .p-social-head .eyebrow {
+    color: var(--coral);
+    margin-bottom: 1rem;
+  }
+  .p-social-head h2 {
+    color: var(--navy-deep);
+    font-size: clamp(2rem, 3.4vw, 2.6rem);
+    letter-spacing: -0.02em;
+  }
+
+  .p-social-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .p-quote-card {
+    background: #fff;
+    border: 1px dashed var(--border);
+    border-radius: var(--r-card);
+    padding: 2.25rem 2rem;
+    position: relative;
+  }
+
+  .p-quote-mark {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    line-height: 0.5;
+    color: var(--color-teal); /* teal per Q3 */
+    opacity: 0.4;
+    position: absolute;
+    top: 1.25rem;
+    left: 1.5rem;
+    font-weight: 800;
+  }
+
+  .p-quote-pending {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mist);
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    display: inline-block;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .p-quote-text {
+    color: var(--mist);
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  .p-quote-attr {
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--slate);
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .p-social-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .p-social {
+      padding: 64px var(--pad-x);
+    }
+  }
+</style>

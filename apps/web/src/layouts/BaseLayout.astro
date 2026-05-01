@@ -1,0 +1,42 @@
+---
+/**
+ * Purpose: Root layout wrapping every page — imports global CSS, renders Nav, slot, Footer, MobileCTABar
+ * Context: All pages extend this layout
+ * Source: design-source/styles/base.css (tokens + reset), design-source/partials/nav.html, footer.html, mobile-bar.html
+ */
+
+import Nav from '../components/nav/Nav.astro';
+import Footer from '../components/ui/Footer.astro';
+import MobileCTABar from '../components/ui/MobileCTABar.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Licensed mental health care placed on-site at assisted living and skilled nursing facilities across Southeast Florida. Teletherapy statewide.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <MobileCTABar />
+  </body>
+</html>
