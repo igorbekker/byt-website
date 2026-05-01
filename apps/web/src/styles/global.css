@@ -1,0 +1,27 @@
+/* Design tokens — values populated from design-source/styles/ in Phase 2 */
+
+:root {
+  /* Colors */
+  /* --color-primary: ; */
+  /* --color-secondary: ; */
+  /* --color-background: ; */
+  /* --color-text: ; */
+
+  /* Typography */
+  /* --font-heading: ; */
+  /* --font-body: ; */
+
+  /* Spacing */
+  /* --spacing-unit: ; */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body, system-ui, sans-serif);
+}
