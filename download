@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.local
+.dev.vars
+*.local
+.claude/settings.local.json
+.wrangler/
+*.bak
+backups/git/
+backups/sanity/
+.DS_Store
