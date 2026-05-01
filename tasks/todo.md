@@ -11,9 +11,12 @@
 
 ## Phase 1 — Repo Bootstrap + Design-Source Setup
 
-### Job 1: Design-Source [!] BLOCKED
+### Job 1: Design-Source [x] COMPLETE
 
-- [!] Zip file not yet uploaded to design-source/ — waiting on Igor
+- [x] Zip uploaded by Igor (Homepage (1).zip)
+- [x] Extracted and sorted into pages/, partials/, styles/, assets/, assets/wireframes/, assets/vendor/
+- [x] design-source/README.md written with full index
+- [x] Committed to main: chore(design-source)
 
 ### Job 2: Monorepo + CMS Bootstrap [x] COMPLETE
 
@@ -58,6 +61,6 @@
 
 ## Quick Status Summary
 
-- **Last work:** Phase 1 Job 2 complete. Job 1 blocked on zip upload.
-- **Current issues:** design-source zip not yet uploaded
+- **Last work:** Phase 1 cleanup session — PR #1 merged, design-source organized, retroactive OBS-001–004 logged, DEC-001 approval corrected.
+- **Current issues:** None known
 - **Detailed history:** See `tasks/todo-archive.md` (created when this file exceeds 100 lines)

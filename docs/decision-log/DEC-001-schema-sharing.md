@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-01
 **Status:** approved
-**Approved by:** Claude (pending Igor review)
+**Approved by:** Igor (2026-05-01)
 
 ## Context
 
