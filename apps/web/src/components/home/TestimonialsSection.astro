@@ -4,48 +4,73 @@
  * Context: Block 7 on Homepage — white background
  * Source: design-source/pages/Homepage.html (.testimonials, .testimonials-grid, .testimonial-card, .testimonial-quote-mark, .testimonial-text, .testimonial-attribution, .testimonial-avatar)
  */
+
+interface Testimonial {
+  _id: string;
+  quote: string;
+  authorName: string;
+  authorRole?: string;
+  authorOrg?: string;
+  authorInitials?: string;
+  audienceType?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  subhead?: string;
+  testimonials?: Testimonial[];
+}
+
+const { eyebrow, heading, subhead, testimonials } = Astro.props;
+
+function deriveInitials(name: string): string {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('')
+    .toUpperCase();
+}
 ---
 
 <section class="testimonials">
   <div style="max-width:var(--max-w);margin:0 auto;">
     <div class="testimonials-header fade-up">
-      <p class="eyebrow" style="margin-bottom:.75rem">Real Voices</p>
-      <h2>What Our Clients and Partners Are Saying</h2>
-      <p>From the families and facilities we serve &mdash; in their own words.</p>
+      {
+        eyebrow && (
+          <p class="eyebrow" style="margin-bottom:.75rem">
+            {eyebrow}
+          </p>
+        )
+      }
+      {heading && <h2>{heading}</h2>}
+      {subhead && <p>{subhead}</p>}
     </div>
 
-    <div class="testimonials-grid fade-up">
-      <div class="testimonial-card">
-        <div class="testimonial-quote-mark">&ldquo;</div>
-        <p class="testimonial-text">
-          Better You placed a licensed clinician on-site within two weeks. No billing burden on our
-          team, and our residents have weekly continuity of care they didn't have before. [Sample
-          testimonial]
-        </p>
-        <div class="testimonial-attribution">
-          <div class="testimonial-avatar">WD</div>
-          <div>
-            <div class="testimonial-name">Director of Wellness</div>
-            <div class="testimonial-role">Assisted Living &middot; Palm Beach County</div>
-          </div>
+    {
+      testimonials && testimonials.length > 0 && (
+        <div class="testimonials-grid fade-up">
+          {testimonials.map((t) => {
+            const initials = t.authorInitials ?? deriveInitials(t.authorName);
+            const attribution = [t.authorRole, t.authorOrg].filter(Boolean).join(' · ');
+            return (
+              <div class="testimonial-card">
+                <div class="testimonial-quote-mark">&ldquo;</div>
+                <p class="testimonial-text">{t.quote}</p>
+                <div class="testimonial-attribution">
+                  <div class="testimonial-avatar">{initials}</div>
+                  <div>
+                    <div class="testimonial-name">{t.authorName}</div>
+                    {attribution && <div class="testimonial-role">{attribution}</div>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-quote-mark">&ldquo;</div>
-        <p class="testimonial-text">
-          My mom had been on a waitlist for months. One call to Better You and she had her first
-          session that same week &mdash; right from her apartment. [Sample testimonial]
-        </p>
-        <div class="testimonial-attribution">
-          <div class="testimonial-avatar">FM</div>
-          <div>
-            <div class="testimonial-name">Adult Daughter</div>
-            <div class="testimonial-role">Family member &middot; Southeast Florida</div>
-          </div>
-        </div>
-      </div>
-    </div>
+      )
+    }
   </div>
 </section>
 

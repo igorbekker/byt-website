@@ -4,11 +4,20 @@
  * Context: Rendered in BaseLayout above </body>; hidden on desktop via CSS
  * Source: design-source/partials/mobile-bar.html, design-source/styles/base.css (.mobile-cta-bar)
  */
+
+interface Props {
+  navCtaLabel: string;
+  navCtaSecondaryLabel: string;
+  bookingUrl: string;
+  referralUrl: string;
+}
+
+const { navCtaLabel, navCtaSecondaryLabel, bookingUrl, referralUrl } = Astro.props;
 ---
 
 <div class="mobile-cta-bar" aria-label="Primary actions">
-  <a href="/patients/" class="btn btn-coral">Book a Session</a>
-  <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
+  <a href={bookingUrl} class="btn btn-coral">{navCtaLabel}</a>
+  <a href={referralUrl} class="btn btn-outline-ink">{navCtaSecondaryLabel}</a>
 </div>
 
 <style>

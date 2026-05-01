@@ -389,3 +389,337 @@ All 38 Astro components built, global.css fully populated with design token syst
 **OBS logged:** OBS-006 (sanity documents create requires interactive login — resolved via Option A)
 
 All 21 schema types created and registered, desk structure wired into structureTool, all 5 quality gates pass, Studio starts cleanly at localhost:3333. siteSettings seeding deferred to Igor via /admin UI (Option A approved). queries.ts updated with all 10 new siteSettings fields.
+
+---
+
+# Phase 4 — Static Pages (CMS-Driven)
+
+**Date:** 2026-05-01
+**Status:** COMPLETE (2026-05-01T20:10Z)
+
+## Overview
+
+Phase 4 connects every Sanity singleton schema (homePage, communitiesPage, patientsPage, providersPage, aboutPage, careersPage, contactPage) to real Astro page files, and wires BaseLayout's Nav and Footer to live siteSettings data. Each unit builds one page (or the BaseLayout update) and is immediately followed by an AGENT_qa verification pass before the next unit begins. At the end of Phase 4 all 7 public pages are CMS-driven with no hardcoded copy, phone numbers, or contact details.
+
+---
+
+## Build Units
+
+### Unit 0 — BaseLayout: Nav + Footer → siteSettings
+
+**Goal:** Replace every hardcoded string in Nav.astro and Footer.astro with values fetched from the `siteSettings` Sanity singleton. Update BaseLayout.astro to fetch siteSettings and pass it as props to Nav and Footer.
+
+**siteSettings fields to wire:**
+
+- `businessName` — footer copyright line
+- `phone` — footer contact block, footer links column, Nav secondary CTA href (tel:)
+- `email` — footer contact block
+- `address` → `city`, `state` — footer contact block
+- `fax` — footer contact block (currently hardcoded as 754-999-0012)
+- `bookingUrl` — Nav primary CTA href, mobile menu primary CTA href
+- `referralUrl` — Nav secondary CTA href, mobile menu secondary CTA href
+- `navCtaLabel` — Nav primary CTA text, mobile menu primary CTA text
+- `navCtaSecondaryLabel` — Nav secondary CTA text, mobile menu secondary CTA text
+- `footerTagline` — footer tagline paragraph
+- `copyrightEntity` — footer copyright entity name
+- `newsletterHeading` — footer "Stay in touch" column heading
+- `newsletterBody` — footer newsletter pitch paragraph
+- `seo` → `metaTitle`, `metaDescription` — BaseLayout default `<title>` and `<meta name="description">` fallback
+
+**Current hardcoded values to eliminate (confirmed by reading files):**
+
+- Nav.astro: "Book a Session" (line 21), "Refer a Resident" (lines 22, 69), `/individual-therapy/` href (lines 21, 68), `/referral/` href (lines 22, 69)
+- Footer.astro: tagline text (line 17-19), "Boca Raton, FL" (line 21), "754-999-0011" (lines 22, 75), "hello@getbetteryou.com" (line 23), "754-999-0012" (line 75 — fax in footer links), "Better You Therapy LLC" + year in copyright (line 101), newsletter pitch text (line 82)
+
+**Tasks:**
+
+- [x] Add `SITE_SETTINGS_QUERY` fetch in BaseLayout.astro using `sanityClient` from `sanity:client`
+- [x] Update BaseLayout Props interface: accept page-level `seo` object; fall back to siteSettings.seo when page seo is null
+- [x] Update `<title>` and `<meta name="description">` in BaseLayout `<head>` to use resolved SEO values
+- [x] Update Nav.astro Props interface to accept `navCtaLabel`, `navCtaSecondaryLabel`, `bookingUrl`, `referralUrl`; pass from BaseLayout
+- [x] Wire Nav.astro: replace 4 hardcoded strings/hrefs with props
+- [x] Update Footer.astro Props interface to accept all contact/copy fields; pass from BaseLayout
+- [x] Wire Footer.astro: replace all hardcoded contact/copy strings with props
+- [x] Wire MobileCTABar.astro: replace hardcoded CTA labels/hrefs with props
+- [x] AGENT_qa: PASS — build clean, no hardcoded values, props flow verified
+
+---
+
+### Unit 1 — Homepage (/)
+
+**File:** `apps/web/src/pages/index.astro` (already exists — currently uses static placeholder data)
+**Design-source:** `design-source/pages/Homepage.html`
+**Design-source sections (in DOM order):**
+
+1. `.hero` — split-column cream hero with eyebrow, headline, subhead, image, two CTA buttons
+2. `.router-section` — audience router with eyebrow, heading, subhead, and 3 audience cards (each: tagline, heading, collapsed body, expanded body, image, CTA)
+3. `.belief` — cream quote/statement band with quote text and body paragraph
+4. `.twoways` — full-bleed photo cards (2 service tracks: label, heading, body, image, CTA)
+5. `.l349` — sticky-scroll conditions section with eyebrow, heading, subhead (conditions data rendered from `condition` document collection query)
+6. `.howitworks` — two-track step layout with eyebrow, heading, teletherapy track (label + 3 steps + CTA), facility track (label + 3 steps + CTA)
+7. `.testimonials` — 2-col grid with eyebrow, heading, subhead (testimonial data from `testimonial` document collection query)
+8. `.provider` — dark photo overlay teaser with eyebrow, heading, body, image, primary CTA, secondary CTA
+
+**Sanity fields queried (from homePage.ts):**
+`heroEyebrow`, `heroHeadline`, `heroSubhead`, `heroImage`, `heroPrimaryCta`, `heroSecondaryCta`, `routerEyebrow`, `routerHeading`, `routerSubhead`, `routerCards[]{ tagline, heading, bodyCollapsed, bodyExpanded, image, cta }`, `beliefQuote`, `beliefBody`, `twoWaysEyebrow`, `twoWaysHeading`, `twoWaysSubhead`, `twoWaysTracks[]{ label, heading, body, cta, image }`, `conditionsEyebrow`, `conditionsHeading`, `conditionsSubhead`, `howItWorksEyebrow`, `howItWorksHeading`, `teletherapyTrackLabel`, `teletherapySteps[]{ stepNumber, heading, body }`, `teletherapyCta`, `facilityTrackLabel`, `facilitySteps[]{ stepNumber, heading, body }`, `facilityCta`, `testimonialsEyebrow`, `testimonialsHeading`, `testimonialsSubhead`, `providerTeaserEyebrow`, `providerTeaserHeading`, `providerTeaserBody`, `providerTeaserImage`, `providerTeaserPrimaryCta`, `providerTeaserSecondaryCta`, `seo`
+
+**Also queries:** `*[_type == "condition"]{ _id, name, description }` (for ConditionsScroll), `*[_type == "testimonial"]{ _id, quote, authorName, authorTitle, authorAvatar }` (for TestimonialsSection)
+
+**Tasks:**
+
+- [x] Write `HOME_PAGE_QUERY`, `CONDITIONS_HOME_QUERY`, `TESTIMONIALS_HOME_QUERY` in queries.ts
+- [x] Rewrite `index.astro` — fetches 3 queries, wires all 8 sections
+- [x] Wire all 42 homePage schema fields + condition + testimonial collections
+- [x] AGENT_qa: PASS (after fix — removed hardcoded title/description fallback; replaced #fff with var(--white) in 4 components)
+
+---
+
+### Unit 2 — Communities (/communities/)
+
+**File:** `apps/web/src/pages/communities.astro` (create new)
+**Design-source:** `design-source/pages/Communities.html`
+**Design-source sections (in DOM order):**
+
+1. `.h84` — hero (eyebrow, h1, lede/subhead, single CTA button, hero image)
+2. `.l521-section` — process steps (heading, subhead, up to 4 cards with step number, heading, icon)
+3. `.l16` — what BYT handles grid (eyebrow, heading, subhead, handles items array)
+4. `.l526-section` — conditions section (eyebrow, heading, subhead + condition cards from collection)
+5. `.l505-section` — additional handles/detail section (maps to handlesItems, see Escalation Q1)
+6. `.l192` — (see Escalation Q2 — no clear schema mapping found)
+7. `.cta25-section` — CTA band (heading, subhead, CTA button)
+
+**Sanity fields queried (from communitiesPage.ts):**
+`heroHeading`, `heroSubhead`, `heroCta{ label, href, variant }`, `processEyebrow`, `processHeading`, `processSteps[]{ stepNumber, heading, body }`, `handlesEyebrow`, `handlesHeading`, `handlesSubhead`, `handlesItems[]{ heading, body }`, `conditionsEyebrow`, `conditionsHeading`, `conditionsSubhead`, `ctaHeading`, `ctaSubhead`, `ctaCta{ label, href, variant }`, `seo`
+
+**Also queries:** `*[_type == "condition"]{ _id, name, description }` (for conditions section)
+
+**Reused components:** `<HandlesGrid>`, `<CTABand>`, `<ConditionsScroll>` (or inline section for simpler conditions display)
+
+**Tasks:**
+
+- [x] Write `COMMUNITIES_PAGE_QUERY` + `CONDITIONS_COMMUNITIES_QUERY` in queries.ts
+- [x] Add `serviceAreaHeading`, `serviceAreaLede` fields to communitiesPage.ts schema
+- [x] Create `apps/web/src/pages/communities.astro` — 6 sections including tabbed conditions + static SVG map
+- [x] AGENT_qa: PASS (SVG map hex colors advisory-only — static art asset)
+
+---
+
+### Unit 3 — Patients (/patients/)
+
+**File:** `apps/web/src/pages/patients.astro` (create new)
+**Design-source:** `design-source/pages/Patients.html`
+**Design-source sections (in DOM order):**
+
+1. `.ph-hero` — hero with background image, tint overlay, heading, subhead, primary CTA
+2. `.ph-router` — 4-card audience selector grid (eyebrow "Choose", heading "What brings you here?", subhead, 4 cards each with label/tag, heading, body, link href)
+3. `.ph-twoways` — delivery tracks grid (eyebrow "Delivery", heading "Two ways to get started", subhead, 2 full-bleed photo cards each with tag, heading, body, image)
+4. `.belief` — belief band (quote + body) — same BeliefBand component as Homepage
+5. `.ph-l505` — conditions section (eyebrow, heading, subhead + condition cards)
+6. `.ph-cta35` — CTA band with two-column layout (heading, subhead, 2 CTAs side by side)
+
+**Sanity fields queried (from patientsPage.ts):**
+`heroHeading`, `heroSubhead`, `heroPrimaryCta{ label, href, variant }`, `audienceSelectorHeading`, `audienceSelectorCards[]{ label, heading, body, cta{ label, href, variant } }`, `deliveryEyebrow`, `deliveryTracks[]{ label, heading, body, cta, image }`, `beliefQuote`, `beliefBody`, `conditionsEyebrow`, `conditionsHeading`, `conditionsSubhead`, `ctaHeading`, `ctaSubhead`, `ctaCta{ label, href, variant }`, `seo`
+
+**Also queries:** `*[_type == "condition"]{ _id, name, description }` (for conditions section)
+
+**Reused components:** `<BeliefBand>`, `<CTABand>`
+
+**Tasks:**
+
+- [x] Add `heroImage` (imageWithAlt) to patientsPage.ts; add `image` (imageWithAlt) to audienceCard.ts
+- [x] Write `PATIENTS_PAGE_QUERY` + `CONDITIONS_PATIENTS_QUERY` in queries.ts
+- [x] Create `apps/web/src/pages/patients.astro` — 6 sections, full-bleed hero bg image pattern
+- [x] AGENT_qa: PASS
+
+---
+
+### Unit 4 — Providers (/providers/)
+
+**File:** `apps/web/src/pages/providers.astro` (create new)
+**Design-source:** `design-source/pages/Providers.html`
+**Design-source sections (in DOM order):**
+
+1. `.h98` — split photo/panel hero (eyebrow, heading, subhead, primary CTA; no hero image field in schema, see Escalation Q5)
+2. `.section` (l422 layout) — role tracks section (eyebrow `tracksEyebrow`, heading `tracksHeading`, subhead `tracksSubhead`, 2 track cards each with label, heading, body, statusNote, CTA)
+3. `.l374-section` — what BYT handles grid (eyebrow `handlesEyebrow`, heading `handlesHeading`, handles items array)
+4. `.section` (l506 layout) — qualifications list (eyebrow `qualsEyebrow`, heading `qualsHeading`, quals array with scope + body)
+5. `.t37-section` — quote cards / testimonials (no schema field — see Escalation Q6)
+6. `.cta36-section` — CTA band (ctaHeading, ctaSubhead, ctaCta)
+
+**Sanity fields queried (from providersPage.ts):**
+`heroHeading`, `heroSubhead`, `heroPrimaryCta{ label, href, variant }`, `tracksEyebrow`, `tracksHeading`, `tracksSubhead`, `tracks[]{ label, heading, body, statusNote, cta{ label, href, variant } }`, `handlesEyebrow`, `handlesHeading`, `handlesItems[]{ heading, body }`, `qualsEyebrow`, `qualsHeading`, `quals[]{ scope, body }`, `ctaHeading`, `ctaSubhead`, `ctaCta{ label, href, variant }`, `seo`
+
+**Reused components:** `<ProvidersHero>`, `<ProviderTrack>`, `<HandlesGrid>`, `<QualsList>`, `<QuoteCards>`, `<CTABand>`
+
+**Tasks:**
+
+- [x] Add `heroImage` (imageWithAlt) to providersPage.ts schema
+- [x] Write `PROVIDERS_PAGE_QUERY` + `TESTIMONIALS_THERAPIST_QUERY` in queries.ts
+- [x] Create `apps/web/src/pages/providers.astro` — 6 sections; testimonials from global collection filtered by audienceType == "therapist"
+- [x] AGENT_qa: PASS
+
+---
+
+### Unit 5 — About (/about/)
+
+**File:** `apps/web/src/pages/about.astro` (create new)
+**Design-source:** `design-source/pages/About.html`
+**Design-source sections (in DOM order):**
+
+1. `.about-hero` — split two-column hero (heading left, hero image right + subhead)
+2. `.mission-band` — cream quote/mission band with eyebrow, large quote, body
+3. `.story` — two-column story section (eyebrow, heading, rich-text body, founder signature block: name, credential, photo/avatar)
+4. `.values` — principles grid (eyebrow `principlesEyebrow`, heading `principlesHeading`, subhead `principlesSubhead`, principles array: number, heading, body — max 3)
+5. `.approach` — practice pillars section (eyebrow `practiceEyebrow`, heading `practiceHeading`, practicePillars array: number, label, heading, body — max 4)
+6. `.about-cta` — full-bleed background image CTA band (heading, subhead, primary CTA, secondary CTA)
+
+**Sanity fields queried (from aboutPage.ts):**
+`heroHeading`, `heroSubhead`, `missionEyebrow`, `missionQuote`, `missionBody`, `storyEyebrow`, `storyHeading`, `storyBody` (portable text array), `founderName`, `founderCredential`, `founderPhoto{ asset, alt }`, `principlesEyebrow`, `principlesHeading`, `principlesSubhead`, `principles[]{ number, heading, body }`, `practiceEyebrow`, `practiceHeading`, `practicePillars[]{ number, label, heading, body }`, `ctaHeading`, `ctaSubhead`, `ctaPrimary{ label, href, variant }`, `ctaSecondary{ label, href, variant }`, `seo`
+
+**Note:** `storyBody` is a portable text (`array of block`) — requires `@portabletext/astro` or inline block renderer (see Escalation Q7).
+
+**Tasks:**
+
+- [x] Install `astro-portabletext` (note: @portabletext/astro does not exist on npm — correct pkg is astro-portabletext)
+- [x] Add `ctaBackgroundImage` (imageWithAlt) to aboutPage.ts schema
+- [x] Write `ABOUT_PAGE_QUERY` in queries.ts
+- [x] Create `apps/web/src/pages/about.astro` — 6 sections with PortableText for storyBody
+- [x] AGENT_qa: PASS (after fix — .about-cta h2 color: #fff → var(--white))
+- NOTE: About.html also contains .stats-band + .team sections not in brief — pending Igor decision
+
+---
+
+### Unit 6 — Careers (/careers/)
+
+**File:** `apps/web/src/pages/careers.astro` (create new)
+**Design-source:** `design-source/pages/Careers.html`
+**Design-source sections (in DOM order):**
+
+1. `.about-hero.careers-hero` — hero (heading, subhead)
+2. `.jobs` — open positions section (openPositionsIntro text + dynamic list from `jobPosting` document collection)
+3. `.general-app` — "no fit" / general application section (noFitHeading, noFitBody)
+
+**Sanity fields queried (from careersPage.ts):**
+`heroHeading`, `heroSubhead`, `openPositionsIntro`, `noFitHeading`, `noFitBody`, `seo`
+
+**Also queries:** `*[_type == "jobPosting"] | order(publishedAt desc){ _id, title, department, location, type, slug, summary }` (for jobs listing)
+
+**Tasks:**
+
+- [x] Write `CAREERS_PAGE_QUERY` + `JOB_POSTINGS_QUERY` in queries.ts
+- [x] Create `apps/web/src/pages/careers.astro` — 3 sections; empty-state handled gracefully
+- [x] AGENT_qa: PASS
+
+---
+
+### Unit 7 — Contact (/contact/)
+
+**File:** `apps/web/src/pages/contact.astro` (create new)
+**Design-source:** `design-source/pages/Contact.html`
+**Design-source sections (in DOM order):**
+
+1. `.contact-hero` — hero with background image and overlay (heading, subhead; no hero image in schema, see Escalation Q8)
+2. `.contact-form-section` — two-column layout: left side contact info (phone, email, fax from siteSettings), right side Formspree contact form (heroHeading as form heading, hoursDescription, disclaimerCopy, responseCopy)
+
+**Sanity fields queried (from contactPage.ts):**
+`heroHeading`, `heroSubhead`, `hoursDescription`, `disclaimerCopy`, `responseCopy`, `seo`
+
+**siteSettings fields also used:**
+`phone`, `email`, `fax`, `address`
+
+**Note:** Contact form uses Formspree per CLAUDE.md tech stack. Form action URL must come from an env var (`PUBLIC_FORMSPREE_ENDPOINT`) — not hardcoded (see Escalation Q9).
+
+**Tasks:**
+
+- [x] Add `heroImage` (imageWithAlt) to contactPage.ts schema
+- [x] Write `CONTACT_PAGE_QUERY` in queries.ts; add `PUBLIC_FORMSPREE_CONTACT_ID` to .env.example
+- [x] Create `apps/web/src/pages/contact.astro` — 2 sections; siteSettings contact info left, Formspree form right
+- [x] AGENT_qa: PASS (after fix — consent label businessName from siteSettings, not hardcoded)
+
+---
+
+## Escalation Questions
+
+The following ambiguities must be resolved by Igor before AGENT_builder starts the affected unit. Each item is tagged with the unit it blocks.
+
+**Q1 — Communities: l505 section purpose [blocks Unit 2]**
+`design-source/pages/Communities.html` has a 5th section `.l505-section` (line 891) in addition to the process steps (l521) and handles grid (l16). The `communitiesPage` schema has only one `handlesItems` array. Clarify whether `.l505-section` is a second "handles" pass, a conditions section, or something else entirely. If it maps to a different content model, the schema may need a new field.
+
+**Q2 — Communities: l192 section [blocks Unit 2]**
+`.l192` (line 1006) appears in Communities.html but has no direct mapping in `communitiesPage.ts`. Clarify what content this section carries and whether it needs a schema addition or should be omitted.
+
+**Q3 — Patients: hero background image [blocks Unit 3]**
+`.ph-hero` uses a full-bleed background image (`design-source/pages/Patients.html` line 678). `patientsPage.ts` has no `heroImage` field. Clarify: should a `heroImage` field be added to the schema, or should the Patients hero use a static/hardcoded image?
+
+**Q4 — Patients: audience selector card images [blocks Unit 3]**
+The `.ph-router` audience cards in `Patients.html` (lines 701-748) each have an image. `patientsPage.audienceSelectorCards` objects have only `label`, `heading`, `body`, `cta` — no `image` field. Clarify: add `image` to each audience selector card object, or use static images per card?
+
+**Q5 — Providers: hero image [blocks Unit 4]**
+`.h98` in `Providers.html` is a split photo/panel hero. `providersPage.ts` has no `heroImage` field. Clarify: add `heroImage: imageWithAlt` to providersPage schema, or use the existing `ProvidersHero.astro` component with a static image?
+
+**Q6 — Providers: quote cards / testimonials section [blocks Unit 4]**
+`.t37-section` in Providers.html (line 983) shows a testimonial quote grid. `providersPage.ts` has no testimonials field. The design source comment says "Provider testimonial — pending collection." Clarify: should this section pull from the global `testimonial` document collection filtered by type, or should it be skipped/stubbed with placeholder text until testimonials are collected?
+
+**Q7 — About: portable text renderer dependency [blocks Unit 5]**
+`aboutPage.storyBody` is `array of block` (Sanity portable text). Rendering it requires either `@portabletext/astro` (new dependency — architectural decision per CLAUDE.md) or a custom block-to-HTML mapper. Clarify which approach to use. If `@portabletext/astro` is approved, AGENT_builder must log an OBS before installing.
+
+**Q8 — Contact: hero background image [blocks Unit 7]**
+`.contact-hero` in Contact.html uses a background image. `contactPage.ts` has no `heroImage` field. Clarify: add `heroImage: imageWithAlt` to contactPage schema, or use a static hardcoded image for the contact hero background?
+
+**Q9 — Contact: Formspree endpoint [blocks Unit 7]**
+The contact form must submit to Formspree. The form action URL is not yet defined anywhere in the codebase. Clarify: provide the Formspree form ID or full endpoint URL so it can be added to `.env.example` and `.env.local`. Until this is resolved, Unit 7 can be built with a TODO placeholder, but it cannot be verified as fully functional.
+
+---
+
+## Quality Gate Checklist (applied to every unit before marking complete)
+
+- [x] `pnpm --filter web build` passes with no errors
+- [x] `pnpm --filter web check` passes (0 Astro type errors)
+- [x] No hardcoded hex colors in page files (all CSS uses `var(--*)`)
+- [x] No hardcoded phone numbers, email addresses, or business copy outside Sanity queries
+- [x] All Sanity fields listed per unit are queried and rendered (null-guarded where optional)
+- [x] Heading hierarchy valid on every page
+- [x] All `<img>` tags have `alt` attributes
+- [x] All new page files use `BaseLayout.astro`
+- [x] No `console.log` in committed code
+- [x] Page `seo` prop passed to BaseLayout from each page's Sanity query result
+- [x] All 7 routes prerender: /, /communities/, /patients/, /providers/, /about/, /careers/, /contact/
+
+---
+
+## Phase 4 Review
+
+**Status:** COMPLETE (2026-05-01T20:10Z)
+**Branch:** feat/phase-4-static-pages
+
+**What was built:**
+
+- Unit 0: BaseLayout, Nav.astro, Footer.astro, MobileCTABar.astro wired to siteSettings — all hardcoded CTAs, contact info, and copy eliminated
+- Unit 1: index.astro rewritten — 8 sections, 42 fields, condition + testimonial collections
+- Unit 2: communities.astro — 6 sections, tabbed conditions (showOnCommunities filter), static SVG map, 2 new schema fields (serviceAreaHeading, serviceAreaLede)
+- Unit 3: patients.astro — 6 sections; added heroImage to patientsPage + image to audienceCard schema
+- Unit 4: providers.astro — 6 sections; added heroImage to providersPage; therapist testimonials from global collection
+- Unit 5: about.astro — 6 sections; astro-portabletext installed for storyBody; ctaBackgroundImage added to schema
+- Unit 6: careers.astro — 3 sections; job postings from collection; graceful empty-state
+- Unit 7: contact.astro — 2 sections; Formspree via PUBLIC_FORMSPREE_CONTACT_ID env var; contact info from siteSettings
+
+**Schema additions this phase (8 new fields across 4 schemas):**
+
+- patientsPage: heroImage
+- audienceCard: image
+- providersPage: heroImage
+- aboutPage: ctaBackgroundImage
+- contactPage: heroImage
+- communitiesPage: serviceAreaHeading, serviceAreaLede
+
+**Fixes caught by AGENT_qa (3 rounds):**
+
+- Unit 1: hardcoded title/description fallback in index.astro removed; #fff → var(--white) in 4 home components
+- Unit 5: .about-cta h2 color: #fff → var(--white)
+- Unit 7: consent checkbox businessName from siteSettings, not hardcoded literal
+
+**Known gaps (not blocking, pending Igor):**
+
+- About.html has .stats-band + .team sections not in the Phase 4 brief — no schema fields, not rendered
+- OBS-007 correction: installed package is astro-portabletext, not @portabletext/astro (doesn't exist on npm)
+- Sanity Studio deploy requires SANITY_DEPLOY_TOKEN (Administrator) — stored in ~/.profile as $SANITY_DEPLOY_TOKEN

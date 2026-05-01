@@ -18,6 +18,7 @@ export const patientsPage = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
+    defineField({ name: 'heroImage', title: 'Hero Background Image', type: 'imageWithAlt' }),
     defineField({ name: 'heroPrimaryCta', title: 'Hero Primary CTA', type: 'ctaLink' }),
 
     // ── Audience Selector ─────────────────────────────────────────────────
@@ -25,6 +26,11 @@ export const patientsPage = defineType({
       name: 'audienceSelectorHeading',
       title: 'Audience Selector Heading',
       type: 'string',
+    }),
+    defineField({
+      name: 'audienceSelectorSubhead',
+      title: 'Audience Selector Subhead',
+      type: 'text',
     }),
     defineField({
       name: 'audienceSelectorCards',
@@ -48,6 +54,7 @@ export const patientsPage = defineType({
             }),
             defineField({ name: 'body', title: 'Body', type: 'text' }),
             defineField({ name: 'cta', title: 'CTA', type: 'ctaLink' }),
+            defineField({ name: 'image', title: 'Card Image', type: 'imageWithAlt' }),
           ],
           preview: {
             select: { title: 'heading', subtitle: 'label' },
@@ -59,6 +66,8 @@ export const patientsPage = defineType({
 
     // ── Delivery Tracks ───────────────────────────────────────────────────
     defineField({ name: 'deliveryEyebrow', title: 'Delivery Eyebrow', type: 'string' }),
+    defineField({ name: 'deliveryHeading', title: 'Delivery Heading', type: 'string' }),
+    defineField({ name: 'deliverySubhead', title: 'Delivery Subhead', type: 'text' }),
     defineField({
       name: 'deliveryTracks',
       title: 'Delivery Tracks',

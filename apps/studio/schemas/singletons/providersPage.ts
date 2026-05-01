@@ -19,6 +19,7 @@ export const providersPage = defineType({
     }),
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
     defineField({ name: 'heroPrimaryCta', title: 'Hero Primary CTA', type: 'ctaLink' }),
+    defineField({ name: 'heroImage', title: 'Hero Image', type: 'imageWithAlt' }),
 
     // ── Tracks ────────────────────────────────────────────────────────────
     defineField({ name: 'tracksEyebrow', title: 'Tracks Eyebrow', type: 'string' }),

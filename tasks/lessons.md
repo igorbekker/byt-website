@@ -35,3 +35,21 @@ After ANY correction from Igor, add an entry below. Do NOT fabricate "seed" less
 - Never approve your own decisions. Only Igor approves.
 
 **Related:** First CC session, feat/phase-1-bootstrap branch, PR #1
+
+---
+
+## 2026-05-01 — Wrong npm package name for Portable Text renderer
+
+**Context:** Phase 4 Unit 5 — About page, storyBody Portable Text field
+**What went wrong:** OBS-007 and the builder brief both referenced `@portabletext/astro` as the package to install. This package does not exist on npm. The correct package is `astro-portabletext`.
+
+**Rule for next time:** When specifying Sanity ecosystem npm packages, use `astro-portabletext` for Portable Text rendering in Astro projects, not `@portabletext/astro`.
+
+---
+
+## 2026-05-01 — `source ~/.bashrc` does not set env vars in non-interactive shells
+
+**Context:** Phase 3 — Sanity auth token and deploy token usage
+**What went wrong:** Ran `source ~/.bashrc && SANITY_AUTH_TOKEN=$SANITY_AUTH_TOKEN npx sanity deploy` expecting the token to be set. `~/.bashrc` has `case $- in *i*) ;; *) return;; esac` at the top, which causes it to exit immediately in non-interactive shells (like the Bash tool). The env vars at the bottom of `.bashrc` were never exported.
+
+**Rule for next time:** Always use `source ~/.profile` (not `source ~/.bashrc`) when running commands in the Bash tool. `~/.profile` exports vars at the top level with no interactive check. Verify with `echo ${#VAR_NAME}` before passing a token to a command.

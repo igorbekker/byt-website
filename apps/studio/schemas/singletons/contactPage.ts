@@ -17,6 +17,7 @@ export const contactPage = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
+    defineField({ name: 'heroImage', title: 'Hero Image', type: 'imageWithAlt' }),
     defineField({ name: 'hoursDescription', title: 'Hours Description', type: 'text' }),
     defineField({ name: 'disclaimerCopy', title: 'Disclaimer Copy', type: 'text' }),
     defineField({ name: 'responseCopy', title: 'Response Copy', type: 'text' }),

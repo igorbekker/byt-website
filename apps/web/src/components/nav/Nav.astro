@@ -4,6 +4,15 @@
  * Context: Rendered in BaseLayout at top of every page
  * Source: design-source/partials/nav.html, design-source/styles/base.css (.nav, .nav-inner, .nav-links, .nav-actions, .nav-cta, .nav-cta-secondary, .nav-hamburger, .mobile-menu, .mobile-menu-panel)
  */
+
+interface Props {
+  navCtaLabel: string;
+  navCtaSecondaryLabel: string;
+  bookingUrl: string;
+  referralUrl: string;
+}
+
+const { navCtaLabel, navCtaSecondaryLabel, bookingUrl, referralUrl } = Astro.props;
 ---
 
 <nav class="nav">
@@ -18,8 +27,8 @@
       <a href="/about/">About</a>
     </div>
     <div class="nav-actions">
-      <a href="/individual-therapy/" class="nav-cta">Book a Session</a>
-      <a href="/referral/" class="nav-cta-secondary">Refer a Resident</a>
+      <a href={bookingUrl} class="nav-cta">{navCtaLabel}</a>
+      <a href={referralUrl} class="nav-cta-secondary">{navCtaSecondaryLabel}</a>
     </div>
     <button class="nav-hamburger" aria-label="Open menu" id="navHamburger">
       <svg
@@ -65,8 +74,8 @@
     <a href="/providers/" class="mm-link">For Therapists</a>
     <a href="/about/" class="mm-link">About</a>
     <div class="mobile-menu-actions">
-      <a href="/individual-therapy/" class="btn btn-coral">Book a Session</a>
-      <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
+      <a href={bookingUrl} class="btn btn-coral">{navCtaLabel}</a>
+      <a href={referralUrl} class="btn btn-outline-ink">{navCtaSecondaryLabel}</a>
     </div>
   </div>
 </div>

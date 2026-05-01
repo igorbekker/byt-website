@@ -4,34 +4,63 @@
  * Context: Block 8 on Homepage — navy-deep background with blurred photo and centered content
  * Source: design-source/pages/Homepage.html (.provider, .provider-bg, .provider-overlay, .provider-inner, .provider-tags, .provider-actions)
  */
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  image?: ImageWithAlt;
+  primaryCta?: CtaLink;
+  secondaryCta?: CtaLink;
+}
+
+const { eyebrow, heading, body, image, primaryCta, secondaryCta } = Astro.props;
+
+const primaryVariant = primaryCta?.variant ?? 'btn-coral';
+const secondaryVariant = secondaryCta?.variant ?? 'btn-outline-white';
+
+const bgStyle = image?.asset?.url ? `background-image:url('${image.asset.url}');` : '';
 ---
 
 <section class="provider">
-  <div
-    class="provider-bg"
-    style="background-image:url('https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=1600&q=80&auto=format&fit=crop');"
-  >
-  </div>
+  <div class="provider-bg" style={bgStyle}></div>
   <div class="provider-overlay"></div>
   <div class="provider-inner fade-up">
-    <p class="eyebrow" style="margin-bottom:1rem;color:rgba(255,255,255,.75)">Join the Team</p>
-    <h2>Are You a Licensed Therapist in Florida?</h2>
-    <p>
-      Facility-based positions in Southeast Florida and teletherapy positions statewide. Transparent
-      revenue split from day one. We source the patients &mdash; you deliver the clinical care.
-    </p>
-    <div class="provider-tags">
-      <span class="provider-tag">Psychologists</span>
-      <span class="provider-tag">LCSWs</span>
-      <span class="provider-tag">LMHCs</span>
-      <span class="provider-tag">LPCs</span>
-      <span class="provider-tag">LMFTs</span>
-      <span class="provider-tag">Facility-based</span>
-      <span class="provider-tag">Teletherapy</span>
-    </div>
+    {
+      eyebrow && (
+        <p class="eyebrow" style="margin-bottom:1rem;color:rgba(255,255,255,.75)">
+          {eyebrow}
+        </p>
+      )
+    }
+    {heading && <h2>{heading}</h2>}
+    {body && <p>{body}</p>}
     <div class="provider-actions">
-      <a href="/providers/" class="btn btn-coral">See Open Positions &rarr;</a>
-      <a href="/providers/" class="btn btn-outline-white">Learn More</a>
+      {
+        primaryCta?.label && primaryCta.href && (
+          <a href={primaryCta.href} class={`btn ${primaryVariant}`}>
+            {primaryCta.label}
+          </a>
+        )
+      }
+      {
+        secondaryCta?.label && secondaryCta.href && (
+          <a href={secondaryCta.href} class={`btn ${secondaryVariant}`}>
+            {secondaryCta.label}
+          </a>
+        )
+      }
     </div>
   </div>
 </section>
@@ -72,7 +101,7 @@
   }
 
   .provider h2 {
-    color: #fff;
+    color: var(--white);
     margin-bottom: 1rem;
     font-size: clamp(2rem, 3.5vw, 2.8rem);
     letter-spacing: -0.02em;
@@ -83,25 +112,6 @@
     line-height: 1.65;
     margin-bottom: 2rem;
     font-size: 17px;
-  }
-
-  .provider-tags {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 2.25rem;
-  }
-
-  .provider-tag {
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    padding: 0.45rem 1rem;
-    border-radius: var(--r-pill);
-    font-size: 13px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    letter-spacing: 0.01em;
   }
 
   .provider-actions {

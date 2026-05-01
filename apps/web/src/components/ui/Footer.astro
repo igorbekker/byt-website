@@ -4,6 +4,31 @@
  * Context: Rendered in BaseLayout at bottom of every page
  * Source: design-source/partials/footer.html, design-source/styles/base.css (.footer, .footer-grid, .footer-col, .footer-links, .footer-bottom, .footer-legal, .social-links, .social-link)
  */
+
+interface Address {
+  street?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
+interface Props {
+  phone: string;
+  email: string;
+  fax: string;
+  address: Address;
+  footerTagline: string;
+  copyrightEntity: string;
+  newsletterHeading: string;
+  newsletterBody: string;
+}
+
+const { phone, email, address, footerTagline, copyrightEntity, newsletterHeading, newsletterBody } =
+  Astro.props;
+
+const currentYear = new Date().getFullYear();
+const cityState = [address?.city, address?.state].filter(Boolean).join(', ');
+const phoneDigits = phone.replace(/\D/g, '');
 ---
 
 <footer class="footer">
@@ -13,14 +38,23 @@
         <a href="/" class="footer-logo" aria-label="Better You Therapy">
           <img src="/assets/logo-white.png" alt="Better You Therapy" />
         </a>
-        <p class="footer-tagline">
-          Licensed mental health care placed on-site at assisted living, skilled nursing, and
-          continuing care facilities across Southeast Florida. Teletherapy statewide.
-        </p>
+        {footerTagline && <p class="footer-tagline">{footerTagline}</p>}
         <div class="footer-contact">
-          <div>Boca Raton, FL</div>
-          <div><a href="tel:7549990011">754-999-0011</a></div>
-          <div><a href="mailto:hello@getbetteryou.com">hello@getbetteryou.com</a></div>
+          {cityState && <div>{cityState}</div>}
+          {
+            phone && (
+              <div>
+                <a href={`tel:${phoneDigits}`}>{phone}</a>
+              </div>
+            )
+          }
+          {
+            email && (
+              <div>
+                <a href={`mailto:${email}`}>{email}</a>
+              </div>
+            )
+          }
         </div>
         <div class="social-links">
           <a href="#" class="social-link" aria-label="Facebook">
@@ -72,15 +106,19 @@
           <li><a href="/faq/">FAQ</a></li>
           <li><a href="/contact/">Contact</a></li>
           <li><a href="/referral/">Refer a Resident</a></li>
-          <li><a href="tel:7549990011">754-999-0011</a></li>
+          {
+            phone && (
+              <li>
+                <a href={`tel:${phoneDigits}`}>{phone}</a>
+              </li>
+            )
+          }
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4>Stay in touch</h4>
-        <p class="footer-newsletter-pitch">
-          One thoughtful email a month — practical mental health resources, no spam.
-        </p>
+        <h4>{newsletterHeading}</h4>
+        {newsletterBody && <p class="footer-newsletter-pitch">{newsletterBody}</p>}
         <form class="footer-newsletter-form" id="footerNewsletterForm" novalidate>
           <label class="sr-only" for="footer-newsletter-email">Email address</label>
           <input
@@ -98,7 +136,7 @@
     <div class="footer-divider"></div>
 
     <div class="footer-bottom">
-      <span>&copy; 2026 Better You Therapy LLC &middot; getbetteryou.com</span>
+      <span>&copy; {currentYear} {copyrightEntity}</span>
       <div class="footer-legal">
         <a href="/privacy/">Privacy Policy</a>
         <a href="/terms/">Terms of Service</a>

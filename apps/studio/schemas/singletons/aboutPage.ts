@@ -122,6 +122,11 @@ export const aboutPage = defineType({
     defineField({ name: 'ctaSubhead', title: 'CTA Subhead', type: 'text' }),
     defineField({ name: 'ctaPrimary', title: 'CTA Primary', type: 'ctaLink' }),
     defineField({ name: 'ctaSecondary', title: 'CTA Secondary', type: 'ctaLink' }),
+    defineField({
+      name: 'ctaBackgroundImage',
+      title: 'CTA Background Image',
+      type: 'imageWithAlt',
+    }),
 
     // ── SEO ───────────────────────────────────────────────────────────────
     defineField({ name: 'seo', title: 'SEO', type: 'seoFields' }),

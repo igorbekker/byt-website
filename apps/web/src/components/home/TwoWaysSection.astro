@@ -4,56 +4,79 @@
  * Context: Block 4 on Homepage — navy-deep background with photo overlay cards
  * Source: design-source/pages/Homepage.html (.twoways, .twoways-cards, .twoways-card, .twoways-card-bg, .twoways-card-overlay, .twoways-card-content, .twoways-card-label)
  */
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface ServiceTrack {
+  label: string;
+  heading: string;
+  body?: string;
+  image?: ImageWithAlt;
+  cta?: CtaLink;
+}
+
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  subhead?: string;
+  tracks?: ServiceTrack[];
+}
+
+const { eyebrow, heading, subhead, tracks } = Astro.props;
 ---
 
 <section class="twoways">
   <div style="max-width:var(--max-w);margin:0 auto;">
     <div class="twoways-header fade-up">
-      <p class="eyebrow" style="margin-bottom:.75rem">Two Ways We Work</p>
-      <h2>Two Ways to Get Mental Health Care Through Better You Therapy</h2>
-      <p>
-        Whether you need a therapist to come to you, or want to connect from wherever you are
-        &mdash; we have a path for you.
-      </p>
+      {
+        eyebrow && (
+          <p class="eyebrow" style="margin-bottom:.75rem">
+            {eyebrow}
+          </p>
+        )
+      }
+      {heading && <h2>{heading}</h2>}
+      {subhead && <p>{subhead}</p>}
     </div>
 
-    <div class="twoways-cards fade-up">
-      <div class="twoways-card twoways-card-lead">
-        <div
-          class="twoways-card-bg"
-          style="background-image:url('https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=85&auto=format&fit=crop');background-color:var(--navy-deep);"
-        >
+    {
+      tracks && tracks.length > 0 && (
+        <div class="twoways-cards fade-up">
+          {tracks.map((track, idx) => {
+            const ctaVariant =
+              track.cta?.variant ?? (idx === 0 ? 'btn-white' : 'btn-white-outline');
+            const bgStyle = track.image?.asset?.url
+              ? `background-image:url('${track.image.asset.url}');background-color:var(--navy-deep);`
+              : 'background-color:var(--navy-deep);';
+            return (
+              <div class={`twoways-card${idx === 0 ? ' twoways-card-lead' : ''}`}>
+                <div class="twoways-card-bg" style={bgStyle} />
+                <div class="twoways-card-overlay" />
+                <div class="twoways-card-content">
+                  {track.label && <div class="twoways-card-label">{track.label}</div>}
+                  {track.heading && <h3>{track.heading}</h3>}
+                  {track.body && <p>{track.body}</p>}
+                  {track.cta?.label && track.cta.href && (
+                    <a href={track.cta.href} class={`btn ${ctaVariant}`}>
+                      {track.cta.label}
+                    </a>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <div class="twoways-card-overlay"></div>
-        <div class="twoways-card-content">
-          <div class="twoways-card-label">Teletherapy &mdash; Anywhere in Florida</div>
-          <h3>Therapy available this week, from wherever you are</h3>
-          <p>
-            Licensed therapists available via secure video. Adults, couples, and families. Cash-pay
-            or insurance. No waitlist.
-          </p>
-          <a href="/individual-therapy/" class="btn btn-white">Book a Session &rarr;</a>
-        </div>
-      </div>
-
-      <div class="twoways-card">
-        <div
-          class="twoways-card-bg"
-          style="background-image:url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=900&q=85&auto=format&fit=crop');background-color:var(--navy-deep);"
-        >
-        </div>
-        <div class="twoways-card-overlay"></div>
-        <div class="twoways-card-content">
-          <div class="twoways-card-label">In-Facility &mdash; Southeast Florida</div>
-          <h3>On-site mental health care at your facility</h3>
-          <p>
-            Licensed therapists placed inside assisted living, skilled nursing, and continuing care
-            facilities. Medicare-billed. Zero cost to the facility or resident.
-          </p>
-          <a href="/communities/" class="btn btn-white-outline">Refer a Resident &rarr;</a>
-        </div>
-      </div>
-    </div>
+      )
+    }
   </div>
 </section>
 
@@ -71,7 +94,7 @@
     color: rgba(255, 255, 255, 0.65);
   }
   .twoways-header h2 {
-    color: #fff;
+    color: var(--white);
     max-width: 900px;
     margin: 0 auto 1rem;
     font-size: clamp(2rem, 3.5vw, 2.8rem);
@@ -129,7 +152,7 @@
     position: absolute;
     inset: 0;
     padding: 2.25rem 2rem;
-    color: #fff;
+    color: var(--white);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -150,7 +173,7 @@
   }
 
   .twoways-card h3 {
-    color: #fff;
+    color: var(--white);
     font-size: 1.75rem;
     margin-bottom: 0.75rem;
     line-height: 1.15;

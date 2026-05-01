@@ -1,0 +1,1029 @@
+---
+/**
+ * Purpose: Patients hub page — hero, audience selector, delivery tracks, belief band, conditions, CTA
+ * Context: Route /patients/
+ * Source: design-source/pages/Patients.html
+ * Schema: apps/studio/schemas/singletons/patientsPage.ts
+ */
+
+import { sanityClient } from 'sanity:client';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { PATIENTS_PAGE_QUERY, CONDITIONS_PATIENTS_QUERY } from '../lib/queries';
+
+interface CtaLink {
+  label: string;
+  href: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface SeoFields {
+  metaTitle?: string;
+  metaDescription?: string;
+}
+
+interface AudienceCard {
+  label?: string;
+  heading?: string;
+  body?: string;
+  cta?: CtaLink;
+  image?: ImageWithAlt;
+}
+
+interface DeliveryTrack {
+  label?: string;
+  heading?: string;
+  body?: string;
+  image?: ImageWithAlt;
+  cta?: CtaLink;
+}
+
+interface PatientsPage {
+  heroHeading?: string;
+  heroSubhead?: string;
+  heroImage?: ImageWithAlt;
+  heroPrimaryCta?: CtaLink;
+  audienceSelectorHeading?: string;
+  audienceSelectorSubhead?: string;
+  audienceSelectorCards?: AudienceCard[];
+  deliveryEyebrow?: string;
+  deliveryHeading?: string;
+  deliverySubhead?: string;
+  deliveryTracks?: DeliveryTrack[];
+  beliefQuote?: string;
+  beliefBody?: string;
+  conditionsEyebrow?: string;
+  conditionsHeading?: string;
+  conditionsSubhead?: string;
+  ctaHeading?: string;
+  ctaSubhead?: string;
+  ctaCta?: CtaLink;
+  seo?: SeoFields;
+}
+
+interface Condition {
+  _id: string;
+  tagline: string;
+  heading: string;
+  body?: string;
+}
+
+const [page, conditions] = await Promise.all([
+  sanityClient.fetch<PatientsPage>(PATIENTS_PAGE_QUERY),
+  sanityClient.fetch<Condition[]>(CONDITIONS_PATIENTS_QUERY),
+]);
+---
+
+<BaseLayout seo={page?.seo ?? null}>
+  <!-- ══════════════════════ Hero (.ph-hero) ══════════════════════ -->
+  <section class="ph-hero">
+    {
+      page?.heroImage?.asset?.url ? (
+        <div class="ph-hero-bg">
+          <img src={page.heroImage.asset.url} alt={page.heroImage.alt ?? ''} />
+        </div>
+      ) : (
+        <div class="ph-hero-bg" aria-hidden="true" />
+      )
+    }
+    <div class="ph-hero-tint" aria-hidden="true"></div>
+    <div class="ph-hero-content">
+      {page?.heroHeading && <h1>{page.heroHeading}</h1>}
+      {page?.heroSubhead && <p>{page.heroSubhead}</p>}
+      {
+        page?.heroPrimaryCta && (
+          <div class="ph-hero-cta">
+            <a
+              href={page.heroPrimaryCta.href}
+              class={`btn btn-${page.heroPrimaryCta.variant ?? 'coral'}`}
+            >
+              {page.heroPrimaryCta.label}
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Audience Selector (.ph-router) ══════════════════════ -->
+  {
+    page?.audienceSelectorCards && page.audienceSelectorCards.length > 0 && (
+      <section class="ph-router">
+        <div class="ph-router-head">
+          <p class="eyebrow">Choose</p>
+          {page?.audienceSelectorHeading && <h2>{page.audienceSelectorHeading}</h2>}
+          {page?.audienceSelectorSubhead && (
+            <p class="ph-router-sub">{page.audienceSelectorSubhead}</p>
+          )}
+        </div>
+        <div class="ph-router-grid">
+          {page.audienceSelectorCards.map((card) => (
+            <div class="ph-card">
+              <div class="ph-card-body">
+                {card.label && <p class="ph-card-tag">{card.label}</p>}
+                {card.heading && <h3>{card.heading}</h3>}
+                {card.body && <p>{card.body}</p>}
+                {card.cta && (
+                  <a href={card.cta.href} class="ph-card-link">
+                    {card.cta.label}{' '}
+                    <span class="arrow" aria-hidden="true">
+                      ›
+                    </span>
+                  </a>
+                )}
+              </div>
+              {card.image?.asset?.url ? (
+                <div class="ph-card-img">
+                  <img src={card.image.asset.url} alt={card.image.alt ?? ''} loading="lazy" />
+                </div>
+              ) : (
+                <div class="ph-card-img img-ph img-ph-cream" aria-hidden="true" />
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ Delivery Tracks (.ph-twoways) ══════════════════════ -->
+  {
+    page?.deliveryTracks && page.deliveryTracks.length > 0 && (
+      <section class="ph-twoways">
+        <div class="ph-twoways-head">
+          {page?.deliveryEyebrow && <p class="eyebrow">{page.deliveryEyebrow}</p>}
+          {page?.deliveryHeading && <h2>{page.deliveryHeading}</h2>}
+          {page?.deliverySubhead && <p class="ph-twoways-sub">{page.deliverySubhead}</p>}
+        </div>
+        <div class="ph-twoways-grid">
+          {page.deliveryTracks.map((track) => (
+            <div class="ph-way">
+              <div class="ph-way-bg">
+                {track.image?.asset?.url && (
+                  <img src={track.image.asset.url} alt={track.image.alt ?? ''} loading="lazy" />
+                )}
+                <div class="ph-way-tint" aria-hidden="true" />
+              </div>
+              <div class="ph-way-foot">
+                {track.label && <p class="ph-way-tag">{track.label}</p>}
+                {track.heading && <h3>{track.heading}</h3>}
+                {(track.body || track.cta) && (
+                  <div class="ph-way-extra">
+                    {track.body && <p>{track.body}</p>}
+                    {track.cta && (
+                      <a href={track.cta.href} class="ph-way-link">
+                        {track.cta.label}{' '}
+                        <span class="arrow" aria-hidden="true">
+                          ›
+                        </span>
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ Belief Band (.belief) ══════════════════════ -->
+  {
+    (page?.beliefQuote || page?.beliefBody) && (
+      <section class="belief">
+        <div class="belief-inner">
+          <div class="belief-rule" aria-hidden="true" />
+          {page?.beliefQuote && <h2>"{page.beliefQuote}"</h2>}
+          {page?.beliefBody && <p>{page.beliefBody}</p>}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ Conditions Tabs (.ph-l505) ══════════════════════ -->
+  {
+    conditions && conditions.length > 0 && (
+      <section class="ph-l505">
+        <div class="l505-head">
+          {page?.conditionsEyebrow && <p class="eyebrow">{page.conditionsEyebrow}</p>}
+          {page?.conditionsHeading && <h2>{page.conditionsHeading}</h2>}
+          {page?.conditionsSubhead && <p class="text-md">{page.conditionsSubhead}</p>}
+        </div>
+
+        <div class="l505-tabs" id="l505">
+          <div class="l505-list" role="tablist">
+            {conditions.map((cond, idx) => (
+              <button
+                class={`l505-trigger${idx === 0 ? ' active' : ''}`}
+                data-tab={`l505-tab-${cond._id}`}
+                role="tab"
+                aria-selected={idx === 0 ? 'true' : 'false'}
+                aria-controls={`panel-${cond._id}`}
+                id={`tab-${cond._id}`}
+              >
+                {cond.tagline}
+              </button>
+            ))}
+          </div>
+
+          {conditions.map((cond, idx) => (
+            <div
+              class={`l505-panel${idx === 0 ? ' active' : ''}`}
+              id={`panel-${cond._id}`}
+              role="tabpanel"
+              aria-labelledby={`tab-${cond._id}`}
+            >
+              <div class="l505-panel-inner">
+                <div class="l505-icon" aria-hidden="true">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <h3>{cond.heading}</h3>
+                {cond.body && <p>{cond.body}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══════════════════════ CTA Band (.ph-cta35) ══════════════════════ -->
+  {
+    (page?.ctaHeading || page?.ctaCta) && (
+      <section class="ph-cta35">
+        <div class="ph-cta35-grid">
+          <div class="ph-cta35-col">
+            <div class="ph-cta35-mark" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" />
+                <path
+                  d="M16 24l6 6 12-14"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            {page?.ctaHeading && <h2>{page.ctaHeading}</h2>}
+            {page?.ctaSubhead && <p>{page.ctaSubhead}</p>}
+            {page?.ctaCta && (
+              <div class="ph-cta35-actions">
+                <a href={page.ctaCta.href} class={`btn btn-${page.ctaCta.variant ?? 'coral'}`}>
+                  {page.ctaCta.label}
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  /* ── Hero (.ph-hero) ─────────────────────────────────────────── */
+  .ph-hero {
+    position: relative;
+    min-height: 640px;
+    padding: 120px var(--pad-x);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .ph-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--navy-deep);
+  }
+
+  .ph-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ph-hero-tint {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 45, 82, 0.55) 0%, rgba(10, 45, 82, 0.78) 100%);
+    z-index: 1;
+  }
+
+  .ph-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    color: var(--white);
+  }
+
+  .ph-hero-content h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+
+  .ph-hero-content > p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 680px;
+    margin: 0 auto 2.25rem;
+  }
+
+  .ph-hero-cta {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ── Audience Selector (.ph-router) ──────────────────────────── */
+  .ph-router {
+    background: var(--white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .ph-router-head {
+    max-width: var(--max-w);
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .ph-router-head .eyebrow {
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .ph-router-head h2 {
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .ph-router-sub {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .ph-router-grid {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 1024px) {
+    .ph-router-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ph-router-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ph-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    transition:
+      border-color var(--t-hover),
+      transform var(--t-hover),
+      box-shadow var(--t-hover);
+  }
+
+  .ph-card:hover {
+    border-color: var(--coral);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .ph-card-body {
+    padding: 2rem 1.75rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .ph-card-tag {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+
+  .ph-card h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+    color: var(--navy-deep);
+  }
+
+  .ph-card-body > p {
+    color: var(--slate);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .ph-card-link {
+    margin-top: auto;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+  }
+
+  .ph-card-link .arrow {
+    transition: transform var(--t-hover);
+  }
+
+  .ph-card:hover .ph-card-link .arrow {
+    transform: translateX(4px);
+  }
+
+  .ph-card-img {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--off-white);
+  }
+
+  .ph-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .ph-card:hover .ph-card-img img {
+    transform: scale(1.05);
+  }
+
+  .ph-card-img.img-ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ph-card-img.img-ph-cream {
+    background: var(--cream);
+  }
+
+  /* ── Delivery Tracks (.ph-twoways) ───────────────────────────── */
+  .ph-twoways {
+    background: var(--off-white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .ph-twoways-head {
+    max-width: var(--max-w);
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .ph-twoways-head .eyebrow {
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .ph-twoways-head h2 {
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .ph-twoways-sub {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .ph-twoways-grid {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .ph-twoways-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ph-way {
+    position: relative;
+    min-height: 520px;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    isolation: isolate;
+  }
+
+  .ph-way-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--navy-deep);
+  }
+
+  .ph-way-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .ph-way-tint {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 45, 82, 0.15) 0%, rgba(10, 45, 82, 0.92) 100%);
+  }
+
+  .ph-way:hover .ph-way-bg img {
+    transform: scale(1.04);
+  }
+
+  .ph-way-foot {
+    padding: 2.25rem 2rem;
+    color: var(--white);
+    position: relative;
+    z-index: 1;
+  }
+
+  .ph-way-tag {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+    margin-bottom: 0.75rem;
+  }
+
+  .ph-way h3 {
+    font-size: 1.75rem;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .ph-way-extra {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-height 0.35s ease,
+      opacity 0.25s ease;
+  }
+
+  .ph-way:hover .ph-way-extra {
+    max-height: 240px;
+    opacity: 1;
+  }
+
+  .ph-way-extra > p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    max-width: 90%;
+  }
+
+  .ph-way-link {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+  }
+
+  .ph-way-link .arrow {
+    transition: transform var(--t-hover);
+  }
+
+  .ph-way:hover .ph-way-link .arrow {
+    transform: translateX(4px);
+  }
+
+  /* ── Belief Band (.belief) ───────────────────────────────────── */
+  .belief {
+    background: var(--cream);
+    padding: var(--pad-s) var(--pad-x);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .belief-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .belief-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--coral);
+    margin: 0 auto 1.75rem;
+    border-radius: 2px;
+  }
+
+  .belief h2 {
+    color: var(--navy-deep);
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .belief p {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 400;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* ── Conditions Tabs (.ph-l505) ──────────────────────────────── */
+  .ph-l505 {
+    background: var(--off-white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .l505-head {
+    max-width: var(--max-w);
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .l505-head h2 {
+    margin-bottom: 1.25rem;
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .l505-head .text-md {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .l505-tabs {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    background: var(--white);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  @media (max-width: 768px) {
+    .l505-tabs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .l505-list {
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 768px) {
+    .l505-list {
+      border-right: 0;
+      border-bottom: 1px solid var(--border);
+      flex-direction: row;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .l505-list::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .l505-trigger {
+    text-align: left;
+    padding: 1.25rem 1.75rem;
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: var(--mist);
+    cursor: pointer;
+    transition:
+      background-color var(--t-hover),
+      color var(--t-hover);
+    position: relative;
+  }
+
+  .l505-trigger:last-child {
+    border-bottom: 0;
+  }
+
+  .l505-trigger.active {
+    background: var(--off-white);
+    color: var(--navy-deep);
+  }
+
+  .l505-trigger.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--coral);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .l505-trigger:hover:not(.active) {
+    color: var(--navy-deep);
+    background: var(--off-white);
+  }
+
+  @media (max-width: 768px) {
+    .l505-trigger {
+      white-space: nowrap;
+      border-bottom: 0;
+      border-right: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      font-size: 14px;
+    }
+
+    .l505-trigger.active::before {
+      left: 50%;
+      top: auto;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 3px;
+      border-radius: 2px 2px 0 0;
+    }
+  }
+
+  .l505-panel {
+    display: none;
+    animation: l505fade 0.25s ease;
+  }
+
+  .l505-panel.active {
+    display: block;
+  }
+
+  @keyframes l505fade {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .l505-panel-inner {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .l505-panel-inner {
+      padding: 2rem 1.5rem;
+    }
+  }
+
+  .l505-icon {
+    margin-bottom: 1.5rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--coral-light);
+    color: var(--coral);
+    border-radius: 12px;
+  }
+
+  .l505-panel h3 {
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.6rem, 2.4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--navy-deep);
+  }
+
+  .l505-panel p {
+    color: var(--slate);
+    line-height: 1.65;
+    font-size: 16px;
+  }
+
+  /* ── CTA Band (.ph-cta35) ────────────────────────────────────── */
+  .ph-cta35 {
+    background: var(--white);
+    padding: var(--pad-s) var(--pad-x);
+  }
+
+  .ph-cta35-grid {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .ph-cta35-col {
+    text-align: center;
+  }
+
+  .ph-cta35-mark {
+    color: var(--coral);
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .ph-cta35-mark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .ph-cta35-col h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .ph-cta35-col > p {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.65;
+    margin-bottom: 1.75rem;
+  }
+
+  .ph-cta35-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* ── Shared button styles ────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 14px 24px;
+    border-radius: var(--r-btn);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+      background-color var(--t-hover),
+      border-color var(--t-hover),
+      color var(--t-hover);
+    border: 1.5px solid transparent;
+    white-space: nowrap;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .btn-coral {
+    background: var(--coral);
+    color: var(--white);
+    border-color: var(--coral);
+  }
+
+  .btn-coral:hover {
+    background: var(--coral-hover);
+    border-color: var(--coral-hover);
+  }
+
+  .btn-primary {
+    background: var(--coral);
+    color: var(--white);
+    border-color: var(--coral);
+  }
+
+  .btn-primary:hover {
+    background: var(--coral-hover);
+    border-color: var(--coral-hover);
+  }
+
+  .btn-outline-white {
+    background: transparent;
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .btn-outline-white:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--white);
+  }
+</style>
+
+<script>
+  const tabContainer = document.getElementById('l505');
+  if (tabContainer) {
+    const triggers = tabContainer.querySelectorAll<HTMLButtonElement>('.l505-trigger');
+    const panels = tabContainer.querySelectorAll<HTMLElement>('.l505-panel');
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const panelId = trigger.getAttribute('aria-controls');
+        if (!panelId) return;
+
+        triggers.forEach((t) => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        panels.forEach((p) => {
+          p.classList.remove('active');
+        });
+
+        trigger.classList.add('active');
+        trigger.setAttribute('aria-selected', 'true');
+
+        const targetPanel = document.getElementById(panelId);
+        if (targetPanel) {
+          targetPanel.classList.add('active');
+        }
+      });
+    });
+  }
+</script>
