@@ -1,27 +1,308 @@
-/* Design tokens — values populated from design-source/styles/ in Phase 2 */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
-:root {
-  /* Colors */
-  /* --color-primary: ; */
-  /* --color-secondary: ; */
-  /* --color-background: ; */
-  /* --color-text: ; */
+/* ════════════════════════════════════════════════
+   BETTER YOU THERAPY — Global CSS
+   Phase 2: Design Source Ingestion
+   Source: design-source/styles/base.css + Homepage.html
+════════════════════════════════════════════════ */
 
-  /* Typography */
-  /* --font-heading: ; */
-  /* --font-body: ; */
-
-  /* Spacing */
-  /* --spacing-unit: ; */
-}
-
+/* ── CSS RESET ── */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
-
-body {
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+ul,
+ol,
+figure,
+blockquote {
   margin: 0;
-  font-family: var(--font-body, system-ui, sans-serif);
+  padding: 0;
+}
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── GLOBAL TOKENS ── */
+:root {
+  /* Colors */
+  --navy: #104378;
+  --navy-deep: #0a2d52;
+  --navy-footer: #2d2d52;
+  --white: #ffffff;
+  --off-white: #f5f7fa; /* replaces #f1f4f7, #f8fafb, old #f5f7fa */
+  --cream: #fffcf0;
+  --slate: #5a7194;
+  --mist: #8fa3bf;
+  --border: #e4eaf0;
+  --coral: #e05555;
+  --coral-hover: #c94444;
+  --coral-light: #fce8e8;
+  --sage: #9caf88;
+  --sage-hover: #7a9468;
+  --sage-light: #e8efe3;
+  --color-spec-blue: #2491eb;
+  --color-spec-blue-hover: #1a7bcc;
+  --color-teal: #4fb7a6;
+  --color-prose-text: #2d3a4f;
+
+  /* Typography */
+  --font-body: 'Montserrat', system-ui, sans-serif;
+  --font-heading: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+  --font-size-base: 15px;
+  --line-height-base: 1.55;
+  --line-height-heading: 1.1;
+
+  /* Border Radius — no --r-lg, use --r-card everywhere */
+  --r-btn: 6px;
+  --r-card: 12px;
+  --r-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(16, 67, 120, 0.04);
+  --shadow-md: 0 4px 12px rgba(16, 67, 120, 0.08);
+  --shadow-lg: 0 8px 24px rgba(16, 67, 120, 0.1);
+
+  /* Motion */
+  --t-hover: 150ms ease;
+
+  /* Layout / Spacing */
+  --max-w: 1200px;
+  --pad-x: 64px;
+  --pad-s: 80px;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --pad-x: 32px;
+    --pad-s: 64px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --pad-x: 20px;
+    --pad-s: 56px;
+  }
+}
+
+/* ── BASE ELEMENT STYLES ── */
+body {
+  font-family: var(--font-body);
+  color: var(--slate);
+  background: var(--white);
+  line-height: var(--line-height-base);
+  font-size: var(--font-size-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  line-height: var(--line-height-heading);
+  letter-spacing: -0.01em;
+  color: var(--navy-deep);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ── UTILITY CLASSES ── */
+.max-w {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── BUTTONS — Canonical ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 14px 24px;
+  border-radius: var(--r-btn);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background-color var(--t-hover),
+    border-color var(--t-hover),
+    color var(--t-hover);
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.btn-coral {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+.btn-coral:hover {
+  background: var(--coral-hover);
+  border-color: var(--coral-hover);
+}
+
+.btn-ink {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+.btn-ink:hover {
+  background: var(--navy-deep);
+  border-color: var(--navy-deep);
+}
+
+.btn-outline-white {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #fff;
+}
+
+.btn-outline-ink {
+  background: transparent;
+  color: var(--navy);
+  border-color: var(--navy);
+}
+.btn-outline-ink:hover {
+  background: var(--navy);
+  color: #fff;
+}
+
+.btn-outline-navy {
+  background: transparent;
+  color: var(--navy-deep);
+  border-color: var(--navy-deep);
+}
+.btn-outline-navy:hover {
+  background: var(--navy-deep);
+  color: #fff;
+}
+
+.btn-outline-coral {
+  background: transparent;
+  color: var(--coral);
+  border-color: var(--coral);
+}
+.btn-outline-coral:hover {
+  background: var(--coral);
+  color: #fff;
+}
+
+.btn-sage {
+  background: var(--sage);
+  color: #fff;
+  border-color: var(--sage);
+}
+.btn-sage:hover {
+  background: var(--sage-hover);
+  border-color: var(--sage-hover);
+}
+
+/* ── BUTTONS — Aliases (from Homepage.html Q8) ── */
+.btn-primary {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+.btn-primary:hover {
+  background: var(--coral-hover);
+  border-color: var(--coral-hover);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--navy);
+  border-color: var(--navy);
+}
+.btn-outline:hover {
+  background: var(--navy);
+  color: #fff;
+}
+
+.btn-white {
+  background: #fff;
+  color: var(--navy);
+  border-color: #fff;
+}
+.btn-white:hover {
+  background: var(--off-white);
+  border-color: var(--off-white);
+  color: var(--navy);
+}
+
+.btn-white-outline {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.btn-white-outline:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #fff;
+}
+
+/* ── SPEC BLUE BUTTON (providers page) ── */
+.btn-spec-blue {
+  background: var(--color-spec-blue);
+  color: #fff;
+  border-color: var(--color-spec-blue);
+}
+.btn-spec-blue:hover {
+  background: var(--color-spec-blue-hover);
+  border-color: var(--color-spec-blue-hover);
 }

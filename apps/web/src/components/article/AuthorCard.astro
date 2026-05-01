@@ -1,0 +1,108 @@
+---
+/**
+ * Purpose: Author bio card with avatar, role, bio, and optional profile link
+ * Context: Below article content and tags
+ * Source: design-source/styles/article.css (.author-card, .author-card-avatar, .author-card-body)
+ */
+
+interface Props {
+  name: string;
+  role?: string;
+  bio?: string;
+  initials?: string;
+  profileHref?: string;
+}
+
+const {
+  name,
+  role = 'Licensed Clinician',
+  bio = '',
+  initials = name.slice(0, 2).toUpperCase(),
+  profileHref = '',
+} = Astro.props;
+---
+
+<div class="author-card">
+  <div class="author-card-avatar">{initials}</div>
+  <div class="author-card-body">
+    <h4>{name}</h4>
+    <p class="author-role">{role}</p>
+    {bio && <p>{bio}</p>}
+    {profileHref && <a href={profileHref}>View full profile &rarr;</a>}
+  </div>
+</div>
+
+<style>
+  .author-card {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 1.75rem;
+    margin-top: 2.5rem;
+    align-items: start;
+  }
+
+  .author-card-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--coral-light);
+    color: var(--coral);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+  }
+
+  .author-card-body h4 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    color: var(--navy-deep);
+    margin-bottom: 0.25rem;
+  }
+
+  .author-role {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--coral);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .author-card-body p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 0 0 0.85rem;
+  }
+
+  .author-card-body a {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--coral);
+  }
+
+  @media (max-width: 768px) {
+    .author-card {
+      grid-template-columns: 64px 1fr;
+      gap: 1rem;
+      padding: 1.4rem;
+    }
+    .author-card-avatar {
+      width: 64px;
+      height: 64px;
+      font-size: 18px;
+    }
+  }
+</style>

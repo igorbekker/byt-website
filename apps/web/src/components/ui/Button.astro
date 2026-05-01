@@ -1,0 +1,47 @@
+---
+/**
+ * Purpose: Renders all button variants defined in global.css
+ * Context: Used throughout the site for CTAs, nav actions, section actions
+ * Source: design-source/styles/base.css (.btn + variants), design-source/pages/Homepage.html (aliases)
+ */
+
+type ButtonVariant =
+  | 'btn-coral'
+  | 'btn-ink'
+  | 'btn-outline-white'
+  | 'btn-outline-ink'
+  | 'btn-outline-navy'
+  | 'btn-outline-coral'
+  | 'btn-sage'
+  | 'btn-primary'
+  | 'btn-outline'
+  | 'btn-white'
+  | 'btn-white-outline'
+  | 'btn-spec-blue';
+
+interface Props {
+  href?: string;
+  variant?: ButtonVariant;
+  tag?: 'a' | 'button';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { href, variant = 'btn-coral', tag, class: extraClass, ...rest } = Astro.props;
+
+// Determine element: explicit tag prop wins, else 'a' if href provided
+const Tag = tag ?? (href ? 'a' : 'button');
+const classes = ['btn', variant, extraClass].filter(Boolean).join(' ');
+---
+
+{
+  Tag === 'a' ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

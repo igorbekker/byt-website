@@ -1,0 +1,370 @@
+---
+/**
+ * Purpose: Two-track layout block (Track 1: Facility-Based / Track 2: Teletherapy)
+ * Context: Providers page — alternating left/right layout with spec cards
+ * Source: design-source/styles/providers.css (.p-track, .p-track-inner, .p-track-eyebrow, .p-track-num, .p-track-title, .p-track-status, .p-track-specs, .p-spec, .p-track-visual, .p-county-card, .p-statewide-card)
+ */
+
+interface SpecItem {
+  label: string;
+  body: string;
+}
+
+interface Props {
+  trackNumber: 1 | 2;
+  eyebrow?: string;
+  title: string;
+  statusLabel?: string;
+  specs?: SpecItem[];
+  visualSrc?: string;
+  visualAlt?: string;
+  insetLabel?: string;
+  insetBody?: string;
+}
+
+const {
+  trackNumber,
+  eyebrow = trackNumber === 1 ? 'Track 1' : 'Track 2',
+  title,
+  statusLabel = '',
+  specs = [],
+  visualSrc = '',
+  visualAlt = '',
+  insetLabel = '',
+  insetBody = '',
+} = Astro.props;
+
+const isTrack2 = trackNumber === 2;
+const trackClass = isTrack2 ? 'p-track p-track-2' : 'p-track p-track-1';
+---
+
+<div class={trackClass} id={`track-${trackNumber}`}>
+  <div class="p-track-inner">
+    <div class="p-track-content">
+      <div class="p-track-eyebrow">
+        <span class="p-track-num">{trackNumber}</span>
+        {eyebrow}
+      </div>
+      <h2 class="p-track-title">{title}</h2>
+      {statusLabel && <div class="p-track-status">{statusLabel}</div>}
+      {
+        specs.length > 0 && (
+          <div class="p-track-specs">
+            {specs.map((spec) => (
+              <div class="p-spec">
+                <div class="p-spec-label">{spec.label}</div>
+                <div class="p-spec-body" set:html={spec.body} />
+              </div>
+            ))}
+          </div>
+        )
+      }
+      <slot />
+    </div>
+
+    <div class="p-track-visual">
+      {
+        visualSrc ? (
+          <img src={visualSrc} alt={visualAlt} />
+        ) : (
+          <div
+            class="img-ph img-ph-navy"
+            data-label={visualAlt || 'Track image'}
+            style="width:100%;height:100%;"
+          />
+        )
+      }
+
+      {
+        insetLabel && isTrack2 ? (
+          <div class="p-statewide-card">
+            <div class="p-statewide-card-label">{insetLabel}</div>
+            <div class="p-statewide-card-body" set:html={insetBody} />
+          </div>
+        ) : insetLabel ? (
+          <div class="p-county-card">
+            <div class="p-county-card-label">{insetLabel}</div>
+            <div class="p-county-card-list" set:html={insetBody} />
+          </div>
+        ) : null
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .p-track {
+    padding: var(--pad-s) var(--pad-x);
+  }
+  .p-track-1 {
+    background: var(--off-white);
+  }
+  .p-track-2 {
+    background: var(--white);
+  }
+
+  .p-track-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .p-track-2 .p-track-inner {
+    direction: rtl;
+  }
+  .p-track-2 .p-track-inner > * {
+    direction: ltr;
+  }
+
+  .p-track-eyebrow {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .p-track-2 .p-track-eyebrow {
+    color: var(--sage-hover);
+  }
+
+  .p-track-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: var(--coral);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+  .p-track-2 .p-track-num {
+    background: var(--sage-hover);
+  }
+
+  .p-track-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.7rem, 2.8vw, 2.2rem);
+    font-weight: 800;
+    color: var(--navy-deep);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    text-wrap: balance;
+  }
+
+  .p-track-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(36, 145, 235, 0.1);
+    color: var(--color-spec-blue-hover);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 1.25rem;
+  }
+  .p-track-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-spec-blue);
+    animation: pulse 2.4s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(36, 145, 235, 0.55);
+    }
+    70% {
+      box-shadow: 0 0 0 8px rgba(36, 145, 235, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(36, 145, 235, 0);
+    }
+  }
+
+  .p-track-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .p-spec {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 1rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .p-spec:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .p-spec-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mist);
+    padding-top: 2px;
+  }
+
+  .p-spec-body {
+    font-size: 15px;
+    color: var(--slate);
+    line-height: 1.55;
+  }
+  .p-spec-body :global(strong) {
+    color: var(--navy-deep);
+    font-weight: 600;
+  }
+
+  .p-track-visual {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    background: var(--off-white);
+    box-shadow: var(--shadow-md);
+  }
+  .p-track-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .p-county-card,
+  .p-statewide-card {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    right: 1.25rem;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border-radius: var(--r-btn);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .p-county-card-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 0.5rem;
+  }
+  .p-county-card-list {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy-deep);
+    line-height: 1.4;
+  }
+
+  .p-statewide-card-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sage-hover);
+    margin-bottom: 0.35rem;
+  }
+  .p-statewide-card-body {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy-deep);
+    line-height: 1.4;
+  }
+
+  .img-ph {
+    background-color: var(--off-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--mist);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(16, 67, 120, 0.06) 0,
+      rgba(16, 67, 120, 0.06) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+  }
+  .img-ph::before {
+    content: attr(data-label);
+    background: rgba(255, 255, 255, 0.85);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .img-ph-navy {
+    background-color: #e7edf5;
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(16, 67, 120, 0.1) 0,
+      rgba(16, 67, 120, 0.1) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+  }
+
+  @media (max-width: 1100px) {
+    .p-track-inner {
+      gap: 3rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .p-track-inner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .p-track-2 .p-track-inner {
+      direction: ltr;
+    }
+    .p-track-visual {
+      aspect-ratio: 16 / 10;
+      max-height: 360px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .p-track {
+      padding: 64px var(--pad-x);
+    }
+    .p-spec {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+      padding-bottom: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+/**
+ * Purpose: Social share buttons row in the article sidebar
+ * Context: Article sidebar below TableOfContents
+ * Source: design-source/styles/article.css (.share, .share-label, .share-row, .share-btn)
+ */
+
+interface Props {
+  url?: string;
+  title?: string;
+}
+
+const { url = '', title = '' } = Astro.props;
+
+// Encode for use in href attributes
+const encodedUrl = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+---
+
+<div class="share">
+  <p class="share-label">Share</p>
+  <div class="share-row">
+    <a
+      href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
+      class="share-btn"
+      aria-label="Share on Twitter"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.258 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+        ></path>
+      </svg>
+    </a>
+    <a
+      href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+      class="share-btn"
+      aria-label="Share on Facebook"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+      </svg>
+    </a>
+    <a
+      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+      class="share-btn"
+      aria-label="Share on LinkedIn"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+        ></path>
+        <rect x="2" y="9" width="4" height="12"></rect>
+        <circle cx="4" cy="4" r="2"></circle>
+      </svg>
+    </a>
+    <button class="share-btn" id="copyLinkBtn" aria-label="Copy link">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .share {
+    padding-left: 1.25rem;
+  }
+
+  .share-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 0.85rem;
+  }
+
+  .share-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .share-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-btn);
+    border: 1px solid var(--border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all var(--t-hover);
+    text-decoration: none;
+  }
+  .share-btn:hover {
+    border-color: var(--coral);
+    color: var(--coral);
+  }
+</style>
+
+<script>
+  const copyBtn = document.getElementById('copyLinkBtn');
+  copyBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      copyBtn.setAttribute('aria-label', 'Copied!');
+      setTimeout(() => copyBtn.setAttribute('aria-label', 'Copy link'), 2000);
+    } catch {
+      // Clipboard API not available — silently ignore
+    }
+  });
+</script>

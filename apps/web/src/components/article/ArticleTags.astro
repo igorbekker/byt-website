@@ -1,0 +1,54 @@
+---
+/**
+ * Purpose: Tag pill list displayed below article content
+ * Context: End of ArticleBody prose content
+ * Source: design-source/styles/article.css (.article-tags, .article-tag)
+ */
+
+interface Props {
+  tags: string[];
+}
+
+const { tags = [] } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <div class="article-tags">
+      {tags.map((tag) => (
+        <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`} class="article-tag">
+          {tag}
+        </a>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .article-tag {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--r-pill);
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    color: var(--slate);
+    transition: all var(--t-hover);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .article-tag:hover {
+    border-color: var(--coral);
+    color: var(--coral);
+    background: #fff;
+  }
+</style>

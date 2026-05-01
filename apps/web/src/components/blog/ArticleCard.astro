@@ -1,0 +1,159 @@
+---
+/**
+ * Purpose: Blog listing card with category, title, snippet, and author attribution
+ * Context: Blog index page grid
+ * Source: design-source/styles/blog.css (.article-card, .article-card-img, .article-card-body, .article-card-meta, .article-card-cat, .article-card-author, .article-card-avatar)
+ */
+
+interface Props {
+  href: string;
+  category?: string;
+  date?: string;
+  title: string;
+  snippet?: string;
+  authorName?: string;
+  authorInitials?: string;
+}
+
+const {
+  href,
+  category = 'Mental Health',
+  date = '',
+  title,
+  snippet = '',
+  authorName = 'BYT Clinical Team',
+  authorInitials = 'BT',
+} = Astro.props;
+---
+
+<a href={href} class="article-card">
+  <div class="article-card-img img-ph" data-label={title}></div>
+  <div class="article-card-body">
+    <div class="article-card-meta">
+      <span class="article-card-cat">{category}</span>
+      {
+        date && (
+          <>
+            <span class="dot" />
+            <span>{date}</span>
+          </>
+        )
+      }
+    </div>
+    <h3>{title}</h3>
+    {snippet && <p class="article-card-snippet">{snippet}</p>}
+    <div class="article-card-author">
+      <div class="article-card-avatar">{authorInitials}</div>
+      <span><strong>{authorName}</strong></span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    text-decoration: none;
+    transition:
+      border-color var(--t-hover),
+      box-shadow var(--t-hover),
+      transform var(--t-hover);
+    height: 100%;
+  }
+  .article-card:hover {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .article-card-img {
+    aspect-ratio: 16 / 10;
+    background: var(--off-white);
+  }
+
+  .article-card-body {
+    padding: 1.5rem 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.75rem;
+  }
+
+  .article-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--slate);
+    font-weight: 500;
+  }
+
+  .article-card-cat {
+    color: var(--coral);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+
+  .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--mist);
+  }
+
+  .article-card h3 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.2rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--navy-deep);
+    margin: 0;
+  }
+
+  .article-card-snippet {
+    color: var(--slate);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .article-card-author {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--slate);
+  }
+
+  .article-card-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--coral-light);
+    color: var(--coral);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+
+  .article-card-author strong {
+    color: var(--navy-deep);
+    font-weight: 600;
+  }
+</style>

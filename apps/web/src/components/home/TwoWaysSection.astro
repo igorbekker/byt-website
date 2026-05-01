@@ -1,0 +1,173 @@
+---
+/**
+ * Purpose: Full-bleed photo cards showing two service tracks — teletherapy and in-facility
+ * Context: Block 4 on Homepage — navy-deep background with photo overlay cards
+ * Source: design-source/pages/Homepage.html (.twoways, .twoways-cards, .twoways-card, .twoways-card-bg, .twoways-card-overlay, .twoways-card-content, .twoways-card-label)
+ */
+---
+
+<section class="twoways">
+  <div style="max-width:var(--max-w);margin:0 auto;">
+    <div class="twoways-header fade-up">
+      <p class="eyebrow" style="margin-bottom:.75rem">Two Ways We Work</p>
+      <h2>Two Ways to Get Mental Health Care Through Better You Therapy</h2>
+      <p>
+        Whether you need a therapist to come to you, or want to connect from wherever you are
+        &mdash; we have a path for you.
+      </p>
+    </div>
+
+    <div class="twoways-cards fade-up">
+      <div class="twoways-card twoways-card-lead">
+        <div
+          class="twoways-card-bg"
+          style="background-image:url('https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=85&auto=format&fit=crop');background-color:var(--navy-deep);"
+        >
+        </div>
+        <div class="twoways-card-overlay"></div>
+        <div class="twoways-card-content">
+          <div class="twoways-card-label">Teletherapy &mdash; Anywhere in Florida</div>
+          <h3>Therapy available this week, from wherever you are</h3>
+          <p>
+            Licensed therapists available via secure video. Adults, couples, and families. Cash-pay
+            or insurance. No waitlist.
+          </p>
+          <a href="/individual-therapy/" class="btn btn-white">Book a Session &rarr;</a>
+        </div>
+      </div>
+
+      <div class="twoways-card">
+        <div
+          class="twoways-card-bg"
+          style="background-image:url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=900&q=85&auto=format&fit=crop');background-color:var(--navy-deep);"
+        >
+        </div>
+        <div class="twoways-card-overlay"></div>
+        <div class="twoways-card-content">
+          <div class="twoways-card-label">In-Facility &mdash; Southeast Florida</div>
+          <h3>On-site mental health care at your facility</h3>
+          <p>
+            Licensed therapists placed inside assisted living, skilled nursing, and continuing care
+            facilities. Medicare-billed. Zero cost to the facility or resident.
+          </p>
+          <a href="/communities/" class="btn btn-white-outline">Refer a Resident &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .twoways {
+    background: var(--navy-deep);
+    padding: var(--pad-s) var(--pad-x) 4rem;
+  }
+
+  .twoways-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .twoways-header .eyebrow {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .twoways-header h2 {
+    color: #fff;
+    max-width: 900px;
+    margin: 0 auto 1rem;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    letter-spacing: -0.02em;
+  }
+  .twoways-header p {
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 560px;
+    margin: 0 auto;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .twoways-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  .twoways-card {
+    position: relative;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    height: 440px;
+    cursor: pointer;
+    transition:
+      transform 0.3s ease,
+      box-shadow var(--t-hover);
+  }
+  .twoways-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .twoways-card-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s ease;
+  }
+  .twoways-card:hover .twoways-card-bg {
+    transform: scale(1.04);
+  }
+
+  .twoways-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 45, 82, 0.96) 30%, rgba(10, 45, 82, 0.25) 100%);
+  }
+
+  .twoways-card-content {
+    position: absolute;
+    inset: 0;
+    padding: 2.25rem 2rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .twoways-card-content > .twoways-card-label {
+    margin-top: auto;
+    margin-bottom: 0.75rem;
+  }
+
+  .twoways-card-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 0.75rem;
+  }
+
+  .twoways-card h3 {
+    color: #fff;
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+  .twoways-card p {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 90%;
+  }
+
+  @media (max-width: 1024px) {
+    .twoways-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

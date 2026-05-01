@@ -1,0 +1,135 @@
+---
+/**
+ * Purpose: Standalone newsletter signup CTA block with email form
+ * Context: Blog listing page — between content sections
+ * Source: design-source/styles/blog.css (.newsletter, .newsletter-inner, .newsletter-form)
+ */
+---
+
+<section class="newsletter">
+  <div class="newsletter-inner">
+    <p class="eyebrow">Stay in the loop</p>
+    <h2>Mental Health Insights, Monthly</h2>
+    <p>One thoughtful email a month — practical resources from our licensed clinicians. No spam.</p>
+    <form class="newsletter-form" id="newsletterForm" novalidate>
+      <label class="sr-only" for="newsletter-email">Email address</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        required
+        placeholder="your@email.com"
+        autocomplete="email"
+      />
+      <button type="submit" class="btn btn-coral">Subscribe</button>
+    </form>
+    <p class="newsletter-tiny">No spam. Unsubscribe any time.</p>
+  </div>
+</section>
+
+<style>
+  .newsletter {
+    background: var(--cream);
+    padding: var(--pad-s) var(--pad-x);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .newsletter-inner {
+    max-width: 620px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .newsletter .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .newsletter h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    color: var(--navy-deep);
+  }
+
+  .newsletter p {
+    color: var(--slate);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  .newsletter-form input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-btn);
+    font-family: var(--font-body);
+    font-size: 15px;
+    background: #fff;
+    color: var(--navy-deep);
+    transition: border-color var(--t-hover);
+  }
+  .newsletter-form input:focus {
+    outline: none;
+    border-color: var(--coral);
+  }
+
+  .newsletter-form button {
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .newsletter-tiny {
+    font-size: 12px;
+    color: var(--mist);
+    margin-top: 0.85rem;
+    margin-bottom: 0;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  @media (max-width: 768px) {
+    .newsletter-form {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('newsletterForm') as HTMLFormElement | null;
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button') as HTMLButtonElement | null;
+    const input = form.querySelector('input') as HTMLInputElement | null;
+    if (!input?.value) return;
+    if (btn) {
+      btn.textContent = 'Subscribed ✓';
+      btn.disabled = true;
+    }
+    if (input) input.value = '';
+    setTimeout(() => {
+      if (btn) {
+        btn.textContent = 'Subscribe';
+        btn.disabled = false;
+      }
+    }, 2400);
+  });
+</script>

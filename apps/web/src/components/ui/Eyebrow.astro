@@ -1,0 +1,17 @@
+---
+/**
+ * Purpose: Renders the eyebrow label — Montserrat 600, uppercase, coral, used above headings
+ * Context: All section headers across the site
+ * Source: design-source/styles/base.css (.eyebrow)
+ */
+
+interface Props {
+  text: string;
+  class?: string;
+}
+
+const { text, class: extraClass } = Astro.props;
+const classes = ['eyebrow', extraClass].filter(Boolean).join(' ');
+---
+
+<p class={classes}>{text}</p>
