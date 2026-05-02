@@ -1,0 +1,2654 @@
+---
+import { sanityClient } from 'sanity:client';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { PROVIDERS_PAGE_QUERY, TESTIMONIALS_THERAPIST_QUERY } from '../lib/queries';
+
+interface ProvidersPage {
+  heroHeading?: string;
+  heroSubhead?: string;
+  heroPrimaryCta?: { label: string; href?: string; variant?: string };
+  heroImage?: { asset?: { url: string }; alt?: string };
+  tracksEyebrow?: string;
+  tracksHeading?: string;
+  tracksSubhead?: string;
+  tracks?: Array<{
+    label?: string;
+    heading?: string;
+    body?: string;
+    statusNote?: string;
+    cta?: { label: string; href?: string };
+  }>;
+  handlesEyebrow?: string;
+  handlesHeading?: string;
+  handlesItems?: Array<{ heading?: string; body?: string }>;
+  qualsEyebrow?: string;
+  qualsHeading?: string;
+  quals?: Array<{ scope?: string; body?: string }>;
+  ctaHeading?: string;
+  ctaSubhead?: string;
+  ctaCta?: { label: string; href?: string };
+  seo?: { metaTitle?: string; metaDescription?: string };
+}
+
+interface Testimonial {
+  _id: string;
+  quote?: string;
+  authorName?: string;
+  authorRole?: string;
+  authorOrg?: string;
+  authorInitials?: string;
+}
+
+const [page, testimonials] = await Promise.all([
+  sanityClient.fetch<ProvidersPage>(PROVIDERS_PAGE_QUERY),
+  sanityClient.fetch<Testimonial[]>(TESTIMONIALS_THERAPIST_QUERY),
+]);
+---
+
+<BaseLayout
+  title={page?.seo?.metaTitle ?? 'For Therapists | Better You Therapy'}
+  description={page?.seo?.metaDescription ??
+    'Join Better You Therapy as a licensed therapist. Two role tracks — facility-based in Southeast Florida or statewide teletherapy. Billing, referrals, and EHR handled for you.'}
+>
+  <style is:global>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --byt-navy: #104378;
+      --byt-navy-deep: #0a2d52;
+      --byt-navy-footer: #2d2d52;
+      --byt-coral: #e05555;
+      --byt-coral-hover: #c94444;
+      --byt-coral-light: #fce8e8;
+      --byt-sage: #9caf88;
+      --byt-sage-light: #e8efe3;
+      --byt-slate: #5a7194;
+      --byt-mist: #8fa3bf;
+      --byt-border: #e4eaf0;
+      --byt-off-white: #f5f7fa;
+      --byt-cream: #fffcf0;
+
+      --r-btn: 6px;
+      --r-card: 12px;
+      --r-pill: 999px;
+
+      --shadow-sm: 0 1px 2px rgba(16, 67, 120, 0.04);
+      --shadow-md: 0 4px 12px rgba(16, 67, 120, 0.08);
+      --shadow-lg: 0 8px 24px rgba(16, 67, 120, 0.1);
+
+      --bg-primary: #ffffff;
+      --bg-alt: #f5f7fa;
+      --text-primary: #0a2d52;
+      --text-alt: #ffffff;
+      --border-primary: #e4eaf0;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      font-family:
+        'Montserrat',
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        sans-serif;
+      color: var(--byt-slate);
+      background: var(--bg-primary);
+      line-height: 1.5;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family:
+        'Manrope',
+        system-ui,
+        -apple-system,
+        sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--byt-navy-deep);
+    }
+    img {
+      display: block;
+      max-width: 100%;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+      background: transparent;
+      color: inherit;
+    }
+    ul {
+      list-style: none;
+    }
+
+    .container {
+      width: 100%;
+      margin-inline: auto;
+      max-width: 80rem;
+    }
+    .section {
+      padding: 64px 5%;
+    }
+    @media (min-width: 768px) {
+      .section {
+        padding: 96px 5%;
+      }
+    }
+    @media (min-width: 1024px) {
+      .section {
+        padding: 112px 5%;
+      }
+    }
+
+    .text-md {
+      font-size: 1.125rem;
+      line-height: 1.5;
+    }
+    .text-sm {
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+    .text-xl {
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+    .text-2xl {
+      font-size: 1.5rem;
+      line-height: 1.3;
+    }
+    .text-4xl {
+      font-size: 2.25rem;
+      line-height: 1.2;
+    }
+    .text-5xl {
+      font-size: 3rem;
+      line-height: 1.1;
+    }
+    .text-6xl {
+      font-size: 3.75rem;
+      line-height: 1.1;
+    }
+    .text-7xl {
+      font-size: 4.5rem;
+      line-height: 1.05;
+    }
+    .text-8xl {
+      font-size: 6rem;
+      line-height: 1;
+    }
+    .text-9xl {
+      font-size: 8rem;
+      line-height: 1;
+    }
+    .text-10xl {
+      font-size: 10rem;
+      line-height: 1;
+    }
+    .font-bold {
+      font-weight: 700;
+    }
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: 1.5px solid var(--byt-navy);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+      background: var(--bg-primary);
+      color: var(--byt-navy-deep);
+      border-radius: var(--r-btn);
+      transition:
+        background-color 0.15s,
+        color 0.15s,
+        border-color 0.15s,
+        box-shadow 0.15s,
+        transform 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    .btn-primary:hover {
+      box-shadow: var(--shadow-md);
+    }
+    .btn-primary {
+      background: var(--byt-coral);
+      color: #fff;
+      border-color: var(--byt-coral);
+    }
+    .btn-primary:hover {
+      background: var(--byt-coral-hover);
+      border-color: var(--byt-coral-hover);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--byt-navy-deep);
+      border-color: var(--byt-navy-deep);
+    }
+    .btn-secondary:hover {
+      background: var(--byt-navy-deep);
+      color: #fff;
+    }
+    .btn-secondary-alt {
+      background: transparent;
+      color: #fff;
+      border-color: #fff;
+    }
+    .btn-secondary-alt:hover {
+      background: #fff;
+      color: var(--byt-navy-deep);
+    }
+    .btn-sm {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.875rem;
+    }
+    .btn-link {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      color: var(--byt-coral);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+    .btn-link:hover {
+      color: var(--byt-coral-hover);
+    }
+    .btn-link.alt {
+      color: #fff;
+    }
+    .btn-link.alt:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .btn-link svg {
+      width: 1em;
+      height: 1em;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      height: 84px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      border-bottom: 1px solid var(--byt-border);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      height: 68px;
+    }
+    .nav-logo img {
+      height: 64px;
+      width: auto;
+      display: block;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-links a {
+      color: var(--byt-navy-deep);
+      font-size: 15px;
+      font-weight: 500;
+      transition: color 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .nav-links a:hover {
+      color: var(--byt-coral);
+    }
+    .nav-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .nav-cta {
+      background: var(--byt-coral);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--r-btn);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      transition: background-color 0.2s;
+    }
+    .nav-cta:hover {
+      background: var(--byt-coral-hover);
+    }
+    .nav-cta-secondary {
+      color: var(--byt-navy-deep);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px 20px;
+      border-radius: var(--r-btn);
+      transition: color 0.2s;
+    }
+    .nav-cta-secondary:hover {
+      color: var(--byt-coral);
+    }
+
+    .nav-hamburger {
+      display: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin-right: -8px;
+      color: var(--byt-navy-deep);
+    }
+    .nav-hamburger svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      background: rgba(10, 45, 82, 0.5);
+      backdrop-filter: blur(4px);
+    }
+    .mobile-menu.open {
+      display: block;
+    }
+    .mobile-menu-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(86vw, 360px);
+      background: #fff;
+      padding: 20px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: -8px 0 32px rgba(10, 45, 82, 0.15);
+      animation: mmSlide 0.25s ease-out;
+    }
+    @keyframes mmSlide {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: none;
+      }
+    }
+    .mobile-menu-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--byt-border);
+    }
+    .mobile-menu-close {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--byt-navy-deep);
+      margin-right: -8px;
+    }
+    .mobile-menu-close svg {
+      width: 22px;
+      height: 22px;
+    }
+    .mobile-menu a.mm-link {
+      display: block;
+      padding: 14px 4px;
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--byt-navy-deep);
+      border-bottom: 1px solid var(--byt-border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a.mm-link:hover {
+      color: var(--byt-coral);
+    }
+    .mobile-menu-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .mobile-menu-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .mobile-cta-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      background: #fff;
+      border-top: 1px solid var(--byt-border);
+      box-shadow: 0 -4px 20px rgba(10, 45, 82, 0.08);
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      gap: 8px;
+      align-items: stretch;
+    }
+    .mobile-cta-bar .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 14px 12px;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .nav {
+        height: 72px !important;
+        padding: 0 32px;
+      }
+      .nav-logo {
+        height: 52px !important;
+      }
+      .nav-logo img {
+        height: 48px !important;
+        width: auto !important;
+        max-width: none !important;
+      }
+      .nav-links {
+        display: none !important;
+      }
+      .nav-actions {
+        display: none !important;
+      }
+      .nav-hamburger {
+        display: flex !important;
+        margin-left: auto !important;
+        margin-right: -8px !important;
+      }
+    }
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 78px;
+      }
+      .nav {
+        height: 64px !important;
+        padding: 0 20px;
+      }
+      .nav-logo {
+        height: 48px !important;
+      }
+      .nav-logo img {
+        height: 44px !important;
+        width: auto !important;
+        max-width: none !important;
+      }
+      .nav-actions {
+        display: none !important;
+      }
+      .nav-hamburger {
+        display: flex !important;
+      }
+      .mobile-cta-bar {
+        display: flex !important;
+      }
+    }
+
+    .h98 {
+      padding: 0;
+    }
+    .h98-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0;
+      box-shadow: none;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+    .h98-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      min-height: 32rem;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-alt);
+    }
+    @media (min-width: 768px) {
+      .h98-content {
+        min-height: 40rem;
+        padding: 4rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .h98-content {
+        min-height: 44rem;
+      }
+    }
+    .h98-content .inner {
+      width: 100%;
+      max-width: 56rem;
+    }
+    .h98-eyebrow {
+      display: inline-block;
+      margin-bottom: 1.25rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #fff;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: var(--r-pill);
+      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .h98 h1 {
+      margin-bottom: 1rem;
+      font-size: 2.75rem;
+      line-height: 1.05;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .h98 .h98-subhead {
+      margin-bottom: 1.5rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.25rem;
+      line-height: 1.35;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      max-width: 36rem;
+      margin-inline: auto;
+    }
+    @media (min-width: 768px) {
+      .h98 .h98-subhead {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .h98 .h98-subhead {
+        font-size: 1.75rem;
+      }
+    }
+    @media (min-width: 768px) {
+      .h98 h1 {
+        margin-bottom: 1.5rem;
+        font-size: 4rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .h98 h1 {
+        font-size: 5rem;
+      }
+    }
+    .h98 h1 em {
+      font-style: normal;
+      color: var(--byt-coral);
+      font-family: 'Manrope', serif;
+      font-weight: 800;
+    }
+    .h98 .lede {
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      max-width: 34rem;
+      margin-inline: auto;
+    }
+    @media (min-width: 768px) {
+      .h98 .lede {
+        font-size: 1.125rem;
+      }
+    }
+    .h98-actions {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.875rem;
+    }
+    @media (min-width: 768px) {
+      .h98-actions {
+        margin-top: 2.25rem;
+      }
+    }
+    .h98-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #0a2d52 0%, #104378 60%, #1a4d8c 100%);
+    }
+    .h98-bg img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      opacity: 0.55;
+      mix-blend-mode: luminosity;
+    }
+    .h98-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(10, 45, 82, 0.55) 0%,
+        rgba(10, 45, 82, 0.35) 50%,
+        rgba(10, 45, 82, 0.75) 100%
+      );
+    }
+    .h98-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.6;
+    }
+
+    .l422-head {
+      margin-inline: auto;
+      margin-bottom: 48px;
+      width: 100%;
+      max-width: 48rem;
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .l422-head {
+        margin-bottom: 72px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l422-head {
+        margin-bottom: 80px;
+      }
+    }
+    .l422-eyebrow {
+      display: inline-block;
+      margin-bottom: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--byt-coral);
+    }
+    .l422-head h2 {
+      margin-bottom: 1.25rem;
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 768px) {
+      .l422-head h2 {
+        margin-bottom: 1.5rem;
+        font-size: 2.75rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l422-head h2 {
+        font-size: 3.25rem;
+      }
+    }
+    .l422-head .text-md {
+      color: var(--byt-slate);
+    }
+
+    .l422-cards {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .l422-cards {
+        flex-direction: row;
+        gap: 2rem;
+      }
+    }
+
+    .l422-card {
+      position: relative;
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-md);
+      transition:
+        width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.25s;
+    }
+    .l422-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    @media (min-width: 768px) {
+      .l422-card {
+        width: 50%;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l422-card {
+        height: 100%;
+      }
+      .l422-cards:not(:hover) > .l422-card.is-default {
+        width: 70%;
+      }
+      .l422-cards:not(:hover) > .l422-card.is-default .l422-card-content::before {
+        background: rgba(0, 0, 0, 0.5);
+      }
+      .l422-cards:not(:hover) > .l422-card.is-default .l422-card-body.desktop-only {
+        opacity: 1;
+        height: auto;
+        transform: translateY(0);
+      }
+      .l422-cards:hover > .l422-card:hover {
+        width: 70%;
+      }
+    }
+    .l422-card-img {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .l422-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .l422-card-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        180deg,
+        rgba(10, 45, 82, 0.25) 0%,
+        rgba(10, 45, 82, 0.55) 60%,
+        rgba(10, 45, 82, 0.85) 100%
+      );
+    }
+    .l422-card-content {
+      position: relative;
+      display: flex;
+      height: 100%;
+      min-height: 70vh;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.5rem;
+      color: var(--text-alt);
+    }
+    @media (min-width: 768px) {
+      .l422-card-content {
+        padding: 2rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l422-card-content {
+        padding: 3rem;
+      }
+    }
+    .l422-card-content::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      transition: background-color 0.3s;
+    }
+    @media (min-width: 1024px) {
+      .l422-card:hover .l422-card-content::before {
+        background: rgba(0, 0, 0, 0.5);
+      }
+    }
+    .l422-card-text {
+      position: relative;
+      z-index: 10;
+    }
+    .l422-card-eyebrow {
+      margin-bottom: 0.75rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .l422-card h3 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #fff;
+    }
+    @media (min-width: 768px) {
+      .l422-card h3 {
+        font-size: 3rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l422-card h3 {
+        font-size: 3.75rem;
+      }
+    }
+    .l422-card-body {
+      position: relative;
+      z-index: 10;
+    }
+    .l422-card-body p {
+      margin-top: 1.25rem;
+      color: #fff;
+    }
+    @media (min-width: 768px) {
+      .l422-card-body p {
+        margin-top: 1.5rem;
+        font-size: 1.125rem;
+      }
+    }
+    .l422-card-cta {
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .l422-card-cta {
+        margin-top: 2rem;
+      }
+    }
+
+    .l422-card-body.desktop-only {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .l422-card-body.mobile-only {
+        display: none;
+      }
+      .l422-card-body.desktop-only {
+        display: block;
+        width: 528px;
+        max-width: 100%;
+        opacity: 0;
+        height: 0;
+        transform: translateY(50px);
+        overflow: hidden;
+        transition:
+          opacity 0.3s ease,
+          height 0.3s ease,
+          transform 0.3s ease;
+      }
+      .l422-card:hover .l422-card-body.desktop-only {
+        opacity: 1;
+        height: auto;
+        transform: translateY(0);
+      }
+    }
+
+    #l374-section {
+      background: var(--byt-off-white);
+    }
+    .l374-head {
+      margin-bottom: 48px;
+    }
+    @media (min-width: 768px) {
+      .l374-head {
+        margin-bottom: 72px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l374-head {
+        margin-bottom: 80px;
+      }
+    }
+    .l374-head-inner {
+      margin-inline: auto;
+      max-width: 60rem;
+      text-align: center;
+    }
+    .l374-head h2 {
+      margin-bottom: 1.25rem;
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 768px) {
+      .l374-head h2 {
+        margin-bottom: 1.5rem;
+        font-size: 2.75rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l374-head h2 {
+        font-size: 3.25rem;
+      }
+    }
+    .l374-head .text-md {
+      color: var(--byt-slate);
+    }
+    .l374-eyebrow {
+      display: inline-block;
+      margin-bottom: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--byt-coral);
+    }
+
+    .l374-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .l374-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (min-width: 768px) {
+      .l374-grid {
+        gap: 2rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l374-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .l374-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-primary);
+      background: #fff;
+      border-radius: var(--r-card);
+      overflow: hidden;
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        transform 0.2s;
+    }
+    .l374-card:hover {
+      border-color: var(--byt-coral);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .l374-card.feature {
+      grid-column: span 1;
+    }
+    @media (min-width: 640px) {
+      .l374-card.feature {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+    }
+    @media (min-width: 768px) {
+      .l374-card.feature {
+        flex-direction: row;
+      }
+      .l374-card.feature .body {
+        flex: 1.4;
+      }
+      .l374-card.feature .image {
+        flex: 1;
+        min-height: 0;
+      }
+    }
+    .l374-card .body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .l374-card.feature .body {
+      padding: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .l374-card.feature .body {
+        padding: 2rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l374-card.feature .body {
+        padding: 3rem;
+      }
+    }
+    .l374-card .tag {
+      margin-bottom: 0.75rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--byt-coral);
+    }
+    .l374-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.125rem;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+    @media (min-width: 768px) {
+      .l374-card h3 {
+        font-size: 1.25rem;
+      }
+    }
+    .l374-card.feature h3 {
+      white-space: normal;
+    }
+    .l374-card.feature h3 {
+      margin-bottom: 1.25rem;
+      font-size: 1.625rem;
+      line-height: 1.15;
+      text-wrap: balance;
+    }
+    @media (min-width: 768px) {
+      .l374-card.feature h3 {
+        margin-bottom: 1.5rem;
+        font-size: 1.875rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l374-card.feature h3 {
+        font-size: 2.125rem;
+      }
+    }
+    .l374-card .body p {
+      color: var(--byt-slate);
+      line-height: 1.55;
+    }
+    .l374-card .actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .l374-card .actions {
+        margin-top: 1.5rem;
+      }
+    }
+    .l374-card.feature .actions {
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .l374-card.feature .actions {
+        margin-top: 2rem;
+      }
+    }
+    .l374-card .image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      min-height: 96px;
+      position: relative;
+      overflow: hidden;
+    }
+    .l374-card .image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 18px 18px;
+      opacity: 0.7;
+    }
+    .l374-card .image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.45;
+      mix-blend-mode: luminosity;
+    }
+    .l374-bg-icon {
+      width: 36%;
+      max-width: 64px;
+      height: auto;
+      position: relative;
+      z-index: 1;
+    }
+    .l374-card.feature .image {
+      min-height: 280px;
+    }
+    @media (min-width: 1024px) {
+      .l374-card.feature .image {
+        min-height: 320px;
+      }
+    }
+
+    .l506-head {
+      margin-inline: auto;
+      margin-bottom: 48px;
+      width: 100%;
+      max-width: 48rem;
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .l506-head {
+        margin-bottom: 72px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l506-head {
+        margin-bottom: 80px;
+      }
+    }
+    .l506-head h1 {
+      margin-bottom: 1.25rem;
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 768px) {
+      .l506-head h1 {
+        margin-bottom: 1.5rem;
+        font-size: 2.75rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l506-head h1 {
+        font-size: 3.25rem;
+      }
+    }
+    .l506-head .text-md {
+      color: var(--byt-slate);
+    }
+    .l506-head .eyebrow {
+      display: inline-block;
+      margin-bottom: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--byt-coral);
+    }
+
+    .l506-tabs {
+      position: relative;
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-template-columns: 1fr;
+      border: 1px solid var(--border-primary);
+      background: #fff;
+      border-radius: var(--r-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    @media (min-width: 768px) {
+      .l506-tabs {
+        grid-template-columns: 1.5fr 1fr;
+      }
+    }
+
+    .l506-panel {
+      display: none;
+      animation: l506fade 0.25s ease;
+    }
+    .l506-panel.active {
+      display: block;
+    }
+    @keyframes l506fade {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    .l506-panel-inner {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .l506-panel-inner {
+        padding: 2rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l506-panel-inner {
+        padding: 4rem;
+      }
+    }
+    .l506-icon {
+      margin-bottom: 1.25rem;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--byt-coral-light);
+      color: var(--byt-coral);
+      border-radius: 12px;
+    }
+    @media (min-width: 768px) {
+      .l506-icon {
+        margin-bottom: 1.5rem;
+      }
+    }
+    .l506-panel h2 {
+      margin-bottom: 1.25rem;
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    @media (min-width: 768px) {
+      .l506-panel h2 {
+        margin-bottom: 1.5rem;
+        font-size: 2.25rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l506-panel h2 {
+        font-size: 2.5rem;
+      }
+    }
+    .l506-panel p {
+      color: var(--byt-slate);
+      line-height: 1.55;
+    }
+    .l506-panel-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .l506-panel-actions {
+        margin-top: 2rem;
+      }
+    }
+
+    .l506-list {
+      position: relative;
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-template-columns: 1fr;
+      border-top: 1px solid var(--border-primary);
+      background: var(--byt-off-white);
+    }
+    @media (min-width: 768px) {
+      .l506-list {
+        border-top: 0;
+        border-left: 1px solid var(--border-primary);
+      }
+    }
+    .l506-trigger {
+      text-align: left;
+      padding: 1.25rem 1.5rem;
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      border: 0;
+      border-bottom: 1px solid var(--border-primary);
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition:
+        background-color 0.15s,
+        color 0.15s;
+    }
+    .l506-trigger:last-child {
+      border-bottom: 0;
+    }
+    @media (min-width: 768px) {
+      .l506-trigger {
+        padding: 1.5rem 2rem;
+        font-size: 1.125rem;
+      }
+    }
+    .l506-trigger.active {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      position: relative;
+    }
+    .l506-trigger.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      background: var(--byt-coral);
+      border-radius: 0 2px 2px 0;
+    }
+    .l506-trigger:not(.active) {
+      color: var(--byt-mist);
+    }
+    .l506-trigger:hover:not(.active) {
+      color: var(--byt-navy);
+      background: var(--byt-off-white);
+    }
+
+    .t37-section {
+      background: var(--byt-cream);
+    }
+    .t37-head {
+      margin-bottom: 48px;
+    }
+    @media (min-width: 768px) {
+      .t37-head {
+        margin-bottom: 72px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .t37-head {
+        margin-bottom: 80px;
+      }
+    }
+    .t37-head-inner {
+      margin-inline: auto;
+      width: 100%;
+      max-width: 48rem;
+      text-align: center;
+    }
+    .t37-head h1 {
+      margin-bottom: 1.25rem;
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    @media (min-width: 768px) {
+      .t37-head h1 {
+        margin-bottom: 1.5rem;
+        font-size: 2.75rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .t37-head h1 {
+        font-size: 3.25rem;
+      }
+    }
+    .t37-head .text-md {
+      color: var(--byt-slate);
+    }
+
+    .t37-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .t37-grid {
+        grid-template-rows: repeat(4, auto);
+      }
+    }
+    @media (min-width: 768px) {
+      .t37-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .t37-grid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, auto);
+      }
+    }
+
+    .t37-cell {
+      border: 1px solid var(--border-primary);
+      background: #fff;
+      display: flex;
+      padding: 1.5rem;
+      border-radius: var(--r-card);
+    }
+    @media (min-width: 768px) {
+      .t37-cell {
+        padding: 2rem;
+      }
+    }
+    .t37-logo {
+      align-items: center;
+      justify-content: center;
+    }
+    @media (min-width: 1024px) {
+      .t37-logo {
+        padding: 1.5rem;
+      }
+    }
+    .t37-logo img {
+      max-height: 3rem;
+      width: auto;
+      object-fit: contain;
+    }
+    .t37-badge {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.875rem;
+      background: linear-gradient(135deg, #fff 0%, var(--byt-off-white) 100%);
+      border: 1px solid var(--byt-border);
+      text-align: center;
+    }
+    .t37-badge-mark {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--byt-coral-light);
+      color: var(--byt-coral);
+    }
+    .t37-badge-mark svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    .t37-badge-eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--byt-coral);
+      margin-bottom: 0.25rem;
+    }
+    .t37-badge-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--byt-navy-deep);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .t37-test {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    @media (min-width: 640px) {
+      .t37-test {
+        grid-column: span 2;
+      }
+    }
+    .t37-stars {
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 0.125rem;
+      color: var(--byt-coral);
+    }
+    @media (min-width: 768px) {
+      .t37-stars {
+        margin-bottom: 1.5rem;
+      }
+    }
+    .t37-stars svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .t37-quote {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      color: var(--byt-navy-deep);
+      font-weight: 500;
+    }
+    @media (min-width: 768px) {
+      .t37-quote {
+        font-size: 1.1875rem;
+      }
+    }
+    .t37-meta {
+      margin-top: 1.25rem;
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    @media (min-width: 768px) {
+      .t37-meta {
+        margin-top: 1.5rem;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+    .t37-avatar {
+      margin-bottom: 1rem;
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem;
+      min-height: 3rem;
+      border-radius: 9999px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--byt-navy-deep), var(--byt-navy));
+    }
+    @media (min-width: 768px) {
+      .t37-avatar {
+        margin-bottom: 0;
+        margin-right: 1rem;
+      }
+    }
+    .t37-avatar-init {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+    .t37-meta .name {
+      font-weight: 700;
+      color: var(--byt-navy-deep);
+      font-family: 'Manrope', sans-serif;
+    }
+    .t37-meta div p:last-child {
+      color: var(--byt-slate);
+      font-size: 0.875rem;
+    }
+
+    .t37-test.order-last {
+      order: 99;
+    }
+    @media (min-width: 1024px) {
+      .t37-test.order-last {
+        order: 0;
+      }
+    }
+
+    .cta36-section {
+      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta36-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .cta36-section .container {
+      position: relative;
+      z-index: 1;
+    }
+    .cta36-grid {
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-template-columns: 1fr;
+      column-gap: 2rem;
+      row-gap: 3rem;
+    }
+    @media (min-width: 768px) {
+      .cta36-grid {
+        grid-template-columns: 1fr;
+        max-width: 48rem;
+        margin: 0 auto;
+      }
+    }
+    @media (min-width: 1024px) {
+      .cta36-grid {
+        column-gap: 4rem;
+      }
+    }
+    .cta36-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .cta36-cell .icon-circle {
+      margin-bottom: 1.5rem;
+      width: 3.5rem;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--byt-coral);
+      color: #fff;
+      border-radius: 50%;
+    }
+    .cta36-cell .icon-circle svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    .cta36-cell img.icon {
+      margin-bottom: 1.25rem;
+      width: 3rem;
+      height: 3rem;
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .cta36-cell img.icon {
+        margin-bottom: 1.5rem;
+      }
+    }
+    .cta36-cell h2 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    @media (min-width: 768px) {
+      .cta36-cell h2 {
+        margin-bottom: 1.25rem;
+        font-size: 2.5rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .cta36-cell h2 {
+        font-size: 2.75rem;
+      }
+    }
+    .cta36-cell p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      max-width: 28rem;
+    }
+    .cta36-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .cta36-actions {
+        margin-top: 2rem;
+      }
+    }
+
+    .footer {
+      background: var(--byt-navy-deep);
+      color: rgba(255, 255, 255, 0.68);
+      padding: 4rem 5% 2rem;
+    }
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .footer-logo {
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .footer-logo img {
+      height: 100px;
+      width: auto;
+      display: block;
+    }
+    .footer-tagline {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.55);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+      max-width: 360px;
+    }
+    .footer-contact {
+      font-size: 14px;
+      line-height: 1.85;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .footer-contact a {
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.2s;
+    }
+    .footer-contact a:hover {
+      color: #fff;
+    }
+    .footer h4 {
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-links li {
+      padding: 0;
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+    }
+
+    .footer-newsletter-pitch {
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.62);
+      margin: -0.25rem 0 1rem;
+    }
+    .footer-newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .footer-newsletter-form input {
+      width: 100%;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      padding: 11px 14px;
+      border-radius: var(--r-btn);
+      transition:
+        border-color var(--t-hover),
+        background-color var(--t-hover);
+    }
+    .footer-newsletter-form input::placeholder {
+      color: rgba(255, 255, 255, 0.42);
+    }
+    .footer-newsletter-form input:focus {
+      outline: none;
+      border-color: var(--coral);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .footer-newsletter-form button {
+      width: 100%;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+    }
+    .footer-newsletter-form button:disabled {
+      opacity: 0.85;
+      cursor: default;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin-bottom: 1.5rem;
+    }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .footer-legal {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-legal li {
+      text-decoration: none;
+    }
+    .footer-legal a {
+      color: rgba(255, 255, 255, 0.45);
+      transition: color 0.2s;
+    }
+    .footer-legal a:hover {
+      color: #fff;
+    }
+    .social-links {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+    .social-link {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-btn);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .social-link:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    @media (max-width: 1024px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+      }
+    }
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+    }
+
+    .eyebrow-mb {
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    @media (min-width: 768px) {
+      .eyebrow-mb {
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+
+  <!-- ══════════════════════ Header98 ══════════════════════ -->
+  <section id="relume" class="h98">
+    <div class="container h98-card">
+      <div class="h98-content">
+        <div class="inner">
+          <h1>{page?.heroHeading ?? 'You became a therapist to do therapy.'}</h1>
+          <p class="h98-subhead">
+            {
+              page?.heroSubhead ??
+                'Not to manage billing, chase referrals, or build a business from scratch.'
+            }
+          </p>
+        </div>
+        <div class="h98-actions">
+          <button class="btn btn-primary" title={page?.heroPrimaryCta?.label ?? 'Apply Now'}
+            >{page?.heroPrimaryCta?.label ?? 'Apply Now'}</button
+          >
+        </div>
+      </div>
+      <div class="h98-bg">
+        <img
+          src={page?.heroImage?.asset?.url ??
+            'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1920&q=80'}
+          alt={page?.heroImage?.alt ?? 'Therapist with patient'}
+          loading="eager"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Layout422 ══════════════════════ -->
+  <section id="relume" class="section">
+    <div class="container">
+      <div class="l422-head">
+        <p class="l422-eyebrow">{page?.tracksEyebrow ?? 'Ways to work with us'}</p>
+        <h2>
+          {page?.tracksHeading ?? 'One license. Two role tracks. Pick the one that fits your life.'}
+        </h2>
+        <p class="text-md">
+          {
+            page?.tracksSubhead ??
+              'On-site at senior living communities across Southeast Florida, or fully remote teletherapy anywhere in the state. Same operational support — different ways to practice.'
+          }
+        </p>
+      </div>
+
+      <div class="l422-cards">
+        <a href={page?.tracks?.[0]?.cta?.href ?? '#'} class="l422-card is-default">
+          <div class="l422-card-img">
+            <img
+              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80"
+              alt="Therapist on telehealth video call"
+            />
+          </div>
+          <div class="l422-card-content">
+            <div class="l422-card-text">
+              <h3>{page?.tracks?.[0]?.heading ?? 'Teletherapy — Anywhere in Florida'}</h3>
+              <div class="l422-card-body mobile-only">
+                <p>
+                  {
+                    page?.tracks?.[0]?.body ??
+                      'Statewide telehealth — no geographic restriction beyond a Florida license. Cash-pay $175/session; insurance billing handled by BYT. Currently accepting applications as the teletherapy line launches. Early applicants prioritized.'
+                  }
+                </p>
+                <div class="l422-card-cta">
+                  <button class="btn-link alt"
+                    >Apply Now <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
+                    ></button
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="l422-card-body desktop-only">
+              <p>
+                {
+                  page?.tracks?.[0]?.body ??
+                    'Floriday statewide telehealth — no geographic restriction beyond a Florida license. Insurance and billing handled by us.'
+                }
+              </p>
+              <div class="l422-card-cta">
+                <button class="btn-link alt"
+                  >Apply Now <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
+                  ></button
+                >
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a href={page?.tracks?.[1]?.cta?.href ?? '#'} class="l422-card">
+          <div class="l422-card-img">
+            <img
+              src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80"
+              alt="Senior care facility setting"
+            />
+          </div>
+          <div class="l422-card-content">
+            <div class="l422-card-text">
+              <h3>{page?.tracks?.[1]?.heading ?? 'Facility-Based — Southeast Florida'}</h3>
+              <div class="l422-card-body mobile-only">
+                <p>
+                  {
+                    page?.tracks?.[1]?.body ??
+                      'On-site at ALFs, SNFs, and CCRCs in Palm Beach, Martin, St. Lucie, or Okeechobee counties. Established patient pipeline from Wellness Director referrals — no cold-calling, no marketing. You set your weekly availability; we coordinate scheduling around your calendar.'
+                  }
+                </p>
+                <div class="l422-card-cta">
+                  <button class="btn-link alt"
+                    >Apply Now <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
+                    ></button
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="l422-card-body desktop-only">
+              <p>
+                {
+                  page?.tracks?.[1]?.body ??
+                    'On-site at ALFs, SNFs, and CCRCs in Palm Beach, Martin, St. Lucie, or Okeechobee counties. Established patient pipeline.'
+                }
+              </p>
+              <div class="l422-card-cta">
+                <button class="btn-link alt"
+                  >Apply Now <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
+                  ></button
+                >
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Layout374 ══════════════════════ -->
+  <section id="l374-section" class="section">
+    <div class="container">
+      <div class="l374-head">
+        <div class="l374-head-inner">
+          <p class="l374-eyebrow">{page?.handlesEyebrow ?? 'What we handle'}</p>
+          <h2>{page?.handlesHeading ?? 'So you can focus on clinical work'}</h2>
+          <p class="text-md">The operational infrastructure that frees you to do therapy.</p>
+        </div>
+      </div>
+
+      <div class="l374-grid">
+        <div class="l374-card feature">
+          <div class="body">
+            <div>
+              <p class="tag">Billing</p>
+              <h3>{page?.handlesItems?.[0]?.heading ?? 'Medicare and insurance billing'}</h3>
+              <p>
+                {
+                  page?.handlesItems?.[0]?.body ??
+                    'Our billing team handles all claims — Medicare, commercial insurance, cash-pay reconciliation. You never file paperwork, never chase a denial, never sit on hold with a payer.'
+                }
+              </p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+            </div>
+          </div>
+          <div class="image">
+            <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true"
+              ><circle
+                cx="100"
+                cy="100"
+                r="70"
+                fill="none"
+                stroke="rgba(255,255,255,.18)"
+                stroke-width="1.5"></circle><circle
+                cx="100"
+                cy="100"
+                r="45"
+                fill="none"
+                stroke="rgba(255,255,255,.25)"
+                stroke-width="1.5"></circle><path
+                d="M70 100h60M100 70v60"
+                stroke="rgba(255,255,255,.5)"
+                stroke-width="2"
+                stroke-linecap="round"></path></svg
+            >
+          </div>
+        </div>
+
+        <div class="l374-card">
+          <div class="body">
+            <div>
+              <p class="tag">Referrals</p>
+              <h3>{page?.handlesItems?.[1]?.heading ?? 'Patient referrals'}</h3>
+              <p>
+                {
+                  page?.handlesItems?.[1]?.body ??
+                    'Facility-based: Wellness Directors send referrals. Teletherapy: we sourced and match patients. No self-marketing required.'
+                }
+              </p>
+            </div>
+          </div>
+          <div class="image">
+            <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true"
+              ><path
+                d="M50 100h80M115 80l25 20-25 20"
+                fill="none"
+                stroke="rgba(255,255,255,.5)"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path><circle
+                cx="100"
+                cy="100"
+                r="70"
+                fill="none"
+                stroke="rgba(255,255,255,.18)"
+                stroke-width="1.5"></circle></svg
+            >
+          </div>
+        </div>
+
+        <div class="l374-card">
+          <div class="body">
+            <div>
+              <p class="tag">EHR</p>
+              <h3>{page?.handlesItems?.[2]?.heading ?? 'EHR access'}</h3>
+              <p>
+                {
+                  page?.handlesItems?.[2]?.body ??
+                    'EHR provided. Progress notes, treatment plans, and documentation in one system — no setup, no per-seat fees.'
+                }
+              </p>
+            </div>
+          </div>
+          <div class="image">
+            <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true"
+              ><rect
+                x="65"
+                y="55"
+                width="70"
+                height="90"
+                rx="6"
+                fill="none"
+                stroke="rgba(255,255,255,.4)"
+                stroke-width="2"></rect><path
+                d="M80 90h40M80 105h30M85 130l8 8 18-18"
+                stroke="rgba(255,255,255,.55)"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path></svg
+            >
+          </div>
+        </div>
+
+        <div class="l374-card">
+          <div class="body">
+            <div>
+              <p class="tag">Clinical</p>
+              <h3>{page?.handlesItems?.[3]?.heading ?? 'Clinical Director oversight'}</h3>
+              <p>
+                {
+                  page?.handlesItems?.[3]?.body ??
+                    "Peer consultation and clinical oversight from Clinical Director. You're never practicing alone."
+                }
+              </p>
+            </div>
+          </div>
+          <div class="image">
+            <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true"
+              ><path
+                d="M60 145V70l40-20 40 20v75"
+                fill="none"
+                stroke="rgba(255,255,255,.45)"
+                stroke-width="2"
+                stroke-linejoin="round"></path><rect
+                x="80"
+                y="90"
+                width="12"
+                height="14"
+                fill="rgba(255,255,255,.3)"></rect><rect
+                x="108"
+                y="90"
+                width="12"
+                height="14"
+                fill="rgba(255,255,255,.3)"></rect><rect
+                x="92"
+                y="120"
+                width="16"
+                height="25"
+                fill="rgba(255,255,255,.4)"></rect></svg
+            >
+          </div>
+        </div>
+
+        <div class="l374-card">
+          <div class="body">
+            <div>
+              <p class="tag">Credentialing</p>
+              <h3>{page?.handlesItems?.[4]?.heading ?? 'Credentialing support'}</h3>
+              <p>
+                {
+                  page?.handlesItems?.[4]?.body ??
+                    'We assists with Medicare & Insurance enrollment and facility credentialing.'
+                }
+              </p>
+            </div>
+          </div>
+          <div class="image">
+            <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true"
+              ><rect
+                x="55"
+                y="65"
+                width="90"
+                height="80"
+                rx="6"
+                fill="none"
+                stroke="rgba(255,255,255,.4)"
+                stroke-width="2"></rect><line
+                x1="55"
+                y1="85"
+                x2="145"
+                y2="85"
+                stroke="rgba(255,255,255,.4)"
+                stroke-width="2"></line><line
+                x1="75"
+                y1="55"
+                x2="75"
+                y2="75"
+                stroke="rgba(255,255,255,.55)"
+                stroke-width="3"
+                stroke-linecap="round"></line><line
+                x1="125"
+                y1="55"
+                x2="125"
+                y2="75"
+                stroke="rgba(255,255,255,.55)"
+                stroke-width="3"
+                stroke-linecap="round"></line><circle
+                cx="100"
+                cy="115"
+                r="4"
+                fill="rgba(255,255,255,.6)"></circle></svg
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Layout506 ══════════════════════ -->
+  <section id="relume" class="section">
+    <div class="container">
+      <div class="l506-head">
+        <p class="eyebrow">{page?.qualsEyebrow ?? 'Qualifications'}</p>
+        <h1>{page?.qualsHeading ?? 'What you need to apply'}</h1>
+      </div>
+
+      <div class="l506-tabs" id="l506">
+        <div class="l506-panel active" data-panel="tab-1">
+          <div class="l506-panel-inner">
+            <div class="l506-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
+            </div>
+            <h2>Active Florida license</h2>
+            <p>
+              Psychologist, LCSW, LMHC, LPC, or LMFT. Full credential list required at application.
+            </p>
+            <div class="l506-panel-actions">
+              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="l506-panel" data-panel="tab-2">
+          <div class="l506-panel-inner">
+            <div class="l506-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
+            </div>
+            <h2>Active Medicare &amp; Insurance enrollment</h2>
+            <p>
+              Already enrolled, or willing to enroll. We handle all Medicare and private insurance
+              enrollment process if you're not yet credentialed.
+            </p>
+            <div class="l506-panel-actions">
+              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="l506-panel" data-panel="tab-3">
+          <div class="l506-panel-inner">
+            <div class="l506-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
+            </div>
+            <h2>Clinical experience</h2>
+            <p>
+              Experience in individual, group, or specialized populations preferred — not required.
+              We onboard newly-licensed clinicians too.
+            </p>
+            <div class="l506-panel-actions">
+              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="l506-panel" data-panel="tab-4">
+          <div class="l506-panel-inner">
+            <div class="l506-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
+            </div>
+            <h2>Southeast Florida geography</h2>
+            <p>
+              Facility-based track only. You must live within reasonable driving distance of Palm
+              Beach, Martin, St. Lucie, or Okeechobee counties.
+            </p>
+            <div class="l506-panel-actions">
+              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="l506-panel" data-panel="tab-5">
+          <div class="l506-panel-inner">
+            <div class="l506-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
+            </div>
+            <h2>HIPAA-compliant home office</h2>
+            <p>Private, secure space for sessions. Locked door.</p>
+            <div class="l506-panel-actions">
+              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="l506-list" role="tablist">
+          <button class="l506-trigger active" data-tab="tab-1">Florida license</button>
+          <button class="l506-trigger" data-tab="tab-2">Medicare &amp; Insurance enrollment</button>
+          <button class="l506-trigger" data-tab="tab-3">Clinical experience</button>
+          <button class="l506-trigger" data-tab="tab-4">SE Florida · facility</button>
+          <button class="l506-trigger" data-tab="tab-5">Home office · telehealth</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Testimonial37 ══════════════════════ -->
+  <section class="section t37-section">
+    <div class="container">
+      <div class="t37-head">
+        <div class="t37-head-inner">
+          <h1>What our therapists are saying</h1>
+          <p class="text-md">Peer proof from clinicians already working with BYT.</p>
+        </div>
+      </div>
+
+      <div class="t37-grid">
+        <div class="t37-cell t37-badge">
+          <div class="t37-badge-mark">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"></path><path
+                d="m9 12 2 2 4-4"></path></svg
+            >
+          </div>
+          <div class="t37-badge-text">
+            <p class="t37-badge-eyebrow">NPI</p>
+            <p class="t37-badge-label">Registered</p>
+          </div>
+        </div>
+        <div class="t37-cell t37-badge">
+          <div class="t37-badge-mark">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"></path><path
+                d="m9 12 2 2 4-4"></path></svg
+            >
+          </div>
+          <div class="t37-badge-text">
+            <p class="t37-badge-eyebrow">HIPAA</p>
+            <p class="t37-badge-label">Compliant</p>
+          </div>
+        </div>
+        <div class="t37-cell t37-test order-last">
+          <div class="t37-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+          </div>
+          <p class="t37-quote">
+            "{
+              testimonials?.[0]?.quote ??
+                '[Provider testimonial — pending collection. Quote will speak to operational relief: billing, scheduling, and referrals handled so the clinician can focus on clinical work.]'
+            }"
+          </p>
+          <div class="t37-meta">
+            <div class="t37-avatar t37-avatar-init">
+              {testimonials?.[0]?.authorInitials ?? 'FB'}
+            </div>
+            <div>
+              <p class="name">{testimonials?.[0]?.authorRole ?? '[Credential] · Facility-Based'}</p>
+              <p>{testimonials?.[0]?.authorOrg ?? '[County], Southeast Florida'}</p>
+            </div>
+          </div>
+        </div>
+        <div class="t37-cell t37-test">
+          <div class="t37-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+            <svg viewBox="0 0 24 24" fill="currentColor"
+              ><path
+                d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"
+              ></path></svg
+            >
+          </div>
+          <p class="t37-quote">
+            "{
+              testimonials?.[1]?.quote ??
+                '[Provider testimonial — pending collection. Quote will speak to flexibility and matched referrals: practicing on your own schedule without building a private practice from scratch.]'
+            }"
+          </p>
+          <div class="t37-meta">
+            <div class="t37-avatar t37-avatar-init">
+              {testimonials?.[1]?.authorInitials ?? 'TT'}
+            </div>
+            <div>
+              <p class="name">{testimonials?.[1]?.authorRole ?? '[Credential] · Teletherapy'}</p>
+              <p>{testimonials?.[1]?.authorOrg ?? 'FL telehealth'}</p>
+            </div>
+          </div>
+        </div>
+        <div class="t37-cell t37-badge">
+          <div class="t37-badge-mark">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"></path><path
+                d="m9 12 2 2 4-4"></path></svg
+            >
+          </div>
+          <div class="t37-badge-text">
+            <p class="t37-badge-eyebrow">Florida</p>
+            <p class="t37-badge-label">Licensed</p>
+          </div>
+        </div>
+        <div class="t37-cell t37-badge">
+          <div class="t37-badge-mark">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"></path><path
+                d="m9 12 2 2 4-4"></path></svg
+            >
+          </div>
+          <div class="t37-badge-text">
+            <p class="t37-badge-eyebrow">Medicare &amp; Insurance</p>
+            <p class="t37-badge-label">Enrolled</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ Cta36 ══════════════════════ -->
+  <section class="section cta36-section">
+    <div class="container">
+      <div class="cta36-grid">
+        <div class="cta36-cell">
+          <div class="icon-circle">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline
+                points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg
+            >
+          </div>
+          <h2>{page?.ctaHeading ?? 'Ready to do the work you were trained for?'}</h2>
+          <p>{page?.ctaSubhead ?? 'Application only takes 3 minutes.'}</p>
+          <div class="cta36-actions">
+            <button class="btn btn-primary">{page?.ctaCta?.label ?? 'Apply Now'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    /* Layout506 — vertical Tabs */
+    const l506 = document.getElementById('l506');
+    l506.querySelectorAll('.l506-trigger').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        l506
+          .querySelectorAll('.l506-trigger')
+          .forEach((b) => b.classList.toggle('active', b === btn));
+        l506
+          .querySelectorAll('.l506-panel')
+          .forEach((p) => p.classList.toggle('active', p.dataset.panel === target));
+      });
+    });
+  </script>
+</BaseLayout>

@@ -1055,7 +1055,8 @@ Provider tag pills (Psychologists, LCSWs, LMHCs, LPCs, LMFTs, Facility-based, Te
 - [x] Rewrite communities.astro: verbatim HTML body, `<style is:global>` CSS block verbatim, `<script is:inline>` for l505 tabs, Sanity variables wired
 - [x] pnpm build — PASS (communities/index.html prerendered)
 - [x] pnpm lint — PASS (0 errors after var→const in script block)
-- [ ] Deploy + visual parity confirmed by Igor
+- [x] Deploy — CF Pages deploy active, commit 979c01a, https://5fd5a68c.byt-website.pages.dev
+- [ ] Visual parity confirmed by Igor
 
 #### Communities Review — 2026-05-02T04:15Z
 
@@ -1095,10 +1096,33 @@ h84-eyebrow "For Wellness Directors", l521 step images (4 Unsplash URLs), l521 s
 - [ ] Rewrite patients.astro
 - [ ] Build + deploy + visual parity confirmed
 
-### Providers (`/providers/`) — pending
+### Providers (`/providers/`) — BUILT, pending deploy + Igor confirmation
 
-- [ ] Rewrite providers.astro
-- [ ] Build + deploy + visual parity confirmed
+- [x] Read every line of design-source/pages/Providers.html (CSS lines 9–702, body lines 704–1083, script lines 1150–1160)
+- [x] Create apps/web/src/pages/providers.astro — verbatim HTML injection with Sanity variables
+- [x] pnpm build — PASS (/providers/index.html prerendered)
+- [x] pnpm typecheck — PASS
+- [x] pnpm lint — PASS (pre-existing .sanity/runtime/app.js error unaffected, providers.astro clean)
+- [ ] Deploy — CF Pages auto-deploy on push to main
+- [ ] Visual parity confirmed by Igor
+
+#### Providers Review — 2026-05-02T04:45Z
+
+**Files changed:**
+
+- `apps/web/src/pages/providers.astro` — created: verbatim HTML from design-source Providers.html, `<style is:global>` (all CSS lines 9–702), `<script is:inline>` (l506 tab switcher), Sanity variables wired for all 6 sections
+
+**Sanity-editable fields:**
+heroHeading, heroSubhead, heroPrimaryCta (label/href), heroImage (url/alt), tracksEyebrow, tracksHeading, tracksSubhead, tracks[0–1].heading, tracks[0–1].body, tracks[0–1].cta.href, handlesEyebrow, handlesHeading, handlesItems[0–4].heading, handlesItems[0–4].body, qualsEyebrow, qualsHeading, ctaHeading, ctaSubhead, ctaCta.label, testimonials[] (quote, authorInitials, authorRole, authorOrg)
+
+**Hardcoded (no schema):**
+l422 card images (2 Unsplash URLs), l374 card SVG icons (5 inline SVGs), l374 card tags (Billing/Referrals/EHR/Clinical/Credentialing), l374 subhead "The operational infrastructure…", l506 all 5 panel headings + body text (quals schema has scope+body but no heading field; panel text left verbatim), l506 trigger labels, t37 badge cells (4: NPI/HIPAA/Florida/Medicare), t37 section heading + subhead, cta36 icon SVG
+
+**Quality gates:**
+
+- pnpm build — PASS
+- pnpm typecheck — PASS
+- pnpm lint — PASS (providers.astro clean)
 
 ### About (`/about/`) — pending
 
