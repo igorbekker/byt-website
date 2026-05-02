@@ -947,11 +947,11 @@ _(`.stats-band` and `.team` are defined in design-source CSS but have no `<secti
 - [x] Igor approves deviation report — 2026-05-02
 - [x] Fixes begin on `feat/phase-5-design-parity` branch — 2026-05-02
 - [x] APPROACH CHANGE: Raw HTML injection replacing component decomposition — Igor approved 2026-05-02
-- [ ] G1/G2/G7 cross-cutting CSS fixes
-- [ ] Per-page fixes: Homepage, Communities, Providers, Patients, Careers, About, Contact
-- [ ] All 7 pages verified against design-source after fixes
-- [ ] `/pre` before commit
-- [ ] `/post` after push
+- [x] G1/G2/G7 cross-cutting CSS fixes — resolved by Phase 6 raw HTML injection (verbatim CSS from design-source; no manual fixes needed)
+- [x] Per-page fixes — superseded by Phase 6 full page rewrites
+- [ ] All 7 pages verified against design-source after Phase 6 rewrites
+- [x] `/pre` before commit — 2026-05-02
+- [x] `/post` after push — 2026-05-02
 
 ---
 
@@ -1048,10 +1048,47 @@ Provider tag pills (Psychologists, LCSWs, LMHCs, LPCs, LMFTs, Facility-based, Te
 
 - `pnpm --filter web build` — PASS (all 7 routes prerendered, /index.html 172ms)
 
-### Communities (`/communities/`) — pending
+### Communities (`/communities/`) — 2026-05-02T04:15Z
 
-- [ ] Rewrite communities.astro: verbatim HTML, styles, scripts, Sanity variables
-- [ ] Build + deploy + visual parity confirmed
+- [x] Revert all non-homepage pages (about, careers, contact, patients, providers deleted)
+- [x] Read design-source/pages/Communities.html in full — all 1270 lines
+- [x] Rewrite communities.astro: verbatim HTML body, `<style is:global>` CSS block verbatim, `<script is:inline>` for l505 tabs, Sanity variables wired
+- [x] pnpm build — PASS (communities/index.html prerendered)
+- [x] pnpm lint — PASS (0 errors after var→const in script block)
+- [ ] Deploy + visual parity confirmed by Igor
+
+#### Communities Review — 2026-05-02T04:15Z
+
+**Status:** BUILT — pending deploy + Igor visual confirmation
+
+**Files changed:**
+
+- `apps/web/src/pages/communities.astro` — full rewrite: verbatim HTML from design-source, `<style is:global>` block (all CSS from design-source `<head>` lines 9–648), `<script is:inline>` for l505 tab switcher, Sanity variables wired for all 7 sections
+- `apps/web/src/pages/about.astro` — deleted (revert; was built prematurely in previous session)
+- `apps/web/src/pages/careers.astro` — deleted (revert)
+- `apps/web/src/pages/contact.astro` — deleted (revert)
+- `apps/web/src/pages/patients.astro` — deleted (revert)
+- `apps/web/src/pages/providers.astro` — deleted (revert)
+- `tasks/lessons.md` — lesson logged: built all 7 pages at once instead of one at a time
+- `tasks/todo.md` — Communities task tracked
+
+**Approach:**
+
+- `<style is:global>` contains the full CSS block verbatim from design-source `<head>` — not moved, not modified
+- HTML between nav and footer copied verbatim from design-source body; nav/footer remain in BaseLayout
+- l505 tab script from design-source reproduced as `<script is:inline>` — `var` changed to `const` to pass lint (zero behavioral change)
+- Conditions fallback: if no Sanity conditions data, 11 hardcoded conditions from design-source render as default
+
+**Sanity-editable fields:**
+heroHeading, heroSubhead, heroCta (label/href), heroImage (url/alt), processHeading, processSubhead, processSteps[0–3].heading, handlesHeading, handlesSubhead, handlesItems[].heading, conditionsEyebrow, conditionsHeading, conditionsSubhead, conditions[] collection (tagline/heading/body), serviceAreaHeading, serviceAreaLede, ctaHeading, ctaSubhead, ctaCta (label/href), siteSettings.phone (CTA section)
+
+**Hardcoded (no schema):**
+h84-eyebrow "For Wellness Directors", l521 step images (4 Unsplash URLs), l521 step SVG icons, l16 photo image, l526 entire section (6 cards: headings, bodies, images, icons, tags), l505 condition SVG icons (generic heart for all), l192 SVG map, l192 county pills (Palm Beach/Martin/St. Lucie/Okeechobee), l192 facility type pills (ALF/SNF/CCRC)
+
+**Quality gates:**
+
+- `pnpm --filter web build` — PASS (2 routes prerendered: /index.html, /communities/index.html)
+- `pnpm exec eslint apps/web/src/pages/communities.astro` — PASS (0 errors)
 
 ### Patients (`/patients/`) — pending
 
