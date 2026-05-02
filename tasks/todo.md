@@ -946,11 +946,65 @@ _(`.stats-band` and `.team` are defined in design-source CSS but have no `<secti
 
 - [x] Igor approves deviation report — 2026-05-02
 - [x] Fixes begin on `feat/phase-5-design-parity` branch — 2026-05-02
+- [x] APPROACH CHANGE: Raw HTML injection replacing component decomposition — Igor approved 2026-05-02
 - [ ] G1/G2/G7 cross-cutting CSS fixes
 - [ ] Per-page fixes: Homepage, Communities, Providers, Patients, Careers, About, Contact
 - [ ] All 7 pages verified against design-source after fixes
 - [ ] `/pre` before commit
 - [ ] `/post` after push
+
+---
+
+# Phase 6 — Raw HTML Injection Rebuild
+
+**Status:** IN PROGRESS
+**Date:** 2026-05-02
+**Branch:** feat/phase-5-design-parity (continuing)
+**Approach:** Replace component-based pages with raw HTML from design-source. Only CMS-editable fields (headlines, body copy, CTAs, image paths) pulled from Sanity. Global CSS verbatim from design-source. Scripts as `<script is:inline>`.
+
+## Task: Homepage (`/`)
+
+- [x] Read design-source/pages/Homepage.html in full — inventory all sections
+- [x] Extract global CSS from design-source/styles/ into global.css verbatim
+- [x] Identify Sanity fields to query (headlines, copy, CTAs, images)
+- [x] Rewrite apps/web/src/pages/index.astro with raw HTML + Sanity interpolation
+- [x] Move page-scoped styles to `<style is:global>` in index.astro
+- [x] Add `<script is:inline>` for page scripts (router accordion + l349 scroll)
+- [x] pnpm build — PASS
+- [ ] Deploy + verify visual parity against design-source
+- [ ] /pre → commit → push → /post
+
+### Homepage Review
+
+**Status:** BUILT, PENDING DEPLOY VERIFICATION — 2026-05-02
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — full rewrite: raw HTML injection from design-source, Sanity data interpolated, `<style is:global>` with all 8 section CSS blocks, `<script is:inline>` for router accordion + l349 sticky scroll
+- `apps/web/src/styles/global.css` — fade-up transition updated `0.5s → 0.6s` to match design-source
+
+**Approach:**
+
+- All 8 sections (hero, router, belief, twoways, conditions, howitworks, testimonials, provider) taken verbatim from design-source HTML
+- Sanity data interpolated for: hero (eyebrow, headline, subhead, CTAs), router (eyebrow, heading, subhead, 3 card texts + CTAs), belief (quote, body), twoways (eyebrow, heading, subhead, track labels/headings/bodies/CTAs), conditions (eyebrow, heading, subhead), howitworks (eyebrow, heading, track labels, steps, CTAs), testimonials (eyebrow, heading, subhead), provider (eyebrow, heading, body, CTAs)
+- Hardcoded: SVG icons, condition list items (4 conditions), testimonial content (2 cards), provider tags (7 pills), Unsplash image URLs as defaults
+- Removed all component imports (HeroSection, AudienceRouter, etc.)
+- BaseLayout still handles nav, footer, mobile CTA bar, global fade-up IntersectionObserver
+- Scripts: fade-up observer in BaseLayout (G4 fix), router accordion + l349 scroll in `<script is:inline>` — no duplicate observers
+
+**Verified:**
+
+- `pnpm --filter web build` — PASS (all 7 routes, /index.html in 57ms)
+- `pnpm lint` — PASS (0 errors in index.astro)
+- `pnpm --filter web check` — 1 pre-existing ts(2307) error (sanity:client, affects all pages), 0 new errors
+
+## Remaining Pages (do not start until Homepage confirmed)
+
+- [ ] Communities (`/communities/`)
+- [ ] Patients (`/patients/`)
+- [ ] Providers (`/providers/`)
+- [ ] About (`/about/`)
+- [ ] Careers (`/careers/`)
+- [ ] Contact (`/contact/`)
 
 ---
 
