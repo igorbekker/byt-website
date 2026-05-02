@@ -1002,27 +1002,81 @@ _(`.stats-band` and `.team` are defined in design-source CSS but have no `<secti
 **Goal:** Confirm design-source Homepage.html renders correctly as a standalone file before proceeding to other pages. If test.html looks correct, every deviation on the live site is in the Astro translation layer.
 
 - [x] Copy design-source/pages/Homepage.html → apps/web/public/test.html — 2026-05-02
-- [ ] Push to main, wait for CF Pages auto-deploy
-- [ ] Verify https://byt-website.pages.dev/test.html renders full homepage design correctly
-- [ ] Report result; proceed to remaining pages only after confirmed
+- [x] Push to main, wait for CF Pages auto-deploy — 2026-05-02
+- [x] Verify https://byt-website.pages.dev/test.html renders full homepage design correctly — Igor confirmed 2026-05-02
+- [x] Report result; proceed to remaining pages only after confirmed — 2026-05-02
 
 ### test.html Review — 2026-05-02
 
-**Status:** COMMITTED — pending deploy + visual check
-**What was built:** Verbatim copy of design-source/pages/Homepage.html placed in apps/web/public/. The public/ directory is served as-is by Astro — no build pipeline, no Astro rendering, no component processing. This proves the design-source file itself is sound before any Astro translation layer is blamed.
-**Approach change:** Earlier attempts used prerendered .astro pages, server endpoints, and CF Pages API polling — all unnecessary complexity. Igor corrected: cp file to public/, push to main, let CF Pages auto-deploy, check the URL.
-**Verified:** N/A — file is a verbatim copy. Build quality gate run below.
+**Status:** COMPLETE — Igor confirmed test.html renders correctly 2026-05-02
+**What was built:** Verbatim copy of design-source/pages/Homepage.html placed in apps/web/public/. The public/ directory is served as-is by Astro — no build pipeline, no Astro rendering, no component processing. Proves the design-source file itself is sound; any deviation on live site is in the Astro translation layer.
 
 ---
 
-## Remaining Pages (do not start until test.html confirmed)
+## Phase 6 — Raw HTML Injection (all 7 pages)
 
-- [ ] Communities (`/communities/`)
-- [ ] Patients (`/patients/`)
-- [ ] Providers (`/providers/`)
-- [ ] About (`/about/`)
-- [ ] Careers (`/careers/`)
-- [ ] Contact (`/contact/`)
+**Approach confirmed by Igor 2026-05-02:** Copy design-source HTML verbatim into .astro files. `<style>` blocks kept exactly as-is (no moving to global.css). Scripts use `is:inline`. Only replace text/image values with Sanity variables where schemas exist. No refactoring, componentizing, renaming, or restructuring.
+
+### Homepage (`/`) [x] COMPLETE — 2026-05-02
+
+- [x] Remove public/test.html — same commit as Homepage — 2026-05-02
+- [x] Rewrite index.astro: verbatim HTML from design-source, `<style is:global>`, `<script is:inline>`, Sanity variables wired — 2026-05-02
+- [x] Build passes — 2026-05-02
+- [ ] Deploy + visual parity confirmed
+
+### Homepage Review — 2026-05-02
+
+**Status:** BUILT — pending deploy + visual confirmation
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — full rewrite: 1148 lines, verbatim design-source HTML, `<style is:global>` block (lines 10–527 of source), `<script is:inline>` for router accordion + l349 sticky-scroll, Sanity variables wired for all 8 sections
+- `apps/web/public/test.html` — deleted (test file no longer needed)
+
+**Approach:**
+
+- `<style is:global>` contains the full 517-line CSS block verbatim from design-source `<head>` — not moved, not modified
+- HTML between nav and footer copied verbatim from design-source body; nav/footer remain in BaseLayout
+- Scripts from design-source bottom-of-body reproduced as `<script is:inline>` — no restructuring
+
+**Sanity-editable fields:**
+heroEyebrow, heroHeadline, heroSubhead, heroImage, heroPrimaryCta, heroSecondaryCta, routerEyebrow, routerHeading, routerSubhead, routerCards[] (tagline/heading/bodyCollapsed/bodyExpanded/cta/image), beliefQuote, beliefBody, twoWaysEyebrow, twoWaysHeading, twoWaysSubhead, twoWaysTracks[] (label/heading/body/image/cta), conditionsEyebrow, conditionsHeading, conditionsSubhead, conditions[] collection, howItWorksEyebrow, howItWorksHeading, teletherapyTrackLabel, teletherapySteps[], teletherapyCta, facilityTrackLabel, facilitySteps[], facilityCta, testimonialsEyebrow, testimonialsHeading, testimonialsSubhead, testimonials[] collection, providerTeaserEyebrow, providerTeaserHeading, providerTeaserBody, providerTeaserImage, providerTeaserPrimaryCta, providerTeaserSecondaryCta, seo
+
+**Hardcoded (no schema):**
+Provider tag pills (Psychologists, LCSWs, LMHCs, LPCs, LMFTs, Facility-based, Teletherapy), SVG icons in router cards
+
+**Verified:**
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered, /index.html 172ms)
+
+### Communities (`/communities/`) — pending
+
+- [ ] Rewrite communities.astro: verbatim HTML, styles, scripts, Sanity variables
+- [ ] Build + deploy + visual parity confirmed
+
+### Patients (`/patients/`) — pending
+
+- [ ] Rewrite patients.astro
+- [ ] Build + deploy + visual parity confirmed
+
+### Providers (`/providers/`) — pending
+
+- [ ] Rewrite providers.astro
+- [ ] Build + deploy + visual parity confirmed
+
+### About (`/about/`) — pending
+
+- [ ] Rewrite about.astro
+- [ ] Build + deploy + visual parity confirmed
+
+### Careers (`/careers/`) — pending
+
+- [ ] Rewrite careers.astro
+- [ ] Build + deploy + visual parity confirmed
+
+### Contact (`/contact/`) — pending
+
+- [ ] Rewrite contact.astro
+- [ ] Build + deploy + visual parity confirmed
 
 ---
 
