@@ -1103,7 +1103,8 @@ h84-eyebrow "For Wellness Directors", l521 step images (4 Unsplash URLs), l521 s
 - [x] pnpm build — PASS (/providers/index.html prerendered)
 - [x] pnpm typecheck — PASS
 - [x] pnpm lint — PASS (pre-existing .sanity/runtime/app.js error unaffected, providers.astro clean)
-- [ ] Deploy — CF Pages auto-deploy on push to main
+- [x] Deploy — pushed to origin/main at 2026-05-02T04:46Z, CF Pages auto-deploy triggered (commit 67be182)
+- [x] Fix — .btn-secondary border missing at rest (global.css cascade conflict); bumped to .btn.btn-secondary for higher specificity (2026-05-02T05:03Z, commit pending)
 - [ ] Visual parity confirmed by Igor
 
 #### Providers Review — 2026-05-02T04:45Z
