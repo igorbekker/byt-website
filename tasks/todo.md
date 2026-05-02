@@ -723,3 +723,249 @@ The contact form must submit to Formspree. The form action URL is not yet define
 - About.html has .stats-band + .team sections not in the Phase 4 brief — no schema fields, not rendered
 - OBS-007 correction: installed package is astro-portabletext, not @portabletext/astro (doesn't exist on npm)
 - Sanity Studio deploy requires SANITY_DEPLOY_TOKEN (Administrator) — stored in ~/.profile as $SANITY_DEPLOY_TOKEN
+
+---
+
+# Phase 5 — Design-Source Parity
+
+**Status:** IN PROGRESS
+**Date:** 2026-05-02
+**Branch:** feat/phase-5-design-parity
+
+---
+
+## Cross-Cutting Deviations (affect all or most pages)
+
+| #                | Issue                                                     | Design-source value                                           | Current value                                                                                                              |
+| ---------------- | --------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| G1               | Container max-width                                       | `max-width: 80rem` (1280px) via `.container`                  | `max-width: 1200px` via `--max-w`                                                                                          |
+| G2               | Base font-size                                            | `16px`                                                        | `15px` (via `--font-size-base`)                                                                                            |
+| G3               | fade-up transition duration                               | `0.6s ease`                                                   | `0.5s ease` (global.css)                                                                                                   |
+| G4 ✅ 2026-05-02 | fade-up observer **not running on homepage**              | Observer runs on all `.fade-up` elements                      | `FadeUp.astro` never included in any home section component or `index.astro` — all fade-up sections invisible at opacity:0 |
+| G5               | Section vertical padding                                  | `64px/96px/112px` (`.section` class, three breakpoints)       | `80px/64px/56px` (`var(--pad-s)`, reversed scaling)                                                                        |
+| G6               | `.btn` missing `box-shadow` and `transform` in transition | `transition: …, box-shadow .15s, transform .15s`              | `transition: background-color, border-color, color` only                                                                   |
+| G7               | Lora serif italic font not loaded                         | `font-family: 'Lora', serif` used on `h1 em` in Patients hero | Not imported anywhere                                                                                                      |
+
+---
+
+## PAGE: /
+
+**SOURCE:** design-source/pages/Homepage.html
+
+**Sections in design-source (in order):**
+
+1. `.hero` — split-column hero (cream bg)
+2. `.router-section` — audience router (accordion cards, navy bg)
+3. `.belief` — belief band (cream bg, centered quote)
+4. `.twoways` — two photo-overlay cards (dark bg)
+5. `.l349-section-header` + `.l349` — conditions sticky scroll
+6. `.howitworks` — two-track step layout
+7. `.testimonials` — 2-col testimonial grid
+8. `.provider` — provider teaser (dark bg photo overlay)
+
+**Deviations:**
+
+- **fade-up (CRITICAL):** `FadeUp.astro` is never included in `index.astro` or any home section component. The IntersectionObserver never runs. All `.fade-up` elements stay at `opacity: 0` — the entire homepage is invisible below the fold. Fix: wire observer script into `BaseLayout.astro` or `index.astro`.
+- **Audience Router — `.r-cta` border:** Astro adds `border: 1.5px solid var(--coral)` with hover. Design-source: `border: none`.
+- **Audience Router — SVG icons:** Design-source uses per-card distinct SVGs with specific stroke colors (card 1: `#E17B5D`; cards 2–3: `#9CAF88`). Astro renders one generic user-silhouette SVG for all cards, `stroke: var(--coral)`.
+- **TwoWays — eyebrow margin-bottom:** Design-source: `1rem`. Astro: `0.75rem`.
+- **Provider Teaser — `.provider-tags` missing:** Design-source renders a `<div class="provider-tags">` with 7 credential pills (Psychologists, LCSWs, LMHCs, LPCs, LMFTs, Facility-based, Teletherapy). Astro has no tags block, no CSS for it, no Sanity field.
+- **Testimonials — avatar photos:** Design-source shows `background: url(...)` photos. Astro renders initials only (no photo URL in schema).
+- **Footer — `gap`:** Design-source: `3rem`. Astro: `4rem`.
+- **Footer — grid columns:** Design-source: `1.6fr 1fr 1fr 1.2fr`. Astro: `1.6fr 1fr 1fr 1fr`.
+- **Footer — logo height:** Design-source: `100px`. Astro: `60px`.
+- **Footer — newsletter pitch:** Design-source: `14px / rgba(255,255,255,.62) / lh 1.55 / margin -.25rem 0 1rem`. Astro: `13px / rgba(255,255,255,.55) / lh 1.6 / no negative top margin`.
+- **Footer — newsletter input border:** Design-source: `1px solid rgba(255,255,255,.16)`. Astro: `1.5px solid rgba(255,255,255,.2)`.
+- **Footer — newsletter input focus:** Design-source: `border-color: var(--coral); background: rgba(255,255,255,.1)`. Astro: `border-color: rgba(255,255,255,0.5)` — no coral, no background change.
+
+---
+
+## PAGE: /communities
+
+**SOURCE:** design-source/pages/Communities.html
+
+**Sections in design-source (in order):**
+
+1. `.h84` — split hero: text left / image right, eyebrow + h1 + lede + CTA
+2. `#l521-section` — 4-step process cards with background photo + overlay + icon per card
+3. `.section.l16` — "We handle everything your staff shouldn't" — 2-col: checklist left / photo right
+4. `#l526-section` — 3-col bento handles grid with background photo + overlay + tags/icons per card
+5. `#l505-section` — vertical tab conditions
+6. `.section.l192` — SVG map left / text + service-area pills right
+7. `#cta / .cta25-section` — centered dark CTA band
+
+**Deviations:**
+
+- **Hero — `.h84-eyebrow` missing:** Design-source renders `<span class="h84-eyebrow">For Wellness Directors</span>` above h1 (`font-size:13px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--coral)`). Not in Astro.
+- **Process cards (l521) — background photo + overlay missing:** Design-source: each `.l521-card` has a `.l521-card-img` photo + gradient overlay `rgba(10,45,82,.45→.7→.92)`. Astro: solid CSS gradient only, no photo layer.
+- **Process cards (l521) — `.l521-icon` missing:** Each card has an icon container (`border-radius:10px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25)`) with a step-specific SVG. Entirely absent from Astro.
+- **Section l16 — ENTIRE SECTION MISSING:** The "We handle everything your staff shouldn't" block (2-column: checklist with coral check-circle icons left, photo right) is completely absent from `communities.astro`. It appears between l521 and l526 in the design-source. No schema fields, no CSS, no markup.
+- **Handles grid (l526) — background photo + overlay missing:** Same as l521 — design-source uses photo + overlay per card. Astro uses solid gradient only.
+- **Handles grid (l526) — `.l526-tag` and `.l526-icon` missing:** Large cards have `<span class="l526-tag">` eyebrow labels (Sessions, Coordination, Education). Small cards have `.l526-icon` SVGs. Neither is present in Astro.
+- **Service area (l192) — container width:** Design-source `.container`: `max-width: 80rem` (1280px). Astro `.max-w`: 1200px. (Cross-cutting, per G1.)
+
+---
+
+## PAGE: /patients
+
+**SOURCE:** design-source/pages/Patients.html
+
+**Sections in design-source (in order):**
+
+1. `.ph-hero` — full-bleed bg image, dark tint overlay, centered h1/subhead/CTA
+2. `.ph-router` — 4-card audience selector (white bg) — cards are `<a>` anchors
+3. `.ph-twoways` — 2 delivery-track photo cards (off-white bg) — cards are `<a>` anchors
+4. `.belief` — belief band (cream bg)
+5. `.ph-l505` — vertical tab conditions (off-white bg)
+6. `.ph-cta35` — single-column CTA band (white bg)
+
+**Deviations:**
+
+- **Hero — Lora italic missing (CRITICAL / cross-cutting G7):** Design-source: `.ph-hero-content h1 em { font-family:'Lora',serif; font-style:italic; font-weight:500 }`. Lora not imported. The `em` span in the h1 renders in Montserrat/Manrope instead of serif italic.
+- **Hero — `.ph-hero-tint` placement:** Design-source places it _inside_ `.ph-hero-bg`. Astro places it as a sibling _outside_ `.ph-hero-bg`.
+- **Audience cards — element type:** Design-source: each `.ph-card` is an `<a>` anchor (full card is a link). Astro: `<div>` with nested `<a class="ph-card-link">` — whole card is not a link.
+- **Delivery tracks — card element type:** Same — design-source `.ph-way` is an `<a>`; Astro uses `<div>`.
+- **Belief band — `.belief h2` white-space:** Design-source: `white-space: nowrap` (+ 900px breakpoint override to `normal`). Astro: no `white-space` property.
+- **Conditions tabs — `.l505-tabs` box-shadow:** Design-source: no `box-shadow`. Astro adds `box-shadow: var(--shadow-sm)`.
+
+---
+
+## PAGE: /providers
+
+**SOURCE:** design-source/pages/Providers.html
+
+**Sections in design-source (in order):**
+
+1. `.h98` — full-bleed image hero with dot-pattern overlay
+2. `.l422` — two hover-expand role-track cards (viewport-height, photo panels)
+3. `.l374` — bento handles grid (1 large feature + 4 small)
+4. `.l506` — vertical tab qualifications panel
+5. `.t37-section` — badge cells + testimonial cards bento
+6. `.cta36-section` — centered CTA band
+
+**Deviations:**
+
+- **Hero — dot-pattern overlay (`.h98-bg::before`) missing:** Design-source: `radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px); background-size: 24px 24px; opacity:.6`. Not in Astro.
+- **Hero — h1 mobile font-size:** Design-source: `2.75rem` base. Astro: `clamp(2.5rem, …)` — floor is `2.5rem`.
+- **Hero — gradient 3rd stop missing:** Design-source: `#1a4d8c` at 100%. Astro: 2-stop gradient, no `#1a4d8c`.
+- **Hero — actions `margin-top`:** Design-source: `1.75rem` base / `2.25rem` at 768px. Astro: `0.25rem`.
+- **Role tracks (l422) — cards are `<div>` not `<a>`:** Design-source: cards are anchor elements. Astro: `<div>`.
+- **Role tracks (l422) — background photo panels missing:** Design-source: `.l422-card-img` with photo + gradient overlay. Astro: solid CSS gradient only.
+- **Role tracks (l422) — expanded width:** Design-source: `70%` for default/hovered card. Astro: `60%`.
+- **Role tracks (l422) — desktop card height:** Design-source: `min-height: 70vh`. Astro: `min-height: 500px` (fixed px).
+- **Role tracks (l422) — mobile/desktop body split animation missing:** Design-source has two `.l422-card-body` divs per card (`.mobile-only` / `.desktop-only`); desktop body animates in on hover. Astro has one static `.l422-card-body`.
+- **Handles grid (l374) — feature card image panel missing:** Design-source: feature card has a `.image` panel (decorative gradient + dot pattern + SVG icon, `flex: 1`, `min-height: 280px`). Not in Astro.
+- **Handles grid (l374) — `.tag` eyebrow missing per card:** Each card body has `<p class="tag">` (11px / coral / uppercase / letter-spacing). Not in Astro.
+- **Handles grid (l374) — feature card CTA button missing:** Each feature card has `<div class="actions"><button class="btn btn-secondary">Apply Now</button></div>`. Not in Astro.
+- **Qualifications (l506) — panel `h2` heading missing:** Each panel has a heading element (`font-size: 1.75rem → 2.5rem`). Astro renders only scope badge + body text.
+- **Qualifications (l506) — panel CTA button missing:** Each panel has `<div class="l506-panel-actions"><button class="btn btn-secondary">Apply Now</button></div>`. Not in Astro.
+- **Qualifications (l506) — trigger hover color:** Design-source: `color: var(--navy)` (#104378). Astro: `color: var(--navy-deep)` (#0a2d52). Wrong shade.
+- **Qualifications (l506) — trigger hover background:** Design-source: `background: var(--off-white)`. Astro: `background: var(--white)`.
+- **Testimonials (t37) — badge cells COMPLETELY MISSING:** Design-source: `.t37-grid` has 4 `.t37-badge` cells interspersed (NPI Registered, HIPAA Compliant, Florida Licensed, Medicare Enrolled) each with icon + label. Not in Astro at all.
+- **Testimonials (t37) — mobile meta stacking:** Design-source: avatar stacks above text on mobile (`flex-direction: column`). Astro: always row direction.
+- **Testimonials (t37) — `border-top` extra:** Astro adds `border-top: 1px solid var(--border)` on `.t37-section`. Not in design-source.
+- **CTA (cta36) — icon class mismatch:** Design-source: `class="icon-circle"`. Astro: `class="cta36-icon-circle"`.
+
+---
+
+## PAGE: /about
+
+**SOURCE:** design-source/pages/About.html
+
+**Sections in design-source (in order):**
+
+1. `.about-hero` — split hero: cream left (h1 + subhead), navy image right
+2. `.mission-band` — white centered pull-quote band with coral rule
+3. `.story` — off-white two-column: founder photo left, narrative right
+4. `.values` — white 3-up principle cards
+5. `.approach` — white practice-pillar row list
+6. `.about-cta` — navy-deep CTA with background image + overlay
+
+_(`.stats-band` and `.team` are defined in design-source CSS but have no `<section>` in the HTML body — consistently absent from both source and Astro.)_
+
+**Deviations:**
+
+- **Approach — background color:** Design-source: `var(--white)`. Astro: `var(--off-white)`.
+- **Approach — extra `border-top`:** Design-source: none. Astro adds `border-top: 1px solid var(--border)`.
+- **Approach — `.approach-num` font:** Design-source: `font-family:'Manrope'; font-weight:800; font-size:14px; white-space:nowrap`. Astro: `font-family:var(--font-body)` (Montserrat); `font-weight:600`; `font-size:12px`; adds `text-transform:uppercase` not in source; no `white-space:nowrap`.
+- **Approach — `.approach-row` grid columns:** Design-source: `200px 1fr 1.4fr`. Astro: `220px 1fr 1fr`.
+- **Approach — `.approach-row` align-items:** Design-source: `baseline`. Astro: `start`.
+- **Approach — `.approach-title` font-size:** Design-source: `1.4rem`. Astro: `1.05rem`.
+- **Approach — `.approach-body` font-size:** Design-source: `16px`. Astro: `15px`.
+- **Approach — `.approach-body` max-width:** Design-source: `560px`. Astro: none.
+- **Values — `.value-num` font-family:** Design-source: `font-family:'Manrope'; font-weight:800` (explicit). Astro: no `font-family` declared on `.value-num` (a `<span>`) — inherits Montserrat from body instead of Manrope.
+- **CTA — gradient opacity:** Design-source: `rgba(10,45,82,.9)` / `rgba(16,67,120,.84)`. Astro: `.92` / `.85`. Minor.
+- **CTA — `p` margin-bottom:** Design-source: `2.25rem`. Astro: `2rem`.
+
+---
+
+## PAGE: /careers
+
+**SOURCE:** design-source/pages/Careers.html
+
+**Sections in design-source (in order):**
+
+1. `.about-hero.careers-hero` — navy full-width hero, centered text, coral vertical bar `::before`, radial gradient `::after`
+2. `.jobs` — open positions with 4-column job row grid
+3. `.general-app` — cream background, heading + body + **full inline form** (name, email, phone, license-type, textarea, file-drop resume upload)
+4. `#jobModal` — full-screen job detail + application modal
+
+**Deviations:**
+
+- **Hero — ALL careers CSS missing:** `.careers-hero`, `::before` (coral bar), `::after` (radial gradients), scoped `h1`/`p`/`.eyebrow` rules are absent from Astro. Without them: no navy background, no coral bar, wrong h1 size, subhead renders in `--slate` color instead of white.
+- **Jobs section — ALL job row CSS missing:** `.job-row` (4-col grid), `.job-title` (Manrope 800 1.25rem navy), `.job-meta` (flex, coral SVG icons), `.job-actions` (flex end), `.job-link` / `.job-link.primary` (coral filled button). The job list renders with no layout, no styles.
+- **Jobs section — "Learn More" button missing:** Design-source has two buttons per row (Learn More + Apply). Astro has one (Apply Now as `<a>`).
+- **General application — full form replaced by link:** Design-source has a complete `.general-form` (name, email, phone, license select, textarea, `.file-drop` resume upload, submit button). Astro replaces the entire form with `<a href="/contact/">Send Us Your Resume →</a>`.
+- **General application — ALL section CSS missing:** `.general-app` (cream bg, padding, border-top), `.general-app-inner` (max-width 720px centered), h2 sizing, `.general-form`, `.form-row`, `.form-field`, `.file-drop`, `.form-success`. None defined in Astro.
+- **Modal — entirely absent:** Design-source has a full `#jobModal` overlay (job description + application form). Astro has no modal.
+
+---
+
+## PAGE: /contact
+
+**SOURCE:** design-source/pages/Contact.html
+
+**Sections in design-source (in order):**
+
+1. `.contact-hero` — 1fr 1fr grid: **image LEFT, content RIGHT**
+2. `.contact-form-section` — two-column: contact info left, Formspree form right
+
+**Deviations:**
+
+- **Hero — column order reversed:** Design-source: image left, content right. Astro: content left (`order:1`), image right (`order:2`). Layout is mirror-flipped.
+- **Contact info — Address item extra:** Design-source has 3 contact items (Phone, Email, Fax). Astro renders a 4th (Address) not in design-source.
+- **Form — checkbox `appearance` missing:** Design-source: `-webkit-appearance:auto; appearance:auto`. Astro: not set.
+- **Form — submit button padding:** Design-source: `.form-actions .btn { padding: 14px 28px }`. Astro: inherits global `14px 24px` (4px narrower).
+- **Form — `.form-fineprint` font-size:** Design-source: `12px`. Astro: `13px`.
+- **Form — `.form-actions` margin-top:** Design-source: `1.75rem`. Astro: `1.5rem`.
+- **Form — `.form-consent` checkbox margin-top:** Design-source: `3px`. Astro: `2px`.
+
+---
+
+## Approval Checklist
+
+- [x] Igor approves deviation report — 2026-05-02
+- [x] Fixes begin on `feat/phase-5-design-parity` branch — 2026-05-02
+- [ ] G1/G2/G7 cross-cutting CSS fixes
+- [ ] Per-page fixes: Homepage, Communities, Providers, Patients, Careers, About, Contact
+- [ ] All 7 pages verified against design-source after fixes
+- [ ] `/pre` before commit
+- [ ] `/post` after push
+
+---
+
+## G4 Review — IntersectionObserver Fix
+
+**Status:** COMPLETE (2026-05-02)
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — Added global `<script>` with IntersectionObserver (`threshold: 0.12, rootMargin: '0px 0px -40px 0px'`, `.visible` class) just before `</body>`. Now runs on every page and watches all `.fade-up` elements regardless of how the class was applied.
+- `apps/web/src/components/ui/FadeUp.astro` — Removed duplicate `<script>` block. Component is now a pure wrapper div; observer lives in BaseLayout only.
+
+**Why:** The design-source has one global `<script>` at the bottom of `<body>` that calls `document.querySelectorAll('.fade-up')`. The Astro implementation had the observer inside `FadeUp.astro`, but no home section component ever imported `FadeUp.astro`, so the observer never ran and all `.fade-up` sections stayed at `opacity: 0`.
+
+**Verified:**
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered)
+- `pnpm --filter web check` — PASS (0 new errors)
+- `pnpm lint` — PASS (pre-existing lint error in auto-generated `.sanity/runtime/app.js` unaffected)
