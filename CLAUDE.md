@@ -11,6 +11,37 @@ Point to the exact rule I broke. Do not apologize. Fix it on the spot.
 
 ---
 
+## REQUIRED: Build Method — Raw HTML Injection (Mandatory)
+
+This is the ONLY approved method for building page .astro files. No exceptions.
+
+1. **Design-source HTML files are build specs.** The files in `design-source/pages/` are complete, working web pages. Your job is to serve them, not rewrite them.
+
+2. **Copy everything** between `<body>` and `</body>` from the design-source HTML into the .astro page inside the Layout component.
+
+3. **All `<style>` blocks come verbatim.** All `<script>` tags use `is:inline`. No changes.
+
+4. **Never rename classes, move styles to global.css, restructure DOM, change semantic elements, or extract sections into components.**
+
+5. **Sanity variables replace ONLY individual text strings and image src values.** The pattern:
+   ```
+   {patientsPage.heroHeading ?? "Care that meets you where you are"}
+   ```
+   Every Sanity variable MUST have a `??` fallback to the original hardcoded value from the source HTML.
+
+6. **NEVER replace HTML structure with Sanity `.map()` loops.** The HTML cards, tabs, tracks, and grids stay hardcoded from the source file. Only the text inside them gets a Sanity variable. If you need to make an array editable, index into it by position:
+   ```
+   {cards?.[0]?.heading ?? "Original Heading"}
+   ```
+
+7. **One page at a time.** Build, deploy, wait for Igor's visual confirmation. Do not start the next page until the current one is confirmed.
+
+8. **Audit global.css** for specificity conflicts against page-level styles before every commit.
+
+9. **Reference:** `docs/BYT_Process_Learnings_v4_AstroSanity.docx`
+
+---
+
 ## REQUIRED: Task Management
 
 REQUIRED: Before any task — write plan to `tasks/todo.md` with checkable items
@@ -33,6 +64,7 @@ REQUIRED: Run the actual function/test and confirm output before committing
 REQUIRED: One bug = one commit. Atomic fixes, clean git history.
 REQUIRED: Run full CLAUDE.md audit on every file touched before committing
 REQUIRED: After `replace_all` — immediately verify the constant declaration was not self-replaced
+REQUIRED: Run `scripts/design-parity-check.sh` before committing any page .astro file
 
 NEVER mark a task complete without proving it works
 NEVER fix data without fixing the code that wrote it
@@ -142,12 +174,7 @@ NEVER ask the user for credentials. If `.env.local` is missing, say so and stop.
 ## Deploy
 
 Cloudflare Pages auto-deploys from GitHub on merge to `main`. No manual deploy needed.
-
-For manual testing:
-
-```bash
-npx wrangler deploy
-```
+Push to main. Wait for auto-deploy. Do NOT manually trigger builds, poll deployment status, or debug deployment tokens.
 
 If deploy fails with auth error: `source ~/.profile` first, then retry.
 
@@ -220,32 +247,4 @@ Never resolve a conflict between sources unilaterally. Log an obstacle and wait.
 1. Create `OBS-XXX-design-divergence-<page>.md`
 2. Document the diff (file paths, line numbers)
 3. Stop work on that page
-4. Report to Igor — he decides: fix to match, update design-source, or accept
-
----
-
-## Status Report (after every task or blocker)
-
-```
-STATUS: <complete | blocked | partial>
-BRANCH: <branch name>
-PR: <link>
-
-WHAT CHANGED:
-- <bulleted list of files changed and why>
-
-DESIGN-SOURCE PARITY:
-- Files referenced: <paths>
-- Verified: <yes/no/partial>
-- Divergences logged: OBS-XXX
-
-QUALITY GATES:
-- astro check: <pass/fail>
-- typecheck: <pass/fail>
-- lint: <pass/fail>
-- format: <pass/fail>
-- build: <pass/fail>
-
-OPEN QUESTIONS FOR IGOR:
-- <questions>
-```
+4. Report to Igor
