@@ -473,11 +473,28 @@ p { text-wrap: pretty; }
 .ph-hero-cta { display:flex; justify-content:center; }
 
 /* ── LAYOUT399: 4-card router ── */
-.ph-router { background:var(--white); padding:var(--pad-s) var(--pad-x); }
+.ph-router { background:var(--white); padding:var(--pad-s) var(--pad-x); position:relative; }
 .ph-router-head { max-width:var(--max-w); margin:0 auto 3rem; text-align:center; }
+@media(max-width:768px){
+  /* Mobile: turn the router head into a sticky secondary menu that pins
+     while the 4 cards scroll past, then releases at the section's end */
+  .ph-router { padding-top:0; }
+  .ph-router-head {
+    position:sticky; top:63px; z-index:50;
+    background:var(--white);
+    margin:0 calc(var(--pad-x) * -1) 1.5rem;
+    padding:1rem var(--pad-x) 1rem;
+    border-bottom:1px solid var(--border);
+    text-align:center;
+    box-shadow:0 4px 12px -8px rgba(10,45,82,.15);
+  }
+  .ph-router-head .eyebrow { margin-bottom:.25rem; font-size:11px; }
+  .ph-router-head h2 { font-size:1.25rem; margin-bottom:.15rem; }
+  .ph-router-sub { font-size:14px; margin:1.25rem var(--pad-x) 1.5rem; text-align:center; }
+}
 .ph-router-head .eyebrow { margin-bottom:1rem; display:block; }
 .ph-router-head h2 { font-size:clamp(2rem, 3.6vw, 3rem); margin-bottom:1rem; letter-spacing:-.02em; }
-.ph-router-sub { color:var(--slate); font-size:17px; line-height:1.6; max-width:560px; margin:0 auto; }
+.ph-router-sub { color:var(--slate); font-size:17px; line-height:1.6; max-width:560px; margin:0 auto 3rem; text-align:center; }
 .ph-router-grid { max-width:var(--max-w); margin:0 auto; display:grid; grid-template-columns:repeat(4, 1fr); gap:1.5rem; }
 @media(max-width:1024px){ .ph-router-grid { grid-template-columns:repeat(2, 1fr); } }
 @media(max-width:560px){ .ph-router-grid { grid-template-columns:1fr; gap:1rem; } }
@@ -700,8 +717,8 @@ p { text-wrap: pretty; }
   <div class="ph-router-head">
     <p class="eyebrow">Choose</p>
     <h2>What brings you here?</h2>
-    <p class="ph-router-sub">Find the right path to care.</p>
   </div>
+  <p class="ph-router-sub">Find the right path to care.</p>
 
   <div class="ph-router-grid">
 
@@ -925,7 +942,7 @@ p { text-wrap: pretty; }
         <div class="footer-contact">
           <div>Boca Raton, FL</div>
           <div><a href="tel:7549990011">754-999-0011</a></div>
-          <div><a href="/cdn-cgi/l/email-protection#3b535e5757547b5c5e4f595e4f4f5e4942544e15585456"><span class="__cf_email__" data-cfemail="6109040d0d0e21060415030415150413180e144f020e0c">[email&#160;protected]</span></a></div>
+          <div><a href="/cdn-cgi/l/email-protection#49212c252526092e2c3d2b2c3d3d2c3b30263c672a2624"><span class="__cf_email__" data-cfemail="2e464b4242416e494b5a4c4b5a5a4b5c57415b004d4143">[email&#160;protected]</span></a></div>
         </div>
         <div class="social-links">
           <a href="#" class="social-link" aria-label="Facebook"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
