@@ -1645,9 +1645,19 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     display: block;
   }
   .footer-logo img {
-    height: 100px;
+    height: 96px;
     width: auto;
     display: block;
+  }
+  @media (max-width: 1024px) {
+    .footer-logo img {
+      height: 72px;
+    }
+  }
+  @media (max-width: 768px) {
+    .footer-logo img {
+      height: 66px;
+    }
   }
   .footer-tagline {
     font-size: 14px;
@@ -2005,33 +2015,72 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             }
           </p>
           <ul class="l16-list">
-            {
-              (page?.handlesItems && page.handlesItems.length > 0
-                ? page.handlesItems
-                : [
-                    { heading: 'Scheduling and credentialing handled' },
-                    { heading: 'Documentation and billing processed automatically' },
-                    { heading: 'Clinical integration with your care team' },
-                    { heading: 'Progress reporting back to your nursing &amp; wellness staff' },
-                  ]
-              ).map((item) => (
-                <li>
-                  <span class="l16-check">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <polyline points="5 12 10 17 19 7" />
-                    </svg>
-                  </span>
-                  {item.heading}
-                </li>
-              ))
-            }
+            <li>
+              <span class="l16-check">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="5 12 10 17 19 7"></polyline>
+                </svg>
+              </span>
+              {page?.handlesItems?.[0]?.heading ?? 'Scheduling and credentialing handled'}
+            </li>
+            <li>
+              <span class="l16-check">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="5 12 10 17 19 7"></polyline>
+                </svg>
+              </span>
+              {
+                page?.handlesItems?.[1]?.heading ??
+                  'Documentation and billing processed automatically'
+              }
+            </li>
+            <li>
+              <span class="l16-check">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="5 12 10 17 19 7"></polyline>
+                </svg>
+              </span>
+              {page?.handlesItems?.[2]?.heading ?? 'Clinical integration with your care team'}
+            </li>
+            <li>
+              <span class="l16-check">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="5 12 10 17 19 7"></polyline>
+                </svg>
+              </span>
+              {
+                page?.handlesItems?.[3]?.heading ??
+                  'Progress reporting back to your nursing &amp; wellness staff'
+              }
+            </li>
           </ul>
         </div>
         <div class="l16-image">
@@ -2187,185 +2236,338 @@ const [page, conditionsData, siteSettings] = await Promise.all([
 
       <div class="l505-tabs" id="l505">
         <div class="l505-list" role="tablist">
-          {
-            (conditionsData && conditionsData.length > 0
-              ? conditionsData
-              : [
-                  {
-                    _id: 'dep',
-                    tagline: 'Depression',
-                    heading: 'Depression',
-                    body: 'Late-life depression often shows up as withdrawal, sleep disruption, low energy, or somatic complaints — not the textbook presentation. We assess, treat, and coordinate with the medical team using evidence-based therapy adapted for older adults.',
-                  },
-                  {
-                    _id: 'anx',
-                    tagline: 'Anxiety disorders',
-                    heading: 'Anxiety disorders',
-                    body: 'Generalized anxiety, panic, health anxiety, and worry about family, finances, or independence. We use cognitive-behavioral and acceptance-based approaches calibrated to age-related concerns and any cognitive changes.',
-                  },
-                  {
-                    _id: 'ang',
-                    tagline: 'Anger management',
-                    heading: 'Anger management',
-                    body: 'Irritability, frustration, and outbursts often signal underlying pain, fear, or loss of control. We help residents identify triggers, build coping skills, and reduce conflict with caregivers and family.',
-                  },
-                  {
-                    _id: 'beh',
-                    tagline: 'Behavior problems',
-                    heading: 'Behavior problems',
-                    body: "Resistance to care, agitation, wandering, and disruptive behaviors. We work with residents and your care team to identify causes, adjust environmental triggers, and apply behavior-management strategies that protect everyone's dignity.",
-                  },
-                  {
-                    _id: 'gri',
-                    tagline: 'Grief & loss',
-                    heading: 'Grief & loss',
-                    body: "Loss of a spouse, friends, siblings, or one's prior self. Complicated grief, anticipatory grief, and bereavement are common in senior living — and respond well to therapy when addressed directly.",
-                  },
-                  {
-                    _id: 'mem',
-                    tagline: 'Memory loss',
-                    heading: 'Memory loss',
-                    body: 'Mild cognitive impairment and early-to-moderate dementia respond to reminiscence work, supportive therapy, and behavioral interventions. We coordinate with care teams and family, and adapt our approach as needs change.',
-                  },
-                  {
-                    _id: 'tra',
-                    tagline: 'Transition & adjustment',
-                    heading: 'Transition & adjustment disorder',
-                    body: 'Moving into a community, leaving a long-time home, role changes, loss of independence — all real, all treatable. We help residents process the transition and find meaning in this chapter, not just cope with it.',
-                  },
-                  {
-                    _id: 'pst',
-                    tagline: 'Post-surgical mental health',
-                    heading: 'Post-surgical mental health',
-                    body: 'Recovery brings pain, fear, frustration, and sometimes depression. We support residents through orthopedic, cardiac, oncologic, and other post-surgical recovery — keeping them engaged in rehab and on track to baseline.',
-                  },
-                  {
-                    _id: 'pts',
-                    tagline: 'Post-traumatic stress',
-                    heading: 'Post-traumatic stress',
-                    body: 'Past combat, abuse, accidents, or medical trauma can resurface in late life. Trauma-informed therapy — including evidence-based PTSD modalities — helps residents process and reduce symptom burden at any age.',
-                  },
-                  {
-                    _id: 'chr',
-                    tagline: 'Chronic disease coping',
-                    heading: 'Chronic disease coping',
-                    body: 'Cancer, cardiovascular disease, chronic pain, COPD, post-stroke adjustment. We help residents process the emotional weight of chronic illness, manage pain-related distress, and stay engaged in their medical care.',
-                  },
-                  {
-                    _id: 'sub',
-                    tagline: 'Substance dependency',
-                    heading: 'Drug & alcohol dependency',
-                    body: 'Substance-use issues in older adults are under-recognized and treatable. We provide assessment, motivational and cognitive-behavioral therapy, and coordination with medical providers — confidentially and without stigma.',
-                  },
-                ]
-            ).map((cond, i) => (
-              <button
-                class={`l505-trigger${i === 0 ? ' active' : ''}`}
-                data-tab={`l505-tab-${cond._id}`}
-              >
-                {cond.tagline}
-              </button>
-            ))
-          }
+          <button class="l505-trigger active" data-tab="l505-tab-dep">
+            {conditionsData?.[0]?.tagline ?? 'Depression'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-anx">
+            {conditionsData?.[1]?.tagline ?? 'Anxiety disorders'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-ang">
+            {conditionsData?.[2]?.tagline ?? 'Anger management'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-beh">
+            {conditionsData?.[3]?.tagline ?? 'Behavior problems'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-gri">
+            {conditionsData?.[4]?.tagline ?? 'Grief & loss'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-mem">
+            {conditionsData?.[5]?.tagline ?? 'Memory loss'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-tra">
+            {conditionsData?.[6]?.tagline ?? 'Transition & adjustment'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-pst">
+            {conditionsData?.[7]?.tagline ?? 'Post-surgical mental health'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-pts">
+            {conditionsData?.[8]?.tagline ?? 'Post-traumatic stress'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-chr">
+            {conditionsData?.[9]?.tagline ?? 'Chronic disease coping'}
+          </button>
+          <button class="l505-trigger" data-tab="l505-tab-sub">
+            {conditionsData?.[10]?.tagline ?? 'Substance dependency'}
+          </button>
         </div>
 
-        {
-          (conditionsData && conditionsData.length > 0
-            ? conditionsData
-            : [
-                {
-                  _id: 'dep',
-                  tagline: 'Depression',
-                  heading: 'Depression',
-                  body: 'Late-life depression often shows up as withdrawal, sleep disruption, low energy, or somatic complaints — not the textbook presentation. We assess, treat, and coordinate with the medical team using evidence-based therapy adapted for older adults.',
-                },
-                {
-                  _id: 'anx',
-                  tagline: 'Anxiety disorders',
-                  heading: 'Anxiety disorders',
-                  body: 'Generalized anxiety, panic, health anxiety, and worry about family, finances, or independence. We use cognitive-behavioral and acceptance-based approaches calibrated to age-related concerns and any cognitive changes.',
-                },
-                {
-                  _id: 'ang',
-                  tagline: 'Anger management',
-                  heading: 'Anger management',
-                  body: 'Irritability, frustration, and outbursts often signal underlying pain, fear, or loss of control. We help residents identify triggers, build coping skills, and reduce conflict with caregivers and family.',
-                },
-                {
-                  _id: 'beh',
-                  tagline: 'Behavior problems',
-                  heading: 'Behavior problems',
-                  body: "Resistance to care, agitation, wandering, and disruptive behaviors. We work with residents and your care team to identify causes, adjust environmental triggers, and apply behavior-management strategies that protect everyone's dignity.",
-                },
-                {
-                  _id: 'gri',
-                  tagline: 'Grief & loss',
-                  heading: 'Grief & loss',
-                  body: "Loss of a spouse, friends, siblings, or one's prior self. Complicated grief, anticipatory grief, and bereavement are common in senior living — and respond well to therapy when addressed directly.",
-                },
-                {
-                  _id: 'mem',
-                  tagline: 'Memory loss',
-                  heading: 'Memory loss',
-                  body: 'Mild cognitive impairment and early-to-moderate dementia respond to reminiscence work, supportive therapy, and behavioral interventions. We coordinate with care teams and family, and adapt our approach as needs change.',
-                },
-                {
-                  _id: 'tra',
-                  tagline: 'Transition & adjustment',
-                  heading: 'Transition & adjustment disorder',
-                  body: 'Moving into a community, leaving a long-time home, role changes, loss of independence — all real, all treatable. We help residents process the transition and find meaning in this chapter, not just cope with it.',
-                },
-                {
-                  _id: 'pst',
-                  tagline: 'Post-surgical mental health',
-                  heading: 'Post-surgical mental health',
-                  body: 'Recovery brings pain, fear, frustration, and sometimes depression. We support residents through orthopedic, cardiac, oncologic, and other post-surgical recovery — keeping them engaged in rehab and on track to baseline.',
-                },
-                {
-                  _id: 'pts',
-                  tagline: 'Post-traumatic stress',
-                  heading: 'Post-traumatic stress',
-                  body: 'Past combat, abuse, accidents, or medical trauma can resurface in late life. Trauma-informed therapy — including evidence-based PTSD modalities — helps residents process and reduce symptom burden at any age.',
-                },
-                {
-                  _id: 'chr',
-                  tagline: 'Chronic disease coping',
-                  heading: 'Chronic disease coping',
-                  body: 'Cancer, cardiovascular disease, chronic pain, COPD, post-stroke adjustment. We help residents process the emotional weight of chronic illness, manage pain-related distress, and stay engaged in their medical care.',
-                },
-                {
-                  _id: 'sub',
-                  tagline: 'Substance dependency',
-                  heading: 'Drug & alcohol dependency',
-                  body: 'Substance-use issues in older adults are under-recognized and treatable. We provide assessment, motivational and cognitive-behavioral therapy, and coordination with medical providers — confidentially and without stigma.',
-                },
-              ]
-          ).map((cond, i) => (
-            <div
-              class={`l505-panel${i === 0 ? ' active' : ''}`}
-              data-panel={`l505-tab-${cond._id}`}
-            >
-              <div class="l505-panel-inner">
-                <div class="l505-icon">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </div>
-                <h3>{cond.heading}</h3>
-                <p>{cond.body}</p>
-              </div>
+        <div class="l505-panel active" data-panel="l505-tab-dep">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
             </div>
-          ))
-        }
+            <h3>{conditionsData?.[0]?.heading ?? 'Depression'}</h3>
+            <p>
+              {
+                conditionsData?.[0]?.body ??
+                  'Late-life depression often shows up as withdrawal, sleep disruption, low energy, or somatic complaints — not the textbook presentation. We assess, treat, and coordinate with the medical team using evidence-based therapy adapted for older adults.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-anx">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[1]?.heading ?? 'Anxiety disorders'}</h3>
+            <p>
+              {
+                conditionsData?.[1]?.body ??
+                  'Generalized anxiety, panic, health anxiety, and worry about family, finances, or independence. We use cognitive-behavioral and acceptance-based approaches calibrated to age-related concerns and any cognitive changes.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-ang">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[2]?.heading ?? 'Anger management'}</h3>
+            <p>
+              {
+                conditionsData?.[2]?.body ??
+                  'Irritability, frustration, and outbursts often signal underlying pain, fear, or loss of control. We help residents identify triggers, build coping skills, and reduce conflict with caregivers and family.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-beh">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[3]?.heading ?? 'Behavior problems'}</h3>
+            <p>
+              {
+                conditionsData?.[3]?.body ??
+                  "Resistance to care, agitation, wandering, and disruptive behaviors. We work with residents and your care team to identify causes, adjust environmental triggers, and apply behavior-management strategies that protect everyone's dignity."
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-gri">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[4]?.heading ?? 'Grief & loss'}</h3>
+            <p>
+              {
+                conditionsData?.[4]?.body ??
+                  "Loss of a spouse, friends, siblings, or one's prior self. Complicated grief, anticipatory grief, and bereavement are common in senior living — and respond well to therapy when addressed directly."
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-mem">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[5]?.heading ?? 'Memory loss'}</h3>
+            <p>
+              {
+                conditionsData?.[5]?.body ??
+                  'Mild cognitive impairment and early-to-moderate dementia respond to reminiscence work, supportive therapy, and behavioral interventions. We coordinate with care teams and family, and adapt our approach as needs change.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-tra">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[6]?.heading ?? 'Transition & adjustment disorder'}</h3>
+            <p>
+              {
+                conditionsData?.[6]?.body ??
+                  'Moving into a community, leaving a long-time home, role changes, loss of independence — all real, all treatable. We help residents process the transition and find meaning in this chapter, not just cope with it.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-pst">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[7]?.heading ?? 'Post-surgical mental health'}</h3>
+            <p>
+              {
+                conditionsData?.[7]?.body ??
+                  'Recovery brings pain, fear, frustration, and sometimes depression. We support residents through orthopedic, cardiac, oncologic, and other post-surgical recovery — keeping them engaged in rehab and on track to baseline.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-pts">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[8]?.heading ?? 'Post-traumatic stress'}</h3>
+            <p>
+              {
+                conditionsData?.[8]?.body ??
+                  'Past combat, abuse, accidents, or medical trauma can resurface in late life. Trauma-informed therapy — including evidence-based PTSD modalities — helps residents process and reduce symptom burden at any age.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-chr">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[9]?.heading ?? 'Chronic disease coping'}</h3>
+            <p>
+              {
+                conditionsData?.[9]?.body ??
+                  'Cancer, cardiovascular disease, chronic pain, COPD, post-stroke adjustment. We help residents process the emotional weight of chronic illness, manage pain-related distress, and stay engaged in their medical care.'
+              }
+            </p>
+          </div>
+        </div>
+        <div class="l505-panel" data-panel="l505-tab-sub">
+          <div class="l505-panel-inner">
+            <div class="l505-icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                ></path>
+              </svg>
+            </div>
+            <h3>{conditionsData?.[10]?.heading ?? 'Drug & alcohol dependency'}</h3>
+            <p>
+              {
+                conditionsData?.[10]?.body ??
+                  'Substance-use issues in older adults are under-recognized and treatable. We provide assessment, motivational and cognitive-behavioral therapy, and coordination with medical providers — confidentially and without stigma.'
+              }
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
