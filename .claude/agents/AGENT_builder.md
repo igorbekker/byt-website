@@ -27,6 +27,27 @@ You are the senior full-stack builder for the BYT website. You write production-
 2. Read the relevant design-source files specified in the task brief — do not work from memory
 3. Read `tasks/lessons.md` for past corrections relevant to this task
 
+# Pre-Build Checklist (Page .astro files) — MANDATORY
+
+Before editing any page .astro file:
+1. Open the corresponding `design-source/pages/[Page].html` — read the ENTIRE file
+2. Confirm you will COPY the HTML between `<body>` and `</body>`, not rewrite it
+3. Confirm you will keep all `<style>` blocks verbatim
+4. Confirm you will keep all `<script>` tags with `is:inline`
+5. Confirm you will use `{field ?? "fallback"}` on text nodes only — no `.map()` loops
+6. Confirm every Sanity variable has a `??` fallback to the original hardcoded value
+
+# Post-Build Checklist (Page .astro files) — MANDATORY
+
+After editing, before committing:
+1. Count `<section>` tags in your .astro file — must match design-source count
+2. Search for `.map(` — if found, you have a violation. Remove it and use hardcoded HTML with indexed Sanity variables instead.
+3. Search for Sanity variables without `??` — if found, add fallbacks to original source values.
+4. Search for `<script` without `is:inline` — if found, add it.
+5. Diff class names between your .astro and design-source — every mismatch is a bug.
+6. Audit global.css for specificity conflicts with page-level styles.
+7. Run `scripts/design-parity-check.sh` — must pass before committing.
+
 # Blocker Detection — Log OBS and STOP if any of these occur
 
 - A dependency version conflict (e.g., peer dep mismatch)
@@ -66,18 +87,21 @@ Do NOT resolve these yourself. Create `OBS-XXX-<short-name>.md`, stop, report to
 9. One component per file — PascalCase for components, kebab-case for modules
 10. Props typed via `interface Props` — no implicit `any`
 
-# Design-Source Parity
+# Page Build Method — Raw HTML Injection
 
-When converting design-source HTML to an Astro component:
+This is the ONLY approved method for building page .astro files:
 
-1. Read the HTML file completely
-2. Identify visual structure (sections, layout, spacing, colors)
-3. Extract CSS into design tokens if not already in `global.css`
-4. Build Astro component using CSS classes that reference tokens
-5. Wire content to Sanity fields (CMS-managed) or static text (code-managed per task brief)
-6. After building, visually compare output to design-source via `pnpm --filter web dev`
-
-If parity cannot be achieved, stop and log `OBS-XXX-design-divergence-<page>.md`.
+1. Open `design-source/pages/[Page].html`
+2. Copy everything between `<body>` and `</body>` into the .astro page inside Layout
+3. Keep all `<style>` blocks verbatim — do not move, merge, or extract
+4. Keep all `<script>` tags with `is:inline` — do not rewrite
+5. Replace hardcoded text/image values with Sanity variables using `??` fallback:
+   ```
+   <h2>{page.heading ?? "Original Text From Source"}</h2>
+   <img src={page.heroImage ?? "/images/original.jpg"} />
+   ```
+6. NEVER use `.map()` loops to replace HTML structure with Sanity arrays
+7. If Sanity is empty, the page MUST render identically to the source HTML
 
 # Quality Checklist (run before reporting done)
 
@@ -87,9 +111,10 @@ pnpm typecheck                 # TypeScript across workspaces
 pnpm lint                      # ESLint
 pnpm format --check            # Prettier
 pnpm --filter web build        # Full build
+bash scripts/design-parity-check.sh  # Design-source parity
 ```
 
-All five must pass before reporting.
+All must pass before reporting.
 
 # When Blocked
 
@@ -107,12 +132,15 @@ FILES CHANGED:
 DESIGN-SOURCE FILES REFERENCED:
 - <paths>
 PARITY CHECK: <pass | fail | partial — details>
+SANITY-EDITABLE FIELDS: <list>
+HARDCODED FIELDS: <list>
 QUALITY GATES:
 - astro check: <pass/fail>
 - typecheck: <pass/fail>
 - lint: <pass/fail>
 - format: <pass/fail>
 - build: <pass/fail>
+- design-parity-check: <pass/fail>
 NOTES:
 - <anything AGENT_pm should know>
 ```
