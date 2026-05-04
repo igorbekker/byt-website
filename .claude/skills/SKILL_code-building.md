@@ -4,6 +4,57 @@ Domain knowledge for the builder agent. Coding standards, patterns, and constrai
 
 ---
 
+## Page Build Method — Raw HTML Injection (MANDATORY)
+
+This is the ONLY approved method for building page .astro files. The component decomposition approach was attempted and failed catastrophically — see docs/BYT_Process_Learnings_v4_AstroSanity.docx.
+
+### The Method
+1. Open `design-source/pages/[Page].html`
+2. Copy everything between `<body>` and `</body>`
+3. Paste into the corresponding `.astro` page inside Layout component
+4. Keep all `<style>` blocks verbatim — do not move, merge, rename, or extract
+5. Keep all `<script>` tags with `is:inline` — copy verbatim, do not rewrite
+6. Replace hardcoded text/image values with Sanity variables using `??` fallback pattern
+
+### Sanity Variable Pattern
+```html
+<!-- Text nodes -->
+<h2>{page.heading ?? "Original Text From Source"}</h2>
+<p>{page.bodyText ?? "Original paragraph from the HTML file"}</p>
+
+<!-- Image sources -->
+<img src={page.heroImage ?? "/images/original.jpg"} alt="description" />
+
+<!-- Indexed arrays (for cards, tabs, tracks) -->
+<h3>{cards?.[0]?.heading ?? "Original Card 1 Heading"}</h3>
+<h3>{cards?.[1]?.heading ?? "Original Card 2 Heading"}</h3>
+```
+
+### DO NOT — EVER
+- Use `.map()` loops to replace HTML structure with Sanity arrays — this was the #1 failure (OBS-012)
+- Rename CSS classes from the source HTML
+- Move styles from inline/page `<style>` to global.css
+- Restructure DOM (change elements, swap columns, alter grids)
+- Omit `<script>` tags or remove `is:inline`
+- Extract sections into Astro components
+- Change CSS values (colors, spacing, fonts, sizes)
+- Rewrite scripts instead of copying them verbatim
+
+### Pre-Commit Checklist (Page .astro files)
+Before committing any page .astro file:
+- [ ] Section count matches design-source
+- [ ] No `.map()` loops in the file
+- [ ] All Sanity variables have `??` fallbacks
+- [ ] All `<script>` tags have `is:inline`
+- [ ] Class names match design-source
+- [ ] global.css audited for specificity conflicts
+- [ ] `scripts/design-parity-check.sh` passes
+
+### When Debugging
+Copy the HTML file to `public/`, deploy as static, verify it renders. If it does, every deviation in the .astro version is something you introduced. Diff to find your bug.
+
+---
+
 ## Blocker Detection — STOP and log OBS if any occur
 
 These are architectural decisions. The builder does NOT resolve them.
@@ -79,62 +130,3 @@ Folders: always kebab-case, lowercase, plural for collections.
 ## No-Hardcoding Directive
 
 Code references design-source files, Sanity fields, or named tokens. It never inlines design values.
-
-| Type | Forbidden inline | Where it lives |
-|---|---|---|
-| Colors | `#104378`, `rgb(...)` | CSS variables in `global.css` |
-| Font families | `'Manrope', sans-serif` | CSS variables |
-| Spacing | `padding: 32px 64px` | Spacing tokens or design-source CSS |
-| Phone numbers | `754-999-0011` | Sanity `siteSettings.phone` |
-| Email addresses | `info@getbetteryou.com` | Sanity `siteSettings.email` |
-| Page copy | Any marketing text | Sanity per-page singleton |
-| Hero images | `<img src="..."/>` | Sanity image asset |
-| URLs | `https://getbetteryou.com` | `import.meta.env.PUBLIC_SITE_URL` |
-| Schema markup | `name: "Better You Therapy"` | Sanity `siteSettings` |
-| Form endpoints | `https://formspree.io/f/xxx` | `import.meta.env.PUBLIC_FORMSPREE_*` |
-
-One exception: build-time constants for external service contracts (e.g., `apiVersion: "2026-03-01"`).
-
-## Commenting Standards
-
-### File Header (mandatory on every source file)
-
-```ts
-/**
- * <one-sentence purpose>
- *
- * <2–4 sentences: what this file is for, who uses it,
- * what design-source file or decision log entry it implements>
- *
- * Source: design-source/<path> | DEC-XXX | OBS-XXX
- */
-```
-
-### Rules
-
-- Explain **WHY**, not HOW or WHAT
-- Every workaround references an OBS-XXX
-- JSDoc on every exported function, type, component
-- TODO format: `// TODO(OBS-007): <description>` — bare TODOs are lint failures
-- Banned words: "obviously", "simply", "just", "easy", "should work"
-
-## Conventional Commits
-
-Format: `<type>(<scope>): <description>`
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`
-Reference DEC/OBS IDs: `feat(homepage): add audience router (DEC-014)`
-
-## Performance Budget
-
-- Per-page JS shipped: target 0KB (Astro defaults)
-- Images: Astro `<Image>` or Sanity image URL builder, always with `width` and `height`
-- No `<img>` without `alt`, `width`, `height`
-- Fonts: preconnect + display=swap only
-
-## PR Requirements
-
-Every PR must contain:
-1. Title in Conventional Commit format
-2. Description: what changed, why (DEC/OBS ID), how to test, design-source files referenced, screenshots if visual
-3. Passing CI: lint, type-check, build
-4. Igor's approval before merge
