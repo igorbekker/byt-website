@@ -74,10 +74,6 @@ const resolvedSeo: SeoFields = pageSeo ?? siteSettings?.seo ?? {};
       <slot />
     </main>
     <Footer
-      phone={siteSettings?.phone ?? ''}
-      email={siteSettings?.email ?? ''}
-      fax={siteSettings?.fax ?? ''}
-      address={siteSettings?.address ?? {}}
       footerTagline={siteSettings?.footerTagline ?? ''}
       copyrightEntity={siteSettings?.copyrightEntity ?? ''}
       newsletterHeading={siteSettings?.newsletterHeading ?? 'Stay in touch'}

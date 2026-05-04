@@ -5,30 +5,16 @@
  * Source: design-source/partials/footer.html, design-source/styles/base.css (.footer, .footer-grid, .footer-col, .footer-links, .footer-bottom, .footer-legal, .social-links, .social-link)
  */
 
-interface Address {
-  street?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-}
-
 interface Props {
-  phone: string;
-  email: string;
-  fax: string;
-  address: Address;
   footerTagline: string;
   copyrightEntity: string;
   newsletterHeading: string;
   newsletterBody: string;
 }
 
-const { phone, email, address, footerTagline, copyrightEntity, newsletterHeading, newsletterBody } =
-  Astro.props;
+const { footerTagline, copyrightEntity, newsletterHeading, newsletterBody } = Astro.props;
 
 const currentYear = new Date().getFullYear();
-const cityState = [address?.city, address?.state].filter(Boolean).join(', ');
-const phoneDigits = phone.replace(/\D/g, '');
 ---
 
 <footer class="footer">
@@ -39,23 +25,6 @@ const phoneDigits = phone.replace(/\D/g, '');
           <img src="/assets/logo-white.png" alt="Better You Therapy" />
         </a>
         {footerTagline && <p class="footer-tagline">{footerTagline}</p>}
-        <div class="footer-contact">
-          {cityState && <div>{cityState}</div>}
-          {
-            phone && (
-              <div>
-                <a href={`tel:${phoneDigits}`}>{phone}</a>
-              </div>
-            )
-          }
-          {
-            email && (
-              <div>
-                <a href={`mailto:${email}`}>{email}</a>
-              </div>
-            )
-          }
-        </div>
         <div class="social-links">
           <a href="#" class="social-link" aria-label="Facebook">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -103,16 +72,9 @@ const phoneDigits = phone.replace(/\D/g, '');
         <h4>Company</h4>
         <ul class="footer-links">
           <li><a href="/about/">About Us</a></li>
-          <li><a href="/faq/">FAQ</a></li>
+          <li><a href="/careers/">Careers</a></li>
           <li><a href="/contact/">Contact</a></li>
-          <li><a href="/referral/">Refer a Resident</a></li>
-          {
-            phone && (
-              <li>
-                <a href={`tel:${phoneDigits}`}>{phone}</a>
-              </li>
-            )
-          }
+          <li><a href="/contact/">Refer a Resident</a></li>
         </ul>
       </div>
 
