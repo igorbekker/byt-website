@@ -173,3 +173,33 @@ Source: BYT_Process_Learnings_v4_AstroSanity.docx
 8. **Sanity manages content only.** Text and image references live in Sanity. Layout, styles, animations, and structure live in the `.astro` file as raw HTML from design-source.
 
 9. **Do not build all pages at once.** This was attempted and failed — every page was broken. Sequential builds with confirmation gates are the only approved method.
+
+---
+
+## 2026-05-04 — Replaced hardcoded HTML sections with Sanity loops
+
+**Context:** patients.astro build — router cards, delivery tracks, conditions tabs
+**What went wrong:** "Replace hardcoded text with Sanity variables" was misread as "replace entire sections with Sanity loops." All three repeating sections (4 router cards, 2 delivery tracks, 8 conditions) were replaced with `.map()` loops. If Sanity is empty, sections render nothing.
+
+**The correct method:**
+
+- Keep ALL HTML structure hardcoded exactly as in design-source
+- Replace only the text/image values inside each element: `{field ?? "original text"}`
+- Index into arrays by position: `{cards?.[0]?.label ?? "Families"}`
+- Empty Sanity = page renders identical to design-source HTML
+- A Sanity loop is NEVER the right tool here
+
+**Wrong:**
+
+```
+{page?.cards?.map(card => <a class="ph-card">...</a>)}
+```
+
+**Right:**
+
+```
+<a href={cards?.[0]?.cta?.href ?? "/patients/seniors/"} class="ph-card">
+  <p class="ph-card-tag">{cards?.[0]?.label ?? "Families"}</p>
+  ...
+</a>
+```
