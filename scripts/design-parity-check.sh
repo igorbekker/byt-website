@@ -45,12 +45,13 @@ for ASTRO_FILE in $STAGED; do
   echo "=== Checking $BASENAME against $SOURCE_FILE ==="
 
   # CHECK 1: No Sanity .map() loops replacing HTML structure
-  # grep -c outputs "0" to stdout even on no-match; use || true (not || echo "0") to avoid capturing "0\n0"
-  MAP_COUNT=$(grep -c '\.map(' "$ASTRO_FILE" 2>/dev/null || true)
+  # Strip <script>...</script> blocks first — .map() inside is:inline scripts is legitimate JS, not Sanity loops
+  TEMPLATE_ONLY=$(awk '/<script/,/<\/script>/{next}1' "$ASTRO_FILE")
+  MAP_COUNT=$(echo "$TEMPLATE_ONLY" | grep -c '\.map(' 2>/dev/null || true)
   MAP_COUNT="${MAP_COUNT:-0}"
   if [ "$MAP_COUNT" -gt "0" ]; then
-    echo "❌ FAIL: $BASENAME contains $MAP_COUNT .map() loop(s). Sanity variables must replace text nodes only, never HTML structure."
-    grep -n '\.map(' "$ASTRO_FILE"
+    echo "❌ FAIL: $BASENAME contains $MAP_COUNT .map() loop(s) in template. Sanity variables must replace text nodes only, never HTML structure."
+    echo "$TEMPLATE_ONLY" | grep -n '\.map('
     ERRORS=$((ERRORS + 1))
   fi
 

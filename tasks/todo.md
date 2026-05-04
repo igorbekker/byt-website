@@ -1149,7 +1149,8 @@ l422 card images (2 Unsplash URLs), l374 card SVG icons (5 inline SVGs), l374 ca
 
 - [x] Rewrite about.astro — 2026-05-04
 - [x] Build — 2026-05-04 (pnpm build passes, /about/index.html prerendered)
-- [ ] Deploy + visual parity confirmed by Igor
+- [x] Deploy — 2026-05-04 (commit 5a013d1, pushed to main, CF Pages auto-deploy triggered)
+- [x] Visual parity confirmed by Igor — 2026-05-04
 
 #### About Review — 2026-05-04
 
@@ -1195,10 +1196,30 @@ Hero eyebrow "About Better You Therapy", hero image (Unsplash URL), story image 
 - pnpm build — PASS (/about/index.html prerendered)
 - Specificity audit vs global.css — PASS (no blocking conflicts)
 
-### Careers (`/careers/`) — pending
+### Careers (`/careers/`) [x] BUILT — 2026-05-04, pending visual parity confirmed
 
-- [ ] Rewrite careers.astro
-- [ ] Build + deploy + visual parity confirmed
+- [x] Rewrite careers.astro — 2026-05-04
+- [x] Build — 2026-05-04 (pnpm build passes, /careers/index.html prerendered)
+- [ ] Deploy + visual parity confirmed by Igor
+
+#### Careers Review — 2026-05-04
+
+**Status:** BUILT — pending Igor visual confirmation
+
+**Files changed:**
+
+- `apps/web/src/pages/careers.astro` — created: verbatim HTML from design-source Careers.html, `<style is:global>` (full CSS block, 808 lines), `<script is:inline>` (fade-up observer + full JOBS array + modal + form handlers verbatim), Sanity variables wired for hero and text sections
+
+**Sanity-editable fields:**
+heroHeading (set:html, preserves `<em>` and inline style), heroSubhead, openPositionsIntro, noFitHeading, noFitBody, seo
+
+**Hardcoded (no schema):**
+Hero eyebrow "Careers at Better You Therapy", hero h1 inline style `font-size: 53.2px`, eyebrow inline style `font-size: 14px`, JOBS array (2 job postings with full descriptions), ICON_PIN/ICON_CLOCK/ICON_DEPT SVGs, all form labels/placeholders/options, modal structure, form success messages
+
+**Quality gates:**
+
+- pnpm build — PASS (/careers/index.html prerendered)
+- Specificity audit vs global.css — PASS (no blocking conflicts)
 
 ### Contact (`/contact/`) — pending
 
