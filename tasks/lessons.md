@@ -64,9 +64,11 @@ Copy the HTML file to `public/`, deploy, verify. If it renders correctly, any de
 
 The hook checks for .map() loops, missing ?? fallbacks, section count mismatches, missing is:inline, and class name deletions. If it fails, fix before committing.
 
-### 13. design-source/ is read-only — never modify it
+### 13. design-source/ is read-only and content changes go to Sanity, never hardcoded
 
-Files in design-source/ are the canonical build spec. They are not updated to reflect production changes. Content corrections (emails, phone numbers, URLs) go into the .astro file as hardcoded values or Sanity fields — never into design-source/. Treat design-source/ as an immutable reference.
+design-source/ is a structural reference frozen at design time — never modify it.
+When content changes (email, fax, phone, copy, image): update the value in Sanity Studio or schema defaults — not in design-source/, and not as a new hardcoded value in .astro.
+The .astro file wires the field as `{sanityVar ?? "original-design-source-placeholder"}`. The fallback is the original design-source value; the live content comes from Sanity.
 
 ---
 

@@ -1249,10 +1249,38 @@ Hero eyebrow "Careers at Better You Therapy", hero h1 inline style `font-size: 5
 - pnpm build — PASS (all 6 routes prerendered)
 - TypeScript / ESLint — PASS (unused props removed cleanly)
 
-### Contact (`/contact/`) — pending
+### Contact (`/contact/`) [x] BUILT — 2026-05-04, pending visual parity confirmed
 
-- [ ] Rewrite contact.astro — use hello@getbetteryou.com and fax (754) 328-4344 (hardcoded or Sanity siteSettings)
-- [ ] Build + deploy + visual parity confirmed
+- [x] Rewrite contact.astro — 2026-05-04
+- [x] Build — 2026-05-04 (pnpm build passes, /contact/index.html prerendered)
+- [ ] Deploy + visual parity confirmed by Igor
+
+#### Contact Review — 2026-05-04
+
+**Status:** BUILT — pending Igor visual confirmation
+
+**Files changed:**
+
+- `apps/web/src/pages/contact.astro` — created: verbatim HTML from design-source Contact.html, `<style is:global>` (full CSS block, 656 lines), `<script is:inline>` (fade-up observer only — router/l349 JS omitted as those sections don't exist on this page), Sanity variables wired for hero and contact info
+
+**Sanity-editable fields:**
+heroHeading, heroSubhead, heroImage.asset.url, hoursDescription, responseCopy (from CONTACT_PAGE_QUERY); phone, email, fax (from SITE_SETTINGS_QUERY — parallel fetch)
+
+**Fallback values (design-source originals):**
+heroHeading: "We'd love to hear from you.", phone: "754-999-0011", email: "hello@getbetteryou.com", fax: "(754) 328-4344"
+
+**Hardcoded (no schema):**
+Eyebrow "Contact Us", eyebrow "Get in touch", h2 "Reach our team directly.", form labels/options/placeholders, checkbox disclaimer HTML (has `<strong>` tags), form alert text
+
+**Corrections applied this session:**
+
+- Rule 13 updated: content changes go to Sanity, fallback is design-source placeholder — not a new hardcoded value in .astro
+
+**Quality gates:**
+
+- pnpm build — PASS (/contact/index.html prerendered)
+- Specificity audit vs global.css — PASS (no blocking conflicts)
+- Parity check: 2 sections match Contact.html ✓, no .map() loops ✓, all Sanity vars have ?? fallbacks ✓, script is:inline ✓
 
 ---
 
