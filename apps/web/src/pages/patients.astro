@@ -71,7 +71,9 @@ const [page, conditions] = await Promise.all([
   sanityClient.fetch<Condition[]>(CONDITIONS_PATIENTS_QUERY),
 ]);
 
-const cardPlaceholders = ['img-ph-cream', 'img-ph-coral', 'img-ph-navy', 'img-ph-cream'];
+const c = conditions ?? [];
+const s = page?.audienceSelectorCards ?? [];
+const d = page?.deliveryTracks ?? [];
 ---
 
 <BaseLayout
@@ -2298,9 +2300,9 @@ const cardPlaceholders = ['img-ph-cream', 'img-ph-coral', 'img-ph-navy', 'img-ph
         }
       </p>
       <div class="ph-hero-cta">
-        <a href={page?.heroPrimaryCta?.href ?? '/book/'} class="btn btn-coral">
-          {page?.heroPrimaryCta?.label ?? 'Book a session'}
-        </a>
+        <a href={page?.heroPrimaryCta?.href ?? '/book/'} class="btn btn-coral"
+          >{page?.heroPrimaryCta?.label ?? 'Book a session'}</a
+        >
       </div>
     </div>
   </section>
@@ -2314,29 +2316,90 @@ const cardPlaceholders = ['img-ph-cream', 'img-ph-coral', 'img-ph-navy', 'img-ph
     </div>
 
     <div class="ph-router-grid">
-      {
-        (page?.audienceSelectorCards ?? []).map((card, i) => (
-          <a href={card.cta?.href ?? '#'} class="ph-card">
-            <div class="ph-card-body">
-              <p class="ph-card-tag">{card.label}</p>
-              <h3>{card.heading}</h3>
-              <p>{card.body}</p>
-              <span class="ph-card-link">
-                Explore <span class="arrow">&rsaquo;</span>
-              </span>
-            </div>
-            <div class="ph-card-img">
-              {card.image?.asset?.url ? (
-                <img
-                  src={card.image.asset.url}
-                  alt={card.image.alt ?? ''}
-                  onerror={`this.parentElement.classList.add('img-ph','${cardPlaceholders[i % 4]}')`}
-                />
-              ) : null}
-            </div>
-          </a>
-        ))
-      }
+      <a href={s[0]?.cta?.href ?? '/patients/seniors/'} class="ph-card">
+        <div class="ph-card-body">
+          <p class="ph-card-tag">{s[0]?.label ?? 'Families'}</p>
+          <h3>{s[0]?.heading ?? 'Seniors and families'}</h3>
+          <p>
+            {
+              s[0]?.body ??
+                'Your parent didn\u2019t stop having an inner life when they moved into a facility.'
+            }
+          </p>
+          <span class="ph-card-link">Explore <span class="arrow">&rsaquo;</span></span>
+        </div>
+        <div class="ph-card-img">
+          <img
+            src={s[0]?.image?.asset?.url ??
+              'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=800&q=80&auto=format&fit=crop'}
+            alt={s[0]?.image?.alt ?? ''}
+            onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
+          />
+        </div>
+      </a>
+
+      <a href={s[1]?.cta?.href ?? '/patients/individual-therapy/'} class="ph-card">
+        <div class="ph-card-body">
+          <p class="ph-card-tag">{s[1]?.label ?? 'Adults'}</p>
+          <h3>{s[1]?.heading ?? 'Individual therapy'}</h3>
+          <p>
+            {
+              s[1]?.body ??
+                'You\u2019ve already decided you want to talk to someone. The system shouldn\u2019t be the reason you don\u2019t.'
+            }
+          </p>
+          <span class="ph-card-link">Explore <span class="arrow">&rsaquo;</span></span>
+        </div>
+        <div class="ph-card-img">
+          <img
+            src={s[1]?.image?.asset?.url ??
+              'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=800&q=80&auto=format&fit=crop'}
+            alt={s[1]?.image?.alt ?? ''}
+            onerror="this.parentElement.classList.add('img-ph','img-ph-coral')"
+          />
+        </div>
+      </a>
+
+      <a href={s[2]?.cta?.href ?? '/patients/caregivers/'} class="ph-card">
+        <div class="ph-card-body">
+          <p class="ph-card-tag">{s[2]?.label ?? 'Support'}</p>
+          <h3>{s[2]?.heading ?? 'Caregivers'}</h3>
+          <p>
+            {
+              s[2]?.body ??
+                'You\u2019ve been taking care of everyone else. You deserve the same access to care.'
+            }
+          </p>
+          <span class="ph-card-link">Explore <span class="arrow">&rsaquo;</span></span>
+        </div>
+        <div class="ph-card-img">
+          <img
+            src={s[2]?.image?.asset?.url ??
+              'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=800&q=80&auto=format&fit=crop'}
+            alt={s[2]?.image?.alt ?? ''}
+            onerror="this.parentElement.classList.add('img-ph','img-ph-navy')"
+          />
+        </div>
+      </a>
+
+      <a href={s[3]?.cta?.href ?? '/patients/terapia-en-espanol/'} class="ph-card">
+        <div class="ph-card-body">
+          <p class="ph-card-tag">{s[3]?.label ?? 'Espa\u00f1ol'}</p>
+          <h3>{s[3]?.heading ?? 'Terapia en espa\u00f1ol'}</h3>
+          <p>
+            {s[3]?.body ?? 'Cuidar de tu familia empieza contigo. Buscar ayuda no es debilidad.'}
+          </p>
+          <span class="ph-card-link">Explore <span class="arrow">&rsaquo;</span></span>
+        </div>
+        <div class="ph-card-img">
+          <img
+            src={s[3]?.image?.asset?.url ??
+              'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=800&q=80&auto=format&fit=crop'}
+            alt={s[3]?.image?.alt ?? ''}
+            onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
+          />
+        </div>
+      </a>
     </div>
   </section>
 
@@ -2351,36 +2414,59 @@ const cardPlaceholders = ['img-ph-cream', 'img-ph-coral', 'img-ph-navy', 'img-ph
     </div>
 
     <div class="ph-twoways-grid">
-      {
-        (page?.deliveryTracks ?? []).map((track) => (
-          <a href={track.cta?.href ?? '#'} class="ph-way">
-            <div class="ph-way-bg">
-              {track.image?.asset?.url ? (
-                <img
-                  src={track.image.asset.url}
-                  alt={track.image.alt ?? ''}
-                  onerror="this.style.display='none'"
-                />
-              ) : null}
-              <div class="ph-way-tint" />
-            </div>
-            <div class="ph-way-foot">
-              <p class="ph-way-tag">{track.label}</p>
-              <h3>{track.heading}</h3>
-              <div class="ph-way-extra">
-                <p>{track.body}</p>
-                <span class="ph-way-link">
-                  {track.cta?.label ?? 'Learn more'} <span class="arrow">&rsaquo;</span>
-                </span>
-              </div>
-            </div>
-          </a>
-        ))
-      }
+      <a href={d[0]?.cta?.href ?? '/patients/teletherapy/'} class="ph-way">
+        <div class="ph-way-bg">
+          <img
+            src={d[0]?.image?.asset?.url ??
+              'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=1400&q=85&auto=format&fit=crop'}
+            alt=""
+            onerror="this.style.display='none'"
+          />
+          <div class="ph-way-tint"></div>
+        </div>
+        <div class="ph-way-foot">
+          <p class="ph-way-tag">{d[0]?.label ?? 'Teletherapy'}</p>
+          <h3>{d[0]?.heading ?? 'Secure video from anywhere in Florida'}</h3>
+          <div class="ph-way-extra">
+            <p>
+              {
+                d[0]?.body ??
+                  '50-minute sessions on a HIPAA-compliant platform. Evening and weekend availability. Most major insurance accepted, with Spanish-speaking therapists on staff.'
+              }
+            </p>
+            <span class="ph-way-link">Learn more <span class="arrow">&rsaquo;</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a href={d[1]?.cta?.href ?? '/communities/'} class="ph-way">
+        <div class="ph-way-bg">
+          <img
+            src={d[1]?.image?.asset?.url ??
+              'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=1400&q=85&auto=format&fit=crop'}
+            alt=""
+            onerror="this.style.display='none'"
+          />
+          <div class="ph-way-tint"></div>
+        </div>
+        <div class="ph-way-foot">
+          <p class="ph-way-tag">{d[1]?.label ?? 'On-site'}</p>
+          <h3>{d[1]?.heading ?? 'On-site therapy at your facility'}</h3>
+          <div class="ph-way-extra">
+            <p>
+              {
+                d[1]?.body ??
+                  'Licensed therapists placed inside your facility weekly. Medicare and private insurance billed directly. Available in Palm Beach, Martin, St. Lucie, and Okeechobee counties.'
+              }
+            </p>
+            <span class="ph-way-link">Learn more <span class="arrow">&rsaquo;</span></span>
+          </div>
+        </div>
+      </a>
     </div>
   </section>
 
-  <!-- ── BELIEF BAND ── -->
+  <!-- ── BELIEF BAND (preserved from prior version) ── -->
   <section class="belief">
     <div class="belief-inner">
       <div class="belief-rule" aria-hidden="true"></div>
@@ -2409,49 +2495,228 @@ const cardPlaceholders = ['img-ph-cream', 'img-ph-coral', 'img-ph-navy', 'img-ph
 
     <div class="l505-tabs" id="l505">
       <div class="l505-list" role="tablist">
-        {
-          conditions.map((cond, i) => (
-            <button
-              class={`l505-trigger${i === 0 ? ' active' : ''}`}
-              data-tab={`l505-tab-${i + 1}`}
-            >
-              {cond.heading}
-            </button>
-          ))
-        }
+        <button class="l505-trigger active" data-tab="l505-tab-1"
+          >{c[0]?.heading ?? 'Anxiety'}</button
+        >
+        <button class="l505-trigger" data-tab="l505-tab-2">{c[1]?.heading ?? 'Depression'}</button>
+        <button class="l505-trigger" data-tab="l505-tab-3">{c[2]?.heading ?? 'Grief & loss'}</button
+        >
+        <button class="l505-trigger" data-tab="l505-tab-4"
+          >{c[3]?.heading ?? 'Trauma & PTSD'}</button
+        >
+        <button class="l505-trigger" data-tab="l505-tab-5"
+          >{c[4]?.heading ?? 'Life transitions'}</button
+        >
+        <button class="l505-trigger" data-tab="l505-tab-6"
+          >{c[5]?.heading ?? 'Caregiver burnout'}</button
+        >
+        <button class="l505-trigger" data-tab="l505-tab-7"
+          >{c[6]?.heading ?? 'Relationships'}</button
+        >
+        <button class="l505-trigger" data-tab="l505-tab-8">{c[7]?.heading ?? 'Self-esteem'}</button>
       </div>
 
-      {
-        conditions.map((cond, i) => (
-          <div class={`l505-panel${i === 0 ? ' active' : ''}`} data-panel={`l505-tab-${i + 1}`}>
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 8v4l3 2" />
-                  </>
-                </svg>
-              </div>
-              <h3>{cond.heading}</h3>
-              <p>{cond.body}</p>
-            </div>
+      <div class="l505-panel active" data-panel="l505-tab-1">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 2"></path></svg>
           </div>
-        ))
-      }
+          <h3>{c[0]?.heading ?? 'Anxiety'}</h3>
+          <p>
+            {
+              c[0]?.body ??
+                'Generalized worry, panic, social anxiety, and the running list of \u201cwhat-ifs\u201d that won\u2019t quiet down. We use cognitive-behavioral and acceptance-based approaches to help you name what\u2019s happening, build skills that actually work, and live without bracing for the next thing.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-2">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              ></path></svg>
+          </div>
+          <h3>{c[1]?.heading ?? 'Depression'}</h3>
+          <p>
+            {
+              c[1]?.body ??
+                'Low mood, exhaustion, loss of interest, the sense that something has gone flat. Depression isn\u2019t laziness or weakness \u2014 it\u2019s treatable. Therapy helps you understand what\u2019s underneath it and build a way back toward the things that matter.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-3">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <h3>{c[2]?.heading ?? 'Grief & loss'}</h3>
+          <p>
+            {
+              c[2]?.body ??
+                'Death of a partner, parent, or friend. Loss of a relationship, a role, an identity, a future you expected. Grief doesn\u2019t move in stages \u2014 it moves in waves. We give it the room and the language it needs.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-4">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <h3>{c[3]?.heading ?? 'Trauma & PTSD'}</h3>
+          <p>
+            {
+              c[3]?.body ??
+                'Past combat, abuse, accidents, medical events, or single experiences that reshaped your nervous system. Trauma-informed therapy \u2014 including evidence-based PTSD modalities \u2014 helps you process what happened and reduce the symptoms that keep showing up uninvited.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-5">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"><path d="M3 12h18M12 3v18"></path></svg>
+          </div>
+          <h3>{c[4]?.heading ?? 'Life transitions'}</h3>
+          <p>
+            {
+              c[4]?.body ??
+                'Career change, a move, becoming a parent, an empty nest, retirement, divorce, the death of a parent. Transitions are where identity gets renegotiated. Therapy helps you do that on purpose, instead of just reacting to it.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-6">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              ></path></svg>
+          </div>
+          <h3>{c[5]?.heading ?? 'Caregiver burnout'}</h3>
+          <p>
+            {
+              c[5]?.body ??
+                'Caring for an aging parent, a partner with chronic illness, a child with complex needs. The exhaustion, guilt, resentment, and grief that come with it are real and they\u2019re not character flaws. Therapy is for the caregiver, not just the person being cared for.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-7">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><circle cx="9" cy="7" r="4"></circle><path
+                d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path><path
+                d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M21 21v-2a4 4 0 0 0-3-3.87"
+              ></path></svg>
+          </div>
+          <h3>{c[6]?.heading ?? 'Relationships'}</h3>
+          <p>
+            {
+              c[6]?.body ??
+                'The patterns that keep replaying with partners, family, or friends. Communication that breaks down in the same place every time. We help you see the dynamic clearly and decide what to do with it \u2014 together or on your own.'
+            }
+          </p>
+        </div>
+      </div>
+
+      <div class="l505-panel" data-panel="l505-tab-8">
+        <div class="l505-panel-inner">
+          <div class="l505-icon">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"></path></svg>
+          </div>
+          <h3>{c[7]?.heading ?? 'Self-esteem & identity'}</h3>
+          <p>
+            {
+              c[7]?.body ??
+                'The inner critic that\u2019s louder than it needs to be. Imposter feelings, perfectionism, the sense that you\u2019re somehow getting it wrong. Therapy helps you separate the voice that\u2019s been running the show from the person actually doing the living.'
+            }
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ── CTA35 ── -->
+  <!-- ── CTA35: TWO CTA COLUMNS ── -->
   <section class="ph-cta35">
     <div class="ph-cta35-grid">
       <div class="ph-cta35-col">
@@ -2474,15 +2739,80 @@ const cardPlaceholders = ['img-ph-cream', 'img-ph-coral', 'img-ph-navy', 'img-ph
           }
         </p>
         <div class="ph-cta35-actions">
-          <a href={page?.ctaCta?.href ?? '/book/'} class="btn btn-coral">
-            {page?.ctaCta?.label ?? 'Book a session'}
-          </a>
+          <a href={page?.ctaCta?.href ?? '/book/'} class="btn btn-coral"
+            >{page?.ctaCta?.label ?? 'Book a session'}</a
+          >
         </div>
       </div>
     </div>
   </section>
 
   <script is:inline>
+    // ── BLOCK 2: Router accordion
+    function activateRouterCard(idx) {
+      const isMobile = window.innerWidth <= 768;
+      document.querySelectorAll('.r-card').forEach((c, i) => {
+        c.classList.remove('r-active', 'r-inactive');
+        c.classList.add(i === idx ? 'r-active' : 'r-inactive');
+        const wc = c.querySelector('.r-wide-content');
+        const wi = c.querySelector('.r-wide-image');
+        const nc = c.querySelector('.r-narrow-content');
+        if (isMobile) {
+          // On mobile: all cards show wide-content stacked
+          if (wc) wc.style.display = 'flex';
+          if (wi) wi.style.display = 'none';
+          if (nc) nc.style.display = 'none';
+          c.style.display = 'block';
+          c.style.flexDirection = '';
+        } else if (i === idx) {
+          if (wc) wc.style.display = 'flex';
+          if (wi) wi.style.display = 'block';
+          if (nc) nc.style.display = 'none';
+          c.style.display = 'flex';
+          c.style.flexDirection = 'row';
+        } else {
+          if (wc) wc.style.display = 'none';
+          if (wi) wi.style.display = 'none';
+          if (nc) nc.style.display = 'flex';
+          c.style.display = '';
+          c.style.flexDirection = '';
+        }
+      });
+    }
+    document.querySelectorAll('.r-card').forEach((c, i) => {
+      c.classList.add(i === 0 ? 'r-active' : 'r-inactive');
+    });
+    activateRouterCard(0);
+    window.addEventListener('resize', () =>
+      activateRouterCard(
+        [...document.querySelectorAll('.r-card')].findIndex((c) =>
+          c.classList.contains('r-active'),
+        ) || 0,
+      ),
+    );
+
+    // ── BLOCK 5: sticky scroll image cross-fade
+    const l349Imgs = document.querySelectorAll('[data-img]');
+    function updateConditionImage() {
+      const vh = window.innerHeight;
+      const l349 = document.getElementById('l349');
+      if (!l349) return;
+      const rect = l349.getBoundingClientRect();
+      const scrolledInto = -rect.top;
+      if (scrolledInto < 0) return;
+      const active = Math.min(Math.floor(scrolledInto / vh), l349Imgs.length - 1);
+      l349Imgs.forEach((img, i) => {
+        img.style.opacity = i === active ? '1' : '0';
+        img.classList.toggle('active', i === active);
+      });
+    }
+    l349Imgs.forEach((img, i) => {
+      img.style.transition = 'opacity 0.35s ease';
+      if (i > 0) img.style.opacity = '0';
+    });
+    window.addEventListener('scroll', updateConditionImage, { passive: true });
+    updateConditionImage();
+
     // ── Scroll fade-up
     const fadeObs = new IntersectionObserver(
       (entries) => {
