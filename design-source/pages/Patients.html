@@ -473,31 +473,12 @@ p { text-wrap: pretty; }
 .ph-hero-cta { display:flex; justify-content:center; }
 
 /* ── LAYOUT399: 4-card router ── */
-.ph-router { background:var(--white); padding:var(--pad-s) var(--pad-x); position:relative; }
+.ph-router { background:var(--white); padding:var(--pad-s) var(--pad-x); }
 .ph-router-head { max-width:var(--max-w); margin:0 auto 3rem; text-align:center; }
-@media(max-width:768px){
-  /* Mobile: turn the router head into a sticky secondary menu that pins
-     while the 4 cards scroll past, then releases at the section's end */
-  .ph-router { padding-top:0; }
-  .ph-router-head {
-    position:sticky; top:63px; z-index:50;
-    background:var(--white);
-    margin:0 calc(var(--pad-x) * -1) 1.5rem;
-    padding:1rem var(--pad-x) 1rem;
-    border-bottom:1px solid var(--border);
-    text-align:center;
-    box-shadow:0 4px 12px -8px rgba(10,45,82,.15);
-  }
-  .ph-router-head .eyebrow { margin-bottom:.25rem; font-size:11px; }
-  .ph-router-head h2 { font-size:1.25rem; margin-bottom:.15rem; }
-  .ph-router-sub { font-size:14px; margin:1.25rem var(--pad-x) 1.5rem; text-align:center; }
-}
 .ph-router-head .eyebrow { margin-bottom:1rem; display:block; }
 .ph-router-head h2 { font-size:clamp(2rem, 3.6vw, 3rem); margin-bottom:1rem; letter-spacing:-.02em; }
-.ph-router-sub { color:var(--slate); font-size:17px; line-height:1.6; max-width:560px; margin:0 auto 3rem; text-align:center; }
+.ph-router-sub { color:var(--slate); font-size:17px; line-height:1.6; max-width:560px; margin:0 auto; }
 .ph-router-grid { max-width:var(--max-w); margin:0 auto; display:grid; grid-template-columns:repeat(4, 1fr); gap:1.5rem; }
-@media(max-width:1024px){ .ph-router-grid { grid-template-columns:repeat(2, 1fr); } }
-@media(max-width:560px){ .ph-router-grid { grid-template-columns:1fr; gap:1rem; } }
 .ph-card { display:flex; flex-direction:column; background:var(--white); border:1px solid var(--border); border-radius:var(--r-card); overflow:hidden; transition:border-color var(--t-hover), transform var(--t-hover), box-shadow var(--t-hover); }
 .ph-card:hover { border-color:var(--coral); transform:translateY(-3px); box-shadow:var(--shadow-lg); }
 .ph-card-body { padding:2rem 1.75rem 1.75rem; display:flex; flex-direction:column; gap:.75rem; flex:1; }
@@ -522,7 +503,6 @@ p { text-wrap: pretty; }
 .ph-twoways-head h2 { font-size:clamp(2rem, 3.6vw, 3rem); margin-bottom:1rem; letter-spacing:-.02em; }
 .ph-twoways-sub { color:var(--slate); font-size:17px; line-height:1.6; max-width:560px; margin:0 auto; }
 .ph-twoways-grid { max-width:var(--max-w); margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
-@media(max-width:768px){ .ph-twoways-grid { grid-template-columns:1fr; gap:1rem; } .ph-way { min-height:380px; } }
 .ph-way { position:relative; min-height:520px; border-radius:var(--r-card); overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; isolation:isolate; }
 .ph-way-bg { position:absolute; inset:0; z-index:-1; background:var(--navy-deep); }
 .ph-way-bg img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; }
@@ -559,16 +539,12 @@ p { text-wrap: pretty; }
 .l505-panel h3 { margin-bottom:1.25rem; font-size:clamp(1.6rem, 2.4vw, 2rem); font-weight:800; line-height:1.15; letter-spacing:-.01em; color:var(--navy-deep); }
 .l505-panel > p { color:var(--slate); line-height:1.65; font-size:16px; }
 @media(max-width:768px){
-  .l505-tabs { grid-template-columns:1fr; display:block; background:transparent; border-radius:0; overflow:visible; }
-  .l505-list { display:contents; }
-  .l505-trigger { width:100%; display:block; background:#fff; border:1px solid var(--border); border-radius:var(--r-card); margin-bottom:.5rem; padding:1rem 1.25rem; font-size:1rem; position:relative; }
-  .l505-trigger.active { border-color:var(--coral); background:#fff; }
-  .l505-trigger.active::before { content:''; position:absolute; left:0; top:1rem; bottom:1rem; width:3px; background:var(--coral); border-radius:0 2px 2px 0; transform:none; height:auto; }
-  .l505-trigger::after { content:'+'; position:absolute; right:1.25rem; top:50%; transform:translateY(-50%); font-size:1.4rem; font-weight:400; color:var(--slate); line-height:1; }
-  .l505-trigger.active::after { content:'–'; color:var(--coral); }
-  .l505-panel.active { display:block; margin:-.5rem 0 .75rem; }
-  .l505-panel-inner { padding:1.25rem 1.25rem 1.5rem; background:#fff; border:1px solid var(--coral); border-top:0; border-radius:0 0 var(--r-card) var(--r-card); }
-  .l505-trigger.active { border-bottom-left-radius:0; border-bottom-right-radius:0; margin-bottom:0; }
+  .l505-tabs { grid-template-columns:1fr; }
+  .l505-list { border-right:0; border-bottom:1px solid var(--border); flex-direction:row; overflow-x:auto; scrollbar-width:none; }
+  .l505-list::-webkit-scrollbar { display:none; }
+  .l505-trigger { white-space:nowrap; border-bottom:0; border-right:1px solid var(--border); padding:1rem 1.25rem; font-size:14px; }
+  .l505-trigger.active::before { left:50%; top:auto; bottom:0; transform:translateX(-50%); width:60%; height:3px; border-radius:2px 2px 0 0; }
+  .l505-panel-inner { padding:2rem 1.5rem; }
 }
 
 /* ── CTA35: two CTA columns ── */
@@ -717,8 +693,8 @@ p { text-wrap: pretty; }
   <div class="ph-router-head">
     <p class="eyebrow">Choose</p>
     <h2>What brings you here?</h2>
+    <p class="ph-router-sub">Find the right path to care.</p>
   </div>
-  <p class="ph-router-sub">Find the right path to care.</p>
 
   <div class="ph-router-grid">
 
@@ -942,7 +918,7 @@ p { text-wrap: pretty; }
         <div class="footer-contact">
           <div>Boca Raton, FL</div>
           <div><a href="tel:7549990011">754-999-0011</a></div>
-          <div><a href="/cdn-cgi/l/email-protection#49212c252526092e2c3d2b2c3d3d2c3b30263c672a2624"><span class="__cf_email__" data-cfemail="2e464b4242416e494b5a4c4b5a5a4b5c57415b004d4143">[email&#160;protected]</span></a></div>
+          <div><a href="mailto:hello@getbetteryou.com">hello@getbetteryou.com</a></div>
         </div>
         <div class="social-links">
           <a href="#" class="social-link" aria-label="Facebook"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
@@ -997,7 +973,7 @@ p { text-wrap: pretty; }
   <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ── BLOCK 2: Router accordion
 function activateRouterCard(idx) {
   var isMobile = window.innerWidth <= 768;
@@ -1071,50 +1047,13 @@ document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
   if(!root) return;
   var triggers = root.querySelectorAll('.l505-trigger');
   var panels = root.querySelectorAll('.l505-panel');
-  var mq = window.matchMedia('(max-width: 768px)');
-  function syncPanelPosition(activeBtn, activePanel){
-    if(mq.matches && activePanel && activeBtn){
-      activeBtn.insertAdjacentElement('afterend', activePanel);
-    } else if(!mq.matches){
-      // restore: all panels live after .l505-list
-      var list = root.querySelector('.l505-list');
-      panels.forEach(function(p){ root.appendChild(p); });
-      // (list stays in place because it was never moved)
-      void list;
-    }
-  }
   triggers.forEach(function(btn){
     btn.addEventListener('click', function(){
       var key = btn.getAttribute('data-tab');
-      var isActive = btn.classList.contains('active');
-      // On mobile, clicking the active trigger collapses it
-      if(mq.matches && isActive){
-        btn.classList.remove('active');
-        panels.forEach(function(p){ p.classList.remove('active'); });
-        return;
-      }
       triggers.forEach(function(b){ b.classList.toggle('active', b===btn); });
-      var activePanel = null;
-      panels.forEach(function(p){
-        var on = p.getAttribute('data-panel')===key;
-        p.classList.toggle('active', on);
-        if(on) activePanel = p;
-      });
-      syncPanelPosition(btn, activePanel);
+      panels.forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===key); });
     });
   });
-  // On viewport changes, reposition the currently-active panel
-  mq.addEventListener('change', function(){
-    var activeBtn = root.querySelector('.l505-trigger.active');
-    var activePanel = root.querySelector('.l505-panel.active');
-    syncPanelPosition(activeBtn, activePanel);
-  });
-  // Initial position on load
-  (function init(){
-    var activeBtn = root.querySelector('.l505-trigger.active');
-    var activePanel = root.querySelector('.l505-panel.active');
-    syncPanelPosition(activeBtn, activePanel);
-  })();
 })();
 </script>
 </body>
