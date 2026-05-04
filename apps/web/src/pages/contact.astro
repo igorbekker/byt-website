@@ -26,7 +26,7 @@ const [page, siteSettings] = await Promise.all([
 
 const phone = siteSettings?.phone ?? '754-999-0011';
 const email = siteSettings?.email ?? 'hello@getbetteryou.com';
-const fax = siteSettings?.fax ?? '(754) 328-4344';
+const fax = siteSettings?.fax || '(754) 328-4344';
 const phoneDigits = phone.replace(/\D/g, '');
 const faxDigits = fax.replace(/\D/g, '');
 ---
