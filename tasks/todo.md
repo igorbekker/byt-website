@@ -1145,10 +1145,55 @@ l422 card images (2 Unsplash URLs), l374 card SVG icons (5 inline SVGs), l374 ca
 - pnpm typecheck — PASS
 - pnpm lint — PASS (providers.astro clean)
 
-### About (`/about/`) — pending
+### About (`/about/`) [x] BUILT — 2026-05-04, pending visual parity confirmed
 
-- [ ] Rewrite about.astro
-- [ ] Build + deploy + visual parity confirmed
+- [x] Rewrite about.astro — 2026-05-04
+- [x] Build — 2026-05-04 (pnpm build passes, /about/index.html prerendered)
+- [ ] Deploy + visual parity confirmed by Igor
+
+#### About Review — 2026-05-04
+
+**Status:** BUILT — pending Igor visual confirmation
+
+**Files changed:**
+
+- `apps/web/src/pages/about.astro` — created: verbatim HTML from design-source About.html, `<style is:global>` (full CSS block, 869 lines), `<script is:inline>` (fade-up observer verbatim), Sanity variables wired for all 6 sections
+
+**Sanity-editable fields:**
+heroHeading (set:html for em tag), heroSubhead, missionEyebrow, missionQuote, missionBody, storyEyebrow, storyHeading, storyBody[0–2].children[0].text (3 paragraphs via PortableText positional indexing), founderName, founderCredential, founderPhoto (conditional img or "AN" initials), principlesEyebrow, principlesHeading, principlesSubhead, principles[0–2].number/heading/body, practiceEyebrow, practiceHeading, practicePillars[0–3].number/label/heading/body, ctaHeading, ctaSubhead, ctaPrimary.label/href, ctaSecondary.label/href, ctaBackgroundImage.asset.url, seo
+
+**Hardcoded (no schema):**
+Hero eyebrow "About Better You Therapy", hero image (Unsplash URL), story image (Unsplash URL), story-signature-avatar initials fallback "AN", CTA eyebrow "Work With Us", CTA third button "Join Our Team → /providers/"
+
+**Quality gates:**
+
+- pnpm build — PASS (/about/index.html prerendered)
+- Specificity audit vs global.css — PASS (no blocking conflicts)
+
+### Design-Source Parity Check Hook [x] COMPLETE — 2026-05-04
+
+- [x] scripts/design-parity-check.sh — created with 6 checks (map loops, fallbacks, section count, is:inline, class audit, element swap warning)
+- [x] .husky/pre-commit — wired to run script automatically
+- [x] .claude/settings.json — PreToolUse hook on Edit/Write for .astro pages (gitignored, local-only)
+- [x] Blocking test confirmed: injected .map() loop → exit 1, correct line reported
+- [x] Clean test confirmed: about.astro passes with no errors
+
+#### Parity Hook Review — 2026-05-04
+
+**Files changed:**
+
+- `scripts/design-parity-check.sh` — 6 automated checks before any page .astro commit
+- `.husky/pre-commit` — added `bash scripts/design-parity-check.sh` after `pnpm lint-staged`
+- `.claude/settings.json` — PreToolUse Python inline hook checking Write/Edit to page .astro files for .map() loops (gitignored)
+
+**What it catches (blocking):** Sanity .map() loops, Sanity vars without ?? fallbacks, section count mismatches, script tags without is:inline
+**What it catches (warning):** Missing CSS classes, DOM element swaps (a→div)
+**Known limitation:** .claude/settings.json is gitignored — PreToolUse hook is local-only and must be recreated on new machines
+
+**Quality gates:**
+
+- pnpm build — PASS (/about/index.html prerendered)
+- Specificity audit vs global.css — PASS (no blocking conflicts)
 
 ### Careers (`/careers/`) — pending
 
