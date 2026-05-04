@@ -149,3 +149,27 @@ If the session token also fails for mutations (session tokens expire), the corre
 - When Igor says "one page at a time" — build one, deploy, report, STOP. Wait for explicit confirmation before touching the next page.
 - "WAIT for my confirmation before touching any other page" is a hard stop, not a soft suggestion.
 - After reporting a page is deployed: do nothing until Igor responds with approval.
+
+---
+
+## Astro/Sanity Build Phase — Mandatory Rules (added 2026-05-04)
+
+Source: BYT_Process_Learnings_v4_AstroSanity.docx
+
+1. **Design-source HTML files are build specs, not content references.** Every CSS value, class name, DOM structure, and script must be reproduced exactly.
+
+2. **Raw HTML injection is the build method.** Copy everything between `<body>` and `</body>` into the `.astro` file. Keep all `<style>` blocks verbatim. Keep all `<script>` tags with `is:inline`. The ONLY allowed modification: replace hardcoded text/image values with Sanity variables.
+
+3. **One page at a time with confirmation gates.** Build, deploy, wait for Igor's confirmation. Do not start the next page until the current one is confirmed.
+
+4. **Never rename classes, move styles, restructure DOM, or change semantic elements from the source HTML.**
+
+5. **When debugging, test with public/ first.** Copy the HTML file to `public/`, deploy, verify it renders. If it does, any deviation in the `.astro` version is something you introduced.
+
+6. **Use auto-deploy.** Push to main, Cloudflare deploys automatically. Do not manually trigger builds, poll deployment status, or debug deployment tokens.
+
+7. **Audit global.css against page-level styles for specificity conflicts before every deploy.** If `global.css` overrides a page style, fix the specificity before committing.
+
+8. **Sanity manages content only.** Text and image references live in Sanity. Layout, styles, animations, and structure live in the `.astro` file as raw HTML from design-source.
+
+9. **Do not build all pages at once.** This was attempted and failed — every page was broken. Sequential builds with confirmation gates are the only approved method.

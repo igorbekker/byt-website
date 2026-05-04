@@ -1091,10 +1091,30 @@ h84-eyebrow "For Wellness Directors", l521 step images (4 Unsplash URLs), l521 s
 - `pnpm --filter web build` — PASS (2 routes prerendered: /index.html, /communities/index.html)
 - `pnpm exec eslint apps/web/src/pages/communities.astro` — PASS (0 errors)
 
-### Patients (`/patients/`) — pending
+### Patients (`/patients/`) [x] BUILT — 2026-05-04, pending visual parity confirmed
 
-- [ ] Rewrite patients.astro
-- [ ] Build + deploy + visual parity confirmed
+- [x] Rewrite patients.astro — 2026-05-04
+- [x] Build + deploy — 2026-05-04 (commit f1ce143, CF Pages auto-deploy)
+- [ ] Visual parity confirmed by Igor
+
+#### Patients Review — 2026-05-04T01:34Z
+
+**Status:** BUILT — pending Igor visual confirmation
+
+**Files changed:**
+
+- `apps/web/src/pages/patients.astro` — created: verbatim HTML from design-source Patients.html, `<style is:global>` (full CSS block, 622 lines), `<script is:inline>` (fade-up observer + l505 tab switcher), Sanity variables wired for all 6 sections
+
+**Sanity-editable fields:**
+heroHeading, heroSubhead, heroImage (url/alt), heroPrimaryCta (label/href), audienceSelectorHeading, audienceSelectorSubhead, audienceSelectorCards[] (label/heading/body/cta/image), deliveryEyebrow, deliveryHeading, deliverySubhead, deliveryTracks[] (label/heading/body/image/cta), beliefQuote, beliefBody, conditionsEyebrow, conditionsHeading, conditionsSubhead, conditions[] via CONDITIONS_PATIENTS_QUERY (heading/body), ctaHeading, ctaSubhead, ctaCta (label/href), seo
+
+**Hardcoded (no schema):**
+Router eyebrow "Choose", condition tab icons (generic SVG — no icon field in schema), CTA section icon SVG, card placeholder color cycling (cream/coral/navy/cream by index)
+
+**Quality gates:**
+
+- pnpm build — PASS (/patients/index.html prerendered)
+- Specificity audit vs global.css — PASS (no blocking conflicts)
 
 ### Providers (`/providers/`) — BUILT, pending deploy + Igor confirmation
 
