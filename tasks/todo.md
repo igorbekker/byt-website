@@ -1306,7 +1306,8 @@ Eyebrow "Contact Us", eyebrow "Get in touch", h2 "Reach our team directly.", for
 
 - [x] Root cause found: all 7 pages have `.footer-logo img { height: 100px; width: auto; }` in `<style is:global>` which overrides Footer.astro scoped styles — 2026-05-04
 - [x] Changed `height: 100px → 96px` in 5 page files (about, careers, contact, patients, providers) — 2026-05-04
-- [ ] index.astro + communities.astro deferred — pre-existing .map() violations block parity hook; follow-up commit required
+- [x] index.astro fixed — .map() violations removed in commit 9617b01 — 2026-05-04
+- [x] communities.astro deferred — still has 3 template .map() violations; follow-up commit required — resolved 2026-05-04
 - [x] Added responsive breakpoints to 5 page files: `@media (max-width: 1024px) { height: 72px }` and `@media (max-width: 768px) { height: 66px }` — 2026-05-04
 - [x] Updated Footer.astro `.footer-logo img` to `height: 96px; width: auto` (height-based to match pattern) — 2026-05-04
 - [x] Copied `design-source/assets/logo-multi-sm.png` → `apps/web/public/favicon.png` — 2026-05-04
@@ -1380,3 +1381,39 @@ Router cards (3), Two Ways tracks (2), Conditions sections (4) + images (4), Tel
 - Template .map() count — 0 (verified by Python regex)
 - Script is:inline check — PASS
 - Parity check hook — would PASS (no staged violations)
+
+---
+
+### Communities Fix — Remove .map() violations [x] COMPLETE — 2026-05-04
+
+- [x] Replace .map() #1: handles list (4 li items) with hardcoded HTML + `page?.handlesItems?.[i]` positional indexing — 2026-05-04
+- [x] Replace .map() #2: conditions tabs (11 buttons) with hardcoded `<button class="l505-trigger">` + `conditionsData?.[i]?.tagline` indexing — 2026-05-04
+- [x] Replace .map() #3: conditions panels (11 divs) with hardcoded `<div class="l505-panel">` + `conditionsData?.[i]?.heading/body` indexing — 2026-05-04
+- [x] Footer logo fix: height 100px → 96px + responsive breakpoints (72px tablet, 66px mobile) — 2026-05-04
+- [x] pnpm build — PASS (all 7 routes) — 2026-05-04
+- [x] Parity check — exit 0, 0 .map() in template — 2026-05-04
+- [ ] Deploy + visual parity confirmed by Igor
+
+#### Communities Fix Review — 2026-05-04
+
+**Status:** BUILT — pending Igor visual confirmation
+
+**Root cause of .map() violations:** communities.astro was built before the parity hook. All 3 map calls used the pattern `(conditionsData?.length > 0 ? conditionsData : hardcodedArray).map(fn)` — a ternary on the iterable itself with no separate `if/else` block.
+
+**Fix method:** Python in-place transformation. Replaced each `{ (... ).map(fn) }` block with hardcoded HTML using Sanity positional indexing + `??` fallbacks:
+
+- Handles items: `page?.handlesItems?.[0..3]?.heading ?? 'fallback'`
+- Conditions tabs: `conditionsData?.[0..10]?.tagline ?? 'fallback'`
+- Conditions panels: `conditionsData?.[0..10]?.heading/body ?? 'fallback'`
+
+**Footer logo:** `height: 100px → 96px` + responsive breakpoints added (communities.astro was excluded from adc9254 due to pre-existing .map() violations).
+
+**Files changed:**
+
+- `apps/web/src/pages/communities.astro` — 3 .map() loops removed; footer logo height fixed; parity-clean
+
+**Quality gates:**
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered)
+- Template .map() count — 0 (Python regex + awk/grep parity check, exit 0)
+- Footer logo — height: 96px desktop, 72px tablet, 66px mobile
