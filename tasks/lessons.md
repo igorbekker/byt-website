@@ -70,6 +70,14 @@ design-source/ is a structural reference frozen at design time — never modify 
 When content changes (email, fax, phone, copy, image): update the value in Sanity Studio or schema defaults — not in design-source/, and not as a new hardcoded value in .astro.
 The .astro file wires the field as `{sanityVar ?? "original-design-source-placeholder"}`. The fallback is the original design-source value; the live content comes from Sanity.
 
+### 14. Page-level `<style is:global>` overrides shared component scoped styles
+
+When a page copies design-source CSS verbatim into `<style is:global>`, any rule in that block that targets a shared component element (e.g. `.footer-logo img`, `.nav-logo`) will override the component's own scoped `<style>`. The component's scoped style has lower effective priority in this cascade.
+
+**Consequence:** Changing a style in the component file alone has no visible effect. The fix must be applied in ALL page files that redefine that rule globally.
+
+**Check before any shared component style change:** `grep -r "rule-name" apps/web/src/pages/` to find all page-level overrides.
+
 ---
 
 ## Incident Log

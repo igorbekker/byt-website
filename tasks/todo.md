@@ -1299,3 +1299,42 @@ Eyebrow "Contact Us", eyebrow "Get in touch", h2 "Reach our team directly.", for
 - `pnpm --filter web build` — PASS (all 7 routes prerendered)
 - `pnpm --filter web check` — PASS (0 new errors)
 - `pnpm lint` — PASS (pre-existing lint error in auto-generated `.sanity/runtime/app.js` unaffected)
+
+---
+
+### Footer Logo Fix + Favicon Install [x] COMPLETE — 2026-05-04
+
+- [x] Root cause found: all 7 pages have `.footer-logo img { height: 100px; width: auto; }` in `<style is:global>` which overrides Footer.astro scoped styles — 2026-05-04
+- [x] Changed `height: 100px → 96px` in all 7 page files via perl — 2026-05-04
+- [x] Added responsive breakpoints to all 7 page files: `@media (max-width: 1024px) { height: 72px }` and `@media (max-width: 768px) { height: 66px }` — 2026-05-04
+- [x] Updated Footer.astro `.footer-logo img` to `height: 96px; width: auto` (height-based to match pattern) — 2026-05-04
+- [x] Copied `design-source/assets/logo-multi-sm.png` → `apps/web/public/favicon.png` — 2026-05-04
+- [x] Added `<link rel="icon" type="image/png" href="/favicon.png" />` to BaseLayout.astro — 2026-05-04
+- [x] pnpm build — PASS (all 7 routes prerendered) — 2026-05-04
+
+#### Footer Logo Fix + Favicon Review — 2026-05-04
+
+**Status:** COMPLETE
+
+**Root cause:** The `width: 150px` change in c83c55a had no visible effect because each page's `<style is:global>` contains `.footer-logo img { height: 100px; width: auto; display: block; }` which is applied as a global rule, overriding the component's own scoped style. The component's `<style>` (without `is:global`) is scoped and has lower specificity in the cascade.
+
+**Fix:** Changed `height: 100px → 96px` (matching nav desktop logo height) in all 7 page files. Added tablet (72px) and mobile (66px) breakpoints matching the nav logo pattern. Updated Footer.astro to height-based as well for future consistency.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/pages/about.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/pages/careers.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/pages/communities.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/pages/contact.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/pages/patients.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/pages/providers.astro` — `.footer-logo img` height 100px → 96px + responsive breakpoints
+- `apps/web/src/components/ui/Footer.astro` — `.footer-logo img` switched to `height: 96px; width: auto`
+- `apps/web/public/favicon.png` — added (logo-multi-sm.png, 300×144 RGBA, 14.8KB)
+- `apps/web/src/layouts/BaseLayout.astro` — added `<link rel="icon" type="image/png" href="/favicon.png" />`
+
+**Lesson added:** Page-level `<style is:global>` overrides shared component scoped styles. Any shared component style change must be replicated across all page files that redefine that rule globally.
+
+**Quality gates:**
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered)

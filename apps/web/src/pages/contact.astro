@@ -481,9 +481,19 @@ const faxDigits = fax.replace(/\D/g, '');
       display: block;
     }
     .footer-logo img {
-      height: 100px;
+      height: 96px;
       width: auto;
       display: block;
+    }
+    @media (max-width: 1024px) {
+      .footer-logo img {
+        height: 72px;
+      }
+    }
+    @media (max-width: 768px) {
+      .footer-logo img {
+        height: 66px;
+      }
     }
     .footer-tagline {
       font-size: 14px;

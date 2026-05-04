@@ -60,6 +60,7 @@ const resolvedSeo: SeoFields = pageSeo ?? siteSettings?.seo ?? {};
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={resolvedDescription} />
     <title>{resolvedSeo.metaTitle ?? title}</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
