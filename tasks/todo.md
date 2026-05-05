@@ -1204,6 +1204,51 @@ Router cards (3), Two Ways tracks (2), Conditions sections (4) + images (4), Tel
 - [x] Deploy — pushed to main, CF Pages auto-deploy triggered — 2026-05-04
 - [ ] Visual parity confirmed by Igor
 
+---
+
+### Patients Rebuild — Sticky Scroll Fix — 2026-05-05
+
+- [x] Pull latest remote — new Patients.html (1121 lines) with sticky scroll CSS/JS — 2026-05-05
+- [x] Replace apps/web/public/test-patients.html with new design-source (exact copy) — 2026-05-05
+- [x] Full rewrite patients.astro from new source — sticky scroll, accordion l505, responsive breakpoints — 2026-05-05
+- [x] Build passes — 2026-05-05
+- [ ] Push feature branch + PR + merge to main
+- [ ] CF Pages auto-deploy
+- [ ] Verify /test-patients.html sticky scroll on mobile
+- [ ] Verify /patients/ sticky scroll matches test-patients.html on mobile
+
+#### Patients Rebuild Review — 2026-05-05
+
+**Status:** BUILT — pending push + visual confirmation
+
+**What was built:**
+Full rewrite of `patients.astro` from the new `design-source/pages/Patients.html` (1121 lines). `test-patients.html` replaced with an exact copy of the new design-source file.
+
+**Key changes from previous build:**
+
+- `.ph-router { position:relative }` — required for sticky child to work
+- NEW `@media(max-width:768px)` block: `.ph-router-head { position:sticky; top:63px; z-index:50; background:var(--white); box-shadow:... }` — this is the sticky scroll fix
+- `.ph-router-sub` moved outside `.ph-router-head` div (now between head and grid)
+- `.ph-router-sub` gets `margin:0 auto 3rem; text-align:center`; mobile override: `font-size:14px; margin:1.25rem var(--pad-x) 1.5rem`
+- New breakpoints: `.ph-router-grid` 2-col at 1024px, 1-col at 560px
+- `.ph-twoways-grid` 1-col at 768px, `.ph-way { min-height:380px }`
+- `.l505` mobile: full accordion pattern with `+`/`–` `::after` indicators replacing horizontal-scroll tabs
+- `syncPanelPosition()` JS added: repositions active panel after its trigger on mobile, restores after `.l505-list` on desktop. `mq.addEventListener('change')` handles viewport transitions. `init()` call on load.
+- Cloudflare email obfuscation script absent — handled by CF runtime on deploy
+
+**How it was verified:**
+
+- `pnpm --filter web build` — PASS, `/patients/index.html` prerendered
+- `grep` confirmed: `position:sticky; top:63px` present at line 557, `syncPanelPosition` at line 1282
+- `diff design-source/pages/Patients.html apps/web/public/test-patients.html` — 0 lines output (identical)
+- No `.map()` loops introduced, all Sanity fields indexed by position with `??` fallbacks
+
+**Files changed:**
+
+- `apps/web/public/test-patients.html` — exact copy of new design-source
+- `apps/web/src/pages/patients.astro` — full rewrite
+- `tasks/todo.md` — this entry
+
 #### Patients Rewrite Review — 2026-05-04
 
 **Status:** BUILT — pending Igor visual confirmation
