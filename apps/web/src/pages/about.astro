@@ -2568,11 +2568,11 @@ const sb = page?.storyBody ?? [];
         }
       </p>
       <div class="about-cta-actions">
-        <a href={page?.ctaPrimary?.href ?? '/patients/'} class="btn btn-coral"
-          >{page?.ctaPrimary?.label ?? 'Book a Session'} &rarr;</a
+        <button class="btn btn-coral" onclick="openModal('book')"
+          >{page?.ctaPrimary?.label ?? 'Book a Session'} &rarr;</button
         >
-        <a href={page?.ctaSecondary?.href ?? '/communities/'} class="btn btn-outline-white"
-          >{page?.ctaSecondary?.label ?? 'Refer a Resident'} &rarr;</a
+        <button class="btn btn-outline-white" onclick="openModal('refer')"
+          >{page?.ctaSecondary?.label ?? 'Refer a Resident'} &rarr;</button
         >
         <a href="/providers/" class="btn btn-outline-white">Join Our Team &rarr;</a>
       </div>

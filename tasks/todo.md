@@ -1202,7 +1202,7 @@ Router cards (3), Two Ways tracks (2), Conditions sections (4) + images (4), Tel
 - [x] Build passes — 2026-05-04 (commit 39c8662)
 - [x] Parity check — PASS (exit 0, 0 .map() violations)
 - [x] Deploy — pushed to main, CF Pages auto-deploy triggered — 2026-05-04
-- [ ] Visual parity confirmed by Igor
+- [x] Visual parity confirmed by Igor — 2026-05-05
 
 ---
 
@@ -1212,10 +1212,10 @@ Router cards (3), Two Ways tracks (2), Conditions sections (4) + images (4), Tel
 - [x] Replace apps/web/public/test-patients.html with new design-source (exact copy) — 2026-05-05
 - [x] Full rewrite patients.astro from new source — sticky scroll, accordion l505, responsive breakpoints — 2026-05-05
 - [x] Build passes — 2026-05-05
-- [ ] Push feature branch + PR + merge to main
-- [ ] CF Pages auto-deploy
-- [ ] Verify /test-patients.html sticky scroll on mobile
-- [ ] Verify /patients/ sticky scroll matches test-patients.html on mobile
+- [x] Push to main + CF Pages auto-deploy triggered — 2026-05-05 (commit f260b12)
+- [x] Verify /test-patients.html sticky scroll on mobile — confirmed 2026-05-05
+- [x] Verify /patients/ sticky scroll matches test-patients.html — confirmed 2026-05-05
+- [x] test-patients.html deleted from public/ — commit 00c5760
 
 #### Patients Rebuild Review — 2026-05-05
 
@@ -1274,3 +1274,80 @@ heroHeading (set:html), heroSubhead, heroImage, heroPrimaryCta, audienceSelector
 
 - `pnpm --filter web build` — PASS (/patients/index.html prerendered)
 - Parity check — PASS (exit 0, 0 .map())
+
+---
+
+### Modal Forms — Book a Session + Refer a Resident — 2026-05-05
+
+- [x] Write plan to todo.md — 2026-05-05
+- [x] Step 1: Read design-source/pages/CTA Forms.html — identified both forms — 2026-05-05
+- [x] Step 2: CTA audit across all 7 pages — presented to Igor — 2026-05-05
+- [x] Step 3: Igor approved CTA audit (skip Providers Apply Now; wire Formspree) — 2026-05-05
+- [x] Step 4: Created ModalForms.astro — both modals combined, verbatim CSS/JS — 2026-05-05
+- [x] Step 5: (merged into ModalForms.astro — single component for both modals) — 2026-05-05
+- [x] Step 6: Added ModalForms to BaseLayout.astro — available on all pages — 2026-05-05
+- [x] Step 7: Wired CTAs — Nav, MobileCTABar, index, patients, communities, about — 2026-05-05
+- [x] Step 8: Build passes — parity hook exits 0 — 2026-05-05
+- [x] Step 9: env.example updated, .env.local created — Formspree IDs need populating — 2026-05-05
+- [ ] Deploy + Igor visual confirmation
+
+#### Modal Forms Review — 2026-05-05
+
+**Status:** BUILT — pending push + visual confirmation
+
+**What was built:**
+Single `ModalForms.astro` component containing both modals (Book a Session `#modal-book` + Refer a Resident `#modal-refer`), their full CSS verbatim from `design-source/pages/CTA Forms.html` lines 153–469, and a single `<script is:inline>` with real Formspree `fetch` replacing the mock `handleSubmit`.
+
+**Component added to BaseLayout.astro:** renders on every page, receives `bookId`/`referralId` from `import.meta.env`, phone/email from `siteSettings`.
+
+**CTAs wired (href → onclick="openModal(...)"):**
+| File | Changes |
+|---|---|
+| Nav.astro | 4 (desktop + mobile drawer × Book + Refer) |
+| MobileCTABar.astro | 2 (Book + Refer) |
+| index.astro | 16 (hero ×2, drawer ×2, Two Ways ×2, Conditions ×8, How It Works ×2) |
+| patients.astro | 2 (hero + closing CTA) |
+| communities.astro | 2 (hero + closing CTA) |
+| about.astro | 2 (closing CTA Book + Refer) |
+| providers.astro | 0 (Apply Now — deferred per Igor) |
+| careers.astro | 0 (job modals — leave as-is) |
+| contact.astro | 0 (form submit — leave as-is) |
+
+**CTAs left as links (navigation, not booking):**
+
+- Homepage router cards: Refer a Resident → /communities/, Book a Session → /patients/, Work with Us → /providers/
+- Homepage provider teaser: See Open Positions → /providers/, Learn More → /providers/
+- Patients router cards ×4, Two Ways cards ×2
+- About "Join Our Team →" → /providers/
+- Communities "Call 754-999-0011" → tel:
+
+**Formspree integration:**
+
+- `handleSubmit` replaced with async `fetch` to `https://formspree.io/f/{formId}`
+- Form ID sourced from `data-form-id` attribute on each modal overlay (set from `import.meta.env`)
+- Submit button shows "Sending…" + disabled while in-flight; restores on error
+- `Accept: application/json` header; error alert on non-ok or network failure
+- `PUBLIC_FORMSPREE_BOOK_ID` and `PUBLIC_FORMSPREE_REFERRAL_ID` added to `env.example`
+- `.env.local` created at `apps/web/.env.local` (gitignored) — IDs blank, need Formspree dashboard
+
+**Sanity variables in refer-aside sidebar:**
+
+- Phone: `{phone}` with `?? '754-999-0011'` fallback (from `siteSettings?.phone`)
+- Email: `{email}` with `?? 'hello@getbetteryou.com'` fallback (from `siteSettings?.email`)
+- Hours: hardcoded fallback `'Mon–Fri, 9am–6pm ET'` (no Sanity field yet)
+- Success link: `href="/patients/"` (fixed from source `Patients.html`)
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro` — new file
+- `apps/web/src/layouts/BaseLayout.astro` — import + render ModalForms
+- `apps/web/src/components/nav/Nav.astro` — 4 CTAs wired
+- `apps/web/src/components/ui/MobileCTABar.astro` — 2 CTAs wired
+- `apps/web/src/pages/index.astro` — 16 CTAs wired
+- `apps/web/src/pages/patients.astro` — 2 CTAs wired
+- `apps/web/src/pages/communities.astro` — 2 CTAs wired
+- `apps/web/src/pages/about.astro` — 2 CTAs wired
+- `env.example` — 2 new Formspree vars documented
+- `tasks/todo.md` — this entry
+
+**Formspree note:** `PUBLIC_FORMSPREE_BOOK_ID` and `PUBLIC_FORMSPREE_REFERRAL_ID` are blank in `.env.local`. Forms submit to an empty ID until values are added. Create two forms at formspree.io/forms and add IDs to `.env.local` + Cloudflare Pages env vars.

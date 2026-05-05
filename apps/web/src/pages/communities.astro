@@ -1851,8 +1851,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             }
           </p>
           <div class="h84-actions">
-            <a href={page?.heroCta?.href ?? '#cta'} class="btn btn-primary"
-              >{page?.heroCta?.label ?? 'Refer a Resident'}</a
+            <button class="btn btn-primary" onclick="openModal('refer')"
+              >{page?.heroCta?.label ?? 'Refer a Resident'}</button
             >
           </div>
         </div>
@@ -2808,8 +2808,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           }
         </p>
         <div class="cta25-actions">
-          <a href={page?.ctaCta?.href ?? '#cta'} class="btn btn-primary"
-            >{page?.ctaCta?.label ?? 'Refer a Resident'}</a
+          <button class="btn btn-primary" onclick="openModal('refer')"
+            >{page?.ctaCta?.label ?? 'Refer a Resident'}</button
           >
           <a
             href={`tel:${(siteSettings?.phone ?? '7549990011').replace(/\D/g, '')}`}

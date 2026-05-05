@@ -1,0 +1,1278 @@
+---
+/**
+ * Purpose: Site-wide modal forms — Book a Session and Refer a Resident
+ * Context: Rendered in BaseLayout just before </body>; opened via openModal('book') / openModal('refer')
+ * Source: design-source/pages/CTA Forms.html lines 153–469 (CSS), 584–897 (HTML)
+ */
+
+interface Props {
+  bookId: string;
+  referralId: string;
+  phone?: string;
+  email?: string;
+  hours?: string;
+}
+const {
+  bookId,
+  referralId,
+  phone = '754-999-0011',
+  email = 'hello@getbetteryou.com',
+  hours = 'Mon–Fri, 9am–6pm ET',
+} = Astro.props;
+---
+
+<style is:global>
+  /* ─────────────── Form base (matches Contact/Careers) ─────────────── */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+  .form-field-full {
+    grid-column: 1/-1;
+  }
+  .form-field label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy-deep);
+  }
+  .form-field label .req {
+    color: var(--coral);
+    margin-left: 2px;
+  }
+  .form-field .hint {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--mist);
+    margin-top: 2px;
+  }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-btn);
+    background: #fff;
+    color: var(--navy-deep);
+    transition:
+      border-color var(--t-hover),
+      box-shadow var(--t-hover);
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .form-field input::placeholder,
+  .form-field textarea::placeholder {
+    color: var(--mist);
+  }
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    outline: none;
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px rgba(224, 85, 85, 0.12);
+  }
+  .form-field select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%235A7194' stroke-width='2' stroke-linecap='round'><path d='M1 1l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  .form-field textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.5;
+  }
+
+  /* Pill / chip-group selectors */
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .chip-group input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 9px 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    background: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy-deep);
+    cursor: pointer;
+    transition:
+      border-color var(--t-hover),
+      background-color var(--t-hover),
+      color var(--t-hover);
+  }
+  .chip:hover {
+    border-color: var(--coral);
+  }
+  .chip input:checked + span,
+  .chip.is-active {
+    color: #fff;
+  }
+  .chip:has(input:checked) {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: #fff;
+  }
+  .chip.chip-sage:has(input:checked) {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+
+  /* Segmented toggle */
+  .seg {
+    display: inline-flex;
+    padding: 4px;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+  }
+  .seg label {
+    position: relative;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    border-radius: var(--r-pill);
+    transition:
+      color var(--t-hover),
+      background-color var(--t-hover);
+    letter-spacing: 0;
+    text-transform: none;
+    margin: 0;
+  }
+  .seg input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .seg label:has(input:checked) {
+    background: #fff;
+    color: var(--navy-deep);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Consent / fineprint */
+  .form-consent {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.55;
+    margin: 1.25rem 0 0;
+  }
+  .form-consent input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    accent-color: var(--coral);
+    flex-shrink: 0;
+    -webkit-appearance: auto;
+    appearance: auto;
+  }
+  .form-consent strong {
+    color: var(--navy-deep);
+  }
+
+  .form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .form-actions .btn {
+    padding: 14px 28px;
+  }
+  .form-fineprint {
+    font-size: 12px;
+    color: var(--mist);
+  }
+
+  /* Crisis callout — sits inside form */
+  .crisis-note {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    background: var(--coral-light);
+    border: 1px solid rgba(224, 85, 85, 0.25);
+    border-radius: var(--r-btn);
+    padding: 0.85rem 1rem;
+    font-size: 13px;
+    color: var(--navy-deep);
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+  }
+  .crisis-note svg {
+    width: 18px;
+    height: 18px;
+    color: var(--coral);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .crisis-note strong {
+    color: var(--coral);
+  }
+
+  /* Trust strip inside modal header */
+  .trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    color: var(--slate);
+    font-weight: 500;
+  }
+  .trust-strip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .trust-strip svg {
+    width: 14px;
+    height: 14px;
+    color: var(--sage-hover);
+  }
+
+  /* Virtual-only note inside Book modal */
+  .virtual-only-note {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 0.95rem 1.1rem;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .virtual-only-note svg {
+    width: 22px;
+    height: 22px;
+    color: var(--coral);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .virtual-only-note strong {
+    display: block;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy-deep);
+    letter-spacing: -0.005em;
+    margin-bottom: 0.15rem;
+  }
+  .virtual-only-note span {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--slate);
+  }
+
+  /* ─────────────── Modal (matches Careers) ─────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(10, 45, 82, 0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    overflow-y: auto;
+  }
+  .modal-overlay.open {
+    display: flex;
+  }
+  .modal-panel {
+    background: #fff;
+    max-width: 760px;
+    width: 100%;
+    border-radius: var(--r-card);
+    box-shadow: 0 24px 64px rgba(10, 45, 82, 0.25);
+    overflow: hidden;
+    position: relative;
+    animation: mpFade 0.25s ease-out;
+  }
+  @keyframes mpFade {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy-deep);
+    transition: background-color var(--t-hover);
+    z-index: 5;
+  }
+  .modal-close:hover {
+    background: #fff;
+  }
+  .modal-close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .modal-header {
+    padding: 2.25rem 2.5rem 1.5rem;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-header.header-sage {
+    background: var(--sage-light);
+  }
+  .modal-header.header-sage .eyebrow {
+    color: var(--sage-hover);
+  }
+  .modal-header .eyebrow {
+    margin-bottom: 0.85rem;
+  }
+  .modal-header h3 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+    color: var(--navy-deep);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.65rem;
+  }
+  .modal-header .modal-sub {
+    color: var(--slate);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 1rem;
+    max-width: 560px;
+  }
+
+  .modal-body {
+    padding: 2rem 2.5rem 2.25rem;
+    background: #fff;
+  }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+  .step-dot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .step-dot .num {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--r-pill);
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--mist);
+  }
+  .step-dot.is-active {
+    color: var(--navy-deep);
+  }
+  .step-dot.is-active .num {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: #fff;
+  }
+  .step-dot.is-done .num {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: #fff;
+  }
+  .step-dot.is-done {
+    color: var(--slate);
+  }
+  .step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 0.25rem;
+  }
+
+  .step-pane {
+    display: none;
+  }
+  .step-pane.is-active {
+    display: block;
+  }
+
+  /* Refer-a-resident: split layout */
+  .refer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 0;
+  }
+  .refer-aside {
+    background: var(--navy-deep);
+    color: rgba(255, 255, 255, 0.78);
+    padding: 2.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .refer-aside h4 {
+    color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+  }
+  .refer-aside .eyebrow {
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 0.85rem;
+  }
+  .refer-aside ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .refer-aside li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .refer-aside li svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--sage);
+  }
+  .refer-aside .check-num {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .refer-main {
+    padding: 2rem 2.25rem 2.25rem;
+  }
+
+  /* Section divider in form */
+  .form-section-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--slate);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .form-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .form-section-label:first-child {
+    margin-top: 0;
+  }
+
+  /* Success state */
+  .form-success {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .form-success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--r-pill);
+    background: var(--sage-light);
+    color: var(--sage-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .form-success-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+  .form-success h4 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    color: var(--navy-deep);
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+  }
+  .form-success p {
+    color: var(--slate);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 440px;
+  }
+  .form-success .next-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  /* ─────────────── Responsive ─────────────── */
+  @media (max-width: 1024px) {
+    .refer-grid {
+      grid-template-columns: 1fr;
+    }
+    .refer-aside {
+      order: 2;
+    }
+  }
+  @media (max-width: 768px) {
+    .modal-overlay {
+      padding: 1rem;
+    }
+    .modal-header,
+    .modal-body,
+    .refer-main,
+    .refer-aside {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+    .form-row,
+    .form-row-3 {
+      grid-template-columns: 1fr;
+    }
+    .form-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .form-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<!-- ═════════════════════════════════════════════════
+     MODAL 1 — BOOK A SESSION
+═════════════════════════════════════════════════ -->
+<div
+  class="modal-overlay"
+  id="modal-book"
+  data-form-id={bookId}
+  onclick="if(event.target===this) closeModal('book')"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="bookTitle"
+>
+  <div class="modal-panel">
+    <button class="modal-close" aria-label="Close" onclick="closeModal('book')">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg
+      >
+    </button>
+
+    <div class="modal-header">
+      <p class="eyebrow">Book a Virtual Session</p>
+      <h3 id="bookTitle">Get matched with a licensed therapist this week — by video.</h3>
+      <p class="modal-sub">
+        <strong>Virtual sessions only.</strong> All Better You Therapy bookings are secure online video
+        visits with a Florida-licensed therapist. Our intake team confirms within one business day — usually
+        faster.
+      </p>
+      <div class="trust-strip">
+        <span
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
+          > Florida-licensed therapists</span
+        >
+        <span
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
+          > Most insurance accepted</span
+        >
+        <span
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
+          > No waitlist</span
+        >
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <form id="bookForm" onsubmit="handleSubmit(event,'book')" novalidate>
+        <!-- Who is this session for? -->
+        <div class="form-section-label">Who's this session for?</div>
+        <div class="form-field" style="margin-bottom:1.25rem">
+          <div class="seg" role="radiogroup" aria-label="Who's this session for">
+            <label
+              ><input type="radio" name="bookFor" value="self" checked /><span>For myself</span
+              ></label
+            >
+            <label
+              ><input type="radio" name="bookFor" value="loved-one" /><span>For a loved one</span
+              ></label
+            >
+            <label
+              ><input type="radio" name="bookFor" value="couple" /><span>Couples / family</span
+              ></label
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="bookFirst">First name <span class="req">*</span></label>
+            <input id="bookFirst" name="firstName" type="text" required placeholder="Jane" />
+          </div>
+          <div class="form-field">
+            <label for="bookLast">Last name <span class="req">*</span></label>
+            <input id="bookLast" name="lastName" type="text" required placeholder="Doe" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="bookEmail">Email <span class="req">*</span></label>
+            <input id="bookEmail" name="email" type="email" required placeholder="jane@email.com" />
+          </div>
+          <div class="form-field">
+            <label for="bookPhone">Phone <span class="req">*</span></label>
+            <input id="bookPhone" name="phone" type="tel" required placeholder="(555) 555-5555" />
+          </div>
+        </div>
+
+        <!-- Modality (virtual only) -->
+        <div class="form-section-label">How you'll meet</div>
+        <div class="form-field virtual-only-note" style="margin-bottom:1.25rem">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><polygon points="23 7 16 12 23 17 23 7"></polygon><rect
+              x="1"
+              y="5"
+              width="15"
+              height="14"
+              rx="2"
+              ry="2"></rect></svg
+          >
+          <div>
+            <strong>Secure video session</strong>
+            <span
+              >You'll meet your therapist online, from anywhere in Florida. A link will be sent
+              before your appointment.</span
+            >
+          </div>
+          <input type="hidden" name="modality" value="tele" />
+        </div>
+
+        <!-- Reason -->
+        <div class="form-row">
+          <div class="form-field">
+            <label for="bookReason">What brings you in? <span class="req">*</span></label>
+            <select id="bookReason" name="reason" required>
+              <option value="" disabled selected>Select what fits best</option>
+              <option>Depression or anxiety</option>
+              <option>Grief, loss, or life transition</option>
+              <option>Trauma / PTSD</option>
+              <option>Relationships, couples, or family</option>
+              <option>Caregiver stress or burnout</option>
+              <option>Something else</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="bookPayment">How will you pay? <span class="req">*</span></label>
+            <select id="bookPayment" name="payment" required>
+              <option value="" disabled selected>Select an option</option>
+              <option>Medicare</option>
+              <option>Private insurance</option>
+              <option>Cash-pay / out-of-pocket</option>
+              <option>Not sure — please advise</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="form-field">
+          <label>Best times to reach you</label>
+          <div class="chip-group">
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="weekday-am" /><span>Weekday mornings</span
+              ></label
+            >
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="weekday-pm" /><span
+                >Weekday afternoons</span
+              ></label
+            >
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="evenings" /><span>Evenings</span></label
+            >
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="weekends" /><span>Weekends</span></label
+            >
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="bookNotes"
+            >Anything else we should know? <span
+              style="color:var(--mist); font-weight:500; letter-spacing:0; text-transform:none"
+              >(optional)</span
+            ></label
+          >
+          <textarea
+            id="bookNotes"
+            name="notes"
+            placeholder="Therapist preference (gender, language, specialty), accessibility needs, or anything that would help us match you well."
+          ></textarea>
+        </div>
+
+        <label class="form-consent">
+          <input type="checkbox" required />
+          <span
+            >I understand this form is not for emergencies and agree to be contacted by Better You
+            Therapy by phone, email, or text. <a
+              href="/privacy/"
+              style="color:var(--coral); text-decoration:underline">Privacy Policy</a
+            ></span
+          >
+        </label>
+
+        <div class="form-actions">
+          <span class="form-fineprint">We respond within one business day.</span>
+          <button type="submit" class="btn btn-coral">
+            Request my session
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
+            >
+          </button>
+        </div>
+      </form>
+
+      <!-- Success -->
+      <div class="form-success" id="bookSuccess" style="display:none">
+        <div class="form-success-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
+          >
+        </div>
+        <h4>You're in good hands.</h4>
+        <p>
+          Thanks — we'll reach out within one business day to match you with a licensed therapist
+          and confirm your first session.
+        </p>
+        <div class="next-row">
+          <button class="btn btn-ghost-ink" onclick="closeModal('book')">Close</button>
+          <a href="/patients/" class="btn btn-coral">What to expect next &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════════════
+     MODAL 2 — REFER A RESIDENT
+═════════════════════════════════════════════════ -->
+<div
+  class="modal-overlay"
+  id="modal-refer"
+  data-form-id={referralId}
+  onclick="if(event.target===this) closeModal('refer')"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="referTitle"
+>
+  <div class="modal-panel" style="max-width:880px">
+    <button class="modal-close" aria-label="Close" onclick="closeModal('refer')">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg
+      >
+    </button>
+
+    <div class="modal-header">
+      <p class="eyebrow">Partner with Better You</p>
+      <h3 id="referTitle">Bring on-site mental health care to your facility.</h3>
+      <p class="modal-sub">
+        Tell us about your facility and we'll set up a 20-minute intro call. We'll walk through how
+        on-site care works at your community, answer questions, and — when the time is right — build
+        a referral relationship that fits your team's workflow. <strong
+          >Zero cost to your facility or to residents.</strong>
+      </p>
+    </div>
+
+    <div class="refer-grid">
+      <div class="refer-main">
+        <form id="referForm" onsubmit="handleSubmit(event,'refer')" novalidate>
+          <div class="step-pane is-active" data-step="1">
+            <div class="form-section-label">Your facility</div>
+            <div class="form-field">
+              <label for="refFacility">Facility name <span class="req">*</span></label>
+              <input
+                id="refFacility"
+                name="facility"
+                type="text"
+                required
+                placeholder="Sunrise Senior Living of Boca Raton"
+              />
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refFacType">Facility type <span class="req">*</span></label>
+                <select id="refFacType" name="facType" required>
+                  <option value="" disabled selected>Select type</option>
+                  <option>Assisted Living (ALF)</option>
+                  <option>Skilled Nursing (SNF)</option>
+                  <option>Memory Care</option>
+                  <option>Continuing Care (CCRC)</option>
+                  <option>Independent Living</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="refCounty">County <span class="req">*</span></label>
+                <select id="refCounty" name="county" required>
+                  <option value="" disabled selected>Select county</option>
+                  <option>Palm Beach</option>
+                  <option>Broward</option>
+                  <option>Miami-Dade</option>
+                  <option>Martin</option>
+                  <option>St. Lucie</option>
+                  <option>Okeechobee</option>
+                  <option>Other Florida county</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refBeds">Approximate bed count</label>
+                <select id="refBeds" name="beds">
+                  <option value="" disabled selected>Select size</option>
+                  <option>Under 50</option>
+                  <option>50–100</option>
+                  <option>100–200</option>
+                  <option>200+</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="refExisting">On-site behavioral health today?</label>
+                <select id="refExisting" name="existing">
+                  <option value="" disabled selected>Select</option>
+                  <option>None — looking for a partner</option>
+                  <option>Limited / occasional</option>
+                  <option>Have a provider, exploring options</option>
+                  <option>Just gathering information</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-section-label">About you</div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refName">Your name <span class="req">*</span></label>
+                <input
+                  id="refName"
+                  name="name"
+                  type="text"
+                  required
+                  placeholder="Maria Hernandez"
+                />
+              </div>
+              <div class="form-field">
+                <label for="refRole">Your role <span class="req">*</span></label>
+                <select id="refRole" name="role" required>
+                  <option value="" disabled selected>Select role</option>
+                  <option>Wellness Director</option>
+                  <option>Executive Director</option>
+                  <option>Social Worker / Case Manager</option>
+                  <option>Director of Nursing</option>
+                  <option>Administrator</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refEmail">Work email <span class="req">*</span></label>
+                <input
+                  id="refEmail"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="maria@facility.com"
+                />
+              </div>
+              <div class="form-field">
+                <label for="refPhone">Direct phone <span class="req">*</span></label>
+                <input
+                  id="refPhone"
+                  name="phone"
+                  type="tel"
+                  required
+                  placeholder="(555) 555-5555"
+                />
+              </div>
+            </div>
+
+            <div class="form-section-label">
+              A few more details <span
+                style="color:var(--mist); font-weight:500; letter-spacing:0; text-transform:none"
+                >(optional)</span>
+            </div>
+            <div class="form-field">
+              <label>What sparked your interest?</label>
+              <div class="chip-group" style="margin-top:.25rem">
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="resident-need" /><span
+                    >A resident needs care now</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="team-support" /><span
+                    >Support our care team</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="family-asks" /><span
+                    >Families keep asking</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="compliance" /><span
+                    >Survey / compliance</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="replacing" /><span
+                    >Replacing a provider</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="exploring" /><span
+                    >Just exploring</span
+                  ></label
+                >
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="refNotes">Anything else we should know?</label>
+              <textarea
+                id="refNotes"
+                name="refNotes"
+                placeholder="Best times to reach you, who else should be on the intro call, specific questions about how we work — anything that would make our first conversation more useful."
+              ></textarea>
+            </div>
+
+            <label class="form-consent">
+              <input type="checkbox" required />
+              <span
+                >I'd like Better You Therapy to contact me about an intro call. We'll never share
+                your information.</span
+              >
+            </label>
+
+            <div class="form-actions" style="justify-content:flex-end">
+              <button type="submit" class="btn btn-coral">
+                Request an intro call
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
+                >
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Success -->
+        <div class="form-success" id="referSuccess" style="display:none">
+          <div class="form-success-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
+            >
+          </div>
+          <h4>Thanks — we'll be in touch.</h4>
+          <p>
+            A member of our partnerships team will reach out within one business day to schedule a
+            20-minute intro call at a time that works for you.
+          </p>
+          <div class="next-row">
+            <button class="btn btn-ghost-ink" onclick="closeModal('refer')">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="refer-aside">
+        <div>
+          <p class="eyebrow">What to expect</p>
+          <ul>
+            <li>
+              <span class="check-num">1</span><div>
+                Intro call. 10 minutes. We learn about your community, your residents, your team —
+                and you learn how we work.
+              </div>
+            </li>
+            <li>
+              <span class="check-num">2</span><div>
+                <strong style="color:#fff">On-site visit.</strong> We come meet your team in person. No
+                pressure, no contract — just a relationship.
+              </div>
+            </li>
+            <li>
+              <span class="check-num">3</span><div>
+                <strong style="color:#fff">Referrals when ready.</strong> When a resident needs care,
+                your team sends a referral. We credential, schedule, see the resident, document, and bill
+                Medicare. Zero cost to you.
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:1.25rem">
+          <p class="eyebrow" style="margin-bottom:.6rem">Prefer to talk first?</p>
+          <div style="font-size:13px; line-height:1.7">
+            <a
+              href={`tel:${phone.replace(/\D/g, '')}`}
+              style="color:#fff; display:block; font-weight:600">{phone}</a
+            >
+            <a href={`mailto:${email}`} style="color:rgba(255,255,255,.78); display:block"
+              >{email}</a
+            >
+            <span style="color:rgba(255,255,255,.55); display:block; margin-top:.25rem"
+              >{hours}</span
+            >
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  function openModal(which) {
+    const m = document.getElementById('modal-' + which);
+    if (!m) return;
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // focus first input
+    setTimeout(() => {
+      const f = m.querySelector(
+        'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), select',
+      );
+      if (f) f.focus();
+    }, 100);
+  }
+  function closeModal(which) {
+    const m = document.getElementById('modal-' + which);
+    if (!m) return;
+    m.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach((m) => {
+        m.classList.remove('open');
+      });
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Multi-step (refer modal)
+  function goStep(which, n) {
+    const root = document.getElementById('modal-' + which);
+    if (!root) return;
+    // Validate visible step's required fields before advancing
+    const current = root.querySelector('.step-pane.is-active');
+    if (current) {
+      const goingForward = n > Number(current.dataset.step);
+      if (goingForward) {
+        const required = current.querySelectorAll('[required]');
+        let ok = true;
+        required.forEach((el) => {
+          if (!el.checkValidity()) {
+            el.reportValidity();
+            ok = false;
+          }
+        });
+        if (!ok) return;
+      }
+    }
+    root.querySelectorAll('.step-pane').forEach((p) => {
+      p.classList.toggle('is-active', Number(p.dataset.step) === n);
+    });
+    root.querySelectorAll('.step-dot').forEach((d) => {
+      const dn = Number(d.dataset.step);
+      d.classList.toggle('is-active', dn === n);
+      d.classList.toggle('is-done', dn < n);
+    });
+    // scroll modal back to top
+    const panel = root.querySelector('.modal-panel');
+    if (panel) panel.scrollTop = 0;
+  }
+
+  async function handleSubmit(e, which) {
+    e.preventDefault();
+    const form = e.target;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const overlay = document.getElementById('modal-' + which);
+    const formId = overlay ? overlay.dataset.formId : '';
+    const btn = form.querySelector('[type="submit"]');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const res = await fetch('https://formspree.io/f/' + formId, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        const steps = document.getElementById('referSteps');
+        if (which === 'refer' && steps) steps.style.display = 'none';
+        document.getElementById(which + 'Success').style.display = 'flex';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        alert('Something went wrong. Please try again or call us directly.');
+      }
+    } catch (err) {
+      void err;
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      alert('Unable to submit. Please check your connection and try again.');
+    }
+  }
+
+  function resetReferForm() {
+    const form = document.getElementById('referForm');
+    form.reset();
+    form.style.display = 'block';
+    document.getElementById('referSuccess').style.display = 'none';
+    const steps = document.getElementById('referSteps');
+    if (steps) steps.style.display = 'flex';
+    goStep('refer', 1);
+  }
+</script>

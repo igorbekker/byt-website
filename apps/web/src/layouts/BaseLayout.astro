@@ -9,6 +9,7 @@ import { sanityClient } from 'sanity:client';
 import Nav from '../components/nav/Nav.astro';
 import Footer from '../components/ui/Footer.astro';
 import MobileCTABar from '../components/ui/MobileCTABar.astro';
+import ModalForms from '../components/ui/ModalForms.astro';
 import { SITE_SETTINGS_QUERY } from '../lib/queries';
 import '../styles/global.css';
 
@@ -85,6 +86,13 @@ const resolvedSeo: SeoFields = pageSeo ?? siteSettings?.seo ?? {};
       navCtaSecondaryLabel={siteSettings?.navCtaSecondaryLabel ?? 'Refer a Resident'}
       bookingUrl={siteSettings?.bookingUrl ?? '/individual-therapy/'}
       referralUrl={siteSettings?.referralUrl ?? '/referral/'}
+    />
+    <ModalForms
+      bookId={import.meta.env.PUBLIC_FORMSPREE_BOOK_ID ?? ''}
+      referralId={import.meta.env.PUBLIC_FORMSPREE_REFERRAL_ID ?? ''}
+      phone={siteSettings?.phone ?? '754-999-0011'}
+      email={siteSettings?.email ?? 'hello@getbetteryou.com'}
+      hours={'Mon–Fri, 9am–6pm ET'}
     />
   </body>
 </html>

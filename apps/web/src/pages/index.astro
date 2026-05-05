@@ -1803,8 +1803,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
       <a href="/providers/" class="mm-link">For Therapists</a>
       <a href="/about/" class="mm-link">About</a>
       <div class="mobile-menu-actions">
-        <a href="/individual-therapy/" class="btn btn-coral">Book a Session</a>
-        <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
+        <button class="btn btn-coral" onclick="openModal('book')">Book a Session</button>
+        <button class="btn btn-outline-ink" onclick="openModal('refer')">Refer a Resident</button>
       </div>
     </div>
   </div>
@@ -1837,11 +1837,11 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         }
       </p>
       <div class="hero-actions">
-        <a href={page?.heroPrimaryCta?.href ?? '/patients/'} class="btn btn-coral"
-          >{page?.heroPrimaryCta?.label ?? 'Book a Session'} &rarr;</a
+        <button class="btn btn-coral" onclick="openModal('book')"
+          >{page?.heroPrimaryCta?.label ?? 'Book a Session'} &rarr;</button
         >
-        <a href={page?.heroSecondaryCta?.href ?? '/referral/'} class="btn btn-outline-ink"
-          >{page?.heroSecondaryCta?.label ?? 'Refer a Resident'} &rarr;</a
+        <button class="btn btn-outline-ink" onclick="openModal('refer')"
+          >{page?.heroSecondaryCta?.label ?? 'Refer a Resident'} &rarr;</button
         >
       </div>
     </div>
@@ -2115,7 +2115,9 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
               Licensed therapists available via secure video. Adults, couples, and families.
               Cash-pay or insurance. No waitlist.
             </p>
-            <a href="/individual-therapy/" class="btn btn-white"> Book a Session &rarr; </a>
+            <button class="btn btn-white" onclick="openModal('book')">
+              Book a Session &rarr;
+            </button>
           </div>
         </div>
         <div class="twoways-card">
@@ -2132,7 +2134,9 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
               Licensed therapists placed inside assisted living, skilled nursing, and continuing
               care facilities. Medicare-billed. Zero cost to the facility or resident.
             </p>
-            <a href="/communities/" class="btn btn-white-outline"> Refer a Resident &rarr; </a>
+            <button class="btn btn-white-outline" onclick="openModal('refer')">
+              Refer a Resident &rarr;
+            </button>
           </div>
         </div>
       </div>
@@ -2160,8 +2164,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
           evidence-based care that meets you or your loved one where they are.
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline"> Book a session </a>
-          <a href="/referral/" class="l349-btn-ghost">
+          <button class="l349-btn-outline" onclick="openModal('book')"> Book a session </button>
+          <button class="l349-btn-ghost" onclick="openModal('refer')">
             Refer a resident{' '}
             <svg
               width="15"
@@ -2173,7 +2177,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             >
               <path d="M5 12h14M12 5l7 7-7 7"></path>
             </svg>
-          </a>
+          </button>
         </div>
       </div>
       <div class="l349-section" data-section="1">
@@ -2184,8 +2188,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
           space to process and move forward.
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline"> Book a session </a>
-          <a href="/referral/" class="l349-btn-ghost">
+          <button class="l349-btn-outline" onclick="openModal('book')"> Book a session </button>
+          <button class="l349-btn-ghost" onclick="openModal('refer')">
             Refer a resident{' '}
             <svg
               width="15"
@@ -2197,7 +2201,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             >
               <path d="M5 12h14M12 5l7 7-7 7"></path>
             </svg>
-          </a>
+          </button>
         </div>
       </div>
       <div class="l349-section" data-section="2">
@@ -2208,8 +2212,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
           present wellbeing.
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline"> Book a session </a>
-          <a href="/referral/" class="l349-btn-ghost">
+          <button class="l349-btn-outline" onclick="openModal('book')"> Book a session </button>
+          <button class="l349-btn-ghost" onclick="openModal('refer')">
             Refer a resident{' '}
             <svg
               width="15"
@@ -2221,7 +2225,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             >
               <path d="M5 12h14M12 5l7 7-7 7"></path>
             </svg>
-          </a>
+          </button>
         </div>
       </div>
       <div class="l349-section" data-section="3">
@@ -2232,8 +2236,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
           change together.
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline"> Book a session </a>
-          <a href="/referral/" class="l349-btn-ghost">
+          <button class="l349-btn-outline" onclick="openModal('book')"> Book a session </button>
+          <button class="l349-btn-ghost" onclick="openModal('refer')">
             Refer a resident{' '}
             <svg
               width="15"
@@ -2245,7 +2249,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             >
               <path d="M5 12h14M12 5l7 7-7 7"></path>
             </svg>
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -2317,8 +2321,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             </div>
           </div>
           <div class="track-cta">
-            <a href={page?.teletherapyCta?.href ?? '/individual-therapy/'} class="btn btn-sage"
-              >{page?.teletherapyCta?.label ?? 'Book a Session'} &rarr;</a
+            <button class="btn btn-sage" onclick="openModal('book')"
+              >{page?.teletherapyCta?.label ?? 'Book a Session'} &rarr;</button
             >
           </div>
         </div>
@@ -2355,8 +2359,8 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             </div>
           </div>
           <div class="track-cta">
-            <a href={page?.facilityCta?.href ?? '/referral/'} class="btn btn-coral"
-              >{page?.facilityCta?.label ?? 'Refer a Resident'} &rarr;</a
+            <button class="btn btn-coral" onclick="openModal('refer')"
+              >{page?.facilityCta?.label ?? 'Refer a Resident'} &rarr;</button
             >
           </div>
         </div>

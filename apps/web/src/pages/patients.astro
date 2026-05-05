@@ -2389,8 +2389,8 @@ const c = conditions ?? [];
         }
       </p>
       <div class="ph-hero-cta">
-        <a href={page?.heroPrimaryCta?.href ?? '/book/'} class="btn btn-coral"
-          >{page?.heroPrimaryCta?.label ?? 'Book a session'}</a
+        <button class="btn btn-coral" onclick="openModal('book')"
+          >{page?.heroPrimaryCta?.label ?? 'Book a session'}</button
         >
       </div>
     </div>
@@ -2836,8 +2836,8 @@ const c = conditions ?? [];
           }
         </p>
         <div class="ph-cta35-actions">
-          <a href={page?.ctaCta?.href ?? '/book/'} class="btn btn-coral"
-            >{page?.ctaCta?.label ?? 'Book a session'}</a
+          <button class="btn btn-coral" onclick="openModal('book')"
+            >{page?.ctaCta?.label ?? 'Book a session'}</button
           >
         </div>
       </div>

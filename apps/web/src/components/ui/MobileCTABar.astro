@@ -12,12 +12,12 @@ interface Props {
   referralUrl: string;
 }
 
-const { navCtaLabel, navCtaSecondaryLabel, bookingUrl, referralUrl } = Astro.props;
+const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
 ---
 
 <div class="mobile-cta-bar" aria-label="Primary actions">
-  <a href={bookingUrl} class="btn btn-coral">{navCtaLabel}</a>
-  <a href={referralUrl} class="btn btn-outline-ink">{navCtaSecondaryLabel}</a>
+  <button class="btn btn-coral" onclick="openModal('book')">{navCtaLabel}</button>
+  <button class="btn btn-outline-ink" onclick="openModal('refer')">{navCtaSecondaryLabel}</button>
 </div>
 
 <style>
