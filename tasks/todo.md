@@ -1382,3 +1382,51 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 **Quality gates:**
 
 - `pnpm --filter web build` — PASS (all 7 routes prerendered)
+
+---
+
+## Seven Fixes — 2026-05-05 (session 2)
+
+### Investigation findings
+
+- **Fix 3 (Providers Apply Now audit):** All 12 Apply Now buttons confirmed wired to `/careers/` from the prior commit. Zero missed.
+- **Fix 5 STOP — Reason dropdown mismatch:** Book form "Reason" options are clinical conditions (Depression or anxiety, Grief/loss/life transition, Trauma/PTSD, Relationships/couples/family, Caregiver stress/burnout, Something else, Not sure yet). Audience selector cards are demographic/service categories (Seniors & Families, Adults, Caregivers, Terapia en español). These do NOT map. Per user instruction: stopped and awaiting direction.
+
+### Changes implemented (Fixes 1, 2, 4, 6)
+
+- [x] Fix 1 — Nav CTA button resets: added `border:none; font-family:inherit; cursor:pointer` to `.nav-cta` and `border:none; background:transparent; font-family:inherit; cursor:pointer` to `.nav-cta-secondary` in ALL 7 page files (index, about, careers, contact, patients, communities, providers) — 2026-05-05
+- [x] Fix 2 — index.astro "See Open Positions" fallback href changed from `/providers/` → `/careers/` — 2026-05-05
+- [x] Fix 4 — communities.astro SVG: replaced entire `<g filter="url(#m192-shadow)">` block with design-source version (correct outer path fill #F5F7FA stroke #0A2D52, 4 county fill paths: m192-stlucie, m192-martin, m192-palmbeach, m192-okeechobee, Lake Okeechobee ellipse) — 2026-05-05
+- [x] Fix 6 — patients.astro "Two ways to get started": both ph-way card `<a>` wrappers changed to `href="#" onclick="event.preventDefault();openModal('book')"` — 2026-05-05
+- [x] Fix 5 — patients.astro "What brings you here?" audience selector: all 4 ph-card `<a>` wrappers changed to `href="#" onclick="event.preventDefault();openModal('book')"` — no preselection, just opens Book a Session modal — 2026-05-05
+- [ ] Fix 7 — separate commit: Communities l505 "Conditions we treat" rebuild + Providers l506 "Qualifications" rebuild (pending Fix 1–6 deploy + confirmation)
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered)
+
+### Review — Seven Fixes (session 2) — 2026-05-05
+
+**Status:** BUILT — ready for `/pre` → commit → push
+
+**What was built:**
+
+- **Fix 1 (Nav CTA regression — all pages):** Root cause was Lesson 14: each page's `<style is:global>` block contained `.nav-cta` / `.nav-cta-secondary` verbatim from design-source (originally `<a>` elements), with no button UA resets. These global rules overrode Nav.astro's scoped fix from the prior session. Added `border:none; font-family:inherit; cursor:pointer` to `.nav-cta` and `border:none; background:transparent; font-family:inherit; cursor:pointer` to `.nav-cta-secondary` in all 7 page files (index, about, careers, contact, patients, communities, providers). Note: communities.astro and providers.astro use `--byt-coral` / `--byt-navy-deep` variants; the other 5 use `--coral` / `--navy-deep`.
+- **Fix 2 (See Open Positions href):** `index.astro` fallback href on `providerTeaserPrimaryCta` changed from `/providers/` → `/careers/`.
+- **Fix 3 (Apply Now audit):** Confirmed all 12 Apply Now buttons in `providers.astro` already wired to `/careers/` from prior commit. No change needed.
+- **Fix 4 (Communities SVG county map):** Replaced the `<g filter="url(#m192-shadow)">` block in `communities.astro` with the design-source version. Old block had wrong outer landmass (green `#D6E4C8`, wavy coastline path, dashed county division lines only). New block has correct blue-gray outer shape (`#F5F7FA`/`#0A2D52`), 4 filled county paths (m192-stlucie, m192-martin, m192-palmbeach, m192-okeechobee), and Lake Okeechobee ellipse.
+- **Fix 5 (Patients Explore CTAs):** All 4 ph-card `<a>` wrappers wired to `openModal('book')`. No preselection — Igor confirmed to skip Reason mapping and just open the modal.
+- **Fix 6 (Patients Two Ways — Learn More):** Both `.ph-way` card `<a>` wrappers in `patients.astro` changed from Sanity-href links to `href="#" onclick="event.preventDefault();openModal('book')"`.
+
+**Verification:** `pnpm --filter web build` — clean build, all 7 routes prerendered successfully, no errors.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — Fix 1 (nav-cta resets) + Fix 2 (href)
+- `apps/web/src/pages/about.astro` — Fix 1 (nav-cta resets)
+- `apps/web/src/pages/careers.astro` — Fix 1 (nav-cta resets)
+- `apps/web/src/pages/contact.astro` — Fix 1 (nav-cta resets)
+- `apps/web/src/pages/patients.astro` — Fix 1 (nav-cta resets) + Fix 6 (ph-way modal)
+- `apps/web/src/pages/communities.astro` — Fix 1 (nav-cta resets) + Fix 4 (SVG)
+- `apps/web/src/pages/providers.astro` — Fix 1 (nav-cta resets)
+- `tasks/todo.md` — this entry

@@ -78,6 +78,13 @@ When a page copies design-source CSS verbatim into `<style is:global>`, any rule
 
 **Check before any shared component style change:** `grep -r "rule-name" apps/web/src/pages/` to find all page-level overrides.
 
+### 15. When audience categories don't map to form options — skip preselection
+
+When a CTA opens a form but the CTA's semantic context (e.g. demographic/service category) doesn't cleanly map to a form field's options (e.g. clinical condition dropdown), do not attempt a forced or approximate mapping.
+
+**Rule:** Report the mismatch, stop, wait for direction.
+**Resolution pattern (confirmed by Igor 2026-05-05):** Skip preselection entirely — just open the modal with no preselected value.
+
 ---
 
 ## Incident Log

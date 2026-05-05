@@ -377,6 +377,7 @@ const c = conditions ?? [];
       align-items: center;
     }
     .nav-cta {
+      border: none;
       background: var(--coral);
       color: #fff;
       padding: 12px 20px;
@@ -384,17 +385,23 @@ const c = conditions ?? [];
       font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.01em;
+      font-family: inherit;
+      cursor: pointer;
       transition: background-color var(--t-hover);
     }
     .nav-cta:hover {
       background: var(--coral-hover);
     }
     .nav-cta-secondary {
+      border: none;
+      background: transparent;
       color: var(--navy-deep);
       font-size: 14px;
       font-weight: 500;
       padding: 12px 20px;
       border-radius: var(--r-btn);
+      font-family: inherit;
+      cursor: pointer;
       transition: color var(--t-hover);
     }
     .nav-cta-secondary:hover {
@@ -2405,7 +2412,7 @@ const c = conditions ?? [];
     <p class="ph-router-sub">{page?.audienceSelectorSubhead ?? 'Find the right path to care.'}</p>
 
     <div class="ph-router-grid">
-      <a href={s[0]?.cta?.href ?? '/patients/seniors/'} class="ph-card">
+      <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
         <div class="ph-card-body">
           <p class="ph-card-tag">{s[0]?.label ?? 'Families'}</p>
           <h3>{s[0]?.heading ?? 'Seniors and families'}</h3>
@@ -2427,7 +2434,7 @@ const c = conditions ?? [];
         </div>
       </a>
 
-      <a href={s[1]?.cta?.href ?? '/patients/individual-therapy/'} class="ph-card">
+      <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
         <div class="ph-card-body">
           <p class="ph-card-tag">{s[1]?.label ?? 'Adults'}</p>
           <h3>{s[1]?.heading ?? 'Individual therapy'}</h3>
@@ -2449,7 +2456,7 @@ const c = conditions ?? [];
         </div>
       </a>
 
-      <a href={s[2]?.cta?.href ?? '/patients/caregivers/'} class="ph-card">
+      <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
         <div class="ph-card-body">
           <p class="ph-card-tag">{s[2]?.label ?? 'Support'}</p>
           <h3>{s[2]?.heading ?? 'Caregivers'}</h3>
@@ -2471,7 +2478,7 @@ const c = conditions ?? [];
         </div>
       </a>
 
-      <a href={s[3]?.cta?.href ?? '/patients/terapia-en-espanol/'} class="ph-card">
+      <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
         <div class="ph-card-body">
           <p class="ph-card-tag">{s[3]?.label ?? 'Español'}</p>
           <h3>{s[3]?.heading ?? 'Terapia en español'}</h3>
@@ -2503,7 +2510,7 @@ const c = conditions ?? [];
     </div>
 
     <div class="ph-twoways-grid">
-      <a href={d[0]?.cta?.href ?? '/patients/teletherapy/'} class="ph-way">
+      <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
         <div class="ph-way-bg">
           <img
             src={d[0]?.image?.asset?.url ??
@@ -2528,7 +2535,7 @@ const c = conditions ?? [];
         </div>
       </a>
 
-      <a href={d[1]?.cta?.href ?? '/communities/'} class="ph-way">
+      <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
         <div class="ph-way-bg">
           <img
             src={d[1]?.image?.asset?.url ??
