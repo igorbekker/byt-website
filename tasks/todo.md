@@ -1392,14 +1392,33 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 - **Fix 3 (Providers Apply Now audit):** All 12 Apply Now buttons confirmed wired to `/careers/` from the prior commit. Zero missed.
 - **Fix 5 STOP — Reason dropdown mismatch:** Book form "Reason" options are clinical conditions (Depression or anxiety, Grief/loss/life transition, Trauma/PTSD, Relationships/couples/family, Caregiver stress/burnout, Something else, Not sure yet). Audience selector cards are demographic/service categories (Seniors & Families, Adults, Caregivers, Terapia en español). These do NOT map. Per user instruction: stopped and awaiting direction.
 
-### Changes implemented (Fixes 1, 2, 4, 6)
+### Changes implemented (Fixes 1, 2, 4, 5, 6)
 
 - [x] Fix 1 — Nav CTA button resets: added `border:none; font-family:inherit; cursor:pointer` to `.nav-cta` and `border:none; background:transparent; font-family:inherit; cursor:pointer` to `.nav-cta-secondary` in ALL 7 page files (index, about, careers, contact, patients, communities, providers) — 2026-05-05
 - [x] Fix 2 — index.astro "See Open Positions" fallback href changed from `/providers/` → `/careers/` — 2026-05-05
 - [x] Fix 4 — communities.astro SVG: replaced entire `<g filter="url(#m192-shadow)">` block with design-source version (correct outer path fill #F5F7FA stroke #0A2D52, 4 county fill paths: m192-stlucie, m192-martin, m192-palmbeach, m192-okeechobee, Lake Okeechobee ellipse) — 2026-05-05
 - [x] Fix 6 — patients.astro "Two ways to get started": both ph-way card `<a>` wrappers changed to `href="#" onclick="event.preventDefault();openModal('book')"` — 2026-05-05
 - [x] Fix 5 — patients.astro "What brings you here?" audience selector: all 4 ph-card `<a>` wrappers changed to `href="#" onclick="event.preventDefault();openModal('book')"` — no preselection, just opens Book a Session modal — 2026-05-05
-- [ ] Fix 7 — separate commit: Communities l505 "Conditions we treat" rebuild + Providers l506 "Qualifications" rebuild (pending Fix 1–6 deploy + confirmation)
+- [x] Fix 7 — communities.astro l505 "Conditions we treat": rebuilt from updated design-source — fixed data-tab IDs (l505-tab-dep/anx/... → l505-tab-1 through l505-tab-11), replaced all 11 panels with correct unique SVG icons from design-source — 2026-05-05
+- [x] Fix 7 — providers.astro l506 "Qualifications": confirmed already matches updated design-source exactly (5 panels, 5 triggers, onclick wired) — no change needed — 2026-05-05
+
+### Review — Fix 7 (block rebuilds) — 2026-05-05
+
+**Status:** BUILT — ready for commit
+
+**What was built:**
+
+- **Communities l505 "Conditions we treat":** The existing .astro section used semantic data-tab IDs (`l505-tab-dep`, `l505-tab-anx`, etc.) and the same heart SVG for all 11 condition panels. The updated design-source uses sequential numeric IDs (`l505-tab-1` through `l505-tab-11`) and a unique SVG icon per condition. Full section replaced via Python (349 lines → 194 lines): trigger IDs aligned, all 11 panels now have their correct design-source icons (heart, clock, lightning bolt, checkbox, speech bubble, brain, plus, heart-vine, shield, pulse, flask).
+- **Providers l506 "Qualifications":** Compared against updated design-source line-by-line. All 5 panels, 5 triggers, panel content (h2, p, icon SVG), and Apply Now `onclick="location.href='/careers/'"` are already correct. Zero changes needed.
+
+**How source files were located:** Igor uploaded new Communities.html and Providers.html in commit `e0015d8` before deleting the old ones — files were at correct paths in `design-source/pages/` throughout.
+
+**Verification:** `pnpm --filter web build` — clean build, all 7 routes prerendered, 0 errors.
+
+**Files changed:**
+
+- `apps/web/src/pages/communities.astro` — l505 section rebuilt (IDs + SVG icons)
+- `tasks/todo.md` — this entry
 
 ### Quality gate
 
@@ -1407,7 +1426,7 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 
 ### Review — Seven Fixes (session 2) — 2026-05-05
 
-**Status:** BUILT — ready for `/pre` → commit → push
+**Status:** COMPLETE — committed 82c00e9, pushed to main, Cloudflare auto-deploy triggered
 
 **What was built:**
 
@@ -1426,7 +1445,7 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 - `apps/web/src/pages/about.astro` — Fix 1 (nav-cta resets)
 - `apps/web/src/pages/careers.astro` — Fix 1 (nav-cta resets)
 - `apps/web/src/pages/contact.astro` — Fix 1 (nav-cta resets)
-- `apps/web/src/pages/patients.astro` — Fix 1 (nav-cta resets) + Fix 6 (ph-way modal)
+- `apps/web/src/pages/patients.astro` — Fix 1 (nav-cta resets) + Fix 5 (audience selector modal) + Fix 6 (ph-way modal)
 - `apps/web/src/pages/communities.astro` — Fix 1 (nav-cta resets) + Fix 4 (SVG)
 - `apps/web/src/pages/providers.astro` — Fix 1 (nav-cta resets)
 - `tasks/todo.md` — this entry

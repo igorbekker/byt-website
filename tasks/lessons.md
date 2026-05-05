@@ -78,7 +78,13 @@ When a page copies design-source CSS verbatim into `<style is:global>`, any rule
 
 **Check before any shared component style change:** `grep -r "rule-name" apps/web/src/pages/` to find all page-level overrides.
 
-### 15. When audience categories don't map to form options — skip preselection
+### 15. Before declaring a file missing — check all recent commits
+
+When files appear absent from the working tree, check `git log --oneline` for recent upload or rename commits before reporting them as gone. Igor may have uploaded replacements and then deleted the old versions in separate commits — the new files land at the same path.
+
+**Rule:** Run `git show --name-only <commit>` on any suspicious recent commit before escalating a missing-file blocker.
+
+### 16. When audience categories don't map to form options — skip preselection
 
 When a CTA opens a form but the CTA's semantic context (e.g. demographic/service category) doesn't cleanly map to a form field's options (e.g. clinical condition dropdown), do not attempt a forced or approximate mapping.
 
