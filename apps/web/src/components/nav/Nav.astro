@@ -139,13 +139,16 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
   }
 
   .nav-cta {
+    border: none;
     background: var(--coral);
     color: #fff;
     padding: 12px 20px;
     border-radius: var(--r-btn);
     font-size: 14px;
     font-weight: 600;
+    font-family: inherit;
     letter-spacing: 0.01em;
+    cursor: pointer;
     transition: background-color var(--t-hover);
   }
   .nav-cta:hover {
@@ -153,11 +156,15 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
   }
 
   .nav-cta-secondary {
+    border: none;
+    background: transparent;
     color: var(--navy-deep);
     font-size: 14px;
     font-weight: 500;
+    font-family: inherit;
     padding: 12px 20px;
     border-radius: var(--r-btn);
+    cursor: pointer;
     transition: color var(--t-hover);
   }
   .nav-cta-secondary:hover {

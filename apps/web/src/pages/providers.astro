@@ -1970,8 +1970,10 @@ const [page, testimonials] = await Promise.all([
           </p>
         </div>
         <div class="h98-actions">
-          <button class="btn btn-primary" title={page?.heroPrimaryCta?.label ?? 'Apply Now'}
-            >{page?.heroPrimaryCta?.label ?? 'Apply Now'}</button
+          <button
+            class="btn btn-primary"
+            title={page?.heroPrimaryCta?.label ?? 'Apply Now'}
+            onclick="location.href='/careers/'">{page?.heroPrimaryCta?.label ?? 'Apply Now'}</button
           >
         </div>
       </div>
@@ -2021,7 +2023,7 @@ const [page, testimonials] = await Promise.all([
                   }
                 </p>
                 <div class="l422-card-cta">
-                  <button class="btn-link alt"
+                  <button class="btn-link alt" onclick="location.href='/careers/'"
                     >Apply Now <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -2040,7 +2042,7 @@ const [page, testimonials] = await Promise.all([
                 }
               </p>
               <div class="l422-card-cta">
-                <button class="btn-link alt"
+                <button class="btn-link alt" onclick="location.href='/careers/'"
                   >Apply Now <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -2071,7 +2073,7 @@ const [page, testimonials] = await Promise.all([
                   }
                 </p>
                 <div class="l422-card-cta">
-                  <button class="btn-link alt"
+                  <button class="btn-link alt" onclick="location.href='/careers/'"
                     >Apply Now <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -2090,7 +2092,7 @@ const [page, testimonials] = await Promise.all([
                 }
               </p>
               <div class="l422-card-cta">
-                <button class="btn-link alt"
+                <button class="btn-link alt" onclick="location.href='/careers/'"
                   >Apply Now <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -2131,7 +2133,11 @@ const [page, testimonials] = await Promise.all([
               </p>
             </div>
             <div class="actions">
-              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+              <button
+                class="btn btn-secondary"
+                title="Apply Now"
+                onclick="location.href='/careers/'">Apply Now</button
+              >
             </div>
           </div>
           <div class="image">
@@ -2344,7 +2350,11 @@ const [page, testimonials] = await Promise.all([
               Psychologist, LCSW, LMHC, LPC, or LMFT. Full credential list required at application.
             </p>
             <div class="l506-panel-actions">
-              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+              <button
+                class="btn btn-secondary"
+                title="Apply Now"
+                onclick="location.href='/careers/'">Apply Now</button
+              >
             </div>
           </div>
         </div>
@@ -2367,7 +2377,11 @@ const [page, testimonials] = await Promise.all([
               enrollment process if you're not yet credentialed.
             </p>
             <div class="l506-panel-actions">
-              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+              <button
+                class="btn btn-secondary"
+                title="Apply Now"
+                onclick="location.href='/careers/'">Apply Now</button
+              >
             </div>
           </div>
         </div>
@@ -2390,7 +2404,11 @@ const [page, testimonials] = await Promise.all([
               We onboard newly-licensed clinicians too.
             </p>
             <div class="l506-panel-actions">
-              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+              <button
+                class="btn btn-secondary"
+                title="Apply Now"
+                onclick="location.href='/careers/'">Apply Now</button
+              >
             </div>
           </div>
         </div>
@@ -2413,7 +2431,11 @@ const [page, testimonials] = await Promise.all([
               Beach, Martin, St. Lucie, or Okeechobee counties.
             </p>
             <div class="l506-panel-actions">
-              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+              <button
+                class="btn btn-secondary"
+                title="Apply Now"
+                onclick="location.href='/careers/'">Apply Now</button
+              >
             </div>
           </div>
         </div>
@@ -2433,7 +2455,11 @@ const [page, testimonials] = await Promise.all([
             <h2>HIPAA-compliant home office</h2>
             <p>Private, secure space for sessions. Locked door.</p>
             <div class="l506-panel-actions">
-              <button class="btn btn-secondary" title="Apply Now">Apply Now</button>
+              <button
+                class="btn btn-secondary"
+                title="Apply Now"
+                onclick="location.href='/careers/'">Apply Now</button
+              >
             </div>
           </div>
         </div>
@@ -2644,7 +2670,9 @@ const [page, testimonials] = await Promise.all([
           <h2>{page?.ctaHeading ?? 'Ready to do the work you were trained for?'}</h2>
           <p>{page?.ctaSubhead ?? 'Application only takes 3 minutes.'}</p>
           <div class="cta36-actions">
-            <button class="btn btn-primary">{page?.ctaCta?.label ?? 'Apply Now'}</button>
+            <button class="btn btn-primary" onclick="location.href='/careers/'"
+              >{page?.ctaCta?.label ?? 'Apply Now'}</button
+            >
           </div>
         </div>
       </div>

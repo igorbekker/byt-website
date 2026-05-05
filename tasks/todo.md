@@ -1289,7 +1289,8 @@ heroHeading (set:html), heroSubhead, heroImage, heroPrimaryCta, audienceSelector
 - [x] Step 7: Wired CTAs — Nav, MobileCTABar, index, patients, communities, about — 2026-05-05
 - [x] Step 8: Build passes — parity hook exits 0 — 2026-05-05
 - [x] Step 9: env.example updated, .env.local created — Formspree IDs need populating — 2026-05-05
-- [ ] Deploy + Igor visual confirmation
+- [x] Push to main + CF Pages auto-deploy triggered — 2026-05-05 (commit 106907f)
+- [ ] Igor visual confirmation — modals open/close, both forms submit to Formspree
 
 #### Modal Forms Review — 2026-05-05
 
@@ -1351,3 +1352,33 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 - `tasks/todo.md` — this entry
 
 **Formspree note:** `PUBLIC_FORMSPREE_BOOK_ID` and `PUBLIC_FORMSPREE_REFERRAL_ID` are blank in `.env.local`. Forms submit to an empty ID until values are added. Create two forms at formspree.io/forms and add IDs to `.env.local` + Cloudflare Pages env vars.
+
+---
+
+### Five Fixes — 2026-05-05
+
+- [x] providers.astro — all 12 Apply Now buttons: added `onclick="location.href='/careers/'"` — 2026-05-05
+- [x] about.astro — "Join Our Team" href changed from `/providers/` → `/careers/` — 2026-05-05
+- [x] Footer.astro — "Refer a Resident" now `onclick="event.preventDefault();openModal('refer')"` (was `/contact/`) — 2026-05-05
+- [x] Nav.astro — added button resets to `.nav-cta` and `.nav-cta-secondary`: `border:none; font-family:inherit; cursor:pointer` — 2026-05-05
+- [x] Mobile nav drawer — `.btn btn-coral` / `.btn btn-outline-ink` already have full resets in global CSS; no change needed — 2026-05-05
+- [x] Build passes — 2026-05-05
+
+#### Five Fixes Review — 2026-05-05
+
+**Status:** BUILT — pending push + visual confirmation
+
+**Root cause (Fix 4):** Commit `106907f` converted `<a href=...>` to `<button onclick=...>` in Nav.astro but did not add browser button default resets. UA stylesheet applied `border: 2px outset` + `font-family: system-ui` which overrode the scoped CSS. Fixed by adding `border: none; background: transparent; font-family: inherit; cursor: pointer;` to both `.nav-cta` and `.nav-cta-secondary`.
+
+**Fix 5 confirmation:** Mobile drawer buttons use `.btn.btn-coral` and `.btn.btn-outline-ink` — both have `border`, `font-family: var(--font-body)`, and `cursor: pointer` defined in global.css. No regression present.
+
+**Files changed:**
+
+- `apps/web/src/pages/providers.astro` — 12 Apply Now buttons wired to `/careers/`
+- `apps/web/src/pages/about.astro` — "Join Our Team" href updated
+- `apps/web/src/components/ui/Footer.astro` — "Refer a Resident" opens modal
+- `apps/web/src/components/nav/Nav.astro` — button reset CSS added to `.nav-cta` + `.nav-cta-secondary`
+
+**Quality gates:**
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered)
