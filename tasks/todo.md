@@ -1523,3 +1523,40 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 ### Quality gate
 
 - `pnpm --filter web build` — PASS (all 7 routes prerendered, 0 errors) — 2026-05-06
+
+---
+
+## Legal Pages — Privacy Policy + Terms and Conditions — 2026-05-06 [x] COMPLETE
+
+### Changes implemented
+
+- [x] apps/web/src/pages/privacy.astro — new page from design-source verbatim — 2026-05-06
+- [x] apps/web/src/pages/terms.astro — new page from design-source verbatim — 2026-05-06
+
+### Review — Legal Pages — 2026-05-06
+
+**Method:** Raw HTML injection — same verbatim-copy approach as page rewrites.
+
+- Style block extracted verbatim (content only, no `<style>` wrapper tags) from design-source
+- Body content copied verbatim into BaseLayout `<slot />`
+- No Sanity wiring — legal pages fully hardcoded (appropriate: legal text is not CMS content)
+- No `<script is:inline>` needed — neither design-source file has any inline JS
+
+**Privacy Policy (`7daa653`):** 531-line style block from `design-source/pages/Privacy Policy.html`. Body: `<main class="legal-page"><div class="legal-inner">` with 9 policy sections. Confirmed by Igor.
+
+**Terms and Conditions (`d486bc8`):** 220-line style block from `design-source/pages/Terms and Conditions.html`. Body: `<main class="doc">` with T&C sections. Route `/terms/` initially appeared to render as homepage on live site — investigation confirmed build correct; cause was Cloudflare edge propagation delay. Confirmed by Igor after propagation.
+
+**Issues:**
+
+- `terms.astro` script extraction: Design-source has only a self-closing cfasync external `<script>` with no inline JS. Python extraction found wrong `<script>` tag and returned entire HTML. Fixed by dropping script block entirely.
+- Both pages committed without todo.md review sections — added retroactively in /post.
+
+**Files changed:**
+
+- `apps/web/src/pages/privacy.astro` — new file
+- `apps/web/src/pages/terms.astro` — new file
+- `tasks/todo.md` — this entry (added retroactively in /post)
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (9 routes prerendered including /privacy/ and /terms/, 0 errors) — 2026-05-06
