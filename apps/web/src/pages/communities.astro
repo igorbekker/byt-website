@@ -1281,9 +1281,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
 
   .l505-tabs {
     position: relative;
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--border-primary);
     background: #fff;
     border-radius: var(--r-card);
@@ -1292,22 +1291,23 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   }
   @media (min-width: 768px) {
     .l505-tabs {
+      display: grid;
+      grid-auto-columns: 1fr;
       grid-template-columns: 1fr 1.5fr;
     }
   }
 
   .l505-list {
     position: relative;
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     background: var(--byt-off-white);
-    border-bottom: 1px solid var(--border-primary);
   }
   @media (min-width: 768px) {
     .l505-list {
-      border-bottom: 0;
       border-right: 1px solid var(--border-primary);
+      grid-row: 1/-1;
+      grid-column: 1/2;
     }
   }
   .l505-trigger {
@@ -1362,9 +1362,21 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   .l505-panel {
     display: none;
     animation: l505fade 0.25s ease;
+    background: #fff;
+    border-top: 1px solid var(--border-primary);
   }
   .l505-panel.active {
     display: block;
+  }
+  @media (min-width: 768px) {
+    .l505-panel {
+      border-top: 0;
+      grid-column: 2/3;
+      grid-row: 1/-1;
+    }
+    .l505-panel.active {
+      display: block;
+    }
   }
   @keyframes l505fade {
     from {
@@ -2292,7 +2304,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linejoin="round"
                 ><path
                   d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[0]?.heading ?? 'Depression'}</h3>
             <p>
@@ -2316,7 +2329,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 2"></path></svg>
+                ><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 2"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[1]?.heading ?? 'Anxiety disorders'}</h3>
             <p>
@@ -2339,7 +2353,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
-                stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"></path></svg>
+                stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[2]?.heading ?? 'Anger management'}</h3>
             <p>
@@ -2364,7 +2379,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 ><path d="M9 11l3 3L22 4"></path><path
-                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[3]?.heading ?? 'Behavior problems'}</h3>
             <p>
@@ -2389,7 +2405,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[4]?.heading ?? 'Grief &amp; loss'}</h3>
             <p>
@@ -2417,7 +2434,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                   d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24A2.5 2.5 0 0 1 7 4.5a2.5 2.5 0 0 1 2.5-2.5z"
                 ></path><path
                   d="M14.5 2a2.5 2.5 0 0 0-2.5 2.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24A2.5 2.5 0 0 0 17 4.5 2.5 2.5 0 0 0 14.5 2z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[5]?.heading ?? 'Memory loss'}</h3>
             <p>
@@ -2440,7 +2458,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
-                stroke-linejoin="round"><path d="M3 12h18M12 3v18"></path></svg>
+                stroke-linejoin="round"><path d="M3 12h18M12 3v18"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[6]?.heading ?? 'Transition &amp; adjustment disorder'}</h3>
             <p>
@@ -2466,7 +2485,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linejoin="round"
                 ><path
                   d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[7]?.heading ?? 'Post-surgical mental health'}</h3>
             <p>
@@ -2490,7 +2510,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[8]?.heading ?? 'Post-traumatic stress'}</h3>
             <p>
@@ -2513,7 +2534,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
-                stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[9]?.heading ?? 'Chronic disease coping'}</h3>
             <p>
@@ -2538,7 +2560,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 ><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"
-                ></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg>
+                ></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[10]?.heading ?? 'Drug &amp; alcohol dependency'}</h3>
             <p>

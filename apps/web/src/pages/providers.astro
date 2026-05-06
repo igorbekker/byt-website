@@ -1241,149 +1241,62 @@ const [page, testimonials] = await Promise.all([
 
     .l506-tabs {
       position: relative;
-      display: grid;
-      grid-auto-columns: 1fr;
-      grid-template-columns: 1fr;
-      border: 1px solid var(--border-primary);
       background: #fff;
+      border: 1px solid var(--border-primary);
       border-radius: var(--r-card);
       overflow: hidden;
       box-shadow: var(--shadow-sm);
     }
-    @media (min-width: 768px) {
-      .l506-tabs {
-        grid-template-columns: 1.5fr 1fr;
-      }
-    }
 
-    .l506-panel {
-      display: none;
-      animation: l506fade 0.25s ease;
-    }
-    .l506-panel.active {
-      display: block;
-    }
-    @keyframes l506fade {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-    .l506-panel-inner {
+    /* MOBILE (<768px): accordion — list of triggers, with panels interleaved via flex order */
+    .l506-tabs {
       display: flex;
-      height: 100%;
       flex-direction: column;
-      justify-content: center;
-      padding: 1.5rem;
     }
-    @media (min-width: 768px) {
-      .l506-panel-inner {
-        padding: 2rem;
-      }
-    }
-    @media (min-width: 1024px) {
-      .l506-panel-inner {
-        padding: 4rem;
-      }
-    }
-    .l506-icon {
-      margin-bottom: 1.25rem;
-      width: 3rem;
-      height: 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--byt-coral-light);
-      color: var(--byt-coral);
-      border-radius: 12px;
-    }
-    @media (min-width: 768px) {
-      .l506-icon {
-        margin-bottom: 1.5rem;
-      }
-    }
-    .l506-panel h2 {
-      margin-bottom: 1.25rem;
-      font-size: 1.75rem;
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.01em;
-    }
-    @media (min-width: 768px) {
-      .l506-panel h2 {
-        margin-bottom: 1.5rem;
-        font-size: 2.25rem;
-      }
-    }
-    @media (min-width: 1024px) {
-      .l506-panel h2 {
-        font-size: 2.5rem;
-      }
-    }
-    .l506-panel p {
-      color: var(--byt-slate);
-      line-height: 1.55;
-    }
-    .l506-panel-actions {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    @media (min-width: 768px) {
-      .l506-panel-actions {
-        margin-top: 2rem;
-      }
-    }
-
     .l506-list {
-      position: relative;
-      display: grid;
-      grid-auto-columns: 1fr;
-      grid-template-columns: 1fr;
-      border-top: 1px solid var(--border-primary);
-      background: var(--byt-off-white);
-    }
-    @media (min-width: 768px) {
-      .l506-list {
-        border-top: 0;
-        border-left: 1px solid var(--border-primary);
-      }
+      display: contents;
     }
     .l506-trigger {
+      width: 100%;
       text-align: left;
-      padding: 1.25rem 1.5rem;
+      padding: 1.125rem 1.25rem;
       font-family: 'Manrope', sans-serif;
-      font-size: 1.0625rem;
+      font-size: 1rem;
       font-weight: 700;
       letter-spacing: -0.01em;
+      background: #fff;
       border: 0;
-      border-bottom: 1px solid var(--border-primary);
-      background: transparent;
-      color: var(--text-primary);
+      border-top: 1px solid var(--border-primary);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--byt-mist);
       transition:
         background-color 0.15s,
         color 0.15s;
     }
-    .l506-trigger:last-child {
-      border-bottom: 0;
+    .l506-trigger[data-tab='tab-1'] {
+      border-top: 0;
     }
-    @media (min-width: 768px) {
-      .l506-trigger {
-        padding: 1.5rem 2rem;
-        font-size: 1.125rem;
-      }
+    .l506-trigger::after {
+      content: '';
+      flex: none;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      transition: transform 0.25s;
     }
     .l506-trigger.active {
-      background: var(--bg-primary);
       color: var(--text-primary);
+      background: var(--bg-primary);
       position: relative;
+    }
+    .l506-trigger.active::after {
+      transform: rotate(-135deg);
     }
     .l506-trigger.active::before {
       content: '';
@@ -1396,12 +1309,168 @@ const [page, testimonials] = await Promise.all([
       background: var(--byt-coral);
       border-radius: 0 2px 2px 0;
     }
-    .l506-trigger:not(.active) {
-      color: var(--byt-mist);
-    }
     .l506-trigger:hover:not(.active) {
       color: var(--byt-navy);
       background: var(--byt-off-white);
+    }
+
+    /* Interleave panels with triggers via flex order — order = 2*index, trigger = 2*index - 1 */
+    .l506-trigger[data-tab='tab-1'] {
+      order: 1;
+    }
+    .l506-panel[data-panel='tab-1'] {
+      order: 2;
+    }
+    .l506-trigger[data-tab='tab-2'] {
+      order: 3;
+    }
+    .l506-panel[data-panel='tab-2'] {
+      order: 4;
+    }
+    .l506-trigger[data-tab='tab-3'] {
+      order: 5;
+    }
+    .l506-panel[data-panel='tab-3'] {
+      order: 6;
+    }
+    .l506-trigger[data-tab='tab-4'] {
+      order: 7;
+    }
+    .l506-panel[data-panel='tab-4'] {
+      order: 8;
+    }
+    .l506-trigger[data-tab='tab-5'] {
+      order: 9;
+    }
+    .l506-panel[data-panel='tab-5'] {
+      order: 10;
+    }
+
+    .l506-panel {
+      display: none;
+      background: #fff;
+      border-top: 1px solid var(--border-primary);
+    }
+    .l506-panel.active {
+      display: block;
+      animation: l506fade 0.25s ease;
+    }
+    @keyframes l506fade {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    .l506-panel-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 1.5rem 1.25rem 1.75rem;
+      background: var(--byt-off-white);
+    }
+    .l506-icon {
+      margin-bottom: 1rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--byt-coral-light);
+      color: var(--byt-coral);
+      border-radius: 12px;
+    }
+    .l506-panel h2 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    .l506-panel p {
+      color: var(--byt-slate);
+      line-height: 1.55;
+    }
+    .l506-panel-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    /* TABLET / DESKTOP (≥768px): two-column tabs — panels LEFT, list RIGHT */
+    @media (min-width: 768px) {
+      .l506-tabs {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        grid-template-areas: 'panels list';
+      }
+      .l506-list {
+        display: flex;
+        flex-direction: column;
+        grid-area: list;
+        border-left: 1px solid var(--border-primary);
+        background: var(--byt-off-white);
+      }
+      .l506-trigger,
+      .l506-panel {
+        order: initial;
+      }
+      .l506-trigger {
+        grid-area: auto;
+        border: 0;
+        border-bottom: 1px solid var(--border-primary);
+        padding: 1.5rem 2rem;
+        font-size: 1.125rem;
+        background: transparent;
+      }
+      .l506-list .l506-trigger:last-child {
+        border-bottom: 0;
+      }
+      .l506-trigger::after {
+        display: none;
+      }
+      .l506-panel {
+        grid-area: panels;
+        grid-row: 1;
+        border-top: 0;
+      }
+      .l506-panel.active {
+        display: block;
+      }
+      .l506-panel-inner {
+        padding: 2rem;
+        background: #fff;
+        height: 100%;
+      }
+      .l506-icon {
+        margin-bottom: 1.25rem;
+        width: 3rem;
+        height: 3rem;
+      }
+      .l506-panel h2 {
+        margin-bottom: 1.25rem;
+        font-size: 1.75rem;
+      }
+      .l506-panel-actions {
+        margin-top: 1.5rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .l506-panel-inner {
+        padding: 4rem;
+      }
+      .l506-panel h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .l506-panel-actions {
+        margin-top: 2rem;
+      }
     }
 
     .t37-section {

@@ -1404,7 +1404,7 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 
 ### Review — Fix 7 (block rebuilds) — 2026-05-05
 
-**Status:** BUILT — ready for commit
+**Status:** COMPLETE — included in commit 82c00e9
 
 **What was built:**
 
@@ -1449,3 +1449,37 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 - `apps/web/src/pages/communities.astro` — Fix 1 (nav-cta resets) + Fix 4 (SVG)
 - `apps/web/src/pages/providers.astro` — Fix 1 (nav-cta resets)
 - `tasks/todo.md` — this entry
+
+---
+
+## CSS Verbatim Fix — l505 + l506 — 2026-05-05 (session 3) [x] COMPLETE 2026-05-06
+
+### Changes implemented
+
+- [x] communities.astro l505 CSS — replaced entire `.l505-tabs` through `.l505-panel p` block with verbatim design-source CSS — 2026-05-05
+- [x] providers.astro l506 CSS — replaced entire `.l506-tabs` through all trigger/list/panel/order/keyframe rules with verbatim design-source CSS — 2026-05-05
+- [x] Static test files (`apps/web/public/test-communities.html`, `apps/web/public/test-providers.html`) — deleted — 2026-05-06
+
+### Review — CSS Verbatim Fix — 2026-05-06
+
+**Status:** COMPLETE — committed in session 4
+
+**What was built:**
+
+- **Communities l505 "Conditions we treat" CSS:** The prior .astro CSS had wrong layout rules for `.l505-tabs` (`display:grid` at mobile instead of `display:flex;flex-direction:column`), wrong `.l505-list` (used `display:grid` + `border-bottom` instead of `display:flex;flex-direction:column` + `background:var(--byt-off-white)`), and `.l505-panel` was missing `background:#fff;border-top:1px solid var(--border-primary)` at mobile and `grid-column:2/3;grid-row:1/-1` at desktop. Replaced the entire block with verbatim CSS from `design-source/pages/Communities.html`.
+- **Providers l506 "Qualifications" CSS:** The prior .astro CSS was entirely wrong — it used a static two-column grid approach (like l505) instead of the accordion-with-flex-order mobile pattern. Missing entirely: `.l506-list{display:contents}`, `.l506-trigger` full styling (width:100%, border-top instead of border-bottom, flex justify-content:space-between), `::after` chevron indicator, all 10 order interleaving rules, `@keyframes l506fade`, and full 768px+ two-column grid-template-areas layout. Replaced with verbatim CSS from `design-source/pages/Providers.html`.
+- **Test files:** `public/test-communities.html` and `public/test-providers.html` created last session for parity testing — deleted in session 4 (2026-05-06).
+
+**How verified:** Session 4 confirmed l505 and l506 CSS already correctly applied (commit 8775c46). Normalized CSS diff confirmed only cosmetic formatting differences (leading zeros, space in media query) — values identical. Test files deleted. `pnpm --filter web build` — PASS (all 7 routes prerendered, 0 errors, 44s).
+
+**Issues:** Previous session summary claimed CSS still needed fixing, but the work had already been committed in 8775c46. Session 4 verified correctness via normalized diff and proceeded to delete test files only.
+
+**Files changed:**
+
+- `apps/web/public/test-communities.html` — deleted
+- `apps/web/public/test-providers.html` — deleted
+- `tasks/todo.md` — this entry
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered, 0 errors) — 2026-05-06
