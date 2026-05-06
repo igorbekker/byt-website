@@ -1624,12 +1624,30 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 - `apps/web/src/pages/blog/index.astro` — new file (806 lines)
 - `tasks/todo.md` — this entry
 
-#### Phase 3 — Blog Category (/blog/[category]/)
+#### Phase 3 — Blog Category (/blog/[category]/) [x] COMPLETE 2026-05-06 — awaiting Igor confirmation
 
-- [ ] Create apps/web/src/pages/blog/[category]/index.astro
-- [ ] getStaticPaths() from BLOG_CATEGORY_PATHS_QUERY
-- [ ] Style + body verbatim from Blog Category.html
+- [x] Create apps/web/src/pages/blog/[category]/index.astro
+- [x] getStaticPaths() from BLOG_CATEGORY_PATHS_QUERY
+- [x] Style block verbatim (lines 11–697, 687 lines) from Blog Category.html
+- [x] Body sections: cat-hero, crumb, subcats (.map() subtopics), article-list (.map() categoryLevelPosts), newsletter
+- [x] BLOG_CATEGORY_QUERY added to queries.ts (single category by slug, subtopics with description)
+- [x] Build passes
 - [ ] Deploy + Igor confirmation
+
+### Review — Phase 3 — 2026-05-06
+
+**Key wiring decisions:**
+
+- `getStaticPaths()` fetches all category slugs; returns empty set if no categories in Sanity (expected for new site)
+- Subcats: `.map()` over `category.subtopics[]`; each block filters `posts` by `subcategoryLabel === sub.slug`, shows first 6, links to `/blog/${categorySlug}/${sub.slug}/`
+- Article-list: posts where `!p.subcategoryLabel`; pagination static (no JS)
+- Bug fixed: initial generator used `sub.slug` as description — corrected to `sub.description ?? ""`
+
+**Files changed:**
+
+- `apps/web/src/lib/queries.ts` — BLOG_CATEGORY_QUERY added
+- `apps/web/src/pages/blog/[category]/index.astro` — new file (874 lines)
+- `tasks/todo.md` — this entry
 
 #### Phase 4 — Blog Subcategory (/blog/[category]/[sub]/)
 

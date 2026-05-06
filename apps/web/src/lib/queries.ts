@@ -218,6 +218,11 @@ export const BLOG_CATEGORIES_QUERY = `*[_type == "blogCategory"] | order(order a
   "postCount": count(*[_type == "blogPost" && category._ref == ^._id])
 }`;
 
+export const BLOG_CATEGORY_QUERY = `*[_type == "blogCategory" && slug.current == $categorySlug][0]{
+  _id, title, slug{ current }, description,
+  subtopics[]{ title, slug, description }
+}`;
+
 const BLOG_POST_CARD_FIELDS = `
   _id, title, slug{ current }, publishedAt, readingTimeMinutes, excerpt,
   category->{ title, slug{ current } },
