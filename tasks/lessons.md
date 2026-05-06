@@ -99,6 +99,16 @@ When a page's rendered output diverges from design-source, do NOT attempt to fix
 
 **How to apply:** When Igor says a page doesn't match design-source and CSS patches aren't working, stop patching. Do the full rewrite immediately.
 
+### 18. Blog listing pages are a Lesson 2 exception — .map() is required for variable-count content
+
+Lesson 2 ("no .map() loops, index by position") applies to static marketing pages with a known, fixed number of items (tracks, handles, tabs, etc.). Blog index, category, and subcategory pages are fundamentally different: the number of categories and posts is variable and not known at design time.
+
+**Rule:** For blog listing pages, use `.map()` for genuinely variable-count content (article cards, category tiles, pill filters). Use `??` fallbacks for fixed/singleton fields (hero, newsletter, section headings). The design-source card HTML is the template for each `.map()` iteration.
+
+**Why:** Positional indexing on blog listing pages would cap visible content at the number of design-source placeholder cards (e.g., 6 articles). Posts added to Sanity beyond that count would silently not appear. Igor confirmed blog pages need dynamic rendering.
+
+**How to apply:** Before applying Lesson 2, ask: "Is the count of this array determined at design time or at content-entry time?" Fixed count → positional indexing. Variable/open-ended count → `.map()`.
+
 ---
 
 ## Incident Log

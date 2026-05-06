@@ -1560,3 +1560,87 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 ### Quality gate
 
 - `pnpm --filter web build` — PASS (9 routes prerendered including /privacy/ and /terms/, 0 errors) — 2026-05-06
+
+---
+
+## Blog Pages — 2026-05-06 [ ] IN PROGRESS
+
+### URL structure (confirmed by Igor)
+
+- `/blog/` — Blog.html
+- `/blog/[category]/` — Blog Category.html
+- `/blog/[category]/[sub]/` — Blog Subcategory.html
+- `/blog/[slug]/` — Blog Article.html
+- Category and article slugs share depth — Astro resolves via getStaticPaths() at build time
+- Slug collision check: getStaticPaths() in article route must throw build error if any article slug matches a category slug
+
+### Steps
+
+#### Phase 1 — GROQ Queries [x] COMPLETE 2026-05-06
+
+- [x] Add BLOG_INDEX_PAGE_QUERY to queries.ts
+- [x] Add BLOG_CATEGORIES_QUERY to queries.ts (includes postCount computed field)
+- [x] Add BLOG_POSTS_ALL_QUERY to queries.ts
+- [x] Add BLOG_FEATURED_POST_QUERY to queries.ts
+- [x] Add BLOG_CATEGORY_POSTS_QUERY to queries.ts
+- [x] Add BLOG_SUBCATEGORY_POSTS_QUERY to queries.ts
+- [x] Add BLOG_POST_QUERY to queries.ts
+- [x] Add BLOG_POST_PATHS_QUERY to queries.ts
+- [x] Add BLOG_CATEGORY_PATHS_QUERY to queries.ts
+- [x] Add BLOG_SUBCATEGORY_PATHS_QUERY to queries.ts
+- [x] Build passes after queries added
+
+#### Phase 2 — Blog Index (/blog/) [x] COMPLETE 2026-05-06 — awaiting Igor confirmation
+
+- [x] Create apps/web/src/pages/blog/index.astro
+- [x] Style block verbatim from design-source/pages/Blog.html (lines 11–626)
+- [x] Body sections verbatim: blog-hero, crumb, featured, categories, latest, newsletter
+- [x] Sanity variables wired with ?? fallbacks (fixed sections); .map() used for dynamic listing sections (categories, posts) — blog-specific exception to Lesson 2 noted
+- [x] Build passes: `/blog/index.html` prerendered in 184ms
+- [ ] Deploy + Igor confirmation
+
+### Review — Phase 1 + Phase 2 — 2026-05-06
+
+**Phase 1 — GROQ Queries:**
+10 new queries added to `apps/web/src/lib/queries.ts`. Key design decisions:
+
+- `BLOG_CATEGORIES_QUERY` includes `"postCount": count(*[_type == "blogPost" && category._ref == ^._id])` — computed at query time
+- `BLOG_POST_CARD_FIELDS` is an unexported const used as an interpolated template string inside the 3 post-list queries to avoid field duplication
+- `BLOG_SUBCATEGORY_PATHS_QUERY` returns `{categorySlug, subs[{subSlug}]}` — caller must flatten into `[category]/[sub]` pairs in getStaticPaths()
+
+**Phase 2 — Blog Index:**
+
+- Style block: 616 lines verbatim from design-source (lines 11–626)
+- Dynamic sections: category tiles (.map() over categories), pill filters (.map() over categories), article cards (.map() over posts) — blog pages require dynamic rendering; positional indexing would cap posts at design-source count (6)
+- Static sections wired with ?? fallbacks: hero, featured article, newsletter
+- Featured card: uses `set:html` on h2 to preserve `<em>` markup from Sanity title field
+- All article card hrefs: `/blog/${post.slug.current}/`
+- Category tile hrefs: `/blog/${cat.slug.current}/`
+- Generic SVG icon used for all category tiles (Sanity `icon` field is a string key, not SVG path; no icon mapping system exists)
+
+**Files changed:**
+
+- `apps/web/src/lib/queries.ts` — 10 blog queries added
+- `apps/web/src/pages/blog/index.astro` — new file (806 lines)
+- `tasks/todo.md` — this entry
+
+#### Phase 3 — Blog Category (/blog/[category]/)
+
+- [ ] Create apps/web/src/pages/blog/[category]/index.astro
+- [ ] getStaticPaths() from BLOG_CATEGORY_PATHS_QUERY
+- [ ] Style + body verbatim from Blog Category.html
+- [ ] Deploy + Igor confirmation
+
+#### Phase 4 — Blog Subcategory (/blog/[category]/[sub]/)
+
+- [ ] Create apps/web/src/pages/blog/[category]/[sub]/index.astro
+- [ ] getStaticPaths() from BLOG_SUBCATEGORY_PATHS_QUERY
+- [ ] Style + body verbatim from Blog Subcategory.html
+- [ ] Deploy + Igor confirmation
+
+#### Phase 5 — Blog Article (/blog/[slug]/)
+
+- [ ] Create apps/web/src/pages/blog/[slug].astro
+- [ ] getStaticPaths() from BLOG_POST_PATHS_QUERY with collision check
+- [ ] Style + body verbatim from Blog Article.html
+- [ ] Deploy + Igor confirmation

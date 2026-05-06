@@ -200,3 +200,69 @@ export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   ctaBackgroundImage{ asset->{ url }, alt },
   seo{ metaTitle, metaDescription }
 }`;
+
+// ── BLOG ─────────────────────────────────────────────────────────────────────
+
+export const BLOG_INDEX_PAGE_QUERY = `*[_type == "blogIndexPage"][0]{
+  heroHeading, heroSubhead,
+  featuredLabel,
+  browseByTopicHeading, browseByTopicSubhead,
+  recentlyPublishedHeading,
+  newsletterHeading, newsletterSubhead,
+  seo{ metaTitle, metaDescription }
+}`;
+
+export const BLOG_CATEGORIES_QUERY = `*[_type == "blogCategory"] | order(order asc) {
+  _id, title, slug{ current }, description, icon,
+  subtopics[]{ title, slug },
+  "postCount": count(*[_type == "blogPost" && category._ref == ^._id])
+}`;
+
+const BLOG_POST_CARD_FIELDS = `
+  _id, title, slug{ current }, publishedAt, readingTimeMinutes, excerpt,
+  category->{ title, slug{ current } },
+  subcategoryLabel,
+  author->{ name, credentials, initials },
+  featuredImage{ asset->{ url }, alt }
+`;
+
+export const BLOG_FEATURED_POST_QUERY = `*[_type == "blogPost" && featured == true] | order(publishedAt desc)[0] {
+  ${BLOG_POST_CARD_FIELDS}
+}`;
+
+export const BLOG_POSTS_ALL_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
+  ${BLOG_POST_CARD_FIELDS}
+}`;
+
+export const BLOG_CATEGORY_POSTS_QUERY = `*[_type == "blogPost" && category->slug.current == $categorySlug] | order(publishedAt desc) {
+  ${BLOG_POST_CARD_FIELDS}
+}`;
+
+export const BLOG_SUBCATEGORY_POSTS_QUERY = `*[_type == "blogPost" && category->slug.current == $categorySlug && subcategoryLabel == $subSlug] | order(publishedAt desc) {
+  ${BLOG_POST_CARD_FIELDS}
+}`;
+
+export const BLOG_POST_QUERY = `*[_type == "blogPost" && slug.current == $slug][0] {
+  _id, title, slug{ current }, publishedAt, readingTimeMinutes, excerpt,
+  category->{ title, slug{ current } },
+  subcategoryLabel,
+  featuredImage{ asset->{ url }, alt },
+  body[]{
+    ...,
+    _type == "block" => {
+      ...,
+      children[]{ ..., _type == "span" => { ..., text, marks } }
+    }
+  },
+  author->{ name, credentials, initials, photo{ asset->{ url }, alt }, bio },
+  seo{ metaTitle, metaDescription }
+}`;
+
+export const BLOG_POST_PATHS_QUERY = `*[_type == "blogPost"]{ "slug": slug.current }`;
+
+export const BLOG_CATEGORY_PATHS_QUERY = `*[_type == "blogCategory"]{ "slug": slug.current }`;
+
+export const BLOG_SUBCATEGORY_PATHS_QUERY = `*[_type == "blogCategory" && defined(subtopics) && count(subtopics) > 0]{
+  "categorySlug": slug.current,
+  "subs": subtopics[]{ "subSlug": slug }
+}`;

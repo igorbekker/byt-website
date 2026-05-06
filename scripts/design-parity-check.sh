@@ -28,8 +28,9 @@ if [ -z "$STAGED" ]; then
 fi
 
 for ASTRO_FILE in $STAGED; do
-  BASENAME=$(basename "$ASTRO_FILE")
-  SOURCE_FILE="${PAGE_MAP[$BASENAME]:-}"
+  # Use path relative to pages/ as key so blog/index.astro != index.astro
+  REL_PATH="${ASTRO_FILE#apps/web/src/pages/}"
+  SOURCE_FILE="${PAGE_MAP[$REL_PATH]:-}"
 
   if [ -z "$SOURCE_FILE" ]; then
     continue
@@ -42,7 +43,7 @@ for ASTRO_FILE in $STAGED; do
     continue
   fi
 
-  echo "=== Checking $BASENAME against $SOURCE_FILE ==="
+  echo "=== Checking $REL_PATH against $SOURCE_FILE ==="
 
   # CHECK 1: No Sanity .map() loops replacing HTML structure
   # Strip <script>...</script> blocks first — .map() inside is:inline scripts is legitimate JS, not Sanity loops
@@ -50,7 +51,7 @@ for ASTRO_FILE in $STAGED; do
   MAP_COUNT=$(echo "$TEMPLATE_ONLY" | grep -c '\.map(' 2>/dev/null || true)
   MAP_COUNT="${MAP_COUNT:-0}"
   if [ "$MAP_COUNT" -gt "0" ]; then
-    echo "❌ FAIL: $BASENAME contains $MAP_COUNT .map() loop(s) in template. Sanity variables must replace text nodes only, never HTML structure."
+    echo "❌ FAIL: $REL_PATH contains $MAP_COUNT .map() loop(s) in template. Sanity variables must replace text nodes only, never HTML structure."
     echo "$TEMPLATE_ONLY" | grep -n '\.map('
     ERRORS=$((ERRORS + 1))
   fi
@@ -58,7 +59,7 @@ for ASTRO_FILE in $STAGED; do
   # CHECK 2: All Sanity variables have ?? fallbacks
   NO_FALLBACK=$(grep -Pn '\{[a-zA-Z]+Page\.\w+(?!\s*\?\?)' "$ASTRO_FILE" 2>/dev/null | grep -v '??' | head -20 || true)
   if [ -n "$NO_FALLBACK" ]; then
-    echo "❌ FAIL: $BASENAME has Sanity variables without ?? fallbacks:"
+    echo "❌ FAIL: $REL_PATH has Sanity variables without ?? fallbacks:"
     echo "$NO_FALLBACK"
     ERRORS=$((ERRORS + 1))
   fi
@@ -76,7 +77,7 @@ for ASTRO_FILE in $STAGED; do
   # CHECK 4: All script tags have is:inline
   SCRIPTS_WITHOUT_INLINE=$(grep -Pn '<script(?!.*is:inline)' "$ASTRO_FILE" 2>/dev/null | grep -v 'import' || true)
   if [ -n "$SCRIPTS_WITHOUT_INLINE" ]; then
-    echo "❌ FAIL: $BASENAME has <script> tags without is:inline:"
+    echo "❌ FAIL: $REL_PATH has <script> tags without is:inline:"
     echo "$SCRIPTS_WITHOUT_INLINE"
     ERRORS=$((ERRORS + 1))
   fi
@@ -90,7 +91,7 @@ for ASTRO_FILE in $STAGED; do
     fi
   done
   if [ -n "$MISSING_CLASSES" ]; then
-    echo "⚠️  WARNING: $BASENAME may be missing classes from source:$MISSING_CLASSES"
+    echo "⚠️  WARNING: $REL_PATH may be missing classes from source:$MISSING_CLASSES"
     # Warning only — some classes may be in <style> blocks and not on elements
   fi
 
@@ -103,7 +104,7 @@ for ASTRO_FILE in $STAGED; do
   # Source includes nav+footer (~30+ links) that BaseLayout provides; threshold accounts for that
   DIFF=$((SOURCE_LINKS - ASTRO_LINKS))
   if [ "$DIFF" -gt "35" ]; then
-    echo "⚠️  WARNING: $BASENAME has $ASTRO_LINKS <a> tags vs $SOURCE_LINKS in source (diff: $DIFF). Check for element swaps (a→div)."
+    echo "⚠️  WARNING: $REL_PATH has $ASTRO_LINKS <a> tags vs $SOURCE_LINKS in source (diff: $DIFF). Check for element swaps (a→div)."
   fi
 
   echo ""
