@@ -15,6 +15,8 @@ const SINGLETONS = [
   { id: 'careersPage', title: 'Careers' },
   { id: 'contactPage', title: 'Contact' },
   { id: 'blogIndexPage', title: 'Blog Index' },
+  { id: 'privacyPage', title: 'Privacy Policy' },
+  { id: 'termsPage', title: 'Terms and Conditions' },
 ] as const;
 
 export const structure: StructureResolver = (S) =>

@@ -267,7 +267,36 @@ export const BLOG_POST_PATHS_QUERY = `*[_type == "blogPost"]{ "slug": slug.curre
 
 export const BLOG_CATEGORY_PATHS_QUERY = `*[_type == "blogCategory"]{ "slug": slug.current }`;
 
+export const BLOG_RELATED_POSTS_QUERY = `*[_type == "blogPost" && category->slug.current == $categorySlug && _id != $excludeId] | order(publishedAt desc)[0...3] {
+  _id, title, slug{ current }, readingTimeMinutes, excerpt,
+  category->{ title, slug{ current } }
+}`;
+
 export const BLOG_SUBCATEGORY_PATHS_QUERY = `*[_type == "blogCategory" && defined(subtopics) && count(subtopics) > 0]{
   "categorySlug": slug.current,
   "subs": subtopics[]{ "subSlug": slug }
+}`;
+
+// ── LEGAL PAGES ───────────────────────────────────────────────────────────────
+
+export const PRIVACY_PAGE_QUERY = `*[_type == "privacyPage"][0]{
+  body[]{
+    ...,
+    _type == "block" => {
+      ...,
+      children[]{ ..., _type == "span" => { ..., text, marks } }
+    }
+  },
+  seo{ metaTitle, metaDescription }
+}`;
+
+export const TERMS_PAGE_QUERY = `*[_type == "termsPage"][0]{
+  body[]{
+    ...,
+    _type == "block" => {
+      ...,
+      children[]{ ..., _type == "span" => { ..., text, marks } }
+    }
+  },
+  seo{ metaTitle, metaDescription }
 }`;

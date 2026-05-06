@@ -1649,16 +1649,70 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 - `apps/web/src/pages/blog/[category]/index.astro` — new file (874 lines)
 - `tasks/todo.md` — this entry
 
-#### Phase 4 — Blog Subcategory (/blog/[category]/[sub]/)
+#### Phase 4 — Blog Subcategory (/blog/[category]/[sub]/) [x] COMPLETE 2026-05-06
 
-- [ ] Create apps/web/src/pages/blog/[category]/[sub]/index.astro
-- [ ] getStaticPaths() from BLOG_SUBCATEGORY_PATHS_QUERY
-- [ ] Style + body verbatim from Blog Subcategory.html
-- [ ] Deploy + Igor confirmation
+- [x] Create apps/web/src/pages/blog/[category]/[sub]/index.astro
+- [x] getStaticPaths() flattens BLOG_SUBCATEGORY_PATHS_QUERY into [category,sub] pairs
+- [x] Style block verbatim (lines 11–693, 683 lines) from Blog Subcategory.html
+- [x] Body sections: subcat-hero, crumb, article-list (.map() posts), sisters (.map() siblings), newsletter
+- [x] Build passes
 
-#### Phase 5 — Blog Article (/blog/[slug]/)
+#### Phase 5 — Blog Article (/blog/[slug]/) [x] COMPLETE 2026-05-06
 
-- [ ] Create apps/web/src/pages/blog/[slug].astro
-- [ ] getStaticPaths() from BLOG_POST_PATHS_QUERY with collision check
-- [ ] Style + body verbatim from Blog Article.html
-- [ ] Deploy + Igor confirmation
+- [x] Create apps/web/src/pages/blog/[slug].astro
+- [x] getStaticPaths() fetches post + category slugs; throws build error on collision
+- [x] Style block verbatim (lines 12–1009, 998 lines) from Blog Article.html
+- [x] Body sections: progress-bar, subnav, article-hero, article-image, article-body (PortableText), related, mobile-cta-bar
+- [x] BLOG_RELATED_POSTS_QUERY added to queries.ts
+- [x] Build passes
+
+### Review — Phase 4 + Phase 5 — 2026-05-06
+
+**Phase 4 — Subcategory:**
+
+- `getStaticPaths()` flattens `BLOG_SUBCATEGORY_PATHS_QUERY` result `[{categorySlug, subs:[{subSlug}]}]` into flat `[category,sub]` param pairs
+- Hero: `category.title · Subtopic` eyebrow, `currentSub.title` h1, `currentSub.description`
+- Article list: `.map()` over posts filtered by `subcategoryLabel == subSlug` (done server-side by Sanity query)
+- Sisters: `.map()` over sibling subtopics (parent category subtopics minus current)
+- SSC (sub-sub-categories) section omitted — Sanity schema has no 3rd nesting level
+
+**Phase 5 — Article:**
+
+- Slug collision guard: `getStaticPaths()` cross-checks all post slugs against all category slugs; throws descriptive build error listing colliding slugs if any match
+- TOC: design-source has hardcoded `<ol>` items; replaced with JS-built TOC (`getElementById('toc-list')` populated from `h2[id]` headings in `.article-prose`) — avoids wiring each heading manually
+- Portable Text: `<PortableText value={post.body} />` from `astro-portabletext` (already installed)
+- Featured image: conditional — shows `<img>` if `post.featuredImage.asset.url` exists, else placeholder div
+- Related posts: `BLOG_RELATED_POSTS_QUERY` (3 posts, same category, excludes current by `_id`)
+
+**Files changed:**
+
+- `apps/web/src/lib/queries.ts` — BLOG_RELATED_POSTS_QUERY added
+- `apps/web/src/pages/blog/[category]/[sub]/index.astro` — new file (852 lines)
+- `apps/web/src/pages/blog/[slug].astro` — new file (1246 lines)
+- `tasks/todo.md` — this entry
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (10 routes prerendered, 0 errors, dynamic blog routes empty until Sanity populated) — 2026-05-06
+
+---
+
+## Legal Pages — Sanity-Editable — 2026-05-06 [x] COMPLETE
+
+### Steps
+
+- [x] Create apps/studio/schemas/singletons/privacyPage.ts (body: Portable Text, seo: seoFields)
+- [x] Create apps/studio/schemas/singletons/termsPage.ts (same structure)
+- [x] Register both in apps/studio/schemas/index.ts
+- [x] Add both to SINGLETONS in apps/studio/structure/index.ts
+- [x] Add PRIVACY_PAGE_QUERY and TERMS_PAGE_QUERY to apps/web/src/lib/queries.ts
+- [x] Seed privacyPage document via mutations API (50 PT blocks extracted from privacy.astro)
+- [x] Seed termsPage document via mutations API (59 PT blocks extracted from terms.astro)
+- [x] Wire privacy.astro to render Sanity body with hardcoded fallback
+- [x] Wire terms.astro to render Sanity body with hardcoded fallback
+- [x] Build passes (both /privacy/ and /terms/ prerendered successfully)
+- [ ] Deploy + confirm both pages render identically
+
+### Review — Legal Pages Sanity-Editable — 2026-05-06
+
+Both privacyPage and termsPage Sanity schemas created as singletons with Portable Text body + SEO fields. Registered in schema index (count updated to 23) and studio structure. GROQ queries added to queries.ts. Python script parsed both .astro files into 50 (privacy) + 59 (terms) Portable Text blocks and posted to Sanity mutations API — both documents created (transactionId: sKZc3uoTXRLvCVWTjx1irM). Both .astro pages wired: `sanity:client` fetch with `<PortableText value={page.body} />` when data exists, full hardcoded HTML fallback otherwise. Build passes, both routes prerendered. Pending: deploy + visual confirmation.

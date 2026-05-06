@@ -1,5 +1,5 @@
 /**
- * Purpose: Sanity schema registry — exports all 21 schema types
+ * Purpose: Sanity schema registry — exports all 23 schema types
  * Context: Imported by apps/studio/sanity.config.ts
  * Source: apps/studio/sanity.config.ts
  */
@@ -22,6 +22,8 @@ import { providersPage } from './singletons/providersPage';
 import { careersPage } from './singletons/careersPage';
 import { contactPage } from './singletons/contactPage';
 import { blogIndexPage } from './singletons/blogIndexPage';
+import { privacyPage } from './singletons/privacyPage';
+import { termsPage } from './singletons/termsPage';
 
 // Documents
 import { testimonial } from './documents/testimonial';
@@ -49,6 +51,8 @@ export const schemaTypes = [
   careersPage,
   contactPage,
   blogIndexPage,
+  privacyPage,
+  termsPage,
   // Documents
   testimonial,
   condition,
