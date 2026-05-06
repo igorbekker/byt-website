@@ -1483,3 +1483,43 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 ### Quality gate
 
 - `pnpm --filter web build` — PASS (all 7 routes prerendered, 0 errors) — 2026-05-06
+
+## Full Page Rewrites — Communities + Providers — 2026-05-06 [x] COMPLETE
+
+### Changes implemented
+
+- [x] communities.astro — full rewrite from design-source/pages/Communities.html — 2026-05-06
+- [x] providers.astro — full rewrite from design-source/pages/Providers.html — 2026-05-06
+- [x] test-communities.html deleted (confirmed by Igor) — 2026-05-06
+- [x] test-providers.html deleted (not re-added) — 2026-05-06
+
+### Review — Full Rewrites — 2026-05-06
+
+**Trigger:** CSS patch attempts across 3 sessions failed to produce a page matching design-source. Igor directed: "Stop patching individual CSS blocks. Full page rewrite for both. Start from the design-source HTML as if the .astro file never existed."
+
+**Method:**
+
+1. Read design-source HTML — identify `<style>` line boundaries, body section boundaries, JS script block
+2. Extract CSS content (no `<style>` tags) verbatim into `<style is:global>` block
+3. Extract body from first content section through last CTA section — skip nav, footer, mobile-bar (BaseLayout provides all three)
+4. Apply Sanity variable wiring via Python string replacements — all text nodes, `??` fallbacks, no `.map()` loops
+5. Wire CTAs: "Refer a Resident" → `openModal('refer')`, "Apply Now" → `<a href="/careers/">`
+6. Build verify → ESLint/prettier pass → commit → push
+
+**Communities (`2c97c88`):** 645-line style block + 6 sections (Header84, Layout521, Layout16, Layout526, Layout505 conditions tabs, Layout192 SVG map, Cta25). Confirmed by Igor.
+
+**Providers (`10794c3`):** 739-line style block + 6 sections (Header98, Layout422 tracks, Layout374 handles, Layout506 qualifications tabs, Testimonial37, Cta36). All Apply Now → `/careers/`. Confirmed by Igor.
+
+**How verified:** `pnpm --filter web build` — PASS both commits. Igor visual confirmation on live site for both pages.
+
+**Files changed:**
+
+- `apps/web/src/pages/communities.astro` — full rewrite
+- `apps/web/src/pages/providers.astro` — full rewrite
+- `apps/web/public/test-communities.html` — deleted
+- `tasks/todo.md` — this entry
+- `tasks/lessons.md` — Lesson 17 added
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (all 7 routes prerendered, 0 errors) — 2026-05-06

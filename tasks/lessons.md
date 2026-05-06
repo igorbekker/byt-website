@@ -91,6 +91,14 @@ When a CTA opens a form but the CTA's semantic context (e.g. demographic/service
 **Rule:** Report the mismatch, stop, wait for direction.
 **Resolution pattern (confirmed by Igor 2026-05-05):** Skip preselection entirely — just open the modal with no preselected value.
 
+### 17. CSS patch attempts are unreliable — full verbatim rewrite is the only safe method
+
+When a page's rendered output diverges from design-source, do NOT attempt to fix it by patching individual CSS blocks. Three sessions of CSS patching (expanding rules, replacing individual blocks, adding missing properties) all failed to produce a matching page.
+
+**Why:** The page-level `<style is:global>` block is tightly coupled. Partial replacements leave formatting inconsistencies, missed properties, and stale rules that interact unpredictably with global.css and scoped component styles. The only reliable fix is: delete everything after the frontmatter, copy `<style>` content verbatim from design-source, copy body sections verbatim, re-wire Sanity variables.
+
+**How to apply:** When Igor says a page doesn't match design-source and CSS patches aren't working, stop patching. Do the full rewrite immediately.
+
 ---
 
 ## Incident Log
