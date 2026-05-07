@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useClient } from 'sanity';
-import matter from 'gray-matter';
+import yaml from 'js-yaml';
 import { markdownToPortableText } from '@portabletext/markdown';
 
 const API_VERSION = '2024-01-01';
@@ -10,11 +10,32 @@ function normalize(str: string): string {
   return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// Convert :::key-takeaways ... ::: to a standard H2 + bullet list
+// Bug 1: Strip :::key-takeaways delimiters only — the content block already contains the heading
 function preprocessCustomBlocks(md: string): string {
   return md.replace(/:::key-takeaways\s*\n([\s\S]*?):::/g, (_match, inner: string) => {
-    return `## Key Takeaways\n\n${inner.trim()}`;
+    return inner.trim();
   });
+}
+
+// Bug 2: Strip {#anchor-id} syntax that markdown editors embed in heading lines
+function stripHeadingAnchors(md: string): string {
+  return md.replace(/\s*\{#[^}]+\}/g, '');
+}
+
+// Bug 3: Strip metadata paragraph (Published: … | Updated: … | author | readtime | category)
+function stripMetadataParagraph(md: string): string {
+  return md.replace(/^\*{0,2}Published:\*{0,2}.*\n?/m, '').trimStart();
+}
+
+// Bug 4: Strip "## About the Author" and "## You Might Also Like" sections to end of body
+function stripBoilerplateSections(md: string): string {
+  return md.replace(/\n## (?:About the Author|You Might Also Like)[\s\S]*/i, '');
+}
+
+// Bug 5: Strip "## Table of Contents" section — page template builds TOC from PT headings
+function stripTableOfContents(md: string): string {
+  // Remove the TOC heading and everything up to the next ## section heading
+  return md.replace(/\n## Table of Contents\n[\s\S]*?(?=\n## )/i, '\n');
 }
 
 // blogPost.body only allows { type: 'block' } — drop non-block items (hr, images, code blocks)
@@ -61,8 +82,17 @@ export function MarkdownImportTool() {
     setError(null);
 
     try {
-      // 1. Parse YAML frontmatter + markdown body
-      const { data: fm, content: mdBody } = matter(input);
+      // 1. Parse YAML frontmatter + markdown body (browser-safe: no gray-matter/Buffer)
+      const DELIM = '---';
+      const lines = input.trimStart();
+      if (!lines.startsWith(DELIM))
+        throw new Error('No YAML frontmatter found — file must start with ---');
+      const rest = lines.slice(3); // after first ---
+      const closingIdx = rest.indexOf('\n---');
+      if (closingIdx === -1) throw new Error('Frontmatter closing --- not found');
+      const yamlText = rest.slice(0, closingIdx).trim();
+      const mdBody = rest.slice(closingIdx + 4).trim(); // after closing ---\n
+      const fm = (yaml.load(yamlText) ?? {}) as Record<string, unknown>;
       const warnings: string[] = [];
 
       // 2. Fetch all categories and authors for reference resolution
@@ -70,7 +100,9 @@ export function MarkdownImportTool() {
         client.fetch<Array<{ _id: string; slug: string }>>(
           `*[_type == "blogCategory"]{ _id, "slug": slug.current }`,
         ),
-        client.fetch<Array<{ _id: string; name: string }>>(`*[_type == "author"]{ _id, name }`),
+        client.fetch<Array<{ _id: string; name: string; slug: string | null }>>(
+          `*[_type == "author"]{ _id, name, "slug": slug.current }`,
+        ),
       ]);
 
       // 3. Category reference — match by slug.current
@@ -86,23 +118,33 @@ export function MarkdownImportTool() {
         }
       }
 
-      // 4. Author reference — match by normalized name
-      //    author schema has no slug — match against name, e.g. "sarah-johnson" → "Sarah Johnson"
+      // 4. Author reference — match by slug.current first, then normalized name fallback
       let authorRef: { _type: 'reference'; _ref: string } | undefined;
       if (fm.author) {
-        const normTarget = normalize(String(fm.author));
-        const auth = authors.find((a) => normalize(a.name) === normTarget);
+        const authorValue = String(fm.author).trim();
+        const normTarget = normalize(authorValue);
+        const auth =
+          authors.find((a) => a.slug === authorValue) ??
+          authors.find(
+            (a) => a.slug != null && a.slug.toLowerCase() === authorValue.toLowerCase(),
+          ) ??
+          authors.find((a) => normalize(a.name) === normTarget);
         if (auth) {
           authorRef = { _type: 'reference', _ref: auth._id };
         } else {
           warnings.push(
-            `Author "${fm.author}" not matched. Available: ${authors.map((a) => a.name).join(', ') || 'none'}`,
+            `Author "${fm.author}" not matched. Available: ${authors.map((a) => `${a.name} (${a.slug ?? 'no-slug'})`).join(', ') || 'none'}`,
           );
         }
       }
 
-      // 5. Convert markdown body to Portable Text
-      const processedMd = preprocessCustomBlocks(mdBody);
+      // 5. Pre-process markdown body, then convert to Portable Text
+      let processedMd = mdBody;
+      processedMd = stripMetadataParagraph(processedMd); // Bug 3: remove Published: line
+      processedMd = stripBoilerplateSections(processedMd); // Bug 4: remove About the Author + You Might Also Like
+      processedMd = stripTableOfContents(processedMd); // Bug 5: remove Table of Contents
+      processedMd = preprocessCustomBlocks(processedMd); // Bug 1: unwrap :::key-takeaways
+      processedMd = stripHeadingAnchors(processedMd); // Bug 2: remove {#anchor-id} from headings
       const allBlocks = markdownToPortableText(processedMd);
       const body = onlyTextBlocks(allBlocks);
 
@@ -112,7 +154,7 @@ export function MarkdownImportTool() {
       if (fm.title) doc.title = String(fm.title);
       if (fm.slug) doc.slug = { _type: 'slug', current: String(fm.slug) };
       if (fm.publishedAt) {
-        const parsed = new Date(fm.publishedAt);
+        const parsed = new Date(String(fm.publishedAt));
         if (!isNaN(parsed.getTime())) doc.publishedAt = parsed.toISOString();
       }
       if (fm.readingTime) doc.readingTimeMinutes = Number(fm.readingTime);
@@ -123,9 +165,10 @@ export function MarkdownImportTool() {
       if (body.length > 0) doc.body = body;
       doc.featured = false;
 
-      // SEO — gray-matter parses nested YAML: fm.seo.title / fm.seo.description
-      const seoTitle = fm.seo?.title;
-      const seoDesc = fm.seo?.description;
+      // SEO — js-yaml parses nested YAML into a plain object
+      const seoObj = fm.seo as Record<string, unknown> | undefined;
+      const seoTitle = seoObj?.title;
+      const seoDesc = seoObj?.description;
       if (seoTitle || seoDesc) {
         doc.seo = {
           _type: 'seoFields',
@@ -134,8 +177,9 @@ export function MarkdownImportTool() {
         };
       }
 
-      // 7. Create as draft — publishable from Studio after review
-      // safe: client.create accepts a SanityDocumentStub which is a Record with _type
+      // 7. Create as draft — _id with 'drafts.' prefix keeps it in draft state until published
+      // safe: client.create accepts a SanityDocumentStub which is a Record with _type and _id
+      doc._id = `drafts.${crypto.randomUUID()}`;
       const created = await client.create(doc as Parameters<typeof client.create>[0]);
 
       setResult({ id: created._id, warnings });

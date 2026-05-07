@@ -17,6 +17,13 @@ export const author = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: { source: 'name', maxLength: 96 },
+      validation: (r) => r.required(),
+    }),
+    defineField({
       name: 'credentials',
       title: 'Credentials',
       type: 'string',
