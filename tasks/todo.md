@@ -19,9 +19,9 @@
 
 ## Quick Status Summary
 
-- **Last work:** Phase 1 cleanup session — PR #1 merged, design-source organized, retroactive OBS-001–004 logged, DEC-001 approval corrected.
+- **Last work:** 2026-05-07 — Blog system complete. All 5 blog page templates live. Studio Markdown Import Tool built and fixed. 3 blog posts published (family, choosing-therapy, couples). Author schema slug field added. MarkdownImportTool 6 body-content bugs fixed + author matching hardened.
 - **Current issues:** None known
-- **Detailed history:** See `tasks/todo-archive.md` (created when this file exceeds 100 lines)
+- **Detailed history:** See `tasks/todo-archive.md`
 
 ## Blog Pages — 2026-05-06 [x] COMPLETE 2026-05-07
 

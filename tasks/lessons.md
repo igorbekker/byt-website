@@ -103,6 +103,14 @@ Lesson 2 ("no .map() loops, index by position") applies to static marketing page
 
 **How to apply:** Before applying Lesson 2, ask: "Is the count of this array determined at design time or at content-entry time?" Fixed count → positional indexing. Variable/open-ended count → `.map()`.
 
+### 16. When a deployed Studio fix doesn't take effect — suspect browser cache before writing more code
+
+If a bug persists after a verified rebuild+redeploy, and the user-reported warning/error message format doesn't match the current source code, the browser is running a cached JS bundle — not the deployed version.
+
+**Why:** Sanity Studio is a single-page app. The browser caches the JS bundle aggressively. After a redeploy, users must hard-refresh (Cmd+Shift+R / Ctrl+Shift+R) to load the new bundle. Without it, all code fixes are invisible.
+
+**How to apply:** Before diagnosing a "fix didn't work" report, compare the exact warning/error text from the user against what the current code would produce. If they don't match (e.g., user sees `Available: Name` but code emits `Available: Name (slug)`), the browser has old code. Report this immediately and instruct a hard-refresh. Do not write additional code fixes.
+
 ---
 
 ## Incident Log
