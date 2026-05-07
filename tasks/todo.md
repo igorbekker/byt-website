@@ -1716,3 +1716,25 @@ Single `ModalForms.astro` component containing both modals (Book a Session `#mod
 ### Review — Legal Pages Sanity-Editable — 2026-05-06
 
 Both privacyPage and termsPage Sanity schemas created as singletons with Portable Text body + SEO fields. Registered in schema index (count updated to 23) and studio structure. GROQ queries added to queries.ts. Python script parsed both .astro files into 50 (privacy) + 59 (terms) Portable Text blocks and posted to Sanity mutations API — both documents created (transactionId: sKZc3uoTXRLvCVWTjx1irM). Both .astro pages wired: `sanity:client` fetch with `<PortableText value={page.body} />` when data exists, full hardcoded HTML fallback otherwise. Build passes, both routes prerendered. Pending: deploy + visual confirmation.
+
+---
+
+## Wire Formspree Form IDs — 2026-05-07 [x] COMPLETE
+
+### Steps
+
+- [x] Clone repo, create apps/web/.env.local with all 4 IDs (gitignored)
+- [x] Create apps/web/.env.example documenting all 4 PUBLIC*FORMSPREE*\* var names
+- [x] careers.astro — read PUBLIC_FORMSPREE_APPLY_ID in frontmatter; data-formspree-id on #generalForm + #jobForm; submitGeneral/submitJob converted from stubs to async Formspree POSTs
+- [x] contact.astro — read PUBLIC_FORMSPREE_CONTACT_ID in frontmatter; data-formspree-id on contact form; handleContactSubmit replaces alert() stub
+- [x] BaseLayout.astro — already correct; no changes needed
+- [x] Cloudflare Pages env vars — all 4 set for Production + Preview via PATCH API (BYT_CF_PAGES_TOKEN)
+- [x] Pushed to main — Cloudflare auto-deployed (commit 93eb898)
+
+### Review — Wire Formspree — 2026-05-07
+
+All 4 Formspree form IDs wired site-wide. Book (xdablnyw) and Refer (xojrqlzq) were already flowing through BaseLayout → ModalForms via import.meta.env — no code change needed. Apply (mzdoapyq) injected into both careers forms via data-formspree-id attribute; submit functions converted to async fetch POST to formspree.io/f/{id} using FormData (supports file uploads), with loading state, success UI, and error recovery. Contact (xvzloqya) same pattern on the contact form. eslint-disable comment added to contact.astro script block (same as careers.astro pattern). All 4 vars set in Cloudflare Pages Production + Preview via API. Build passes: 10 routes prerendered, 0 errors.
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (10 routes prerendered, 0 errors) — 2026-05-07
