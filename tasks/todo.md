@@ -1781,3 +1781,51 @@ All 4 Formspree form IDs wired site-wide. Book (xdablnyw) and Refer (xojrqlzq) w
 **Quality gate:**
 
 - `pnpm --filter web build` — PASS (all routes prerendered, 0 errors, 0 new warnings) — 2026-05-07 16:05
+
+---
+
+## Blog System Step 3 — Markdown Import Tool — 2026-05-07 [~] IN PROGRESS
+
+### Steps
+
+- [x] Read blogPost, author, blogCategory, seoFields schemas — 2026-05-07 17:00
+- [x] Install gray-matter + @portabletext/markdown in apps/studio — 2026-05-07 17:00
+- [x] Create apps/studio/tools/MarkdownImportTool.tsx — 2026-05-07 17:00
+- [x] Register tool in apps/studio/sanity.config.ts — 2026-05-07 17:00
+- [x] Studio build passes — `sanity build` ✓ — 2026-05-07 17:00
+- [ ] Commit + push to main
+- [ ] Deploy to byt-website.sanity.studio
+- [ ] Igor confirms tool renders and test import works
+
+### Review — Blog System Step 3 — 2026-05-07
+
+Custom Sanity Studio tool (Option A — sidebar tab) built and verified compiling. Appears as "Import Article" in the Studio top nav.
+
+**What was built:**
+
+`apps/studio/tools/MarkdownImportTool.tsx` — React component registered as a Sanity Tool. Renders a full-page textarea + Import button inside the Studio shell.
+
+**Parsing logic:**
+
+- `gray-matter` splits YAML frontmatter from markdown body
+- Frontmatter field map: `title → title`, `slug → slug.current`, `publishedAt → publishedAt (ISO)`, `readingTime → readingTimeMinutes`, `excerpt → excerpt`, `subcategory → subcategoryLabel`, `seo.title → seo.metaTitle`, `seo.description → seo.metaDescription`, `featured = false` always
+- `category` → GROQ lookup matched by `slug.current`
+- `author` → GROQ lookup matched by normalized name (lowercase alphanumeric). **Note:** author schema has no slug field — name normalization handles `"sarah-johnson"` → `"Sarah Johnson"` matching
+- `:::key-takeaways ... :::` custom block preprocessed to `## Key Takeaways\n\n{list}` before PT conversion
+- `@portabletext/markdown`'s `markdownToPortableText()` converts markdown body to PT blocks
+- Non-block items (hr, images, code blocks) filtered out — `blogPost.body` only allows `{ type: 'block' }`
+- Document created via `client.create()` as a draft — reviewable and publishable from Studio
+- Missing category/author show inline warnings but don't block creation
+
+**Discovery — @sanity/ui not directly resolvable:** Vite couldn't resolve `@sanity/ui` as a transitive dep. Rewrote component using plain React + inline styles. Build passed on second attempt.
+
+**Files changed:**
+
+- `apps/studio/tools/MarkdownImportTool.tsx` — new (136 lines)
+- `apps/studio/sanity.config.ts` — added import + `tools: [...]` array
+- `apps/studio/package.json` — added `gray-matter ^4.0.3` and `@portabletext/markdown ^1.2.0`
+- `pnpm-lock.yaml` — updated lockfile
+
+**Quality gate:**
+
+- `pnpm --filter studio build` — PASS (`sanity build` ✓ in 34s) — 2026-05-07 17:00

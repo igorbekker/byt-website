@@ -3,6 +3,7 @@ import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './schemas';
 import { structure } from './structure';
+import { MarkdownImportTool } from './tools/MarkdownImportTool';
 
 export default defineConfig({
   name: 'byt-website',
@@ -13,4 +14,11 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+  tools: [
+    {
+      name: 'markdown-import',
+      title: 'Import Article',
+      component: MarkdownImportTool,
+    },
+  ],
 });
