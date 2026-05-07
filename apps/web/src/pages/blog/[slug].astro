@@ -68,7 +68,9 @@ const { slug } = Astro.params;
 
 const post = await sanityClient.fetch<BlogPost>(BLOG_POST_QUERY, { slug });
 
-const relatedPosts = post?.category?.slug?.current
+if (!post) return Astro.redirect('/404');
+
+const relatedPosts = post.category?.slug?.current
   ? await sanityClient.fetch<RelatedPost[]>(BLOG_RELATED_POSTS_QUERY, {
       categorySlug: post.category.slug.current,
       excludeId: post._id,
@@ -84,10 +86,23 @@ function fmtDate(iso: string | undefined): string {
   });
 }
 
-const categorySlug = post?.category?.slug?.current ?? '';
-const subSlug = post?.subcategoryLabel ?? '';
-const pageTitle = post?.seo?.metaTitle ?? post?.title ?? 'Article';
-const pageDesc = post?.seo?.metaDescription ?? post?.excerpt ?? '';
+const categorySlug = post.category?.slug?.current ?? '';
+const subSlug = post.subcategoryLabel ?? '';
+const pageTitle = post.seo?.metaTitle ?? post.title ?? 'Article';
+const pageDesc = post.seo?.metaDescription ?? post.excerpt ?? '';
+
+const articleJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.excerpt ?? '',
+  datePublished: post.publishedAt ?? '',
+  image: post.featuredImage?.asset?.url ?? '',
+  author: post.author
+    ? { '@type': 'Person', name: post.author.name, description: post.author.credentials ?? '' }
+    : undefined,
+  publisher: { '@type': 'Organization', name: 'Better You Therapy' },
+});
 ---
 
 <style is:global>
@@ -1953,6 +1968,7 @@ const pageDesc = post?.seo?.metaDescription ?? post?.excerpt ?? '';
 </style>
 
 <BaseLayout title={`${pageTitle} | Better You Therapy Blog`} description={pageDesc}>
+  <Fragment set:html={`<script type="application/ld+json">${articleJsonLd}</script>`} />
   <div class="progress-bar"><span id="readProgress"></span></div>
 
   <div class="subnav">
@@ -2082,7 +2098,32 @@ const pageDesc = post?.seo?.metaDescription ?? post?.excerpt ?? '';
   <section class="article-body">
     <div class="article-body-grid">
       <article class="article-prose">
-        {post?.body && <PortableText value={post.body} />}
+        {post.body && <PortableText value={post.body} />}
+        {
+          post.author && (
+            <div class="author-card">
+              <div class="author-card-avatar">
+                {post.author.photo?.asset?.url ? (
+                  <img
+                    src={post.author.photo.asset.url}
+                    alt={post.author.photo.alt ?? post.author.name}
+                    style="width:80px;height:80px;border-radius:50%;object-fit:cover;"
+                  />
+                ) : (
+                  (post.author.initials ?? post.author.name.slice(0, 2).toUpperCase())
+                )}
+              </div>
+              <div class="author-card-body">
+                <h4>
+                  {post.author.name}
+                  {post.author.credentials ? `, ${post.author.credentials}` : ''}
+                </h4>
+                <p class="author-role">Author</p>
+                {post.author.bio && <PortableText value={post.author.bio} />}
+              </div>
+            </div>
+          )
+        }
       </article>
 
       <aside class="article-side">
@@ -2180,6 +2221,22 @@ const pageDesc = post?.seo?.metaDescription ?? post?.excerpt ?? '';
           ))
         }
       </div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div class="newsletter-inner">
+      <p class="eyebrow" style="color:var(--coral);">Stay informed</p>
+      <h2>Mental health insights, delivered.</h2>
+      <p>
+        Evidence-based articles and practical guides for your wellbeing journey. No spam,
+        unsubscribe anytime.
+      </p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Your email address" aria-label="Email address" />
+        <button type="submit" class="btn btn-coral">Subscribe</button>
+      </form>
+      <p class="newsletter-tiny">Your privacy is protected. We never share your information.</p>
     </div>
   </section>
 

@@ -975,7 +975,7 @@ Phase 5 approval checklist and Phase 6 early page reviews (Homepage, test.html, 
 
 - [x] Rewrite careers.astro — 2026-05-04
 - [x] Build — 2026-05-04 (pnpm build passes, /careers/index.html prerendered)
-- [ ] Deploy + visual parity confirmed by Igor
+- [x] Deploy + visual parity confirmed by Igor — archived 2026-05-06
 
 #### Careers Review — 2026-05-04
 
@@ -1028,7 +1028,7 @@ Hero eyebrow "Careers at Better You Therapy", hero h1 inline style `font-size: 5
 
 - [x] Rewrite contact.astro — 2026-05-04
 - [x] Build — 2026-05-04 (pnpm build passes, /contact/index.html prerendered)
-- [ ] Deploy + visual parity confirmed by Igor
+- [x] Deploy + visual parity confirmed by Igor — archived 2026-05-06
 
 #### Contact Review — 2026-05-04
 
@@ -1130,7 +1130,7 @@ Eyebrow "Contact Us", eyebrow "Get in touch", h2 "Reach our team directly.", for
 - [x] Footer logo fix included: height 96px desktop, 72px tablet, 66px mobile — 2026-05-04
 - [x] pnpm build — PASS (all 7 routes) — 2026-05-04
 - [x] Parity check — 0 .map() in template, 0 missing is:inline — 2026-05-04
-- [ ] Deploy + visual parity confirmed by Igor
+- [x] Deploy + visual parity confirmed by Igor — archived 2026-05-06
 
 #### Homepage Rewrite Review — 2026-05-04
 
@@ -1167,7 +1167,7 @@ Router cards (3), Two Ways tracks (2), Conditions sections (4) + images (4), Tel
 - [x] Footer logo fix: height 100px → 96px + responsive breakpoints (72px tablet, 66px mobile) — 2026-05-04
 - [x] pnpm build — PASS (all 7 routes) — 2026-05-04
 - [x] Parity check — exit 0, 0 .map() in template — 2026-05-04
-- [ ] Deploy + visual parity confirmed by Igor
+- [x] Deploy + visual parity confirmed by Igor — archived 2026-05-06
 
 #### Communities Fix Review — 2026-05-04
 
@@ -1738,3 +1738,46 @@ All 4 Formspree form IDs wired site-wide. Book (xdablnyw) and Refer (xojrqlzq) w
 ### Quality gate
 
 - `pnpm --filter web build` — PASS (10 routes prerendered, 0 errors) — 2026-05-07
+
+---
+
+## Blog System Step 1 — Sanity Webhook → Cloudflare Deploy Hook — 2026-05-07 [x] COMPLETE
+
+- [x] Created Cloudflare Pages deploy hook via API (ID: 4bbbf283-5017-4137-8f82-74de86d21898)
+- [x] Sanity webhook created manually by Igor at manage.sanity.io (API returned 401 — project tokens lack `sanity.project.webhooks` grant)
+- [x] Verified deploy hook returns HTTP 200 on POST
+
+---
+
+## Blog System Step 2 — `[slug].astro` Complete — 2026-05-07 [x] COMPLETE
+
+### Steps
+
+- [x] Edit 1: Add null guard `if (!post) return Astro.redirect('/404')` after post fetch — 2026-05-07 16:05
+- [x] Edit 2: Add JSON-LD `articleJsonLd` variable in frontmatter — 2026-05-07 16:05
+- [x] Edit 3: Add `<Fragment set:html={...}>` JSON-LD injection before progress-bar — 2026-05-07 16:05
+- [x] Edit 4: Add `.author-card` HTML inside `article-prose` after PortableText — 2026-05-07 16:05
+- [x] Edit 5: Add `.newsletter` section after `.related`, before mobile-cta-bar — 2026-05-07 16:05
+- [x] Build passes — `pnpm --filter web build` PASS (0 errors) — 2026-05-07 16:05
+- [ ] Push to main — Cloudflare auto-deploys
+- [ ] Igor confirms article page renders correctly
+
+### Review — Blog System Step 2 — 2026-05-07
+
+`apps/web/src/pages/blog/[slug].astro` completed with 5 targeted edits to the existing 2237-line file. No rewrites, no CSS changes.
+
+**What was added:**
+
+- **Null guard:** `if (!post) return Astro.redirect('/404')` after `sanityClient.fetch()` — redirects any slug that doesn't resolve to a published Sanity document. Also tightened all subsequent `post?.` optional chains to `post.` now that null is excluded.
+- **JSON-LD Article schema:** `articleJsonLd` variable built via `JSON.stringify()` with `@type: Article`, headline, description, datePublished, image, author (Person), and publisher (Organization). Injected into the body as the first child of `<BaseLayout>` via `<Fragment set:html={...}>`. BaseLayout has no `<slot name="head">` so body placement is the only option — this is valid per Google's schema spec.
+- **Author bio card:** `.author-card` div rendered inside `article-prose` after the PortableText body, gated on `post.author`. Shows photo (if present) or initials fallback, name + credentials as h4, `author-role` label, and author bio rendered via `<PortableText>`. CSS for `.author-card` was already in the file.
+- **Newsletter section:** `.newsletter` section inserted after `.related`, before `.mobile-cta-bar`. Static form (no Formspree ID yet — to be wired in a later step). CSS for `.newsletter` was already in the file.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/[slug].astro` — 5 surgical edits, now ~2260 lines
+- `tasks/todo.md` — this entry
+
+**Quality gate:**
+
+- `pnpm --filter web build` — PASS (all routes prerendered, 0 errors, 0 new warnings) — 2026-05-07 16:05
