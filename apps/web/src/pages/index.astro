@@ -1779,43 +1779,6 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
   title={page?.seo?.metaTitle ??
     'Better You Therapy | Licensed Mental Health Care in Southeast Florida'}
 >
-  <!-- Mobile menu drawer -->
-  <div
-    class="mobile-menu"
-    id="mobileMenu"
-    onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow=''}"
-  >
-    <div class="mobile-menu-panel" role="dialog" aria-label="Main menu">
-      <div class="mobile-menu-head">
-        <span
-          style="font-family:'Manrope',sans-serif;font-weight:800;color:var(--navy-deep);font-size:17px;letter-spacing:-.01em"
-          >Better You Therapy</span
-        >
-        <button
-          class="mobile-menu-close"
-          aria-label="Close menu"
-          onclick="document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow=''"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg
-          >
-        </button>
-      </div>
-      <a href="/communities/" class="mm-link">For Facilities</a>
-      <a href="/patients/" class="mm-link">For Patients</a>
-      <a href="/providers/" class="mm-link">For Therapists</a>
-      <a href="/about/" class="mm-link">About</a>
-      <div class="mobile-menu-actions">
-        <button class="btn btn-coral" onclick="openModal('book')">Book a Session</button>
-        <button class="btn btn-outline-ink" onclick="openModal('refer')">Refer a Resident</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ── BLOCK 1: HERO ── -->
   <section class="hero">
     <div class="hero-image">

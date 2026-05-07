@@ -19,9 +19,60 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-07 — Three live blog bugs fixed: category pages showing 0 articles (subcategoryLabel filter removed), pill filters non-functional (JS added), `/blog/#/` bad href (fixed featured card + view-all link). Build PASS 17 routes.
-- **Current issues:** None known
+- **Last work:** 2026-05-08 — Fix two broken pages: duplicate mobile menu removed from index.astro (Issue 2); patients layout investigation (Issue 1)
+- **Current issues:** Under investigation
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Page Fixes — Issue 1 (patients layout) + Issue 2 (homepage nav CTAs) — 2026-05-08
+
+### Issue 2 — Homepage duplicate mobile menu (CONFIRMED BUG)
+
+- [x] A. 2026-05-08 Identified: `index.astro` lines 1782–1817 have duplicate `<div class="mobile-menu" id="mobileMenu">` inside `<main>` — leftover from design-source HTML not removed when Nav.astro took over
+- [x] B. 2026-05-08 Removed lines 1782–1817 from `apps/web/src/pages/index.astro`
+- [x] C. 2026-05-08 Build PASS (17 routes). dist/client/index.html: 1 `id="mobileMenu"` ✓
+- [ ] D. Commit (after /pre)
+
+### Issue 1 — Patients layout (INVESTIGATION INCONCLUSIVE)
+
+- [x] A. 2026-05-08 Git log: no changes to patients.astro, global.css, BaseLayout.astro, or Nav.astro since May 5 confirmation
+- [x] B. 2026-05-08 CSS analysis: patients.astro `<style is:global>` has `.nav { height: 84px }` (0,1,0) vs Nav.astro scoped `height: 126px` (0,2,0) — Nav.astro wins on all pages
+- [x] C. 2026-05-08 Dist output confirmed: correct HTML structure (6 sections), correct CSS loading order
+- [x] D. 2026-05-08 Parity check: 0 errors (run in prior session)
+- [!] E. Root cause not identified via code analysis — waiting for Igor's visual description of what specifically looks broken
+
+---
+
+## Session Review — 2026-05-08 (Issue 2 fixed; Issue 1 investigation)
+
+### What was done
+
+**Issue 2 — Homepage duplicate mobile menu (FIXED):**
+
+- Removed `<div class="mobile-menu" id="mobileMenu">` (lines 1782–1817) from `apps/web/src/pages/index.astro`
+- This was a leftover from design-source HTML not removed when Nav.astro took over mobile navigation
+- Resulted in duplicate `id="mobileMenu"` in rendered DOM (2 → 1)
+- Root cause: when index.astro was initially built from Homepage.html, the full HTML including nav + mobile menu was copied verbatim, but only nav is omitted when BaseLayout provides it — mobile menu HTML was overlooked
+
+**Issue 1 — Patients layout (INVESTIGATION INCONCLUSIVE):**
+
+- Git log: 0 changes to patients.astro, global.css, BaseLayout.astro, Nav.astro since May 5 confirmation (`git diff 82c00e9 apps/web/src/pages/patients.astro` → 0 lines)
+- CSS specificity analysis: patients.astro `<style is:global>` has `.nav { height: 84px }` (0,1,0) vs Nav.astro scoped `height: 126px` (0,2,0) — Nav.astro wins on all pages
+- Parity check: 0 errors
+- Dist HTML: correct 6-section structure, CSS loading order correct
+- No CSS regression identified. Page was build-pass verified (never visually confirmed)
+- Awaiting Igor's description of what specifically looks broken to narrow down fix
+
+### Files changed
+
+- `apps/web/src/pages/index.astro` — removed duplicate mobile menu HTML (lines 1782–1817)
+- `tasks/todo.md` — this review
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (17 routes, 0 errors) — 2026-05-08
+- `dist/client/index.html`: `id="mobileMenu"` count = 1 ✓
 
 ## Blog Pages — 2026-05-06 [x] COMPLETE 2026-05-07
 
