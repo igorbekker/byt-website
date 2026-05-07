@@ -13,6 +13,7 @@ interface CareersPage {
 }
 
 const page = await sanityClient.fetch<CareersPage>(CAREERS_PAGE_QUERY);
+const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
 ---
 
 <BaseLayout
@@ -2324,7 +2325,12 @@ const page = await sanityClient.fetch<CareersPage>(CAREERS_PAGE_QUERY);
             "We're always interested in hearing from licensed clinicians who share our approach."
         }
       </p>
-      <form class="general-form" id="generalForm" onsubmit="submitGeneral(event)">
+      <form
+        class="general-form"
+        id="generalForm"
+        data-formspree-id={applyId}
+        onsubmit="submitGeneral(event)"
+      >
         <div class="form-row">
           <div class="form-field">
             <label for="g-name">Full Name</label>
@@ -2404,7 +2410,7 @@ const page = await sanityClient.fetch<CareersPage>(CAREERS_PAGE_QUERY);
       <div class="modal-body" id="modalBody"></div>
       <div class="modal-form">
         <h4>Apply for this role</h4>
-        <form id="jobForm" onsubmit="submitJob(event)">
+        <form id="jobForm" data-formspree-id={applyId} onsubmit="submitJob(event)">
           <div class="form-row">
             <div class="form-field">
               <label for="j-name">Full Name</label>
@@ -2738,36 +2744,78 @@ const page = await sanityClient.fetch<CareersPage>(CAREERS_PAGE_QUERY);
       }
     }
 
-    function submitJob(e) {
+    async function submitJob(e) {
       e.preventDefault();
       const form = e.target;
-      const wrap = form.parentElement;
-      wrap.innerHTML = `
-    <div class="form-success">
-      <div class="form-success-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <h4>Application received.</h4>
-      <p>Thanks for applying. We'll review your resume and be in touch within 3–5 business days.</p>
-    </div>
-  `;
+      const formId = form.dataset.formspreeId;
+      if (!formId) {
+        alert('Form not configured. Please email us directly.');
+        return;
+      }
+      const btn = form.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const res = await fetch('https://formspree.io/f/' + formId, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error('error');
+        const wrap = form.parentElement;
+        wrap.innerHTML = `
+          <div class="form-success">
+            <div class="form-success-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h4>Application received.</h4>
+            <p>Thanks for applying. We'll review your resume and be in touch within 3–5 business days.</p>
+          </div>
+        `;
+      } catch {
+        btn.disabled = false;
+        btn.textContent = origText;
+        alert('Something went wrong. Please try again or email us directly.');
+      }
     }
 
-    function submitGeneral(e) {
+    async function submitGeneral(e) {
       e.preventDefault();
       const form = e.target;
-      const wrap = form.parentElement;
-      form.style.display = 'none';
-      const success = document.createElement('div');
-      success.className = 'form-success';
-      success.innerHTML = `
-    <div class="form-success-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-    </div>
-    <h4>Resume received.</h4>
-    <p>Thanks for sending us your resume. We'll keep it on file and reach out when a relevant role opens.</p>
-  `;
-      wrap.appendChild(success);
+      const formId = form.dataset.formspreeId;
+      if (!formId) {
+        alert('Form not configured. Please email us directly.');
+        return;
+      }
+      const btn = form.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const res = await fetch('https://formspree.io/f/' + formId, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error('error');
+        const wrap = form.parentElement;
+        form.style.display = 'none';
+        const success = document.createElement('div');
+        success.className = 'form-success';
+        success.innerHTML = `
+          <div class="form-success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h4>Resume received.</h4>
+          <p>Thanks for sending us your resume. We'll keep it on file and reach out when a relevant role opens.</p>
+        `;
+        wrap.appendChild(success);
+      } catch {
+        btn.disabled = false;
+        btn.textContent = origText;
+        alert('Something went wrong. Please try again or email us directly.');
+      }
     }
   </script>
 </BaseLayout>

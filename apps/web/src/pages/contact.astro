@@ -29,6 +29,7 @@ const email = siteSettings?.email ?? 'hello@getbetteryou.com';
 const fax = siteSettings?.fax || '(754) 328-4344';
 const phoneDigits = phone.replace(/\D/g, '');
 const faxDigits = fax.replace(/\D/g, '');
+const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
 ---
 
 <BaseLayout
@@ -1109,7 +1110,8 @@ const faxDigits = fax.replace(/\D/g, '');
 
       <form
         class="contact-form"
-        onsubmit='event.preventDefault(); alert("Thanks — we&apos;ll be in touch within one business day."); this.reset();'
+        data-formspree-id={contactId}
+        onsubmit="handleContactSubmit(event)"
       >
         <h2>Send us a message</h2>
         <p class="form-sub">
@@ -1178,6 +1180,41 @@ const faxDigits = fax.replace(/\D/g, '');
   </section>
 
   <script is:inline>
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    async function handleContactSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formId = form.dataset.formspreeId;
+      if (!formId) {
+        alert('Form not configured. Please email us directly.');
+        return;
+      }
+      const btn = form.querySelector('button[type="submit"]');
+      const origHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const res = await fetch('https://formspree.io/f/' + formId, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!res.ok) throw new Error('error');
+        const div = document.createElement('div');
+        div.style.cssText = 'padding:2rem;text-align:center';
+        div.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;margin:0 auto 1rem;display:block"><polyline points="20 6 9 17 4 12"/></svg>
+          <h4 style="font-family:Manrope,sans-serif;color:var(--navy-deep);margin-bottom:.5rem">Message sent.</h4>
+          <p style="color:var(--slate);font-size:15px">Thanks — we'll be in touch within one business day.</p>
+        `;
+        form.replaceWith(div);
+      } catch {
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+        alert('Something went wrong. Please try again or email us directly.');
+      }
+    }
+
     // ── Scroll fade-up
     const fadeObs = new IntersectionObserver(
       (entries) => {
