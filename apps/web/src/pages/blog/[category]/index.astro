@@ -53,8 +53,7 @@ function fmtDate(iso: string | undefined): string {
   });
 }
 
-// Posts not assigned to any subtopic appear in the category-level article list
-const categoryLevelPosts = posts?.filter((p) => !p.subcategoryLabel) ?? [];
+const categoryLevelPosts = posts ?? [];
 ---
 
 <style is:global>

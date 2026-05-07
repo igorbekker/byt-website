@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-07 — Blog system complete. All 5 blog page templates live. Studio Markdown Import Tool built and fixed. 3 blog posts published (family, choosing-therapy, couples). Author schema slug field added. MarkdownImportTool 6 body-content bugs fixed + author matching hardened.
+- **Last work:** 2026-05-07 — Three live blog bugs fixed: category pages showing 0 articles (subcategoryLabel filter removed), pill filters non-functional (JS added), `/blog/#/` bad href (fixed featured card + view-all link). Build PASS 17 routes.
 - **Current issues:** None known
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -263,3 +263,38 @@ Custom Sanity Studio tool (Option A — sidebar tab) built and verified compilin
 
 - `pnpm --filter web build` — PASS (17 routes prerendered, 0 errors) — 2026-05-07
 - `pnpm --filter studio build` — PASS (sanity build ✓) — 2026-05-07
+
+---
+
+## Blog Bug Fixes — 2026-05-07 [x] COMPLETE 2026-05-07
+
+### Bugs fixed
+
+- [x] BUG 1: Category pages (`/blog/couples/`, `/blog/child-teen/`, etc.) showed 0 articles
+- [x] BUG 2: Pill filters on `/blog/` did nothing when clicked
+- [x] BUG 3: `/blog/#/` appended to URL when clicking featured card with no featured post; "View all articles" also used `href="#"`
+
+### Review
+
+**BUG 1 — Root cause:**
+`apps/web/src/pages/blog/[category]/index.astro:57` had `categoryLevelPosts = posts?.filter((p) => !p.subcategoryLabel)`. Every imported post has a `subcategoryLabel` from the markdown frontmatter `subcategory:` field. The filter excluded them all. No subtopics are defined in Sanity either, so posts also didn't appear in subcategory blocks. Result: 0 visible articles on every category page.
+Fix: removed the filter entirely — `const categoryLevelPosts = posts ?? [];`
+
+**BUG 2 — Root cause:**
+The `<script is:inline>` in `apps/web/src/pages/blog/index.astro` contained only the IntersectionObserver for fade-up animations. No click handler existed for the pill buttons. The `data-cat` attributes on pills and cards were wired correctly but nothing read them.
+Fix: added pill click handler inside the existing `<script is:inline>` block — on click, sets `.active` on the clicked pill, then shows/hides `.article-card` elements by matching `data-cat`.
+
+**BUG 3 — Root cause:**
+Featured card href: `` `/blog/${featured?.slug?.current ?? '#'}/` `` — when `featured` is null, `featured?.slug?.current` is `undefined`, `?? '#'` fires, producing `/blog/#/`.
+"View all articles" link: `href="#"` — raw hash anchor.
+Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug.current}/\` : '/blog/'`; changed view-all href to `/blog/`.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/index.astro` — BUG 2 (pill JS added), BUG 3 (featured href + view-all href fixed)
+- `apps/web/src/pages/blog/[category]/index.astro` — BUG 1 (subcategoryLabel filter removed)
+- `tasks/todo.md` — this review
+
+### Quality gate
+
+- `pnpm --filter web build` — PASS (17 routes prerendered, 0 errors) — 2026-05-07

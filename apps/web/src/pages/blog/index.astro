@@ -1345,7 +1345,10 @@ function fmtDate(iso: string | undefined): string {
   <!-- ── FEATURED ── -->
   <section class="featured">
     <div class="featured-inner">
-      <a href={`/blog/${featured?.slug?.current ?? '#'}/`} class="featured-card fade-up">
+      <a
+        href={featured?.slug?.current ? `/blog/${featured.slug.current}/` : '/blog/'}
+        class="featured-card fade-up"
+      >
         <div class="featured-img img-ph img-ph-coral" data-label="Featured · senior reading"></div>
         <div class="featured-body">
           <div class="featured-meta">
@@ -1423,7 +1426,7 @@ function fmtDate(iso: string | undefined): string {
           <p class="eyebrow">Recently Published</p>
           <h2>{page?.recentlyPublishedHeading ?? 'Latest articles.'}</h2>
         </div>
-        <a href="#" class="latest-view-all">View all articles &rarr;</a>
+        <a href="/blog/" class="latest-view-all">View all articles &rarr;</a>
       </div>
 
       <div class="pill-row fade-up">
@@ -1501,5 +1504,23 @@ function fmtDate(iso: string | undefined): string {
       { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
     );
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
+
+    // Pill filter: show/hide article cards by data-cat attribute
+    const pills = document.querySelectorAll('.pill');
+    const cards = document.querySelectorAll('.article-card');
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        pills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+        const cat = pill.getAttribute('data-cat');
+        cards.forEach((card) => {
+          if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
   </script>
 </BaseLayout>
