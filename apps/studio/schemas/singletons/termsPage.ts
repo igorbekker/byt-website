@@ -10,6 +10,13 @@ export const termsPage = defineType({
   title: 'Terms and Conditions',
   type: 'document',
   fields: [
+    defineField({ name: 'title', title: 'Page Title', type: 'string' }),
+    defineField({
+      name: 'lastUpdated',
+      title: 'Last Updated',
+      type: 'string',
+      description: 'Effective date shown on the page, e.g. "May 4, 2026".',
+    }),
     defineField({
       name: 'body',
       title: 'Body',
