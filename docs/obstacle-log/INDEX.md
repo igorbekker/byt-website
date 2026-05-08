@@ -16,12 +16,14 @@
 | OBS-012 | P1       | Resolved | Sanity .map() loops replaced hardcoded HTML on Patients              |
 | OBS-013 | P1       | Resolved | design-source/Contact.html edited directly — read-only violation     |
 | OBS-014 | P2       | Resolved | False CSS parity claim made without visual verification              |
+| OBS-015 | P0       | Resolved | Undocumented dual CSS system caused recurring cascade failures       |
+| OBS-016 | P1       | Resolved | Wrong Sanity token used for Studio deploy                            |
 
 ## Summary
 
-- Total obstacles: 14
-- P0 (production broken): 4
-- P1 (visible bug): 6
+- Total obstacles: 16
+- P0 (production broken): 5
+- P1 (visible bug): 7
 - P2 (minor): 4
 - All resolved
 
@@ -35,3 +37,5 @@
 | RC-4 | Over-engineered simple operations                                                     | OBS-008                          |
 | RC-5 | Global CSS not audited against page CSS                                               | OBS-009                          |
 | RC-6 | Misinterpreted "replace text with Sanity variables" as permission to restructure HTML | OBS-012                          |
+| RC-7 | No CSS architecture documentation; no single-system requirement defined               | OBS-015                          |
+| RC-8 | No environment variable registry; token purposes undocumented                         | OBS-016                          |
