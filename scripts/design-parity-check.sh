@@ -111,15 +111,23 @@ for ASTRO_FILE in $STAGED; do
   fi
 
   # CHECK 7: No global.css-owned selectors in page <style> block
-  # Extract <style>...</style> content and grep for owned selectors
+  # Extract <style>...</style> content and grep for owned selectors.
+  # Uses line-start anchors to avoid false positives from compound/descendant selectors
+  # (e.g. ".h98 h1{}" or ".mobile-cta-bar .btn{}" are scoped, not bare conflicts).
+  # body{} is only flagged when it sets typography/color properties that global.css owns.
   STYLE_BLOCK=$(sed -n '/<style/,/<\/style>/p' "$ASTRO_FILE" 2>/dev/null || true)
   if [ -n "$STYLE_BLOCK" ]; then
-    OWNED_HITS=$(echo "$STYLE_BLOCK" | grep -nE \
-      'body[[:space:]]*\{|h[1-5][[:space:]]*[{,]|\.btn[[:space:]]*\{|\.btn-[a-zA-Z]|\.eyebrow[[:space:]]*\{|\.max-w[[:space:]]*\{|\.fade-up[[:space:]]*\{' \
+    # Flag body rules that override global.css typography/color properties
+    BODY_HITS=$(echo "$STYLE_BLOCK" | grep -Pn 'body\s*\{[^}]*(font-family|font-size|color:|background:|line-height)' 2>/dev/null || true)
+    # Flag bare heading/button/utility selectors at line-start only (not in compound selectors)
+    SELECTOR_HITS=$(echo "$STYLE_BLOCK" | grep -nE \
+      '^[[:space:]]*(h[1-5][[:space:]]*[{,]|\.btn[[:space:]]*\{|\.btn-[a-zA-Z][a-zA-Z-]*[[:space:]]*\{|\.eyebrow[[:space:]]*\{|\.max-w[[:space:]]*\{|\.fade-up[[:space:]]*\{)' \
       2>/dev/null || true)
+    OWNED_HITS="${BODY_HITS}${SELECTOR_HITS}"
     if [ -n "$OWNED_HITS" ]; then
       echo "❌ FAIL: CASCADE CONFLICT in $REL_PATH — global.css-owned selectors in page <style>:"
       while IFS= read -r hit; do
+        [ -z "$hit" ] && continue
         echo "  CASCADE CONFLICT: $hit — owned by global.css. Remove it. See docs/css-architecture.md."
       done <<< "$OWNED_HITS"
       ERRORS=$((ERRORS + 1))

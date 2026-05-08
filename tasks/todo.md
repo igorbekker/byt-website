@@ -540,3 +540,57 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 ### Quality gate
 
 - `pnpm --filter web build` — PASS (17 routes prerendered, 0 errors) — 2026-05-07
+
+---
+
+## DEC-002 Phase 2 — Rebuild providers.astro (System A) — 2026-05-08 [~] IN PROGRESS
+
+### Steps
+
+- [x] A. 2026-05-08 Converted design-source/pages/Providers.html from System B → System A tokens (f36c3e7)
+- [x] B. 2026-05-08 Converted design-source/pages/Communities.html from System B → System A tokens (f36c3e7)
+- [x] C. 2026-05-08 Added Relume-compat button variants (.btn-secondary, .btn-secondary-alt, .btn-sm, .btn-link) to global.css
+- [x] D. 2026-05-08 Rebuilt apps/web/src/pages/providers.astro from converted Providers.html
+- [x] E. 2026-05-08 Deleted public test files (providers-check.html, communities-check.html)
+- [x] F. 2026-05-08 Fixed parity check script: added ^[[:space:]]\* anchors + scoped body rule detection
+- [x] G. 2026-05-08 Parity check PASS. Build PASS (17 routes, 0 errors).
+- [ ] H. Commit Phase 2
+- [ ] I. Push + wait for Igor visual confirmation
+- [ ] J. Rebuild communities.astro (Phase 2B) — pending Igor confirmation of providers.astro
+
+### Session Review — 2026-05-08 (DEC-002 Phase 2 — providers.astro)
+
+**What was built:** Complete rebuild of `apps/web/src/pages/providers.astro` from System B → System A. Style block stripped of all System B reset/global rules. All tokens unprefixed System A. Sanity vars wired with `??` fallbacks.
+
+**Key changes from prior System B version:**
+
+- Style block: removed `:root`, bare `body`, bare `h1-h5`, `.btn` base, all `.btn-primary/.btn-secondary/.btn-link` variants — all now owned exclusively by global.css
+- `.btn-secondary`, `.btn-secondary-alt`, `.btn-sm`, `.btn-link` moved to global.css (enables parity check to pass)
+- `.btn:hover{transform:translateY(-1px)}` kept as page-specific hover lift
+- Nav/mobile-cta-bar CSS kept in page style (consistent with all System A pages)
+- All Apply Now `<button>` elements changed to `<a href="/careers/">` for proper routing
+- Body: 6 content sections only (Header98 → Cta36). Nav/Footer/MobileCTABar HTML excluded (BaseLayout provides).
+- All `var(--byt-*)` tokens replaced with System A equivalents
+- Sanity wiring: heroHeading, heroSubhead, all tracks/handles/quals/cta text fields, testimonials[0-1]
+
+**Parity check fix (scripts/design-parity-check.sh):**
+
+- CHECK 7 regex updated: `^[[:space:]]*` anchors on all selector patterns (prevents compound/descendant false positives)
+- body{} detection changed to grep -P for typography-property conflicts only (not padding-bottom)
+- Before fix: 40 false positive hits blocked commit. After fix: 0 hits. EXIT 0.
+
+**False positives eliminated:**
+
+- `.h98 h1{`, `.l422-head h2{`, etc. — scoped to section containers, not bare heading rules
+- `.mobile-cta-bar .btn{`, `.mobile-menu-actions .btn{` — scoped compound selectors
+- `.l374-card .body{` — CSS class `.body`, not element `body`
+- `.l506-head .eyebrow{` — scoped to section
+
+**Files changed (4):**
+
+- `apps/web/src/pages/providers.astro` — complete rebuild (~550 lines)
+- `apps/web/src/styles/global.css` — added 13 lines of Relume button variants
+- `scripts/design-parity-check.sh` — CHECK 7 precision fix
+- `apps/web/public/` — deleted providers-check.html + communities-check.html
+
+**How verified:** `scripts/design-parity-check.sh` EXIT 0. `pnpm --filter web build` PASS (17 routes, 0 errors) — 2026-05-08.

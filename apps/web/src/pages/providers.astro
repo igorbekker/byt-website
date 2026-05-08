@@ -59,99 +59,6 @@ const [page, testimonials] = await Promise.all([
    STRUCTURE/UX is unchanged from Relume. Only the visual tokens
    (colors, fonts, headings) have been swapped to the BYT design system.
 ════════════════════════════════════════════════════════════════════ */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      /* BYT design system tokens */
-      --byt-navy: #104378;
-      --byt-navy-deep: #0a2d52;
-      --byt-navy-footer: #2d2d52;
-      --byt-coral: #e05555;
-      --byt-coral-hover: #c94444;
-      --byt-coral-light: #fce8e8;
-      --byt-sage: #9caf88;
-      --byt-sage-light: #e8efe3;
-      --byt-slate: #5a7194;
-      --byt-mist: #8fa3bf;
-      --byt-border: #e4eaf0;
-      --byt-off-white: #f5f7fa;
-      --byt-cream: #fffcf0;
-
-      /* Radii — per BYT DS */
-      --r-btn: 6px;
-      --r-card: 12px;
-      --r-pill: 999px;
-
-      /* Shadows — per BYT DS */
-      --shadow-sm: 0 1px 2px rgba(16, 67, 120, 0.04);
-      --shadow-md: 0 4px 12px rgba(16, 67, 120, 0.08);
-      --shadow-lg: 0 8px 24px rgba(16, 67, 120, 0.1);
-
-      /* Relume token names mapped to BYT palette */
-      --bg-primary: #ffffff;
-      --bg-alt: #f5f7fa;
-      --text-primary: #0a2d52;
-      --text-alt: #ffffff;
-      --border-primary: #e4eaf0;
-    }
-
-    html {
-      -webkit-text-size-adjust: 100%;
-    }
-    body {
-      font-family:
-        'Montserrat',
-        system-ui,
-        -apple-system,
-        Segoe UI,
-        Roboto,
-        sans-serif;
-      color: var(--byt-slate);
-      background: var(--bg-primary);
-      line-height: 1.5;
-      font-size: 16px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-family:
-        'Manrope',
-        system-ui,
-        -apple-system,
-        sans-serif;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      color: var(--byt-navy-deep);
-    }
-    img {
-      display: block;
-      max-width: 100%;
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-    button {
-      font: inherit;
-      cursor: pointer;
-      border: 0;
-      background: transparent;
-      color: inherit;
-    }
-    ul {
-      list-style: none;
-    }
 
     /* Container — Tailwind-like behavior */
     .container {
@@ -225,97 +132,9 @@ const [page, testimonials] = await Promise.all([
       font-weight: 600;
     }
 
-    /* Buttons (Relume structure — BYT colors)
-   .btn-primary  = solid CTA       → BYT coral
-   .btn-secondary= outline on white→ BYT navy outline
-   .btn-secondary-alt = outline on dark → white outline (unchanged)
-*/
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border: 1.5px solid var(--byt-navy);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      line-height: 1.2;
-      letter-spacing: 0.01em;
-      background: var(--bg-primary);
-      color: var(--byt-navy-deep);
-      border-radius: var(--r-btn);
-      transition:
-        background-color 0.15s,
-        color 0.15s,
-        border-color 0.15s,
-        box-shadow 0.15s,
-        transform 0.15s;
-      white-space: nowrap;
-    }
+    /* Buttons — page-specific hover lift */
     .btn:hover {
       transform: translateY(-1px);
-    }
-    .btn-primary:hover {
-      box-shadow: var(--shadow-md);
-    }
-    .btn-primary {
-      background: var(--byt-coral);
-      color: #fff;
-      border-color: var(--byt-coral);
-    }
-    .btn-primary:hover {
-      background: var(--byt-coral-hover);
-      border-color: var(--byt-coral-hover);
-    }
-    .btn.btn-secondary {
-      background: transparent;
-      color: var(--byt-navy-deep);
-      border-color: var(--byt-navy-deep);
-    }
-    .btn.btn-secondary:hover {
-      background: var(--byt-navy-deep);
-      color: #fff;
-    }
-    .btn-secondary-alt {
-      background: transparent;
-      color: #fff;
-      border-color: #fff;
-    }
-    .btn-secondary-alt:hover {
-      background: #fff;
-      color: var(--byt-navy-deep);
-    }
-    .btn-sm {
-      padding: 0.5rem 1.25rem;
-      font-size: 0.875rem;
-    }
-    .btn-link {
-      background: transparent;
-      border: 0;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      color: var(--byt-coral);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: color 0.2s;
-    }
-    .btn-link:hover {
-      color: var(--byt-coral-hover);
-    }
-    .btn-link.alt {
-      color: #fff;
-    }
-    .btn-link.alt:hover {
-      color: rgba(255, 255, 255, 0.8);
-    }
-    .btn-link svg {
-      width: 1em;
-      height: 1em;
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -330,7 +149,7 @@ const [page, testimonials] = await Promise.all([
       display: flex;
       align-items: center;
       padding: 0 5%;
-      border-bottom: 1px solid var(--byt-border);
+      border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
     .nav-inner {
@@ -357,14 +176,14 @@ const [page, testimonials] = await Promise.all([
       gap: 2rem;
     }
     .nav-links a {
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-size: 15px;
       font-weight: 500;
       transition: color 0.2s;
       letter-spacing: 0.01em;
     }
     .nav-links a:hover {
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .nav-actions {
       display: flex;
@@ -372,7 +191,7 @@ const [page, testimonials] = await Promise.all([
       align-items: center;
     }
     .nav-cta {
-      background: var(--byt-coral);
+      background: var(--coral);
       color: #fff;
       padding: 12px 20px;
       border-radius: var(--r-btn);
@@ -382,10 +201,10 @@ const [page, testimonials] = await Promise.all([
       transition: background-color 0.2s;
     }
     .nav-cta:hover {
-      background: var(--byt-coral-hover);
+      background: var(--coral-hover);
     }
     .nav-cta-secondary {
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-size: 14px;
       font-weight: 500;
       padding: 12px 20px;
@@ -393,7 +212,7 @@ const [page, testimonials] = await Promise.all([
       transition: color 0.2s;
     }
     .nav-cta-secondary:hover {
-      color: var(--byt-coral);
+      color: var(--coral);
     }
 
     /* Hamburger (mobile only — hidden by default) */
@@ -408,7 +227,7 @@ const [page, testimonials] = await Promise.all([
       justify-content: center;
       padding: 0;
       margin-right: -8px;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
     }
     .nav-hamburger svg {
       width: 26px;
@@ -455,7 +274,7 @@ const [page, testimonials] = await Promise.all([
       justify-content: space-between;
       padding-bottom: 16px;
       margin-bottom: 12px;
-      border-bottom: 1px solid var(--byt-border);
+      border-bottom: 1px solid var(--border);
     }
     .mobile-menu-close {
       background: transparent;
@@ -466,7 +285,7 @@ const [page, testimonials] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       margin-right: -8px;
     }
     .mobile-menu-close svg {
@@ -479,12 +298,12 @@ const [page, testimonials] = await Promise.all([
       font-family: 'Manrope', sans-serif;
       font-size: 18px;
       font-weight: 700;
-      color: var(--byt-navy-deep);
-      border-bottom: 1px solid var(--byt-border);
+      color: var(--navy-deep);
+      border-bottom: 1px solid var(--border);
       transition: color 0.2s;
     }
     .mobile-menu a.mm-link:hover {
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .mobile-menu-actions {
       display: flex;
@@ -506,7 +325,7 @@ const [page, testimonials] = await Promise.all([
       right: 0;
       z-index: 99;
       background: #fff;
-      border-top: 1px solid var(--byt-border);
+      border-top: 1px solid var(--border);
       box-shadow: 0 -4px 20px rgba(10, 45, 82, 0.08);
       padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
       gap: 8px;
@@ -598,7 +417,7 @@ const [page, testimonials] = await Promise.all([
       justify-content: center;
       padding: 2rem;
       text-align: center;
-      color: var(--text-alt);
+      color: var(--white);
     }
     @media (min-width: 768px) {
       .h98-content {
@@ -672,7 +491,7 @@ const [page, testimonials] = await Promise.all([
     }
     .h98 h1 em {
       font-style: normal;
-      color: var(--byt-coral);
+      color: var(--coral);
       font-family: 'Manrope', serif;
       font-weight: 800;
     }
@@ -763,7 +582,7 @@ const [page, testimonials] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .l422-head h2 {
       margin-bottom: 1.25rem;
@@ -784,7 +603,7 @@ const [page, testimonials] = await Promise.all([
       }
     }
     .l422-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
 
     .l422-cards {
@@ -873,7 +692,7 @@ const [page, testimonials] = await Promise.all([
       flex-direction: column;
       justify-content: flex-end;
       padding: 1.5rem;
-      color: var(--text-alt);
+      color: var(--white);
     }
     @media (min-width: 768px) {
       .l422-card-content {
@@ -981,7 +800,7 @@ const [page, testimonials] = await Promise.all([
    Layout374 — bento (1 large + 4 small)
 ══════════════════════════════════════════════════════════════════ */
     #l374-section {
-      background: var(--byt-off-white);
+      background: var(--off-white);
     }
     .l374-head {
       margin-bottom: 48px;
@@ -1020,7 +839,7 @@ const [page, testimonials] = await Promise.all([
       }
     }
     .l374-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
     .l374-eyebrow {
       display: inline-block;
@@ -1030,7 +849,7 @@ const [page, testimonials] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
 
     .l374-grid {
@@ -1057,7 +876,7 @@ const [page, testimonials] = await Promise.all([
     .l374-card {
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--border-primary);
+      border: 1px solid var(--border);
       background: #fff;
       border-radius: var(--r-card);
       overflow: hidden;
@@ -1067,7 +886,7 @@ const [page, testimonials] = await Promise.all([
         transform 0.2s;
     }
     .l374-card:hover {
-      border-color: var(--byt-coral);
+      border-color: var(--coral);
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
@@ -1119,7 +938,7 @@ const [page, testimonials] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .l374-card h3 {
       margin-bottom: 0.5rem;
@@ -1155,7 +974,7 @@ const [page, testimonials] = await Promise.all([
       }
     }
     .l374-card .body p {
-      color: var(--byt-slate);
+      color: var(--slate);
       line-height: 1.55;
     }
     .l374-card .actions {
@@ -1182,7 +1001,7 @@ const [page, testimonials] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
       min-height: 96px;
       position: relative;
       overflow: hidden;
@@ -1258,7 +1077,7 @@ const [page, testimonials] = await Promise.all([
       }
     }
     .l506-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
     .l506-head .eyebrow {
       display: inline-block;
@@ -1268,13 +1087,13 @@ const [page, testimonials] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
 
     .l506-tabs {
       position: relative;
       background: #fff;
-      border: 1px solid var(--border-primary);
+      border: 1px solid var(--border);
       border-radius: var(--r-card);
       overflow: hidden;
       box-shadow: var(--shadow-sm);
@@ -1298,13 +1117,13 @@ const [page, testimonials] = await Promise.all([
       letter-spacing: -0.01em;
       background: #fff;
       border: 0;
-      border-top: 1px solid var(--border-primary);
+      border-top: 1px solid var(--border);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      color: var(--byt-mist);
+      color: var(--mist);
       transition:
         background-color 0.15s,
         color 0.15s;
@@ -1323,8 +1142,8 @@ const [page, testimonials] = await Promise.all([
       transition: transform 0.25s;
     }
     .l506-trigger.active {
-      color: var(--text-primary);
-      background: var(--bg-primary);
+      color: var(--navy-deep);
+      background: var(--white);
       position: relative;
     }
     .l506-trigger.active::after {
@@ -1338,12 +1157,12 @@ const [page, testimonials] = await Promise.all([
       transform: translateY(-50%);
       width: 3px;
       height: 60%;
-      background: var(--byt-coral);
+      background: var(--coral);
       border-radius: 0 2px 2px 0;
     }
     .l506-trigger:hover:not(.active) {
-      color: var(--byt-navy);
-      background: var(--byt-off-white);
+      color: var(--navy);
+      background: var(--off-white);
     }
 
     /* Interleave panels with triggers via flex order — order = 2*index, trigger = 2*index - 1 */
@@ -1381,7 +1200,7 @@ const [page, testimonials] = await Promise.all([
     .l506-panel {
       display: none;
       background: #fff;
-      border-top: 1px solid var(--border-primary);
+      border-top: 1px solid var(--border);
     }
     .l506-panel.active {
       display: block;
@@ -1402,7 +1221,7 @@ const [page, testimonials] = await Promise.all([
       flex-direction: column;
       justify-content: center;
       padding: 1.5rem 1.25rem 1.75rem;
-      background: var(--byt-off-white);
+      background: var(--off-white);
     }
     .l506-icon {
       margin-bottom: 1rem;
@@ -1411,8 +1230,8 @@ const [page, testimonials] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--byt-coral-light);
-      color: var(--byt-coral);
+      background: var(--coral-light);
+      color: var(--coral);
       border-radius: 12px;
     }
     .l506-panel h2 {
@@ -1423,7 +1242,7 @@ const [page, testimonials] = await Promise.all([
       letter-spacing: -0.01em;
     }
     .l506-panel p {
-      color: var(--byt-slate);
+      color: var(--slate);
       line-height: 1.55;
     }
     .l506-panel-actions {
@@ -1445,8 +1264,8 @@ const [page, testimonials] = await Promise.all([
         display: flex;
         flex-direction: column;
         grid-area: list;
-        border-left: 1px solid var(--border-primary);
-        background: var(--byt-off-white);
+        border-left: 1px solid var(--border);
+        background: var(--off-white);
       }
       .l506-trigger,
       .l506-panel {
@@ -1455,7 +1274,7 @@ const [page, testimonials] = await Promise.all([
       .l506-trigger {
         grid-area: auto;
         border: 0;
-        border-bottom: 1px solid var(--border-primary);
+        border-bottom: 1px solid var(--border);
         padding: 1.5rem 2rem;
         font-size: 1.125rem;
         background: transparent;
@@ -1509,7 +1328,7 @@ const [page, testimonials] = await Promise.all([
    Testimonial37 — logo+testimonial bento
 ══════════════════════════════════════════════════════════════════ */
     .t37-section {
-      background: var(--byt-cream);
+      background: var(--cream);
     }
     .t37-head {
       margin-bottom: 48px;
@@ -1549,7 +1368,7 @@ const [page, testimonials] = await Promise.all([
       }
     }
     .t37-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
 
     .t37-grid {
@@ -1576,7 +1395,7 @@ const [page, testimonials] = await Promise.all([
     }
 
     .t37-cell {
-      border: 1px solid var(--border-primary);
+      border: 1px solid var(--border);
       background: #fff;
       display: flex;
       padding: 1.5rem;
@@ -1606,8 +1425,8 @@ const [page, testimonials] = await Promise.all([
       align-items: center;
       justify-content: center;
       gap: 0.875rem;
-      background: linear-gradient(135deg, #fff 0%, var(--byt-off-white) 100%);
-      border: 1px solid var(--byt-border);
+      background: linear-gradient(135deg, #fff 0%, var(--off-white) 100%);
+      border: 1px solid var(--border);
       text-align: center;
     }
     .t37-badge-mark {
@@ -1617,8 +1436,8 @@ const [page, testimonials] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--byt-coral-light);
-      color: var(--byt-coral);
+      background: var(--coral-light);
+      color: var(--coral);
     }
     .t37-badge-mark svg {
       width: 1.5rem;
@@ -1630,14 +1449,14 @@ const [page, testimonials] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
       margin-bottom: 0.25rem;
     }
     .t37-badge-label {
       font-family: 'Manrope', sans-serif;
       font-size: 1.0625rem;
       font-weight: 700;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       letter-spacing: -0.01em;
       line-height: 1.2;
     }
@@ -1656,7 +1475,7 @@ const [page, testimonials] = await Promise.all([
       margin-bottom: 1.25rem;
       display: flex;
       gap: 0.125rem;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     @media (min-width: 768px) {
       .t37-stars {
@@ -1671,7 +1490,7 @@ const [page, testimonials] = await Promise.all([
       font-family: 'Manrope', sans-serif;
       font-size: 1.0625rem;
       line-height: 1.55;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-weight: 500;
     }
     @media (min-width: 768px) {
@@ -1702,7 +1521,7 @@ const [page, testimonials] = await Promise.all([
       min-height: 3rem;
       border-radius: 9999px;
       object-fit: cover;
-      background: linear-gradient(135deg, var(--byt-navy-deep), var(--byt-navy));
+      background: linear-gradient(135deg, var(--navy-deep), var(--navy));
     }
     @media (min-width: 768px) {
       .t37-avatar {
@@ -1722,11 +1541,11 @@ const [page, testimonials] = await Promise.all([
     }
     .t37-meta .name {
       font-weight: 700;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-family: 'Manrope', sans-serif;
     }
     .t37-meta div p:last-child {
-      color: var(--byt-slate);
+      color: var(--slate);
       font-size: 0.875rem;
     }
 
@@ -1743,7 +1562,7 @@ const [page, testimonials] = await Promise.all([
    Cta36 — two-column CTA
 ══════════════════════════════════════════════════════════════════ */
     .cta36-section {
-      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
       position: relative;
       overflow: hidden;
     }
@@ -1793,7 +1612,7 @@ const [page, testimonials] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--byt-coral);
+      background: var(--coral);
       color: #fff;
       border-radius: 50%;
     }
@@ -1855,7 +1674,7 @@ const [page, testimonials] = await Promise.all([
    FOOTER — synced with Homepage.html
 ══════════════════════════════════════════════════════════════════ */
     .footer {
-      background: var(--byt-navy-deep);
+      background: var(--navy-deep);
       color: rgba(255, 255, 255, 0.68);
       padding: 4rem 5% 2rem;
     }
@@ -2111,7 +1930,7 @@ const [page, testimonials] = await Promise.all([
       </div>
 
       <div class="l422-cards">
-        <a href="/careers/" class="l422-card is-default">
+        <a href="#" class="l422-card is-default">
           <div class="l422-card-img">
             <img
               src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80"
@@ -2129,13 +1948,13 @@ const [page, testimonials] = await Promise.all([
                   }
                 </p>
                 <div class="l422-card-cta">
-                  <a href="/careers/" class="btn-link alt"
+                  <button class="btn-link alt"
                     >Apply Now <svg
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
-                    ></a
+                    ></button
                   >
                 </div>
               </div>
@@ -2148,20 +1967,20 @@ const [page, testimonials] = await Promise.all([
                 }
               </p>
               <div class="l422-card-cta">
-                <a href="/careers/" class="btn-link alt"
+                <button class="btn-link alt"
                   >Apply Now <svg
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
-                  ></a
+                  ></button
                 >
               </div>
             </div>
           </div>
         </a>
 
-        <a href="/careers/" class="l422-card">
+        <a href="#" class="l422-card">
           <div class="l422-card-img">
             <img
               src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80"
@@ -2179,13 +1998,13 @@ const [page, testimonials] = await Promise.all([
                   }
                 </p>
                 <div class="l422-card-cta">
-                  <a href="/careers/" class="btn-link alt"
+                  <button class="btn-link alt"
                     >Apply Now <svg
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
-                    ></a
+                    ></button
                   >
                 </div>
               </div>
@@ -2198,13 +2017,13 @@ const [page, testimonials] = await Promise.all([
                 }
               </p>
               <div class="l422-card-cta">
-                <a href="/careers/" class="btn-link alt"
+                <button class="btn-link alt"
                   >Apply Now <svg
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg
-                  ></a
+                  ></button
                 >
               </div>
             </div>
@@ -2337,10 +2156,12 @@ const [page, testimonials] = await Promise.all([
           <div class="body">
             <div>
               <p class="tag">Clinical</p>
-              <h3>Clinical Director oversight</h3>
+              <h3>{page?.handlesItems?.[3]?.heading ?? 'Clinical Director oversight'}</h3>
               <p>
-                Peer consultation and clinical oversight from Clinical Director. You’re never
-                practicing alone.
+                {
+                  page?.handlesItems?.[3]?.body ??
+                    "Peer consultation and clinical oversight from Clinical Director. You're never practicing alone."
+                }
               </p>
             </div>
           </div>
@@ -2379,7 +2200,7 @@ const [page, testimonials] = await Promise.all([
               <p>
                 {
                   page?.handlesItems?.[4]?.body ??
-                    'We assists with Medicare &amp; Insurance enrollment and facility credentialing.'
+                    'We assists with Medicare & Insurance enrollment and facility credentialing.'
                 }
               </p>
             </div>
@@ -2444,8 +2265,7 @@ const [page, testimonials] = await Promise.all([
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg
-              >
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
             </div>
             <h2>{page?.quals?.[0]?.scope ?? 'Active Florida license'}</h2>
             <p>
@@ -2469,13 +2289,14 @@ const [page, testimonials] = await Promise.all([
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg
-              >
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
             </div>
-            <h2>Active Medicare &amp; Insurance enrollment</h2>
+            <h2>{page?.quals?.[1]?.scope ?? 'Active Medicare & Insurance enrollment'}</h2>
             <p>
-              Already enrolled, or willing to enroll. We handle all Medicare and private insurance
-              enrollment process if you’re not yet credentialed.
+              {
+                page?.quals?.[1]?.body ??
+                  "Already enrolled, or willing to enroll. We handle all Medicare and private insurance enrollment process if you're not yet credentialed."
+              }
             </p>
             <div class="l506-panel-actions">
               <a href="/careers/" class="btn btn-secondary">Apply Now</a>
@@ -2492,8 +2313,7 @@ const [page, testimonials] = await Promise.all([
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg
-              >
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
             </div>
             <h2>{page?.quals?.[2]?.scope ?? 'Clinical experience'}</h2>
             <p>
@@ -2517,8 +2337,7 @@ const [page, testimonials] = await Promise.all([
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg
-              >
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
             </div>
             <h2>{page?.quals?.[3]?.scope ?? 'Southeast Florida geography'}</h2>
             <p>
@@ -2542,8 +2361,7 @@ const [page, testimonials] = await Promise.all([
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg
-              >
+                stroke-width="2"><path d="M5 12l5 5L20 7"></path></svg>
             </div>
             <h2>{page?.quals?.[4]?.scope ?? 'HIPAA-compliant home office'}</h2>
             <p>{page?.quals?.[4]?.body ?? 'Private, secure space for sessions. Locked door.'}</p>
@@ -2640,9 +2458,10 @@ const [page, testimonials] = await Promise.all([
             >
           </div>
           <p class="t37-quote">
-            “[Provider testimonial — pending collection. Quote will speak to operational relief:
-            billing, scheduling, and referrals handled so the clinician can focus on clinical
-            work.]”
+            {
+              testimonials?.[0]?.quote ??
+                '"[Provider testimonial — pending collection. Quote will speak to operational relief: billing, scheduling, and referrals handled so the clinician can focus on clinical work.]"'
+            }
           </p>
           <div class="t37-meta">
             <div class="t37-avatar t37-avatar-init">
@@ -2683,9 +2502,10 @@ const [page, testimonials] = await Promise.all([
             >
           </div>
           <p class="t37-quote">
-            “[Provider testimonial — pending collection. Quote will speak to flexibility and matched
-            referrals: practicing on your own schedule without building a private practice from
-            scratch.]”
+            {
+              testimonials?.[1]?.quote ??
+                '"[Provider testimonial — pending collection. Quote will speak to flexibility and matched referrals: practicing on your own schedule without building a private practice from scratch.]"'
+            }
           </p>
           <div class="t37-meta">
             <div class="t37-avatar t37-avatar-init">
@@ -2757,7 +2577,7 @@ const [page, testimonials] = await Promise.all([
           <h2>{page?.ctaHeading ?? 'Ready to do the work you were trained for?'}</h2>
           <p>{page?.ctaSubhead ?? 'Application only takes 3 minutes.'}</p>
           <div class="cta36-actions">
-            <a href="/careers/" class="btn btn-primary">Apply Now</a>
+            <a href="/careers/" class="btn btn-primary">{page?.ctaCta?.label ?? 'Apply Now'}</a>
           </div>
         </div>
       </div>
