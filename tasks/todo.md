@@ -19,9 +19,51 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-08 — Phase B governance fixes: OBS-013/014, parity script, skill contradictions, missing stubs
+- **Last work:** 2026-05-08 — CSS governance docs: DEC-002, css-architecture.md, 2 runbooks, env/schema/deploy registries, design-source inventory
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## CSS Governance Docs — 2026-05-08 [x] COMPLETE 2026-05-08
+
+### Steps
+
+- [x] A. 2026-05-08 Created `docs/decision-log/DEC-002-css-single-system.md` (Igor specified DEC-001; renamed DEC-002 because DEC-001-schema-sharing.md already exists)
+- [x] B. 2026-05-08 Updated `docs/decision-log/INDEX.md` — added DEC-002 row
+- [x] C. 2026-05-08 Updated `docs/decision-log/README.md` — added DEC-002 row
+- [x] D. 2026-05-08 Created `docs/css-architecture.md`
+- [x] E. 2026-05-08 Created `docs/runbooks/RB-001-css-conflict-resolution.md`
+- [x] F. 2026-05-08 Created `docs/runbooks/RB-002-new-page-build.md`
+- [x] G. 2026-05-08 Updated `docs/runbooks/README.md` — added RB-001 and RB-002 to index
+- [x] H. 2026-05-08 Created `docs/env-registry.md`
+- [x] I. 2026-05-08 Created `docs/sanity-schema-registry.md`
+- [x] J. 2026-05-08 Created `docs/deploy-runbook.md`
+- [x] K. 2026-05-08 Created `docs/design-source-inventory.md`
+
+### Session Review — 2026-05-08 (CSS governance docs)
+
+**What was built:** 7 new docs + 3 updated index files. Documentation only — no code changes.
+
+**Files created (7):**
+
+- `docs/decision-log/DEC-002-css-single-system.md` — approved decision: System A canonical, System B eliminated
+- `docs/css-architecture.md` — full selector ownership contract, build-method CSS handling guide, token reference
+- `docs/runbooks/RB-001-css-conflict-resolution.md` — step-by-step CSS conflict identification and resolution
+- `docs/runbooks/RB-002-new-page-build.md` — end-to-end new page build procedure (9 steps)
+- `docs/env-registry.md` — all env vars, purpose, scope, SANITY_DEPLOY_TOKEN pattern
+- `docs/sanity-schema-registry.md` — all 23 schemas (11 singletons, 6 documents, 6 objects) with consuming pages and seed status
+- `docs/design-source-inventory.md` — all design-source files, page mapping, build status, Providers/Communities marked pending DEC-002 rebuild
+
+**Files updated (3):**
+
+- `docs/decision-log/INDEX.md` — DEC-002 row added
+- `docs/decision-log/README.md` — DEC-002 row added
+- `docs/runbooks/README.md` — RB-001 and RB-002 rows added
+
+**Flag:** Igor specified filename `DEC-001-css-single-system.md` but `DEC-001-schema-sharing.md` already existed. Created as `DEC-002-css-single-system.md`.
+
+**How verified:** All files present — `ls docs/decision-log/`, `ls docs/runbooks/`, `ls docs/*.md` confirmed.
 
 ---
 
