@@ -543,7 +543,7 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 
 ---
 
-## DEC-002 Phase 2 — Rebuild providers.astro (System A) — 2026-05-08 [~] IN PROGRESS
+## DEC-002 Phase 2 — Rebuild providers.astro (System A) — 2026-05-08 [x] COMPLETE 2026-05-08
 
 ### Steps
 
@@ -554,9 +554,9 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 - [x] E. 2026-05-08 Deleted public test files (providers-check.html, communities-check.html)
 - [x] F. 2026-05-08 Fixed parity check script: added ^[[:space:]]\* anchors + scoped body rule detection
 - [x] G. 2026-05-08 Parity check PASS. Build PASS (17 routes, 0 errors).
-- [ ] H. Commit Phase 2
-- [ ] I. Push + wait for Igor visual confirmation
-- [ ] J. Rebuild communities.astro (Phase 2B) — pending Igor confirmation of providers.astro
+- [x] H. 2026-05-08 Commit Phase 2 (f9bfc38)
+- [x] I. 2026-05-08 Push to main — Cloudflare auto-deploy triggered
+- [x] J. 2026-05-08 Rebuild communities.astro (Phase 3) — System B → System A complete
 
 ### Session Review — 2026-05-08 (DEC-002 Phase 2 — providers.astro)
 
@@ -594,3 +594,31 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 - `apps/web/public/` — deleted providers-check.html + communities-check.html
 
 **How verified:** `scripts/design-parity-check.sh` EXIT 0. `pnpm --filter web build` PASS (17 routes, 0 errors) — 2026-05-08.
+
+---
+
+### Session Review — 2026-05-08 (DEC-002 Phase 3 — communities.astro)
+
+**What was built:** Complete rebuild of `apps/web/src/pages/communities.astro` from System B → System A. Same method as providers.astro: full style block replaced with System A CSS from design-source/pages/Communities.html, global.css-owned selectors stripped, Sanity wiring preserved from prior version with CTA button→anchor fixes.
+
+**Key changes from prior System B version:**
+
+- Style block: stripped `:root`, bare `body`, bare `h1-h6`, `.btn` base, `.btn-primary/.btn-secondary/.btn-secondary-alt/.btn-link` variants — all owned by global.css
+- `.btn:hover{transform:translateY(-1px)}` kept as page-specific hover lift
+- Nav/mobile-menu/mobile-cta-bar CSS kept in page `<style is:global>` (established System A pattern)
+- Hero CTA: `<button onclick="openModal('refer')">` → `<a href={page?.heroCta?.href ?? '#cta'}>`
+- Cta25 primary CTA: `<button onclick="openModal('refer')">` → `<a href={page?.ctaCta?.href ?? '/'}>`
+- All Sanity wiring (processSteps, handlesItems, conditionsData[0-10], serviceArea, siteSettings phone) preserved verbatim from prior version
+- L505 tab script preserved verbatim with `is:inline`
+- No `--byt-*` tokens anywhere in file
+
+**Parity check warnings (benign):**
+
+- `__cf_email__` — Cloudflare email obfuscation infrastructure class, not a design class
+- `btn-coral` — present in design-source nav/footer HTML (provided by BaseLayout, not in page content)
+
+**Files changed (1):**
+
+- `apps/web/src/pages/communities.astro` — complete rebuild
+
+**How verified:** `scripts/design-parity-check.sh` EXIT 0 (0 errors, 2 benign warnings). `pnpm --filter web build` PASS (17 routes, 0 errors) — 2026-05-08.

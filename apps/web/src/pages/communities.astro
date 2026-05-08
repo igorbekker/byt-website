@@ -88,106 +88,6 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     'Licensed therapists on-site at your facility weekly. Medicare billing, scheduling, and documentation handled. Zero cost to your facility.'}
 >
   <style is:global>
-    /* ════════════════════════════════════════════════════════════════════
-   Faithful HTML port of the 6 uploaded Relume components for /communities/:
-   Navbar1 → Header84 → Layout521 → Layout16 → Layout526 → Layout192 → Cta25 → Footer3
-   STRUCTURE/UX is unchanged from Relume. Only the visual tokens
-   (colors, fonts, headings) have been swapped to the BYT design system.
-════════════════════════════════════════════════════════════════════ */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      /* BYT design system tokens */
-      --byt-navy: #104378;
-      --byt-navy-deep: #0a2d52;
-      --byt-navy-footer: #2d2d52;
-      --byt-coral: #e05555;
-      --byt-coral-hover: #c94444;
-      --byt-coral-light: #fce8e8;
-      --byt-sage: #9caf88;
-      --byt-sage-light: #e8efe3;
-      --byt-slate: #5a7194;
-      --byt-mist: #8fa3bf;
-      --byt-border: #e4eaf0;
-      --byt-off-white: #f5f7fa;
-      --byt-cream: #fffcf0;
-
-      /* Radii */
-      --r-btn: 6px;
-      --r-card: 12px;
-      --r-pill: 999px;
-
-      /* Shadows */
-      --shadow-sm: 0 1px 2px rgba(16, 67, 120, 0.04);
-      --shadow-md: 0 4px 12px rgba(16, 67, 120, 0.08);
-      --shadow-lg: 0 8px 24px rgba(16, 67, 120, 0.1);
-
-      /* Relume token names mapped to BYT palette */
-      --bg-primary: #ffffff;
-      --bg-alt: #f5f7fa;
-      --text-primary: #0a2d52;
-      --text-alt: #ffffff;
-      --border-primary: #e4eaf0;
-    }
-
-    html {
-      -webkit-text-size-adjust: 100%;
-    }
-    body {
-      font-family:
-        'Montserrat',
-        system-ui,
-        -apple-system,
-        Segoe UI,
-        Roboto,
-        sans-serif;
-      color: var(--byt-slate);
-      background: var(--bg-primary);
-      line-height: 1.5;
-      font-size: 16px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-family:
-        'Manrope',
-        system-ui,
-        -apple-system,
-        sans-serif;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      color: var(--byt-navy-deep);
-    }
-    img {
-      display: block;
-      max-width: 100%;
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-    button {
-      font: inherit;
-      cursor: pointer;
-      border: 0;
-      background: transparent;
-      color: inherit;
-    }
-    ul {
-      list-style: none;
-    }
-
     /* Container */
     .container {
       width: 100%;
@@ -240,87 +140,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
     }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border: 1.5px solid var(--byt-navy);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      line-height: 1.2;
-      letter-spacing: 0.01em;
-      background: var(--bg-primary);
-      color: var(--byt-navy-deep);
-      border-radius: var(--r-btn);
-      transition:
-        background-color 0.15s,
-        color 0.15s,
-        border-color 0.15s,
-        box-shadow 0.15s,
-        transform 0.15s;
-      white-space: nowrap;
-    }
     .btn:hover {
       transform: translateY(-1px);
-    }
-    .btn-primary {
-      background: var(--byt-coral);
-      color: #fff;
-      border-color: var(--byt-coral);
-    }
-    .btn-primary:hover {
-      background: var(--byt-coral-hover);
-      border-color: var(--byt-coral-hover);
-      box-shadow: var(--shadow-md);
-    }
-    .btn-secondary {
-      background: transparent;
-      color: var(--byt-navy-deep);
-      border-color: var(--byt-navy-deep);
-    }
-    .btn-secondary:hover {
-      background: var(--byt-navy-deep);
-      color: #fff;
-    }
-    .btn-secondary-alt {
-      background: transparent;
-      color: #fff;
-      border-color: #fff;
-    }
-    .btn-secondary-alt:hover {
-      background: #fff;
-      color: var(--byt-navy-deep);
-    }
-    .btn-link {
-      background: transparent;
-      border: 0;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      color: var(--byt-coral);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      transition: color 0.2s;
-    }
-    .btn-link:hover {
-      color: var(--byt-coral-hover);
-    }
-    .btn-link.alt {
-      color: #fff;
-    }
-    .btn-link.alt:hover {
-      color: rgba(255, 255, 255, 0.8);
-    }
-    .btn-link svg {
-      width: 1em;
-      height: 1em;
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -335,7 +156,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: flex;
       align-items: center;
       padding: 0 5%;
-      border-bottom: 1px solid var(--byt-border);
+      border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
     .nav-inner {
@@ -362,7 +183,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       gap: 2rem;
     }
     .nav-links a {
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-size: 15px;
       font-weight: 500;
       transition: color 0.2s;
@@ -370,7 +191,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .nav-actions {
       display: flex;
@@ -378,7 +199,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       align-items: center;
     }
     .nav-cta {
-      background: var(--byt-coral);
+      background: var(--coral);
       color: #fff;
       padding: 12px 20px;
       border-radius: var(--r-btn);
@@ -388,10 +209,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       transition: background-color 0.2s;
     }
     .nav-cta:hover {
-      background: var(--byt-coral-hover);
+      background: var(--coral-hover);
     }
     .nav-cta-secondary {
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-size: 14px;
       font-weight: 500;
       padding: 12px 20px;
@@ -399,7 +220,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       transition: color 0.2s;
     }
     .nav-cta-secondary:hover {
-      color: var(--byt-coral);
+      color: var(--coral);
     }
 
     .nav-hamburger {
@@ -413,7 +234,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       justify-content: center;
       padding: 0;
       margin-right: -8px;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
     }
     .nav-hamburger svg {
       width: 26px;
@@ -459,7 +280,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       justify-content: space-between;
       padding-bottom: 16px;
       margin-bottom: 12px;
-      border-bottom: 1px solid var(--byt-border);
+      border-bottom: 1px solid var(--border);
     }
     .mobile-menu-close {
       background: transparent;
@@ -470,7 +291,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       margin-right: -8px;
     }
     .mobile-menu-close svg {
@@ -483,12 +304,12 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-family: 'Manrope', sans-serif;
       font-size: 18px;
       font-weight: 700;
-      color: var(--byt-navy-deep);
-      border-bottom: 1px solid var(--byt-border);
+      color: var(--navy-deep);
+      border-bottom: 1px solid var(--border);
       transition: color 0.2s;
     }
     .mobile-menu a.mm-link:hover {
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .mobile-menu-actions {
       display: flex;
@@ -509,7 +330,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       right: 0;
       z-index: 99;
       background: #fff;
-      border-top: 1px solid var(--byt-border);
+      border-top: 1px solid var(--border);
       box-shadow: 0 -4px 20px rgba(10, 45, 82, 0.08);
       padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
       gap: 8px;
@@ -632,7 +453,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
 
     .h84 h1 {
@@ -655,7 +476,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
 
     .h84 .lede {
-      color: var(--byt-slate);
+      color: var(--slate);
       font-size: 1.0625rem;
       line-height: 1.55;
       max-width: 34rem;
@@ -684,7 +505,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: flex;
       align-items: stretch;
       justify-content: stretch;
-      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
       min-height: 320px;
     }
     @media (min-width: 1024px) {
@@ -710,7 +531,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
    Layout521 — 4-step process with image-bg dark cards
 ══════════════════════════════════════════════════════════════════ */
     #l521-section {
-      background: var(--byt-off-white);
+      background: var(--off-white);
     }
 
     .l521-head {
@@ -738,7 +559,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .l521-head h2 {
       margin-bottom: 1.25rem;
@@ -759,7 +580,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       }
     }
     .l521-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
 
     .l521-grid {
@@ -934,7 +755,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .l16 h2 {
       margin-bottom: 1.25rem;
@@ -956,7 +777,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
     .l16 .lede {
       margin-bottom: 1.25rem;
-      color: var(--byt-slate);
+      color: var(--slate);
     }
     @media (min-width: 768px) {
       .l16 .lede {
@@ -977,7 +798,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: flex;
       align-items: flex-start;
       gap: 0.875rem;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       font-weight: 500;
       line-height: 1.45;
     }
@@ -986,8 +807,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       width: 1.5rem;
       height: 1.5rem;
       border-radius: 9999px;
-      background: var(--byt-coral-light);
-      color: var(--byt-coral);
+      background: var(--coral-light);
+      color: var(--coral);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1003,7 +824,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       border-radius: var(--r-card);
       overflow: hidden;
       box-shadow: var(--shadow-md);
-      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
       aspect-ratio: 4/5;
     }
     @media (min-width: 768px) {
@@ -1024,7 +845,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
    Layout526 — 3 columns × 2 rows = 6 dark photo bento cards
 ══════════════════════════════════════════════════════════════════ */
     #l526-section {
-      background: var(--byt-off-white);
+      background: var(--off-white);
     }
 
     .l526-head {
@@ -1052,7 +873,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .l526-head h2 {
       margin-bottom: 1.25rem;
@@ -1073,7 +894,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       }
     }
     .l526-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
 
     .l526-cols {
@@ -1264,7 +1085,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       }
     }
     .l505-head .text-md {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
     .l505-head .eyebrow {
       display: inline-block;
@@ -1274,14 +1095,14 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
 
     .l505-tabs {
       position: relative;
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--border-primary);
+      border: 1px solid var(--border);
       background: #fff;
       border-radius: var(--r-card);
       overflow: hidden;
@@ -1299,11 +1120,11 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       position: relative;
       display: flex;
       flex-direction: column;
-      background: var(--byt-off-white);
+      background: var(--off-white);
     }
     @media (min-width: 768px) {
       .l505-list {
-        border-right: 1px solid var(--border-primary);
+        border-right: 1px solid var(--border);
         grid-row: 1/-1;
         grid-column: 1/2;
       }
@@ -1316,9 +1137,9 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 700;
       letter-spacing: -0.01em;
       border: 0;
-      border-bottom: 1px solid var(--border-primary);
+      border-bottom: 1px solid var(--border);
       background: transparent;
-      color: var(--text-primary);
+      color: var(--navy-deep);
       cursor: pointer;
       transition:
         background-color 0.15s,
@@ -1335,7 +1156,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
     .l505-trigger.active {
       background: #fff;
-      color: var(--text-primary);
+      color: var(--navy-deep);
       position: relative;
     }
     .l505-trigger.active::before {
@@ -1346,14 +1167,14 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       transform: translateY(-50%);
       width: 3px;
       height: 60%;
-      background: var(--byt-coral);
+      background: var(--coral);
       border-radius: 0 2px 2px 0;
     }
     .l505-trigger:not(.active) {
-      color: var(--byt-mist);
+      color: var(--mist);
     }
     .l505-trigger:hover:not(.active) {
-      color: var(--byt-navy);
+      color: var(--navy);
       background: #fff;
     }
 
@@ -1361,7 +1182,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: none;
       animation: l505fade 0.25s ease;
       background: #fff;
-      border-top: 1px solid var(--border-primary);
+      border-top: 1px solid var(--border);
     }
     .l505-panel.active {
       display: block;
@@ -1410,8 +1231,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--byt-coral-light);
-      color: var(--byt-coral);
+      background: var(--coral-light);
+      color: var(--coral);
       border-radius: 12px;
     }
     @media (min-width: 768px) {
@@ -1425,7 +1246,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -0.01em;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
     }
     @media (min-width: 768px) {
       .l505-panel h3 {
@@ -1439,7 +1260,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       }
     }
     .l505-panel p {
-      color: var(--byt-slate);
+      color: var(--slate);
       line-height: 1.55;
     }
 
@@ -1485,7 +1306,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       overflow: hidden;
       box-shadow: var(--shadow-md);
       aspect-ratio: 4/5;
-      background: var(--byt-off-white);
+      background: var(--off-white);
     }
     @media (min-width: 768px) {
       .l192-image {
@@ -1514,7 +1335,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--byt-coral);
+      color: var(--coral);
     }
     .l192 h2 {
       margin-bottom: 1.25rem;
@@ -1535,7 +1356,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       }
     }
     .l192 .lede {
-      color: var(--byt-slate);
+      color: var(--slate);
     }
     @media (min-width: 768px) {
       .l192 .lede {
@@ -1553,25 +1374,25 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       display: inline-flex;
       align-items: center;
       padding: 0.4rem 0.9rem;
-      border: 1.5px solid var(--byt-border);
+      border: 1.5px solid var(--border);
       border-radius: var(--r-pill);
       font-family: 'Montserrat', sans-serif;
       font-size: 0.8125rem;
       font-weight: 600;
-      color: var(--byt-navy-deep);
+      color: var(--navy-deep);
       background: #fff;
       letter-spacing: 0.01em;
     }
     .l192-pill.coral {
-      border-color: var(--byt-coral);
-      color: var(--byt-coral);
+      border-color: var(--coral);
+      color: var(--coral);
     }
 
     /* ════════════════════════════════════════════════════════════════
    Cta25 — centered closer
 ══════════════════════════════════════════════════════════════════ */
     .cta25-section {
-      background: linear-gradient(135deg, var(--byt-navy-deep) 0%, var(--byt-navy) 100%);
+      background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
       position: relative;
       overflow: hidden;
     }
@@ -1643,7 +1464,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
    FOOTER — synced
 ══════════════════════════════════════════════════════════════════ */
     .footer {
-      background: var(--byt-navy-deep);
+      background: var(--navy-deep);
       color: rgba(255, 255, 255, 0.68);
       padding: 4rem 5% 2rem;
     }
@@ -1716,7 +1537,6 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       color: #fff;
     }
 
-    /* ── Footer Newsletter (column variant) ───────── */
     .footer-newsletter-pitch {
       font-size: 14px;
       line-height: 1.55;
@@ -1772,7 +1592,6 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       white-space: nowrap;
       border: 0;
     }
-    /* ──────────────────────────────────────────────── */
 
     .footer-divider {
       height: 1px;
@@ -1857,8 +1676,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             }
           </p>
           <div class="h84-actions">
-            <button class="btn btn-primary" onclick="openModal('refer')"
-              >{page?.heroCta?.label ?? 'Refer a Resident'}</button
+            <a href={page?.heroCta?.href ?? '#cta'} class="btn btn-primary"
+              >{page?.heroCta?.label ?? 'Refer a Resident'}</a
             >
           </div>
         </div>
@@ -2282,7 +2101,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linejoin="round"
                 ><path
                   d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[0]?.heading ?? 'Depression'}</h3>
             <p>
@@ -2306,7 +2126,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 2"></path></svg>
+                ><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 2"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[1]?.heading ?? 'Anxiety disorders'}</h3>
             <p>
@@ -2329,7 +2150,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
-                stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"></path></svg>
+                stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[2]?.heading ?? 'Anger management'}</h3>
             <p>
@@ -2354,7 +2176,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 ><path d="M9 11l3 3L22 4"></path><path
-                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[3]?.heading ?? 'Behavior problems'}</h3>
             <p>
@@ -2379,7 +2202,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[4]?.heading ?? 'Grief &amp; loss'}</h3>
             <p>
@@ -2407,7 +2231,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                   d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24A2.5 2.5 0 0 1 7 4.5a2.5 2.5 0 0 1 2.5-2.5z"
                 ></path><path
                   d="M14.5 2a2.5 2.5 0 0 0-2.5 2.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24A2.5 2.5 0 0 0 17 4.5 2.5 2.5 0 0 0 14.5 2z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[5]?.heading ?? 'Memory loss'}</h3>
             <p>
@@ -2430,7 +2255,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
-                stroke-linejoin="round"><path d="M3 12h18M12 3v18"></path></svg>
+                stroke-linejoin="round"><path d="M3 12h18M12 3v18"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[6]?.heading ?? 'Transition &amp; adjustment disorder'}</h3>
             <p>
@@ -2456,7 +2282,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linejoin="round"
                 ><path
                   d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7z"
-                ></path></svg>
+                ></path></svg
+              >
             </div>
             <h3>{conditionsData?.[7]?.heading ?? 'Post-surgical mental health'}</h3>
             <p>
@@ -2480,7 +2307,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[8]?.heading ?? 'Post-traumatic stress'}</h3>
             <p>
@@ -2503,7 +2331,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
-                stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[9]?.heading ?? 'Chronic disease coping'}</h3>
             <p>
@@ -2528,7 +2357,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 ><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"
-                ></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg>
+                ></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg
+              >
             </div>
             <h3>{conditionsData?.[10]?.heading ?? 'Drug &amp; alcohol dependency'}</h3>
             <p>
@@ -2592,10 +2422,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 <path d="M 380 500 q 14 -6 28 0 t 28 0"></path>
               </g>
 
-              <!-- Land mass: simplified silhouette of the 4-county region.
-                 Coastline runs along the right; inland ragged edge on the left. -->
+              <!-- Land mass -->
               <g filter="url(#m192-shadow)">
-                <!-- Outer land shape -->
                 <path
                   d="
                 M 30 30
@@ -2674,7 +2502,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                   stroke-width="1"
                   opacity=".95"></path>
 
-                <!-- Lake Okeechobee (sits where Palm Beach / Martin / Okeechobee meet) -->
+                <!-- Lake Okeechobee -->
                 <ellipse
                   cx="115"
                   cy="200"
@@ -2712,22 +2540,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
 
               <!-- Service pins (coral) -->
               <g>
-                <!-- Okeechobee pin -->
                 <g transform="translate(195 50)">
                   <circle r="14" fill="#E05555" opacity=".18"></circle>
                   <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"></circle>
                 </g>
-                <!-- St. Lucie pin -->
                 <g transform="translate(255 105)">
                   <circle r="14" fill="#E05555" opacity=".18"></circle>
                   <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"></circle>
                 </g>
-                <!-- Martin pin -->
                 <g transform="translate(245 180)">
                   <circle r="14" fill="#E05555" opacity=".18"></circle>
                   <circle r="6" fill="#E05555" stroke="#fff" stroke-width="2"></circle>
                 </g>
-                <!-- Palm Beach pin (larger - largest service area) -->
                 <g transform="translate(260 380)">
                   <circle r="20" fill="#E05555" opacity=".18"></circle>
                   <circle r="14" fill="#E05555" opacity=".30"></circle>
@@ -2814,11 +2638,11 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           }
         </p>
         <div class="cta25-actions">
-          <button class="btn btn-primary" onclick="openModal('refer')"
-            >{page?.ctaCta?.label ?? 'Refer a Resident'}</button
+          <a href={page?.ctaCta?.href ?? '/'} class="btn btn-primary"
+            >{page?.ctaCta?.label ?? 'Refer a Resident'}</a
           >
           <a
-            href="tel:{siteSettings?.phone?.replace(/\D/g,'') ?? '7549990011'}"
+            href={`tel:${(siteSettings?.phone ?? '7549990011').replace(/\D/g, '')}`}
             class="btn btn-secondary-alt">Call {siteSettings?.phone ?? '754-999-0011'}</a
           >
         </div>
