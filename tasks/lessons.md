@@ -111,6 +111,22 @@ If a bug persists after a verified rebuild+redeploy, and the user-reported warni
 
 **How to apply:** Before diagnosing a "fix didn't work" report, compare the exact warning/error text from the user against what the current code would produce. If they don't match (e.g., user sees `Available: Name` but code emits `Available: Name (slug)`), the browser has old code. Report this immediately and instruct a hard-refresh. Do not write additional code fixes.
 
+### 17. During investigation — state only what the code proves, never speculate about what the user sees
+
+When investigating a visual bug without being able to render the page, stick to provable facts: what the CSS says, what the HTML says, what the git diff shows. Do not write sentences like "the user might see X" or "this probably looks wrong because Y" unless Y is directly readable from the code.
+
+**Why:** Igor corrected this directly ("very facts. dont guess") during the nav CTA investigation — CC was speculating about visual experience when the answer should have come from reading the code.
+
+**How to apply:** Every claim in an investigation report must be traceable to a specific file, line, or git output. If a visual difference cannot be proven from the code, say "cannot determine from static analysis" and stop there.
+
+### 18. Only change what the instruction explicitly names — do not scale adjacent/container dimensions
+
+When given an instruction to change a specific value (e.g., "multiply the logo by 1.5"), change only that value. Do not change parent container dimensions, wrapper heights, or related elements unless explicitly asked.
+
+**Why:** Igor instructed "Header logo — 1.5x current size. Check the current width/height value in Nav.astro and multiply by 1.5." CC also scaled the nav bar height (84px → 126px) "proportionally to contain logo" — this was not in the instruction. The nav height change was the root cause of the nav CTA visual issue reported sessions later.
+
+**How to apply:** Read the instruction literally. If it says "the logo," change the logo img dimensions only. If the container also needs to change, that is a separate decision that requires explicit confirmation.
+
 ---
 
 ## Incident Log

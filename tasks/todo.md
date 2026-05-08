@@ -32,7 +32,7 @@
 - [x] A. 2026-05-08 Identified: `index.astro` lines 1782–1817 have duplicate `<div class="mobile-menu" id="mobileMenu">` inside `<main>` — leftover from design-source HTML not removed when Nav.astro took over
 - [x] B. 2026-05-08 Removed lines 1782–1817 from `apps/web/src/pages/index.astro`
 - [x] C. 2026-05-08 Build PASS (17 routes). dist/client/index.html: 1 `id="mobileMenu"` ✓
-- [ ] D. Commit (after /pre)
+- [x] D. 2026-05-08 Committed 1e189b6, pushed to main, Cloudflare auto-deploy triggered
 
 ### Issue 1 — Patients layout (INVESTIGATION INCONCLUSIVE)
 
@@ -73,6 +73,42 @@
 
 - `pnpm --filter web build` — PASS (17 routes, 0 errors) — 2026-05-08
 - `dist/client/index.html`: `id="mobileMenu"` count = 1 ✓
+
+## Page Fix — /providers/ layout mismatch — 2026-05-08
+
+### Root cause
+
+The full rewrite in commit `10794c3` (2026-05-06) copied CSS verbatim from `design-source/pages/Providers.html`. This reverted the `9b505c2` fix that bumped `.btn-secondary` to `.btn.btn-secondary` to win the cascade against `global.css`.
+
+**Cascade conflict:**
+
+- `providers@_@astro.css` (loads first): `.btn-secondary { border-color: var(--byt-navy-deep) }` — specificity 0,1,0
+- `BaseLayout.css` (loads second): `.btn { border: 1.5px solid transparent }` — specificity 0,1,0, later → wins
+
+Result: all `.btn btn-secondary` "Apply Now" buttons had transparent/invisible borders.
+
+**Fix:** Changed `.btn-secondary` → `.btn.btn-secondary` (specificity 0,2,0 > 0,1,0) so border-color survives the cascade.
+
+### Steps
+
+- [x] A. 2026-05-08 Identified root cause via cascade analysis of compiled CSS vs global.css
+- [x] B. 2026-05-08 Applied fix: `.btn-secondary` → `.btn.btn-secondary` in providers.astro CSS (lines 271–279)
+- [x] C. 2026-05-08 Build PASS. Parity check exit 0. Compiled CSS verified: `.btn.btn-secondary{border-color:var(--byt-navy-deep)}` ✓
+- [ ] D. Commit, push to main, confirm live
+
+### Session Review — 2026-05-08 (providers fix)
+
+**What was built:** Fixed invisible `.btn-secondary` borders on `/providers/` by bumping CSS specificity from 0,1,0 to 0,2,0.
+
+**How verified:** Build passes, parity check exits 0, compiled CSS contains `.btn.btn-secondary` rule.
+
+**Root cause:** `10794c3` full rewrite copied verbatim from design-source and reverted the `9b505c2` cascade fix. One-line fix: `.btn-secondary` → `.btn.btn-secondary`.
+
+**Files changed:** `apps/web/src/pages/providers.astro` (2 lines changed in CSS block)
+
+**Quality gate:** `pnpm --filter web build` PASS. `scripts/design-parity-check.sh` exit 0.
+
+---
 
 ## Blog Pages — 2026-05-06 [x] COMPLETE 2026-05-07
 
