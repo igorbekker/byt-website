@@ -18,6 +18,8 @@ declare -A PAGE_MAP=(
   ["about.astro"]="About.html"
   ["careers.astro"]="Careers.html"
   ["contact.astro"]="Contact.html"
+  ["privacy.astro"]="Privacy Policy.html"
+  ["terms.astro"]="Terms and Conditions.html"
 )
 
 # Get staged .astro page files
@@ -57,7 +59,8 @@ for ASTRO_FILE in $STAGED; do
   fi
 
   # CHECK 2: All Sanity variables have ?? fallbacks
-  NO_FALLBACK=$(grep -Pn '\{[a-zA-Z]+Page\.\w+(?!\s*\?\?)' "$ASTRO_FILE" 2>/dev/null | grep -v '??' | head -20 || true)
+  # Matches: {xyzPage.field}, {page.field}, {settings.field}, {siteSettings.field}, {siteConfig.field}
+  NO_FALLBACK=$(grep -Pn '\{(?:[a-zA-Z]+[Pp]age|page|settings|siteSettings|siteConfig)\.[a-zA-Z_]\w*' "$ASTRO_FILE" 2>/dev/null | grep -v '??' | head -20 || true)
   if [ -n "$NO_FALLBACK" ]; then
     echo "❌ FAIL: $REL_PATH has Sanity variables without ?? fallbacks:"
     echo "$NO_FALLBACK"

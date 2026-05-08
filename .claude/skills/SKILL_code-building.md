@@ -9,6 +9,7 @@ Domain knowledge for the builder agent. Coding standards, patterns, and constrai
 This is the ONLY approved method for building page .astro files. The component decomposition approach was attempted and failed catastrophically — see docs/BYT_Process_Learnings_v4_AstroSanity.docx.
 
 ### The Method
+
 1. Open `design-source/pages/[Page].html`
 2. Copy everything between `<body>` and `</body>`
 3. Paste into the corresponding `.astro` page inside Layout component
@@ -17,6 +18,7 @@ This is the ONLY approved method for building page .astro files. The component d
 6. Replace hardcoded text/image values with Sanity variables using `??` fallback pattern
 
 ### Sanity Variable Pattern
+
 ```html
 <!-- Text nodes -->
 <h2>{page.heading ?? "Original Text From Source"}</h2>
@@ -31,6 +33,7 @@ This is the ONLY approved method for building page .astro files. The component d
 ```
 
 ### DO NOT — EVER
+
 - Use `.map()` loops to replace HTML structure with Sanity arrays — this was the #1 failure (OBS-012)
 - Rename CSS classes from the source HTML
 - Move styles from inline/page `<style>` to global.css
@@ -41,7 +44,9 @@ This is the ONLY approved method for building page .astro files. The component d
 - Rewrite scripts instead of copying them verbatim
 
 ### Pre-Commit Checklist (Page .astro files)
+
 Before committing any page .astro file:
+
 - [ ] Section count matches design-source
 - [ ] No `.map()` loops in the file
 - [ ] All Sanity variables have `??` fallbacks
@@ -51,6 +56,7 @@ Before committing any page .astro file:
 - [ ] `scripts/design-parity-check.sh` passes
 
 ### When Debugging
+
 Copy the HTML file to `public/`, deploy as static, verify it renders. If it does, every deviation in the .astro version is something you introduced. Diff to find your bug.
 
 ---
@@ -95,7 +101,7 @@ Create `OBS-XXX-<short-name>.md`, stop, report to AGENT_pm.
 - Props typed via `interface Props`
 - No fetching outside frontmatter unless via `lib/` helper
 - No inline styles unless dynamically computed
-- No unscoped `<style is:global>` unless intentional
+- No unscoped `<style is:global>` unless intentional. Exception: page .astro files always use `<style is:global>` per the Raw HTML Injection method. This IS the intentional case.
 
 ## Sanity Schemas
 
@@ -114,15 +120,15 @@ Create `OBS-XXX-<short-name>.md`, stop, report to AGENT_pm.
 
 ## File Naming
 
-| Type | Convention | Example |
-|---|---|---|
-| Astro components | PascalCase, `.astro` | `BlogCard.astro` |
-| Astro pages | kebab-case, `.astro` | `about.astro` |
-| TypeScript modules | kebab-case, `.ts` | `sanity-image.ts` |
-| TypeScript types | PascalCase, `.types.ts` | `Post.types.ts` |
-| Sanity schemas | camelCase, `.ts` | `siteSettings.ts` |
-| CSS files | kebab-case, `.css` | `global.css` |
-| Scripts | kebab-case, `.sh` or `.ts` | `backup-sanity.sh` |
+| Type               | Convention                 | Example            |
+| ------------------ | -------------------------- | ------------------ |
+| Astro components   | PascalCase, `.astro`       | `BlogCard.astro`   |
+| Astro pages        | kebab-case, `.astro`       | `about.astro`      |
+| TypeScript modules | kebab-case, `.ts`          | `sanity-image.ts`  |
+| TypeScript types   | PascalCase, `.types.ts`    | `Post.types.ts`    |
+| Sanity schemas     | camelCase, `.ts`           | `siteSettings.ts`  |
+| CSS files          | kebab-case, `.css`         | `global.css`       |
+| Scripts            | kebab-case, `.sh` or `.ts` | `backup-sanity.sh` |
 
 Forbidden: spaces, uppercase extensions, version suffixes, leading underscores, paths > 100 chars.
 Folders: always kebab-case, lowercase, plural for collections.

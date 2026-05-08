@@ -17,11 +17,11 @@ When information conflicts, top wins:
 
 ## Delegation Matrix
 
-| Agent | Trigger |
-|---|---|
-| `@AGENT_builder` | Any code change |
-| `@AGENT_docs` | Documentation, logs, runbooks, README |
-| `@AGENT_qa` | After code changes, before merges, before deploys |
+| Agent            | Trigger                                           |
+| ---------------- | ------------------------------------------------- |
+| `@AGENT_builder` | Any code change                                   |
+| `@AGENT_docs`    | Documentation, logs, runbooks, README             |
+| `@AGENT_qa`      | After code changes, before merges, before deploys |
 
 ### Sequencing
 
@@ -37,32 +37,36 @@ When information conflicts, top wins:
 
 Each phase produces something deployable. No phase starts without prior gate cleared.
 
-| Phase | Name | Gate |
-|---|---|---|
-| 0 | Foundations & Accounts | All credentials active |
-| 1 | Repository Bootstrap | First PR merges, CI green, CLAUDE.md present |
-| 2 | Design Source Ingestion | Styleguide matches design-source |
-| 3 | Sanity Studio | Editors can log in, edit, see changes |
-| 4 | Static Pages (CMS-Driven) | Each page: parity + Lighthouse 95+ + a11y + Igor approval |
-| 5 | Forms | Submissions arrive, honeypot works |
-| 6 | Blog System | Real post published unassisted, schema validates |
-| 7 | Pre-Launch Hardening | Full checklist 100% complete |
-| 8 | Cutover | Site live on getbetteryou.com |
+| Phase | Name                      | Gate                                                      |
+| ----- | ------------------------- | --------------------------------------------------------- |
+| 0     | Foundations & Accounts    | All credentials active                                    |
+| 1     | Repository Bootstrap      | First PR merges, CI green, CLAUDE.md present              |
+| 2     | Design Source Ingestion   | Styleguide matches design-source                          |
+| 3     | Sanity Studio             | Editors can log in, edit, see changes                     |
+| 4     | Static Pages (CMS-Driven) | Each page: parity + Lighthouse 95+ + a11y + Igor approval |
+| 5     | Forms                     | Submissions arrive, honeypot works                        |
+| 6     | Blog System               | Real post published unassisted, schema validates          |
+| 7     | Pre-Launch Hardening      | Full checklist 100% complete                              |
+| 8     | Cutover                   | Site live on getbetteryou.com                             |
 
 ---
 
 ## Quality Gates
 
 ### Pre-Commit
+
 - Prettier format, ESLint, TypeScript type-check, Astro check
 
 ### Pre-Push
+
 - Full type-check, full build (`pnpm --filter web build`)
 
 ### PR CI
+
 - Lint + type-check + build (web + studio), preview deploy, Lighthouse CI, Igor approves
 
 ### Post-Deploy Smoke
+
 - Homepage loads, all Tier 1 pages load, Studio at `/admin`, contact form posts, sitemap reachable
 - Failure of any: rollback, log obstacle.
 
@@ -71,11 +75,14 @@ Each phase produces something deployable. No phase starts without prior gate cle
 ## Backup Protocol
 
 ### Code
+
 - Primary: GitHub (the repo)
 - Secondary: daily Git bundle to `/backups/git/`
 
 ### Sanity Content
+
 - Daily export to `/backups/sanity/`
 
 ### Pre-Risky-Operation
-Before schema migrations, major dependency bumps: run `./scripts/backup-pre-op.sh "<description>"`
+
+Before schema migrations, major dependency bumps: run `./scripts/backup-git.sh` and `./scripts/backup-sanity.sh` to snapshot the current state.

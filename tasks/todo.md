@@ -19,8 +19,8 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-08 — Fix two broken pages: duplicate mobile menu removed from index.astro (Issue 2); patients layout investigation (Issue 1)
-- **Current issues:** Under investigation
+- **Last work:** 2026-05-08 — Phase B governance fixes: OBS-013/014, parity script, skill contradictions, missing stubs
+- **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
 ---
@@ -94,7 +94,7 @@ Result: all `.btn btn-secondary` "Apply Now" buttons had transparent/invisible b
 - [x] A. 2026-05-08 Identified root cause via cascade analysis of compiled CSS vs global.css
 - [x] B. 2026-05-08 Applied fix: `.btn-secondary` → `.btn.btn-secondary` in providers.astro CSS (lines 271–279)
 - [x] C. 2026-05-08 Build PASS. Parity check exit 0. Compiled CSS verified: `.btn.btn-secondary{border-color:var(--byt-navy-deep)}` ✓
-- [ ] D. Commit, push to main, confirm live
+- [x] D. 2026-05-08 Committed 6544979, pushed to main, deployed
 
 ### Session Review — 2026-05-08 (providers fix)
 
@@ -107,6 +107,52 @@ Result: all `.btn btn-secondary` "Apply Now" buttons had transparent/invisible b
 **Files changed:** `apps/web/src/pages/providers.astro` (2 lines changed in CSS block)
 
 **Quality gate:** `pnpm --filter web build` PASS. `scripts/design-parity-check.sh` exit 0.
+
+---
+
+## Phase B Governance Fixes — 2026-05-08 [x] COMPLETE 2026-05-08
+
+### Steps
+
+- [x] A. 2026-05-08 Created `docs/runbooks/README.md` stub (directory existed, only .gitkeep)
+- [x] B. 2026-05-08 Created `docs/decision-log/INDEX.md` (mirrors README index, lists DEC-001 accurately)
+- [x] C. 2026-05-08 Created `docs/obstacle-log/OBS-013-design-source-modified.md` (P1, resolved)
+- [x] D. 2026-05-08 Created `docs/obstacle-log/OBS-014-false-parity-claim.md` (P2, resolved)
+- [x] E. 2026-05-08 Updated `docs/obstacle-log/INDEX.md`: added OBS-013/014 rows, total 12→14, P1 5→6, P2 3→4
+- [x] F. 2026-05-08 Fixed `SKILL_code-building.md`: added `<style is:global>` exception note to Astro Components section
+- [x] G. 2026-05-08 Fixed `scripts/design-parity-check.sh` PAGE_MAP: added privacy.astro and terms.astro
+- [x] H. 2026-05-08 Fixed `scripts/design-parity-check.sh` Sanity fallback regex: broadened from `{xyzPage.field}` only to also match `{page.field}`, `{settings.field}`, `{siteSettings.field}`, `{siteConfig.field}`
+- [x] I. 2026-05-08 Fixed `SKILL_project-management.md`: replaced dead `backup-pre-op.sh` reference with actual scripts
+- [x] J. 2026-05-08 Marked todo.md providers fix step D complete (commit 6544979 had been done but not marked)
+
+### Session Review — 2026-05-08 (Phase B governance fixes)
+
+**What was built:** Documentation and script-only fixes. No page .astro changes.
+
+**Files created (4):**
+
+- `docs/runbooks/README.md` — stub with empty index table
+- `docs/decision-log/INDEX.md` — mirrors decision-log README index (DEC-001 listed)
+- `docs/obstacle-log/OBS-013-design-source-modified.md` — P1 resolved, 2026-05-04
+- `docs/obstacle-log/OBS-014-false-parity-claim.md` — P2 resolved, 2026-05-05
+
+**Files edited (5):**
+
+- `docs/obstacle-log/INDEX.md` — OBS-013/014 rows added, totals updated
+- `.claude/skills/SKILL_code-building.md` — `<style is:global>` contradiction resolved
+- `.claude/skills/SKILL_project-management.md` — dead `backup-pre-op.sh` reference replaced
+- `scripts/design-parity-check.sh` — PAGE_MAP: +privacy.astro, +terms.astro; CHECK 2 regex broadened
+- `tasks/todo.md` — providers fix step D marked complete; this review
+
+**How verified:**
+
+- `bash -n scripts/design-parity-check.sh` — syntax OK
+- No build required (no .astro or .ts changes)
+
+**Issues discovered during execution:**
+
+- `docs/decision-log/` and `docs/runbooks/` already existed (not missing as reported). Created INDEX.md and README.md as planned, adjusted content to reflect actual state (DEC-001 already present).
+- `docs/obstacle-log/README.md` has its own index table that only goes to OBS-007 — out of sync with INDEX.md (which goes to OBS-012, now 014). Not in scope of this task; flagged for future cleanup.
 
 ---
 
