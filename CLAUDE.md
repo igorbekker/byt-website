@@ -23,22 +23,29 @@ This is the ONLY approved method for building page .astro files. No exceptions.
 
 4. **Never rename classes, move styles to global.css, restructure DOM, change semantic elements, or extract sections into components.**
 
-5. **Sanity variables replace ONLY individual text strings and image src values.** The pattern:
+5. **When copying `<style>` blocks from design-source: strip all shared selectors that `global.css` owns.** See `docs/css-architecture.md` for the complete list. Keep only page-specific selectors.
+
+6. **No `--byt-*` prefixed tokens permitted in any `.astro` file.** All tokens use unprefixed System A names (e.g. `--navy`, not `--byt-navy`).
+
+7. **Sanity variables replace ONLY individual text strings and image src values.** The pattern:
+
    ```
    {patientsPage.heroHeading ?? "Care that meets you where you are"}
    ```
+
    Every Sanity variable MUST have a `??` fallback to the original hardcoded value from the source HTML.
 
-6. **NEVER replace HTML structure with Sanity `.map()` loops.** The HTML cards, tabs, tracks, and grids stay hardcoded from the source file. Only the text inside them gets a Sanity variable. If you need to make an array editable, index into it by position:
+8. **NEVER replace HTML structure with Sanity `.map()` loops.** The HTML cards, tabs, tracks, and grids stay hardcoded from the source file. Only the text inside them gets a Sanity variable. If you need to make an array editable, index into it by position:
+
    ```
    {cards?.[0]?.heading ?? "Original Heading"}
    ```
 
-7. **One page at a time.** Build, deploy, wait for Igor's visual confirmation. Do not start the next page until the current one is confirmed.
+9. **One page at a time.** Build, deploy, wait for Igor's visual confirmation. Do not start the next page until the current one is confirmed.
 
-8. **Audit global.css** for specificity conflicts against page-level styles before every commit.
+10. **Audit global.css** for specificity conflicts against page-level styles before every commit.
 
-9. **Reference:** `docs/BYT_Process_Learnings_v4_AstroSanity.docx`
+11. **Reference:** `docs/BYT_Process_Learnings_v4_AstroSanity.docx`
 
 ---
 
@@ -168,6 +175,8 @@ NEVER commit credentials. NEVER hardcode API keys in source files.
 Credentials live in `.env` or `.env.local` (gitignored).
 Template with key names (no values) committed as `.env.example`.
 NEVER ask the user for credentials. If `.env.local` is missing, say so and stop.
+
+See `docs/env-registry.md` for all environment variables and their purpose. `SANITY_DEPLOY_TOKEN` must be used for Studio deploys — see `docs/deploy-runbook.md`.
 
 ---
 

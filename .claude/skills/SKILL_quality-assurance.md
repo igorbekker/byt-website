@@ -6,16 +6,16 @@ Domain knowledge for the QA agent. Performance targets, validation criteria, dia
 
 ## Performance Targets
 
-| Metric | Target |
-|---|---|
-| Lighthouse Performance | 95+ |
-| Lighthouse Accessibility | 95+ |
-| Lighthouse Best Practices | 95+ |
-| Lighthouse SEO | 95+ |
-| LCP | < 2.5s |
-| CLS | < 0.1 |
-| INP | < 200ms |
-| Per-page JS shipped | 0KB (Astro default) |
+| Metric                    | Target              |
+| ------------------------- | ------------------- |
+| Lighthouse Performance    | 95+                 |
+| Lighthouse Accessibility  | 95+                 |
+| Lighthouse Best Practices | 95+                 |
+| Lighthouse SEO            | 95+                 |
+| LCP                       | < 2.5s              |
+| CLS                       | < 0.1               |
+| INP                       | < 200ms             |
+| Per-page JS shipped       | 0KB (Astro default) |
 
 ---
 
@@ -24,7 +24,7 @@ Domain knowledge for the QA agent. Performance targets, validation criteria, dia
 Compare live/preview against `design-source/` HTML files:
 
 - Layout structure (section order, grid columns, flex direction)
-- Colors match CSS tokens — no rogue hex values
+- Colors reference tokens defined in `global.css`. No `--byt-*` prefixed tokens. No rogue hex values.
 - Typography (family, weight, size, line-height, letter-spacing)
 - Spacing (padding, margin, gap)
 - Component states (hover, active, focus)
@@ -57,12 +57,12 @@ Compare live/preview against `design-source/` HTML files:
 
 ## SEO Schema Requirements
 
-| Page Type | Required JSON-LD |
-|---|---|
-| Homepage | MedicalOrganization + LocalBusiness |
+| Page Type  | Required JSON-LD                              |
+| ---------- | --------------------------------------------- |
+| Homepage   | MedicalOrganization + LocalBusiness           |
 | Blog posts | Article + Author + Publisher + BreadcrumbList |
-| FAQ page | FAQPage |
-| All pages | BreadcrumbList |
+| FAQ page   | FAQPage                                       |
+| All pages  | BreadcrumbList                                |
 
 ### Validation
 
@@ -79,35 +79,35 @@ Check: valid JSON, required fields present, no hardcoded values, consistent `@id
 
 Every QA pass must verify no hardcoded values leaked:
 
-| Type | Scan for |
-|---|---|
+| Type   | Scan for                                             |
+| ------ | ---------------------------------------------------- |
 | Colors | Hex values outside `global.css` and `design-source/` |
-| Phone | Any phone literal in templates |
-| Email | Any email literal in templates |
-| URLs | Site URL not from env var |
-| Copy | Inline strings that should come from Sanity |
-| Images | Direct URLs that should be Sanity assets |
-| Forms | Formspree URLs not from env vars |
+| Phone  | Any phone literal in templates                       |
+| Email  | Any email literal in templates                       |
+| URLs   | Site URL not from env var                            |
+| Copy   | Inline strings that should come from Sanity          |
+| Images | Direct URLs that should be Sanity assets             |
+| Forms  | Formspree URLs not from env vars                     |
 
 ---
 
 ## Lighthouse Diagnostic Guide
 
-| Symptom | Likely Cause | Where to Look |
-|---|---|---|
-| LCP > 2.5s | Hero image, font loading, render-blocking | `<Image>` component, font links |
-| CLS > 0.1 | Images without dimensions, dynamic injection | `<img>` tags, client-side JS |
-| INP > 200ms | JS execution | Should be ~0 for Astro static |
-| a11y < 95 | Missing alt, contrast, heading gaps | axe-core, WCAG checklist |
-| SEO < 95 | Missing meta, schema, sitemap | `<head>`, JSON-LD, `robots.txt` |
+| Symptom     | Likely Cause                                 | Where to Look                   |
+| ----------- | -------------------------------------------- | ------------------------------- |
+| LCP > 2.5s  | Hero image, font loading, render-blocking    | `<Image>` component, font links |
+| CLS > 0.1   | Images without dimensions, dynamic injection | `<img>` tags, client-side JS    |
+| INP > 200ms | JS execution                                 | Should be ~0 for Astro static   |
+| a11y < 95   | Missing alt, contrast, heading gaps          | axe-core, WCAG checklist        |
+| SEO < 95    | Missing meta, schema, sitemap                | `<head>`, JSON-LD, `robots.txt` |
 
 ---
 
 ## Severity Reference
 
-| Level | Definition | Action |
-|---|---|---|
-| P0 | Site broken, data loss | Block deploy. Notify immediately. |
-| P1 | Visible bug, broken UX, schema fail | Block merge. Must fix. |
-| P2 | Performance/a11y, minor visual | Fix this sprint. |
-| P3 | Cosmetic | Backlog. |
+| Level | Definition                          | Action                            |
+| ----- | ----------------------------------- | --------------------------------- |
+| P0    | Site broken, data loss              | Block deploy. Notify immediately. |
+| P1    | Visible bug, broken UX, schema fail | Block merge. Must fix.            |
+| P2    | Performance/a11y, minor visual      | Fix this sprint.                  |
+| P3    | Cosmetic                            | Backlog.                          |

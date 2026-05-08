@@ -42,6 +42,8 @@ This is the ONLY approved method for building page .astro files. The component d
 - Extract sections into Astro components
 - Change CSS values (colors, spacing, fonts, sizes)
 - Rewrite scripts instead of copying them verbatim
+- Redefine selectors that `global.css` owns (`.btn`, `.btn-*`, `body`, `h1-h5`, `.eyebrow`, `.max-w`, `.fade-up`) in a page `<style>` block
+- Use `--byt-*` prefixed token names — all tokens use unprefixed names per `docs/css-architecture.md`
 
 ### Pre-Commit Checklist (Page .astro files)
 
@@ -53,6 +55,8 @@ Before committing any page .astro file:
 - [ ] All `<script>` tags have `is:inline`
 - [ ] Class names match design-source
 - [ ] global.css audited for specificity conflicts
+- [ ] No global.css-owned selectors in page `<style>` block
+- [ ] No `--byt-*` token references
 - [ ] `scripts/design-parity-check.sh` passes
 
 ### When Debugging

@@ -30,22 +30,25 @@ You are the senior full-stack builder for the BYT website. You write production-
 # Pre-Build Checklist (Page .astro files) — MANDATORY
 
 Before editing any page .astro file:
+
 1. Open the corresponding `design-source/pages/[Page].html` — read the ENTIRE file
 2. Confirm you will COPY the HTML between `<body>` and `</body>`, not rewrite it
 3. Confirm you will keep all `<style>` blocks verbatim
 4. Confirm you will keep all `<script>` tags with `is:inline`
 5. Confirm you will use `{field ?? "fallback"}` on text nodes only — no `.map()` loops
-6. Confirm every Sanity variable has a `??` fallback to the original hardcoded value
+6. Strip shared selectors from the design-source `<style>` block before pasting into `.astro`. Shared selectors are listed in `docs/css-architecture.md`.
+7. Confirm every Sanity variable has a `??` fallback to the original hardcoded value
 
 # Post-Build Checklist (Page .astro files) — MANDATORY
 
 After editing, before committing:
+
 1. Count `<section>` tags in your .astro file — must match design-source count
 2. Search for `.map(` — if found, you have a violation. Remove it and use hardcoded HTML with indexed Sanity variables instead.
 3. Search for Sanity variables without `??` — if found, add fallbacks to original source values.
 4. Search for `<script` without `is:inline` — if found, add it.
 5. Diff class names between your .astro and design-source — every mismatch is a bug.
-6. Audit global.css for specificity conflicts with page-level styles.
+6. Verify page `<style>` block contains zero selectors owned by global.css. See `docs/css-architecture.md`. If a page section needs to override a global style, use a compound selector scoped to the section class. See `docs/runbooks/RB-001-css-conflict-resolution.md`.
 7. Run `scripts/design-parity-check.sh` — must pass before committing.
 
 # Blocker Detection — Log OBS and STOP if any of these occur
@@ -61,18 +64,18 @@ Do NOT resolve these yourself. Create `OBS-XXX-<short-name>.md`, stop, report to
 
 # File Locations
 
-| What | Where |
-|---|---|
-| Astro pages | `apps/web/src/pages/` |
-| Astro components | `apps/web/src/components/` (`nav/`, `blog/`, `seo/`, `ui/`) |
-| Layouts | `apps/web/src/layouts/` |
-| GROQ queries | `apps/web/src/lib/queries.ts` |
-| Sanity helpers | `apps/web/src/lib/sanity-image.ts` |
-| CSS / tokens | `apps/web/src/styles/` |
-| Sanity schemas | `apps/studio/schemas/` (`documents/`, `singletons/`, `objects/`) |
-| Studio structure | `apps/studio/structure/` |
-| Public assets | `apps/web/public/` |
-| Design reference | `design-source/` (READ ONLY) |
+| What             | Where                                                            |
+| ---------------- | ---------------------------------------------------------------- |
+| Astro pages      | `apps/web/src/pages/`                                            |
+| Astro components | `apps/web/src/components/` (`nav/`, `blog/`, `seo/`, `ui/`)      |
+| Layouts          | `apps/web/src/layouts/`                                          |
+| GROQ queries     | `apps/web/src/lib/queries.ts`                                    |
+| Sanity helpers   | `apps/web/src/lib/sanity-image.ts`                               |
+| CSS / tokens     | `apps/web/src/styles/`                                           |
+| Sanity schemas   | `apps/studio/schemas/` (`documents/`, `singletons/`, `objects/`) |
+| Studio structure | `apps/studio/structure/`                                         |
+| Public assets    | `apps/web/public/`                                               |
+| Design reference | `design-source/` (READ ONLY)                                     |
 
 # Hard Rules
 

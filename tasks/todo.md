@@ -19,9 +19,76 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-08 — CSS governance docs: DEC-002, css-architecture.md, 2 runbooks, env/schema/deploy registries, design-source inventory
+- **Last work:** 2026-05-08 — Token registry + governance file alignment: token-registry.md, CLAUDE.md, agents, skills, parity script, lessons
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Token Registry — 2026-05-08 [x] COMPLETE 2026-05-08
+
+### Steps
+
+- [x] A. 2026-05-08 Read `apps/web/src/styles/global.css` — extracted all 35 System A `:root` tokens
+- [x] B. 2026-05-08 Read all 16 files in `design-source/pages/` — grepped `var(--token)` consumption per token
+- [x] C. 2026-05-08 Created `docs/token-registry.md` — token table, orphan/eliminated sections, summary
+
+### Session Review — 2026-05-08 (Token Registry)
+
+**What was built:** `docs/token-registry.md` — complete registry of all 35 System A CSS tokens defined in `global.css :root`. Documentation only.
+
+**Contents:**
+
+- Token table: Token | Value | Referenced by (design-source/pages) | Status
+- 22 Active tokens consumed via `var()` in System A pages
+- 7 Orphaned — base styles only (not in design-source pages but used in global.css element rules: body, h1–h5, .btn)
+- 4 Orphaned — unused (not in design-source pages and not in global.css element rules — blog Astro components only)
+- 13 Eliminated `--byt-*` tokens (Providers/Communities System B, per DEC-002)
+- Page abbreviations, status key, notes on --navy-footer anomaly and typography tokens
+
+**Key findings:**
+
+- `--navy-footer` defined in nearly every page's `:root` block but NEVER consumed via `var()` — footer uses `var(--navy-deep)` instead
+- Typography tokens (`--font-body`, `--font-heading`) not consumed via `var()` in design-source — pages use literal font-family values
+- Providers/Communities (System B) DO use some System A tokens (`--coral`, `--r-btn`, `--r-card`, `--r-pill`, `--shadow-*`, `--t-hover`) — mixed usage, full conversion required per DEC-002
+
+**How verified:** Grep methodology: `var(--token)` pattern (not just definition) to distinguish usage from declaration.
+
+---
+
+## Governance File Alignment — 2026-05-08 [x] COMPLETE 2026-05-08
+
+### Steps
+
+- [x] A. 2026-05-08 Updated CLAUDE.md — rules 5+6 (strip shared selectors, no --byt-\*), renumbered 7–11, env var section added
+- [x] B. 2026-05-08 Updated AGENT_builder.md — Pre-Build step 6 added (strip shared selectors), Post-Build step 6 replaced
+- [x] C. 2026-05-08 Updated AGENT_qa.md — Visual Parity: global.css selector grep check added
+- [x] D. 2026-05-08 Updated SKILL_code-building.md — DO NOT list +2, Pre-Commit Checklist +2
+- [x] E. 2026-05-08 Updated SKILL_quality-assurance.md — Colors line updated
+- [x] F. 2026-05-08 Updated design-parity-check.sh — CHECK 7 (cascade conflict) + CHECK 8 (--byt-\* tokens)
+- [x] G. 2026-05-08 Updated tasks/lessons.md — consolidated 18 → 14; new Lesson 4 (CSS single owner)
+- [x] H. 2026-05-08 Verified AGENT_docs.md + SKILL_documentation.md — all 3 README.md files exist, references accurate, no changes needed
+
+### Session Review — 2026-05-08 (Governance file alignment)
+
+**What was built:** 8 governance files updated to align with DEC-002 CSS architecture. No code changes to Astro pages.
+
+**Files updated (8):**
+
+- `CLAUDE.md` — Build Method: added rules 5 (strip shared selectors) + 6 (no --byt-\*), renumbered 7–11; Environment section: added env-registry.md + deploy-runbook.md references
+- `.claude/agents/AGENT_builder.md` — Pre-Build step 6 (strip shared selectors before paste); Post-Build step 6 (verify zero owned selectors, with RB-001 link)
+- `.claude/agents/AGENT_qa.md` — Visual Parity: grep check for bare global.css-owned selectors
+- `.claude/skills/SKILL_code-building.md` — DO NOT: +2 rules (no owned selector redefinition, no --byt-\*); Pre-Commit: +2 checks
+- `.claude/skills/SKILL_quality-assurance.md` — Colors line updated to include --byt-\* prohibition
+- `scripts/design-parity-check.sh` — CHECK 7: HARD FAIL on global.css-owned selectors in page style block; CHECK 8: HARD FAIL on --byt-\* tokens
+- `tasks/lessons.md` — consolidated 18 → 14 (merged 5+6+7, 9+10+11, absorbed 8 into new Lesson 4); new Lesson 4 is CSS single owner rule
+
+**Files verified, no changes needed (2):**
+
+- `.claude/agents/AGENT_docs.md` — docs/decision-log/README.md, docs/obstacle-log/README.md, docs/runbooks/README.md all exist ✓
+- `.claude/skills/SKILL_documentation.md` — no specific file path references, format-only guidance, no stale refs
+
+**How verified:** Script syntax OK (`bash -n`). Lesson count = 14. Build run pending.
 
 ---
 

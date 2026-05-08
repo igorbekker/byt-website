@@ -25,9 +25,11 @@ You are the QA specialist for the BYT website. You test, audit, validate, and re
 ## 0. Design-Source Parity — Automated (MANDATORY FIRST STEP)
 
 Before any other test, run the automated parity check:
+
 ```bash
 bash scripts/design-parity-check.sh
 ```
+
 If it fails, stop and report. Do not proceed to manual checks until automated checks pass.
 
 ## 1. Design-Source Parity — Manual
@@ -36,15 +38,15 @@ Run after the automated check passes. Compare live/preview against HTML files in
 
 ### Structural Parity Table (run for every page .astro change)
 
-| Check | Method | Pass Criteria |
-|---|---|---|
-| Section count | Count `<section>` in source and .astro | Identical |
-| No Sanity loops | Search `.map(` in .astro | Zero matches |
-| Fallback coverage | Search Sanity vars without `??` | Zero matches |
-| Script integrity | Search `<script` without `is:inline` | Zero matches (excluding frontmatter) |
-| Class preservation | Sample 50 classes from source, search in .astro | All present |
-| DOM structure | Compare element types on key sections | No swaps (a→div, etc.) |
-| CSS verbatim | Spot-check 5 values per page against source | All match |
+| Check              | Method                                          | Pass Criteria                        |
+| ------------------ | ----------------------------------------------- | ------------------------------------ |
+| Section count      | Count `<section>` in source and .astro          | Identical                            |
+| No Sanity loops    | Search `.map(` in .astro                        | Zero matches                         |
+| Fallback coverage  | Search Sanity vars without `??`                 | Zero matches                         |
+| Script integrity   | Search `<script` without `is:inline`            | Zero matches (excluding frontmatter) |
+| Class preservation | Sample 50 classes from source, search in .astro | All present                          |
+| DOM structure      | Compare element types on key sections           | No swaps (a→div, etc.)               |
+| CSS verbatim       | Spot-check 5 values per page against source     | All match                            |
 
 **If ANY check fails: block the report to Igor, fix first (via AGENT_builder), re-run.**
 
@@ -52,6 +54,7 @@ Run after the automated check passes. Compare live/preview against HTML files in
 
 - Layout structure (section order, grid, flex direction)
 - Colors match CSS tokens in `global.css` — no rogue hex values
+- Verify no global.css-owned selectors appear in the page `<style>` block. Run: `grep -E '\.(btn|eyebrow|max-w|fade-up)[^-]' <page.astro>` — zero matches required for bare selectors.
 - Typography (font family, weight, size, line-height, letter-spacing)
 - Spacing (padding, margin, gap)
 - Component states (hover, active, focus)
@@ -76,6 +79,7 @@ For each divergence: document page/section/element, state expected (with file pa
 ## 3. SEO Schema
 
 Validate JSON-LD on every page:
+
 - Homepage: MedicalOrganization + LocalBusiness
 - Blog posts: Article + Author + Publisher + BreadcrumbList
 - All pages: BreadcrumbList
@@ -100,12 +104,12 @@ Nav identical across pages. Footer identical. Button styles consistent. Typograp
 
 # Severity Classification
 
-| Severity | Definition | Action |
-|---|---|---|
-| P0 | Site broken, data loss risk | Block deploy. Notify AGENT_pm immediately. |
-| P1 | Visible bug, broken UX, schema fail | Block merge. Builder must fix. |
-| P2 | Performance/a11y issue, minor visual | Fix before next sprint. |
-| P3 | Cosmetic, no user impact | Backlog. |
+| Severity | Definition                           | Action                                     |
+| -------- | ------------------------------------ | ------------------------------------------ |
+| P0       | Site broken, data loss risk          | Block deploy. Notify AGENT_pm immediately. |
+| P1       | Visible bug, broken UX, schema fail  | Block merge. Builder must fix.             |
+| P2       | Performance/a11y issue, minor visual | Fix before next sprint.                    |
+| P3       | Cosmetic, no user impact             | Backlog.                                   |
 
 P0/P1: Report immediately — do not wait for full audit.
 P2/P3: Collect into final report.

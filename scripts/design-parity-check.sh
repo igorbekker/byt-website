@@ -110,6 +110,31 @@ for ASTRO_FILE in $STAGED; do
     echo "⚠️  WARNING: $REL_PATH has $ASTRO_LINKS <a> tags vs $SOURCE_LINKS in source (diff: $DIFF). Check for element swaps (a→div)."
   fi
 
+  # CHECK 7: No global.css-owned selectors in page <style> block
+  # Extract <style>...</style> content and grep for owned selectors
+  STYLE_BLOCK=$(sed -n '/<style/,/<\/style>/p' "$ASTRO_FILE" 2>/dev/null || true)
+  if [ -n "$STYLE_BLOCK" ]; then
+    OWNED_HITS=$(echo "$STYLE_BLOCK" | grep -nE \
+      'body[[:space:]]*\{|h[1-5][[:space:]]*[{,]|\.btn[[:space:]]*\{|\.btn-[a-zA-Z]|\.eyebrow[[:space:]]*\{|\.max-w[[:space:]]*\{|\.fade-up[[:space:]]*\{' \
+      2>/dev/null || true)
+    if [ -n "$OWNED_HITS" ]; then
+      echo "❌ FAIL: CASCADE CONFLICT in $REL_PATH — global.css-owned selectors in page <style>:"
+      while IFS= read -r hit; do
+        echo "  CASCADE CONFLICT: $hit — owned by global.css. Remove it. See docs/css-architecture.md."
+      done <<< "$OWNED_HITS"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # CHECK 8: No --byt-* tokens anywhere in the .astro file
+  BYT_TOKENS=$(grep -n -- '--byt-' "$ASTRO_FILE" 2>/dev/null || true)
+  if [ -n "$BYT_TOKENS" ]; then
+    echo "❌ FAIL: BANNED TOKEN: --byt-* prefix found in $REL_PATH:"
+    echo "$BYT_TOKENS"
+    echo "  Use unprefixed System A tokens. See docs/css-architecture.md."
+    ERRORS=$((ERRORS + 1))
+  fi
+
   echo ""
 done
 
