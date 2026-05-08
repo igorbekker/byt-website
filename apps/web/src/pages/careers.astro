@@ -1,7 +1,7 @@
 ---
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CAREERS_PAGE_QUERY } from '../lib/queries';
+import { CAREERS_PAGE_QUERY, JOB_POSTINGS_QUERY } from '../lib/queries';
 
 interface CareersPage {
   heroHeading?: string;
@@ -12,8 +12,55 @@ interface CareersPage {
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
-const page = await sanityClient.fetch<CareersPage>(CAREERS_PAGE_QUERY);
+interface JobPosting {
+  _id: string;
+  title: string;
+  track?: string;
+  status?: string;
+  location?: string;
+  slug?: { current: string };
+  employmentType?: string;
+  aboutRole?: string;
+  duties?: string[];
+  requirements?: string[];
+  offers?: string[];
+  order?: number;
+}
+
+const [page, rawJobs] = await Promise.all([
+  sanityClient.fetch<CareersPage>(CAREERS_PAGE_QUERY),
+  sanityClient.fetch<JobPosting[]>(JOB_POSTINGS_QUERY),
+]);
+
 const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
+
+function buildBodyHtml(job: JobPosting): string {
+  const li = (items: string[] | undefined) => (items ?? []).map((i) => `<li>${i}</li>`).join('');
+  return [
+    job.aboutRole ? `<h4>About the role</h4><p>${job.aboutRole}</p>` : '',
+    job.duties?.length ? `<h4>What you'll do</h4><ul>${li(job.duties)}</ul>` : '',
+    job.requirements?.length
+      ? `<h4>What we're looking for</h4><ul>${li(job.requirements)}</ul>`
+      : '',
+    job.offers?.length ? `<h4>What we offer</h4><ul>${li(job.offers)}</ul>` : '',
+  ]
+    .filter(Boolean)
+    .join('');
+}
+
+const JOBS = (rawJobs ?? []).map((job) => ({
+  id: job.slug?.current ?? job._id,
+  title: job.title,
+  location: job.location ?? '',
+  type: job.employmentType ?? '',
+  department:
+    job.track === 'facility'
+      ? 'Clinical · On-Site'
+      : job.track === 'teletherapy'
+        ? 'Clinical · Teletherapy'
+        : '',
+  body: buildBodyHtml(job),
+}));
 ---
 
 <BaseLayout
@@ -22,256 +69,6 @@ const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
     "Join the Better You Therapy team. We're hiring licensed therapists across Florida for on-site and telehealth roles."}
 >
   <style is:global>
-    /* ════════════════════════════════════════════════
-   BETTER YOU THERAPY — Homepage
-   Design system: Better You Therapy DS
-   Clinical trust + human warmth
-════════════════════════════════════════════════ */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      /* ── DESIGN SYSTEM TOKENS ── */
-      /* Core (stable across palettes) */
-      --navy: #104378;
-      --navy-deep: #0a2d52;
-      --navy-footer: #2d2d52;
-      --white: #ffffff;
-      --off-white: #f5f7fa;
-      --cream: #fffcf0;
-      --slate: #5a7194;
-      --mist: #8fa3bf;
-      --border: #e4eaf0;
-
-      /* Warm palette (primary direction) */
-      --coral: #e05555;
-      --coral-hover: #c94444;
-      --coral-light: #fce8e8;
-      --sage: #9caf88;
-      --sage-hover: #7a9468;
-      --sage-light: #e8efe3;
-
-      /* Radii — per DS: 6px default, 12px large surfaces, 999px pills */
-      --r-btn: 6px;
-      --r-card: 12px;
-      --r-lg: 12px;
-      --r-pill: 999px;
-
-      /* Shadows — per DS */
-      --shadow-sm: 0 1px 2px rgba(16, 67, 120, 0.04);
-      --shadow-md: 0 4px 12px rgba(16, 67, 120, 0.08);
-      --shadow-lg: 0 8px 24px rgba(16, 67, 120, 0.1);
-
-      /* Motion — color transitions only, 150ms */
-      --t-hover: 150ms ease;
-
-      /* Layout */
-      --max-w: 1200px;
-      --pad-x: 64px;
-      --pad-s: 80px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      font-family:
-        'Montserrat',
-        system-ui,
-        -apple-system,
-        sans-serif;
-      color: var(--slate);
-      background: var(--white);
-      line-height: 1.55;
-      font-size: 15px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    h1,
-    h2,
-    h3,
-    h4 {
-      font-family:
-        'Manrope',
-        system-ui,
-        -apple-system,
-        sans-serif;
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.01em;
-      color: var(--navy-deep);
-      text-wrap: balance;
-    }
-    p {
-      text-wrap: pretty;
-    }
-
-    /* ── UTILITY — Eyebrow: Montserrat 600, UPPERCASE, 13px, .22em tracking (per UI-kit) ── */
-    .eyebrow {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--coral);
-    }
-    .max-w {
-      max-width: var(--max-w);
-      margin: 0 auto;
-    }
-
-    /* ── SCROLL FADE ── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(24px);
-      transition:
-        opacity 0.6s ease,
-        transform 0.6s ease;
-    }
-    .fade-up.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    /* ════════════════════════════════════════════════
-   BUTTONS
-════════════════════════════════════════════════ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 14px 24px;
-      border-radius: var(--r-btn);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      transition:
-        background-color var(--t-hover),
-        border-color var(--t-hover),
-        color var(--t-hover);
-      border: 1.5px solid transparent;
-      white-space: nowrap;
-      line-height: 1;
-    }
-    .btn-coral {
-      background: var(--coral);
-      color: #fff;
-      border-color: var(--coral);
-    }
-    .btn-coral:hover {
-      background: var(--coral-hover);
-      border-color: var(--coral-hover);
-    }
-    .btn-ink {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--navy);
-    }
-    .btn-ink:hover {
-      background: var(--navy-deep);
-      border-color: var(--navy-deep);
-    }
-    .btn-outline-white {
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-    .btn-outline-white:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: #fff;
-    }
-    .btn-outline-ink {
-      background: transparent;
-      color: var(--navy);
-      border-color: var(--navy);
-    }
-    .btn-outline-ink:hover {
-      background: var(--navy);
-      color: #fff;
-    }
-    .btn-outline-navy {
-      background: transparent;
-      color: var(--navy-deep);
-      border-color: var(--navy-deep);
-    }
-    .btn-outline-navy:hover {
-      background: var(--navy-deep);
-      color: #fff;
-    }
-    .btn-outline-coral {
-      background: transparent;
-      color: var(--coral);
-      border-color: var(--coral);
-    }
-    .btn-outline-coral:hover {
-      background: var(--coral);
-      color: #fff;
-    }
-    .btn-sage {
-      background: var(--sage);
-      color: #fff;
-      border-color: var(--sage);
-    }
-    .btn-sage:hover {
-      background: var(--sage-hover);
-      border-color: var(--sage-hover);
-    }
-    /* legacy btn classes */
-    .btn-primary {
-      background: var(--coral);
-      color: #fff;
-      border-color: var(--coral);
-    }
-    .btn-primary:hover {
-      background: var(--coral-hover);
-      border-color: var(--coral-hover);
-    }
-    .btn-outline {
-      background: transparent;
-      color: var(--navy);
-      border-color: var(--navy);
-    }
-    .btn-outline:hover {
-      background: var(--navy);
-      color: #fff;
-    }
-    .btn-white {
-      background: #fff;
-      color: var(--navy);
-      border-color: #fff;
-    }
-    .btn-white:hover {
-      background: var(--off-white);
-      border-color: var(--off-white);
-      color: var(--navy);
-    }
-    .btn-white-outline {
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.55);
-    }
-    .btn-white-outline:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: #fff;
-    }
-
     /* ════════════════════════════════════════════════
    NAVIGATION
 ════════════════════════════════════════════════ */
@@ -2454,7 +2251,7 @@ const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
     </div>
   </div>
 
-  <script is:inline>
+  <script is:inline define:vars={{ JOBS }}>
     /* eslint-disable @typescript-eslint/no-unused-vars */
     // ── BLOCK 2: Router accordion
     function activateRouterCard(idx) {
@@ -2535,151 +2332,6 @@ const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
     );
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
 
-    // ── BLOCK 6: Careers — jobs data + modal + forms
-    const JOBS = [
-      {
-        id: 'lcsw-on-site',
-        title: 'Licensed Clinical Social Worker (LCSW) — On-Site',
-        location: 'Southeast Florida',
-        type: 'Full-time · W-2 or 1099',
-        department: 'Clinical · On-Site',
-        body: `
-      <h4>About the role</h4>
-      <p>Provide weekly individual therapy to residents in our partnered assisted living and skilled nursing communities across Broward, Miami-Dade, and Palm Beach counties. You'll carry a stable caseload of 20–25 patients on a consistent weekly schedule at 2–4 facilities — no driving across the state, no scrambling for referrals.</p>
-      <h4>What you'll do</h4>
-      <ul>
-        <li>Conduct evidence-based individual therapy (CBT, ACT, supportive, trauma-informed) with older adults</li>
-        <li>Coordinate with nursing, wellness directors, and family members on treatment plans</li>
-        <li>Document sessions in our EHR — templates and admin support included</li>
-        <li>Participate in monthly clinical consultation with our team</li>
-      </ul>
-      <h4>What we're looking for</h4>
-      <ul>
-        <li>Active Florida LCSW license in good standing</li>
-        <li>2+ years of post-licensure clinical experience</li>
-        <li>Comfort working with older adults; geriatric experience preferred</li>
-        <li>Reliable transportation between facilities</li>
-      </ul>
-      <h4>What we offer</h4>
-      <ul>
-        <li>Transparent revenue split — you see the math, every cycle</li>
-        <li>Credentialing, billing, scheduling, and documentation handled for you</li>
-        <li>Sustainable caseload — we don't optimize for session volume</li>
-        <li>Health benefits and PTO available for W-2 employees</li>
-      </ul>
-    `,
-      },
-      {
-        id: 'lmhc-telehealth',
-        title: 'Licensed Mental Health Counselor (LMHC) — Telehealth',
-        location: 'Remote · Florida',
-        type: 'Full-time or Part-time',
-        department: 'Clinical · Teletherapy',
-        body: `
-      <h4>About the role</h4>
-      <p>Provide teletherapy to adults and families across Florida from your home office. Build a caseload at your own pace — we handle intake matching, insurance verification, and scheduling, so you can focus on the work in the room.</p>
-      <h4>What you'll do</h4>
-      <ul>
-        <li>Run 45-minute virtual sessions on our HIPAA-compliant platform</li>
-        <li>Treat anxiety, depression, life transitions, grief, and relationship issues</li>
-        <li>Maintain timely documentation in our EHR</li>
-        <li>Coordinate with primary care or psychiatry on request</li>
-      </ul>
-      <h4>What we're looking for</h4>
-      <ul>
-        <li>Active Florida LMHC license</li>
-        <li>1+ year of post-licensure experience</li>
-        <li>Comfortable with telehealth and modern EHR tools</li>
-        <li>Private, HIPAA-appropriate home workspace</li>
-      </ul>
-      <h4>What we offer</h4>
-      <ul>
-        <li>Steady stream of pre-screened, insurance-verified referrals</li>
-        <li>Flexible hours — set your own schedule within a defined window</li>
-        <li>Competitive per-session rate with transparent splits</li>
-        <li>Clinical consultation and peer support built in</li>
-      </ul>
-    `,
-      },
-      {
-        id: 'therapist-geriatric-onsite',
-        title: 'Licensed Therapist — Geriatric On-Site',
-        location: 'Palm Beach, Martin, St. Lucie &amp; Okeechobee counties, FL',
-        type: 'Independent Contractor · Part-time or Full-time',
-        department: 'Clinical · On-Site',
-        body: `
-      <h4>About the role</h4>
-      <p>Provide individual and group therapy to geriatric residents on-site at assisted living facilities, skilled nursing facilities, and continuing care retirement communities. You go to the facility — not the other way around. BYT provides your caseload, a state-of-the-art EHR (PsyNote), and billing specialists who handle all insurance claims with a 99% payment success rate. You focus on patients. We handle everything else.</p>
-      <h4>What you'll do</h4>
-      <ul>
-        <li>Provide individual and group therapy to geriatric residents on-site at ALFs, SNFs, and CCRCs</li>
-        <li>Conduct clinical assessments, develop treatment plans, and implement evidence-based interventions</li>
-        <li>Document patient interactions and progress in the EHR system accurately and on time</li>
-        <li>Collaborate with facility staff, medical teams, and families to ensure coordinated care</li>
-        <li>Maintain professional boundaries and ethical standards in all patient interactions</li>
-        <li>Participate in facility care team meetings as needed</li>
-      </ul>
-      <h4>What we're looking for</h4>
-      <ul>
-        <li>Active Florida license: Psychologist, LCSW, LMHC, LPC, or LMFT</li>
-        <li>Experience with geriatric populations preferred — not required</li>
-        <li>Proficiency with CBT, grief counseling, and adjustment disorder interventions is a plus</li>
-        <li>Reliable transportation to assigned facilities</li>
-        <li>Excellent communication and active listening skills</li>
-        <li>Ability to work independently and manage a flexible caseload</li>
-      </ul>
-      <h4>What we offer</h4>
-      <ul>
-        <li>Meaningful work: direct impact on the mental health and dignity of older adults</li>
-        <li>Caseload provided — no marketing, no client acquisition, no cold outreach</li>
-        <li>Zero administrative burden: billing, insurance, and documentation support handled by BYT</li>
-        <li>Flexible schedule: part-time or full-time, appointments on your terms</li>
-        <li>Comprehensive onboarding: training on policies, procedures, and EHR platform</li>
-        <li>Supportive team: 50+ years of combined experience in healthcare operations and management</li>
-      </ul>
-    `,
-      },
-      {
-        id: 'therapist-teletherapy-online',
-        title: 'Licensed Therapist — Online / Teletherapy',
-        location: 'Remote · Florida',
-        type: 'Independent Contractor · Part-time or Full-time',
-        department: 'Clinical · Teletherapy',
-        body: `
-      <h4>About the role</h4>
-      <p>Provide individual therapy to adults across Florida via BYT's secure HIPAA-compliant telehealth platform. Work from anywhere with a reliable internet connection. BYT provides your clients, a state-of-the-art EHR (PsyNote), and billing specialists who handle all insurance claims with a 99% payment success rate. You focus on patients. We handle everything else.</p>
-      <h4>What you'll do</h4>
-      <ul>
-        <li>Provide individual therapy to adult patients via secure HIPAA-compliant telehealth platform</li>
-        <li>Conduct clinical assessments, develop treatment plans, and implement evidence-based interventions</li>
-        <li>Treat a range of conditions: anxiety, depression, trauma, grief, relationship issues, life transitions, caregiver burnout, and self-esteem</li>
-        <li>Document patient interactions and progress in the EHR system accurately and on time</li>
-        <li>Maintain professional boundaries and ethical standards in all remote interactions</li>
-        <li>Ensure a private, distraction-free environment for all teletherapy sessions</li>
-      </ul>
-      <h4>What we're looking for</h4>
-      <ul>
-        <li>Active Florida license: Psychologist, LCSW, LMHC, LPC, or LMFT</li>
-        <li>Experience with telehealth delivery preferred — not required</li>
-        <li>Proficiency with CBT, trauma-informed care, or other evidence-based modalities</li>
-        <li>Reliable high-speed internet and a private, HIPAA-compliant workspace</li>
-        <li>Comfort with technology: EHR, video conferencing, and digital documentation</li>
-        <li>Excellent communication and active listening skills</li>
-        <li>Ability to work independently and manage a flexible caseload</li>
-      </ul>
-      <h4>What we offer</h4>
-      <ul>
-        <li>Work from anywhere: fully remote with no commute</li>
-        <li>Caseload provided — no marketing, no client acquisition, no cold outreach</li>
-        <li>Zero administrative burden: billing, insurance, and documentation support handled by BYT</li>
-        <li>Flexible schedule: part-time or full-time, appointments on your terms</li>
-        <li>Comprehensive onboarding: training on policies, procedures, and telehealth platform</li>
-        <li>Statewide reach: serve patients across all of Florida, not limited to one geography</li>
-      </ul>
-    `,
-      },
-    ];
-
     const ICON_PIN =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
     const ICON_CLOCK =
@@ -2690,6 +2342,11 @@ const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
     (function renderJobs() {
       const list = document.getElementById('jobsList');
       if (!list) return;
+      if (!JOBS.length) {
+        list.innerHTML =
+          '<p style="text-align:center;color:var(--slate);padding:2rem 0">No open positions at this time.</p>';
+        return;
+      }
       list.innerHTML = JOBS.map(
         (j) => `
     <div class="job-row">

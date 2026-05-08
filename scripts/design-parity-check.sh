@@ -48,8 +48,8 @@ for ASTRO_FILE in $STAGED; do
   echo "=== Checking $REL_PATH against $SOURCE_FILE ==="
 
   # CHECK 1: No Sanity .map() loops replacing HTML structure
-  # Strip <script>...</script> blocks first — .map() inside is:inline scripts is legitimate JS, not Sanity loops
-  TEMPLATE_ONLY=$(awk '/<script/,/<\/script>/{next}1' "$ASTRO_FILE")
+  # Strip frontmatter (between --- delimiters) and <script> blocks — .map() in those is legitimate TS/JS
+  TEMPLATE_ONLY=$(awk 'NR==1 && /^---/{in_fm=1;next} in_fm && /^---/{in_fm=0;next} in_fm{next} /<script/,/<\/script>/{next} 1' "$ASTRO_FILE")
   MAP_COUNT=$(echo "$TEMPLATE_ONLY" | grep -c '\.map(' 2>/dev/null || true)
   MAP_COUNT="${MAP_COUNT:-0}"
   if [ "$MAP_COUNT" -gt "0" ]; then

@@ -61,6 +61,26 @@ export const jobPosting = defineType({
       type: 'array',
       of: [{ type: 'block' }],
     }),
+    defineField({ name: 'employmentType', title: 'Employment Type', type: 'string' }),
+    defineField({ name: 'aboutRole', title: 'About the Role', type: 'text' }),
+    defineField({
+      name: 'duties',
+      title: "What You'll Do",
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'requirements',
+      title: 'What We Are Looking For',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'offers',
+      title: 'What We Offer',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
     defineField({ name: 'order', title: 'Order', type: 'number' }),
   ],
   preview: {

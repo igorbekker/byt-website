@@ -163,8 +163,9 @@ export const CAREERS_PAGE_QUERY = `*[_type == "careersPage"][0]{
   seo{ metaTitle, metaDescription }
 }`;
 
-export const JOB_POSTINGS_QUERY = `*[_type == "jobPosting"] | order(order asc) {
-  _id, title, track, status, location, slug{ current }
+export const JOB_POSTINGS_QUERY = `*[_type == "jobPosting" && status == "open"] | order(order asc) {
+  _id, title, track, status, location, slug, employmentType,
+  aboutRole, duties, requirements, offers, order
 }`;
 
 export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{

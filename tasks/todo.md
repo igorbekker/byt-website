@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-08 — Token registry + governance file alignment: token-registry.md, CLAUDE.md, agents, skills, parity script, lessons
+- **Last work:** 2026-05-08 — Phase 4: careers.astro Sanity migration — hardcoded JOBS removed, dynamic Sanity pull via define:vars, Studio deployed
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -622,3 +622,41 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 - `apps/web/src/pages/communities.astro` — complete rebuild
 
 **How verified:** `scripts/design-parity-check.sh` EXIT 0 (0 errors, 2 benign warnings). `pnpm --filter web build` PASS (17 routes, 0 errors) — 2026-05-08.
+
+---
+
+## Phase 4 — Careers Sanity Migration — 2026-05-08 [x] COMPLETE 2026-05-08
+
+### Steps
+
+- [x] A. 2026-05-08 Read careers.astro — identified 4 hardcoded job listings (all stale, confirmed by Igor)
+- [x] B. 2026-05-08 Read jobPosting.ts schema — confirmed existing fields, identified missing fields
+- [x] C. 2026-05-08 Updated jobPosting.ts — added employmentType, aboutRole, duties, requirements, offers fields
+- [x] D. 2026-05-08 Updated JOB_POSTINGS_QUERY in queries.ts — added new fields, filter status == "open"
+- [x] E. 2026-05-08 Deployed Studio (SANITY_AUTH_TOKEN=$SANITY_DEPLOY_TOKEN pnpm exec sanity deploy)
+- [x] F. 2026-05-08 Rewrote careers.astro — stripped System B CSS, replaced hardcoded JOBS with Sanity fetch via define:vars, empty state fallback
+- [x] G. 2026-05-08 Parity check EXIT 0. Build PASS (complete in 41.74s).
+- [ ] H. Commit + push
+
+### Session Review — 2026-05-08 (Phase 4 — Careers Sanity Migration)
+
+**What was built:** Migrated careers.astro job listings from 4 hardcoded (stale) entries to dynamic Sanity CMS pull. All 4 existing JDs were stale and were NOT seeded — careers page starts empty until real JDs are entered in Studio.
+
+**Schema changes (`apps/studio/schemas/documents/jobPosting.ts`):**
+
+- Added 5 fields before `order`: `employmentType` (string), `aboutRole` (text), `duties` (array of string), `requirements` (array of string), `offers` (array of string)
+- Studio deployed to https://byt-website.sanity.studio/
+
+**Query changes (`apps/web/src/lib/queries.ts`):**
+
+- `JOB_POSTINGS_QUERY`: added `status == "open"` filter, added `employmentType, aboutRole, duties, requirements, offers` to projection
+
+**careers.astro changes:**
+
+- Frontmatter: added `JobPosting` interface, `JOB_POSTINGS_QUERY` import, `Promise.all` fetch for both page + rawJobs, `buildBodyHtml()` helper, `JOBS` mapping array
+- CSS: stripped full System B block (`:root`, bare `body`, bare `h1–h4`, `.eyebrow`, `.max-w`, `.fade-up`, all `.btn-*` variants) — owned by global.css
+- Script: `<script is:inline define:vars={{ JOBS }}>` — server-side JOBS array injected via Astro define:vars
+- Removed hardcoded `const JOBS = [...]` array (4 stale entries, ~143 lines)
+- `renderJobs()`: added empty state check — renders "No open positions at this time." when `JOBS.length === 0`
+
+**How verified:** `scripts/design-parity-check.sh` EXIT 0. `pnpm --filter web build` PASS (complete in 41.74s) — 2026-05-08.
