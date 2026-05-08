@@ -10,25 +10,13 @@ All files in `design-source/pages/`. This directory is **read-only** — never m
 | --------------------------------- | ---------------------- | ---------- | --------------- |
 | `pages/Homepage.html`             | `pages/index.astro`    | System A   | Built, deployed |
 | `pages/About.html`                | `pages/about.astro`    | System A   | Built, deployed |
-| `pages/Patients.html`             | `pages/patients.astro` | System A   | Built, deployed |
-| `pages/Careers.html`              | `pages/careers.astro`  | System A   | Built, deployed |
-| `pages/Contact.html`              | `pages/contact.astro`  | System A   | Built, deployed |
-| `pages/Privacy Policy.html`       | `pages/privacy.astro`  | System A   | Built, deployed |
-| `pages/Terms and Conditions.html` | `pages/terms.astro`    | System A   | Built, deployed |
-
----
-
-## Page Files — Pending Rebuild (DEC-002)
-
-Per DEC-002, Providers and Communities use System B (`--byt-*` tokens). Required actions before rebuild:
-
-1. Convert design-source file to System A tokens (authorized one-time edit)
-2. Rebuild the `.astro` page from the converted design-source
-
-| Design-Source File       | Astro Page                | CSS System                        | Status                              |
-| ------------------------ | ------------------------- | --------------------------------- | ----------------------------------- |
-| `pages/Providers.html`   | `pages/providers.astro`   | System B — **pending conversion** | Built on System B; rebuild required |
-| `pages/Communities.html` | `pages/communities.astro` | System B — **pending conversion** | Built on System B; rebuild required |
+| `pages/Patients.html`             | `pages/patients.astro`    | System A   | Built, deployed |
+| `pages/Careers.html`              | `pages/careers.astro`     | System A   | Built, deployed |
+| `pages/Contact.html`              | `pages/contact.astro`     | System A   | Built, deployed |
+| `pages/Privacy Policy.html`       | `pages/privacy.astro`     | System A   | Built, deployed |
+| `pages/Terms and Conditions.html` | `pages/terms.astro`       | System A   | Built, deployed |
+| `pages/Providers.html`            | `pages/providers.astro`   | System A   | Built, deployed |
+| `pages/Communities.html`          | `pages/communities.astro` | System A   | Built, deployed |
 
 ---
 
