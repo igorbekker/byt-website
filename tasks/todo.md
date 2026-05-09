@@ -430,9 +430,44 @@ Per DEC-001 / docs/css-architecture.md. Branch: chore/strip-page-shared-selector
 
 ### Items
 
-- [ ] 1. Set privacyPage lastUpdated in Sanity to "May 4, 2026"
-- [ ] 2. Homepage: "Conditions We Treat" CTAs — fix to match design-source
-- [ ] 3. Providers: "What you need to apply" section (l506 qualifications tabs) — fix to match design-source
+- [x] 1. Set privacyPage lastUpdated in Sanity to "May 4, 2026"
+- [x] 2. 2026-05-09 Homepage: "Conditions We Treat" CTAs — fix to match design-source
+- [x] 3. 2026-05-09 Providers: "What you need to apply" section (l506 qualifications tabs) — fix to match design-source
 - [ ] 4. Homepage: "Who are you here to help?" hover behavior — fix desktop hover/mobile tap
 - [ ] 5. Footer logo: fix wrong colors (should be white logo on transparent bg)
 - [ ] 6. Careers: JD upload script (reads .docx from content/job-descriptions/, imports to Sanity)
+
+---
+
+### Session Review — 2026-05-09 (Items 2 & 3)
+
+#### Item 2 — Homepage l349 "Conditions We Treat" CTAs
+
+**What was built:**
+
+- `apps/web/src/pages/index.astro` — replaced 4 `<button class="l349-btn-outline" onclick="openModal('book')">` with `<a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>` (done in prior context)
+- Replaced 4 `<button class="l349-btn-ghost" onclick="openModal('refer')">…multi-line SVG…</button>` with `<a href="/referral/" class="l349-btn-ghost">Refer a resident <svg…/></svg></a>` (replace_all, all 4 panels)
+
+**Root cause:** Design-source uses `<a>` tags with real hrefs; live site had `<button>` elements with `onclick`. Browser-default button styles conflict with `.l349-btn-*` page-specific CSS.
+
+**How verified:** Build passed. `grep -n "btn-ghost\|openModal('refer')"` confirmed 0 `<button class="l349-btn-ghost">` instances remain in the l349 section.
+
+**Issues:** None.
+
+---
+
+#### Item 3 — Providers l506 Qualifications Tabs
+
+**Root cause:** The Sanity schema for `quals[]` had `scope` (a dropdown: "all"/"facility"/"teletherapy") used as the `<h2>` heading in providers.astro — but `scope` is a track selector, not a heading. The `body` field had the full text including heading prefix (e.g. "Active Florida license — Psychologist, LCSW…"). The `??` fallback never triggered because `scope` had a non-null value ("all"/"facility"/"teletherapy"), causing the h2 to render as "all", "facility", or "teletherapy".
+
+**What was built:**
+
+- `apps/studio/schemas/singletons/providersPage.ts` — added `label: string` (Heading) field to quals object; renamed "Scope" dropdown title to "Applies To"; updated preview to use `label`
+- `apps/web/src/lib/queries.ts` — added `label` to `quals[]{ label, scope, body }` GROQ projection
+- `apps/web/src/pages/providers.astro` — updated TypeScript type for `quals` to include `label?`; changed all 5 `quals?.[n]?.scope` h2 references to `quals?.[n]?.label`
+- Sanity data patched: all 5 quals now have `label` = proper heading text, `body` = description only (heading prefix removed)
+- Sanity Studio redeployed: `https://byt-website.sanity.studio/`
+
+**Verified:** `pnpm --filter web build` passed. Built HTML shows correct headings: "Active Florida license", "Active Medicare & Insurance enrollment", "Clinical experience", "Southeast Florida geography", "HIPAA-compliant home office".
+
+**Issues:** None.

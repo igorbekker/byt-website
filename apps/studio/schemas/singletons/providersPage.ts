@@ -95,9 +95,10 @@ export const providersPage = defineType({
         {
           type: 'object',
           fields: [
+            defineField({ name: 'label', title: 'Heading', type: 'string' }),
             defineField({
               name: 'scope',
-              title: 'Scope',
+              title: 'Applies To',
               type: 'string',
               options: {
                 list: [
@@ -110,7 +111,7 @@ export const providersPage = defineType({
             defineField({ name: 'body', title: 'Body', type: 'text' }),
           ],
           preview: {
-            select: { title: 'scope', subtitle: 'body' },
+            select: { title: 'label', subtitle: 'body' },
           },
         },
       ],

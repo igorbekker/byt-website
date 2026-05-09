@@ -146,7 +146,7 @@ export const PROVIDERS_PAGE_QUERY = `*[_type == "providersPage"][0]{
   handlesEyebrow, handlesHeading,
   handlesItems[]{ heading, body },
   qualsEyebrow, qualsHeading,
-  quals[]{ scope, body },
+  quals[]{ label, scope, body },
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
   seo{ metaTitle, metaDescription }
