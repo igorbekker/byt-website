@@ -87,241 +87,15 @@ const c = conditions ?? [];
    Design system: Better You Therapy DS
    Clinical trust + human warmth
 ════════════════════════════════════════════════ */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      /* ── DESIGN SYSTEM TOKENS ── */
-      /* Core (stable across palettes) */
-      --navy: #104378;
-      --navy-deep: #0a2d52;
-      --navy-footer: #2d2d52;
-      --white: #ffffff;
-      --off-white: #f5f7fa;
-      --cream: #fffcf0;
-      --slate: #5a7194;
-      --mist: #8fa3bf;
-      --border: #e4eaf0;
-
-      /* Warm palette (primary direction) */
-      --coral: #e05555;
-      --coral-hover: #c94444;
-      --coral-light: #fce8e8;
-      --sage: #9caf88;
-      --sage-hover: #7a9468;
-      --sage-light: #e8efe3;
-
-      /* Radii — per DS: 6px default, 12px large surfaces, 999px pills */
-      --r-btn: 6px;
-      --r-card: 12px;
-      --r-lg: 12px;
-      --r-pill: 999px;
-
-      /* Shadows — per DS */
-      --shadow-sm: 0 1px 2px rgba(16, 67, 120, 0.04);
-      --shadow-md: 0 4px 12px rgba(16, 67, 120, 0.08);
-      --shadow-lg: 0 8px 24px rgba(16, 67, 120, 0.1);
-
-      /* Motion — color transitions only, 150ms */
-      --t-hover: 150ms ease;
-
-      /* Layout */
-      --max-w: 1200px;
-      --pad-x: 64px;
-      --pad-s: 80px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-    body {
-      font-family:
-        'Montserrat',
-        system-ui,
-        -apple-system,
-        sans-serif;
-      color: var(--slate);
-      background: var(--white);
-      line-height: 1.55;
-      font-size: 15px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    h1,
-    h2,
-    h3,
-    h4 {
-      font-family:
-        'Manrope',
-        system-ui,
-        -apple-system,
-        sans-serif;
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.01em;
-      color: var(--navy-deep);
-      text-wrap: balance;
-    }
-    p {
-      text-wrap: pretty;
-    }
 
     /* ── UTILITY — Eyebrow: Montserrat 600, UPPERCASE, 13px, .22em tracking (per UI-kit) ── */
-    .eyebrow {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--coral);
-    }
-    .max-w {
-      max-width: var(--max-w);
-      margin: 0 auto;
-    }
 
     /* ── SCROLL FADE ── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(24px);
-      transition:
-        opacity 0.6s ease,
-        transform 0.6s ease;
-    }
-    .fade-up.visible {
-      opacity: 1;
-      transform: none;
-    }
 
     /* ════════════════════════════════════════════════
    BUTTONS
 ════════════════════════════════════════════════ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 14px 24px;
-      border-radius: var(--r-btn);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      transition:
-        background-color var(--t-hover),
-        border-color var(--t-hover),
-        color var(--t-hover);
-      border: 1.5px solid transparent;
-      white-space: nowrap;
-      line-height: 1;
-    }
-    .btn-coral {
-      background: var(--coral);
-      color: #fff;
-      border-color: var(--coral);
-    }
-    .btn-coral:hover {
-      background: var(--coral-hover);
-      border-color: var(--coral-hover);
-    }
-    .btn-ink {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--navy);
-    }
-    .btn-ink:hover {
-      background: var(--navy-deep);
-      border-color: var(--navy-deep);
-    }
-    .btn-outline-white {
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-    .btn-outline-white:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: #fff;
-    }
-    .btn-outline-ink {
-      background: transparent;
-      color: var(--navy);
-      border-color: var(--navy);
-    }
-    .btn-outline-ink:hover {
-      background: var(--navy);
-      color: #fff;
-    }
-    .btn-outline-coral {
-      background: transparent;
-      color: var(--coral);
-      border-color: var(--coral);
-    }
-    .btn-outline-coral:hover {
-      background: var(--coral);
-      color: #fff;
-    }
-    .btn-sage {
-      background: var(--sage);
-      color: #fff;
-      border-color: var(--sage);
-    }
-    .btn-sage:hover {
-      background: var(--sage-hover);
-      border-color: var(--sage-hover);
-    }
     /* legacy btn classes */
-    .btn-primary {
-      background: var(--coral);
-      color: #fff;
-      border-color: var(--coral);
-    }
-    .btn-primary:hover {
-      background: var(--coral-hover);
-      border-color: var(--coral-hover);
-    }
-    .btn-outline {
-      background: transparent;
-      color: var(--navy);
-      border-color: var(--navy);
-    }
-    .btn-outline:hover {
-      background: var(--navy);
-      color: #fff;
-    }
-    .btn-white {
-      background: #fff;
-      color: var(--navy);
-      border-color: #fff;
-    }
-    .btn-white:hover {
-      background: var(--off-white);
-      border-color: var(--off-white);
-      color: var(--navy);
-    }
-    .btn-white-outline {
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.55);
-    }
-    .btn-white-outline:hover {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: #fff;
-    }
 
     /* ════════════════════════════════════════════════
    NAVIGATION
@@ -2132,24 +1906,11 @@ const c = conditions ?? [];
       flex-wrap: wrap;
       justify-content: center;
     }
-    .btn-outline-navy {
-      background: transparent;
-      color: var(--navy);
-      border-color: var(--navy);
-    }
-    .btn-outline-navy:hover {
-      background: var(--navy);
-      color: #fff;
-    }
 
     /* ════════════════════════════════════════════════
    RESPONSIVE
 ════════════════════════════════════════════════ */
     @media (max-width: 1024px) {
-      :root {
-        --pad-x: 32px;
-        --pad-s: 64px;
-      }
       /* Tablet & below: hide links + CTAs, show hamburger only */
       .nav {
         height: 72px !important;
@@ -2242,10 +2003,6 @@ const c = conditions ?? [];
       }
     }
     @media (max-width: 768px) {
-      :root {
-        --pad-x: 20px;
-        --pad-s: 56px;
-      }
       body {
         padding-bottom: 78px;
       }
