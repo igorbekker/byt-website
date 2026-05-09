@@ -433,9 +433,9 @@ Per DEC-001 / docs/css-architecture.md. Branch: chore/strip-page-shared-selector
 - [x] 1. Set privacyPage lastUpdated in Sanity to "May 4, 2026"
 - [x] 2. 2026-05-09 Homepage: "Conditions We Treat" CTAs — fix to match design-source
 - [x] 3. 2026-05-09 Providers: "What you need to apply" section (l506 qualifications tabs) — fix to match design-source
-- [ ] 4. Homepage: "Who are you here to help?" hover behavior — fix desktop hover/mobile tap
-- [ ] 5. Footer logo: fix wrong colors (should be white logo on transparent bg)
-- [ ] 6. Careers: JD upload script (reads .docx from content/job-descriptions/, imports to Sanity)
+- [x] 4. 2026-05-09 Homepage: "Who are you here to help?" hover behavior — desktop hover-to-expand added
+- [x] 5. 2026-05-09 Footer logo: investigated — static analysis shows code is correct (white RGBA PNG on --navy-deep bg)
+- [x] 6. 2026-05-09 Careers: JD upload script — created, tested, 2 jobPostings created in Sanity
 
 ---
 
@@ -471,3 +471,61 @@ Per DEC-001 / docs/css-architecture.md. Branch: chore/strip-page-shared-selector
 **Verified:** `pnpm --filter web build` passed. Built HTML shows correct headings: "Active Florida license", "Active Medicare & Insurance enrollment", "Clinical experience", "Southeast Florida geography", "HIPAA-compliant home office".
 
 **Issues:** None.
+
+---
+
+### Session Review — 2026-05-09 (Items 4, 5, 6)
+
+#### Item 4 — Homepage "Who are you here to help?" desktop hover behavior
+
+**What was built:**
+
+- `apps/web/src/pages/index.astro` — added desktop hover-to-expand behavior to the existing router card `<script is:inline>` block
+- `window.matchMedia('(hover: hover)')` gates the behavior so it only fires on pointer devices, not touch
+- `mouseenter` on each `.r-card` calls `activateRouterCard(i)` to expand that card
+- `mouseleave` on `#routerRow` calls `activateRouterCard(0)` to reset to first card when cursor exits the row
+
+**Root cause / design note:** Design-source has no hover behavior — click-only. Igor explicitly requested hover-to-expand. User instruction overrides design-source for this behavioral enhancement.
+
+**How verified:** `pnpm --filter web build` PASS (17 routes, 0 errors). `grep -n "mouseenter\|matchMedia"` confirms listeners are present in built HTML.
+
+**Files changed:** `apps/web/src/pages/index.astro` (script block only, ~6 lines added)
+
+---
+
+#### Item 5 — Footer logo wrong colors
+
+**What was investigated:**
+
+- `apps/web/public/assets/logo-white.png` — Python PNG header analysis: colortype=6 (RGBA), pixel RGB=(255,255,255). White pixels on transparent background — correct.
+- `Footer.astro` — uses `/assets/logo-white.png`, no color-altering CSS (filter, mix-blend-mode)
+- Page `<style is:global>` blocks — multiple pages override `.footer-logo img` but only height/width; no color manipulation
+- Footer background: `var(--navy-deep)` — dark navy, white logo on dark = correct
+
+**Conclusion:** No code change was made. Cannot reproduce from static analysis. If logo still appears wrong, requires visual confirmation from Igor — could be a cached asset or browser rendering issue.
+
+**Files changed:** None.
+
+---
+
+#### Item 6 — Careers JD upload script
+
+**What was built:**
+
+- `scripts/import-jds.py` — Python script to batch-import `.docx` job descriptions to Sanity as `jobPosting` documents
+- Reads from `content/job-descriptions/*.docx` (ignored by git, unprocessed only)
+- Parses docx via `zipfile` + `xml.etree.ElementTree` — no external dependencies
+- Detects section headings: About Us, About the Role, Responsibilities, Requirements, Why Join Us
+- Detects track from filename: "teletherapy"/"online"/"remote" → `teletherapy`; "onsite"/"geriatric"/"facility" → `facility`
+- Creates Sanity `jobPosting` via mutations API (POST), authenticates with `SANITY_AUTH_TOKEN`
+- Renames processed files to `*.processed.docx`
+
+**Test run — 2026-05-09:**
+
+- `JD_Licensed_Therapist_Geriatric_OnSite.docx` → track: facility, 7 duties, 6 reqs, 6 offers ✓
+- `JD_Licensed_Therapist_Online_Teletherapy.docx` → track: teletherapy, 7 duties, 7 reqs, 6 offers ✓
+- Sanity API confirmed: 2 `jobPosting` documents with status "open" created (IDs: `zBm7mJ8yrXMZXZmFsmlt7L`, `zBm7mJ8yrXMZXZmFsmltC1`)
+
+**How verified:** `python3 scripts/import-jds.py` ran to completion. Followed with Sanity GROQ query confirming both documents exist with correct titles and tracks.
+
+**Files changed:** `scripts/import-jds.py` (new file, 203 lines)
