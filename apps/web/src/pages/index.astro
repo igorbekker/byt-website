@@ -2234,6 +2234,15 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
     ),
   );
 
+  // Desktop: hover to expand, mouseleave router row to collapse back to first card
+  if (window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.r-card').forEach((c, i) => {
+      c.addEventListener('mouseenter', () => activateRouterCard(i));
+    });
+    const routerRow = document.getElementById('routerRow');
+    if (routerRow) routerRow.addEventListener('mouseleave', () => activateRouterCard(0));
+  }
+
   // ── BLOCK 5: sticky scroll image cross-fade
   const l349Imgs = document.querySelectorAll('[data-img]');
   function updateConditionImage() {
