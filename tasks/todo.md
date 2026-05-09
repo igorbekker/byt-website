@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-08 — Phase 4: careers.astro Sanity migration — hardcoded JOBS removed, dynamic Sanity pull via define:vars, Studio deployed
+- **Last work:** 2026-05-09 — Strip global.css-owned selectors from 7 System A pages (commit b22a085, main 4ef6cdd)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -265,284 +265,6 @@ Result: all `.btn btn-secondary` "Apply Now" buttons had transparent/invisible b
 
 ---
 
-## Blog Pages — 2026-05-06 [x] COMPLETE 2026-05-07
-
-### URL structure (confirmed by Igor)
-
-- `/blog/` — Blog.html
-- `/blog/[category]/` — Blog Category.html
-- `/blog/[category]/[sub]/` — Blog Subcategory.html
-- `/blog/[slug]/` — Blog Article.html
-- Category and article slugs share depth — Astro resolves via getStaticPaths() at build time
-- Slug collision check: getStaticPaths() in article route must throw build error if any article slug matches a category slug
-
-### Steps
-
-#### Phase 1 — GROQ Queries [x] COMPLETE 2026-05-06
-
-- [x] Add BLOG_INDEX_PAGE_QUERY to queries.ts
-- [x] Add BLOG_CATEGORIES_QUERY to queries.ts (includes postCount computed field)
-- [x] Add BLOG_POSTS_ALL_QUERY to queries.ts
-- [x] Add BLOG_FEATURED_POST_QUERY to queries.ts
-- [x] Add BLOG_CATEGORY_POSTS_QUERY to queries.ts
-- [x] Add BLOG_SUBCATEGORY_POSTS_QUERY to queries.ts
-- [x] Add BLOG_POST_QUERY to queries.ts
-- [x] Add BLOG_POST_PATHS_QUERY to queries.ts
-- [x] Add BLOG_CATEGORY_PATHS_QUERY to queries.ts
-- [x] Add BLOG_SUBCATEGORY_PATHS_QUERY to queries.ts
-- [x] Build passes after queries added
-
-#### Phase 2 — Blog Index (/blog/) [x] COMPLETE 2026-05-06 — awaiting Igor confirmation
-
-- [x] Create apps/web/src/pages/blog/index.astro
-- [x] Style block verbatim from design-source/pages/Blog.html (lines 11–626)
-- [x] Body sections verbatim: blog-hero, crumb, featured, categories, latest, newsletter
-- [x] Sanity variables wired with ?? fallbacks (fixed sections); .map() used for dynamic listing sections (categories, posts) — blog-specific exception to Lesson 2 noted
-- [x] Build passes: `/blog/index.html` prerendered in 184ms
-- [x] Deploy + Igor confirmation — 2026-05-07
-
-### Review — Phase 1 + Phase 2 — 2026-05-06
-
-**Phase 1 — GROQ Queries:**
-10 new queries added to `apps/web/src/lib/queries.ts`. Key design decisions:
-
-- `BLOG_CATEGORIES_QUERY` includes `"postCount": count(*[_type == "blogPost" && category._ref == ^._id])` — computed at query time
-- `BLOG_POST_CARD_FIELDS` is an unexported const used as an interpolated template string inside the 3 post-list queries to avoid field duplication
-- `BLOG_SUBCATEGORY_PATHS_QUERY` returns `{categorySlug, subs[{subSlug}]}` — caller must flatten into `[category]/[sub]` pairs in getStaticPaths()
-
-**Phase 2 — Blog Index:**
-
-- Style block: 616 lines verbatim from design-source (lines 11–626)
-- Dynamic sections: category tiles (.map() over categories), pill filters (.map() over categories), article cards (.map() over posts) — blog pages require dynamic rendering; positional indexing would cap posts at design-source count (6)
-- Static sections wired with ?? fallbacks: hero, featured article, newsletter
-- Featured card: uses `set:html` on h2 to preserve `<em>` markup from Sanity title field
-- All article card hrefs: `/blog/${post.slug.current}/`
-- Category tile hrefs: `/blog/${cat.slug.current}/`
-- Generic SVG icon used for all category tiles (Sanity `icon` field is a string key, not SVG path; no icon mapping system exists)
-
-**Files changed:**
-
-- `apps/web/src/lib/queries.ts` — 10 blog queries added
-- `apps/web/src/pages/blog/index.astro` — new file (806 lines)
-- `tasks/todo.md` — this entry
-
-#### Phase 3 — Blog Category (/blog/[category]/) [x] COMPLETE 2026-05-06 — awaiting Igor confirmation
-
-- [x] Create apps/web/src/pages/blog/[category]/index.astro
-- [x] getStaticPaths() from BLOG_CATEGORY_PATHS_QUERY
-- [x] Style block verbatim (lines 11–697, 687 lines) from Blog Category.html
-- [x] Body sections: cat-hero, crumb, subcats (.map() subtopics), article-list (.map() categoryLevelPosts), newsletter
-- [x] BLOG_CATEGORY_QUERY added to queries.ts (single category by slug, subtopics with description)
-- [x] Build passes
-- [x] Deploy + Igor confirmation — 2026-05-07
-
-### Review — Phase 3 — 2026-05-06
-
-**Key wiring decisions:**
-
-- `getStaticPaths()` fetches all category slugs; returns empty set if no categories in Sanity (expected for new site)
-- Subcats: `.map()` over `category.subtopics[]`; each block filters `posts` by `subcategoryLabel === sub.slug`, shows first 6, links to `/blog/${categorySlug}/${sub.slug}/`
-- Article-list: posts where `!p.subcategoryLabel`; pagination static (no JS)
-- Bug fixed: initial generator used `sub.slug` as description — corrected to `sub.description ?? ""`
-
-**Files changed:**
-
-- `apps/web/src/lib/queries.ts` — BLOG_CATEGORY_QUERY added
-- `apps/web/src/pages/blog/[category]/index.astro` — new file (874 lines)
-- `tasks/todo.md` — this entry
-
-#### Phase 4 — Blog Subcategory (/blog/[category]/[sub]/) [x] COMPLETE 2026-05-06
-
-- [x] Create apps/web/src/pages/blog/[category]/[sub]/index.astro
-- [x] getStaticPaths() flattens BLOG_SUBCATEGORY_PATHS_QUERY into [category,sub] pairs
-- [x] Style block verbatim (lines 11–693, 683 lines) from Blog Subcategory.html
-- [x] Body sections: subcat-hero, crumb, article-list (.map() posts), sisters (.map() siblings), newsletter
-- [x] Build passes
-
-#### Phase 5 — Blog Article (/blog/[slug]/) [x] COMPLETE 2026-05-06
-
-- [x] Create apps/web/src/pages/blog/[slug].astro
-- [x] getStaticPaths() fetches post + category slugs; throws build error on collision
-- [x] Style block verbatim (lines 12–1009, 998 lines) from Blog Article.html
-- [x] Body sections: progress-bar, subnav, article-hero, article-image, article-body (PortableText), related, mobile-cta-bar
-- [x] BLOG_RELATED_POSTS_QUERY added to queries.ts
-- [x] Build passes
-
-### Review — Phase 4 + Phase 5 — 2026-05-06
-
-**Phase 4 — Subcategory:**
-
-- `getStaticPaths()` flattens `BLOG_SUBCATEGORY_PATHS_QUERY` result `[{categorySlug, subs:[{subSlug}]}]` into flat `[category,sub]` param pairs
-- Hero: `category.title · Subtopic` eyebrow, `currentSub.title` h1, `currentSub.description`
-- Article list: `.map()` over posts filtered by `subcategoryLabel == subSlug` (done server-side by Sanity query)
-- Sisters: `.map()` over sibling subtopics (parent category subtopics minus current)
-- SSC (sub-sub-categories) section omitted — Sanity schema has no 3rd nesting level
-
-**Phase 5 — Article:**
-
-- Slug collision guard: `getStaticPaths()` cross-checks all post slugs against all category slugs; throws descriptive build error listing colliding slugs if any match
-- TOC: design-source has hardcoded `<ol>` items; replaced with JS-built TOC (`getElementById('toc-list')` populated from `h2[id]` headings in `.article-prose`) — avoids wiring each heading manually
-- Portable Text: `<PortableText value={post.body} />` from `astro-portabletext` (already installed)
-- Featured image: conditional — shows `<img>` if `post.featuredImage.asset.url` exists, else placeholder div
-- Related posts: `BLOG_RELATED_POSTS_QUERY` (3 posts, same category, excludes current by `_id`)
-
-**Files changed:**
-
-- `apps/web/src/lib/queries.ts` — BLOG_RELATED_POSTS_QUERY added
-- `apps/web/src/pages/blog/[category]/[sub]/index.astro` — new file (852 lines)
-- `apps/web/src/pages/blog/[slug].astro` — new file (1246 lines)
-- `tasks/todo.md` — this entry
-
-### Quality gate
-
-- `pnpm --filter web build` — PASS (10 routes prerendered, 0 errors, dynamic blog routes empty until Sanity populated) — 2026-05-06
-
----
-
-## Blog System Step 3 — Markdown Import Tool — 2026-05-07 [x] COMPLETE 2026-05-07
-
-### Steps
-
-- [x] Read blogPost, author, blogCategory, seoFields schemas — 2026-05-07 17:00
-- [x] Install js-yaml + @portabletext/markdown in apps/studio — 2026-05-07 17:00
-- [x] Create apps/studio/tools/MarkdownImportTool.tsx — 2026-05-07 17:00
-- [x] Register tool in apps/studio/sanity.config.ts — 2026-05-07 17:00
-- [x] Studio build passes — `sanity build` ✓ — 2026-05-07 17:00
-- [x] Commit + push to main — 2026-05-07 16:33 (commit 07b729c)
-- [x] Deploy to byt-website.sanity.studio — 2026-05-07 16:36
-- [x] Bug fix — gray-matter threw Buffer is not defined in browser; replaced with js-yaml + manual YAML parser — 2026-05-07
-- [x] Studio rebuild + redeploy after bug fix — sanity build PASS, redeployed to byt-website.sanity.studio — 2026-05-07
-- [x] Igor confirms tool renders and test import works — 4 articles imported and published 2026-05-07
-
-Custom Sanity Studio tool (Option A — sidebar tab) built and verified compiling. Appears as "Import Article" in the Studio top nav.
-
-**What was built:**
-
-`apps/studio/tools/MarkdownImportTool.tsx` — React component registered as a Sanity Tool. Renders a full-page textarea + Import button inside the Studio shell.
-
-**Parsing logic:**
-
-- `gray-matter` splits YAML frontmatter from markdown body
-- Frontmatter field map: `title → title`, `slug → slug.current`, `publishedAt → publishedAt (ISO)`, `readingTime → readingTimeMinutes`, `excerpt → excerpt`, `subcategory → subcategoryLabel`, `seo.title → seo.metaTitle`, `seo.description → seo.metaDescription`, `featured = false` always
-- `category` → GROQ lookup matched by `slug.current`
-- `author` → GROQ lookup matched by normalized name (lowercase alphanumeric). **Note:** author schema has no slug field — name normalization handles `"sarah-johnson"` → `"Sarah Johnson"` matching
-- `:::key-takeaways ... :::` custom block preprocessed to `## Key Takeaways\n\n{list}` before PT conversion
-- `@portabletext/markdown`'s `markdownToPortableText()` converts markdown body to PT blocks
-- Non-block items (hr, images, code blocks) filtered out — `blogPost.body` only allows `{ type: 'block' }`
-- Document created via `client.create()` as a draft — reviewable and publishable from Studio
-- Missing category/author show inline warnings but don't block creation
-
-**Discovery — @sanity/ui not directly resolvable:** Vite couldn't resolve `@sanity/ui` as a transitive dep. Rewrote component using plain React + inline styles. Build passed on second attempt.
-
-**Files changed:**
-
-- `apps/studio/tools/MarkdownImportTool.tsx` — new (136 lines)
-- `apps/studio/sanity.config.ts` — added import + `tools: [...]` array
-- `apps/studio/package.json` — added `gray-matter ^4.0.3` and `@portabletext/markdown ^1.2.0`
-- `pnpm-lock.yaml` — updated lockfile
-
-**Quality gate:**
-
-- `pnpm --filter studio build` — PASS (`sanity build` ✓ in 34s) — 2026-05-07 17:00
-
-**Bug fixed:**
-
-- gray-matter uses Node.js Buffer internally — throws Buffer is not defined in browser (Sanity Studio runs in browser via Vite). Replaced with manual --- delimiter splitting + js-yaml (fully browser-safe). gray-matter removed from package.json; js-yaml + @types/js-yaml installed.
-- Rebuild: pnpm --filter studio build — PASS (34s)
-- Redeploy: https://byt-website.sanity.studio/ — 2026-05-07
-
----
-
-## Session Review — 2026-05-07 (Studio fixes + blog live)
-
-### What was built / fixed
-
-**MarkdownImportTool.tsx — 6 body content bugs fixed:**
-
-- Bug 1: `:::key-takeaways` delimiters were duplicating the `## Key Takeaways` heading → strip delimiters only, preserve inner content
-- Bug 2: `{#anchor-id}` anchor syntax from markdown editor was landing in body as literal text → `stripHeadingAnchors()` regex
-- Bug 3: Metadata paragraph (`Published: … | Updated: …`) was landing in body → `stripMetadataParagraph()`
-- Bug 4: "About the Author" + "You Might Also Like" boilerplate sections were included in body → `stripBoilerplateSections()`
-- Bug 5: Table of Contents section was included in body → `stripTableOfContents()`
-- Bug 6: `client.create(doc)` without `drafts.` prefix created published documents instead of drafts → `doc._id = \`drafts.${crypto.randomUUID()}\`` before create
-
-**author.ts — slug field added:**
-
-- Schema previously had no slug field; author GROQ query returned `slug: null` for all authors
-- Added `defineField({ name: 'slug', type: 'slug', options: { source: 'name' } })` after `name` field
-- Patched existing `author-byt-clinical-team` document to set `slug.current = 'byt-clinical-team'`
-
-**MarkdownImportTool.tsx — author matching hardened:**
-
-- Original: normalized name match only (`normalize(a.name) === normalize(frontmatterValue)`)
-- After Two Fixes: slug-first match added, but `String(fm.author)` was not trimmed
-- Final fix: `.trim()` on `authorValue` + case-insensitive slug fallback tier
-- Match order: exact slug → case-insensitive slug → normalized name
-
-**Root cause of repeated author match failures:**
-
-- Code and data were correct after the Two Fixes deploy
-- Browser was serving a cached Studio bundle from before the fix
-- Symptom: warning showed "Available: Better You Therapy Clinical Team" (no slug in parens) — impossible with current code which always appends `(slug)` or `(no-slug)`
-- Fix: hard-refresh (Cmd+Shift+R) clears cached bundle
-
-**Blog pages live:**
-
-- All 5 blog page templates already committed in prior sessions
-- 4 blog posts published in Sanity by Igor: narcissistic-parent-signs (family), how-to-choose-a-therapist (choosing-therapy), toxic-relationship-signs (couples) + 1 more
-- Build verified: `/blog/index.html`, 4 category pages, 3 article pages — 0 errors
-
-### Files changed this session
-
-- `apps/studio/tools/MarkdownImportTool.tsx` — 6 bug fixes + author slug matching + trim
-- `apps/studio/schemas/documents/author.ts` — slug field added
-- `apps/studio/package.json` — gray-matter removed; js-yaml + @types/js-yaml added
-- `pnpm-lock.yaml` — lockfile updated
-- `tasks/todo.md` — this review
-- `tasks/todo-archive.md` — prior completed sections archived
-
-### Quality gate
-
-- `pnpm --filter web build` — PASS (17 routes prerendered, 0 errors) — 2026-05-07
-- `pnpm --filter studio build` — PASS (sanity build ✓) — 2026-05-07
-
----
-
-## Blog Bug Fixes — 2026-05-07 [x] COMPLETE 2026-05-07
-
-### Bugs fixed
-
-- [x] BUG 1: Category pages (`/blog/couples/`, `/blog/child-teen/`, etc.) showed 0 articles
-- [x] BUG 2: Pill filters on `/blog/` did nothing when clicked
-- [x] BUG 3: `/blog/#/` appended to URL when clicking featured card with no featured post; "View all articles" also used `href="#"`
-
-### Review
-
-**BUG 1 — Root cause:**
-`apps/web/src/pages/blog/[category]/index.astro:57` had `categoryLevelPosts = posts?.filter((p) => !p.subcategoryLabel)`. Every imported post has a `subcategoryLabel` from the markdown frontmatter `subcategory:` field. The filter excluded them all. No subtopics are defined in Sanity either, so posts also didn't appear in subcategory blocks. Result: 0 visible articles on every category page.
-Fix: removed the filter entirely — `const categoryLevelPosts = posts ?? [];`
-
-**BUG 2 — Root cause:**
-The `<script is:inline>` in `apps/web/src/pages/blog/index.astro` contained only the IntersectionObserver for fade-up animations. No click handler existed for the pill buttons. The `data-cat` attributes on pills and cards were wired correctly but nothing read them.
-Fix: added pill click handler inside the existing `<script is:inline>` block — on click, sets `.active` on the clicked pill, then shows/hides `.article-card` elements by matching `data-cat`.
-
-**BUG 3 — Root cause:**
-Featured card href: `` `/blog/${featured?.slug?.current ?? '#'}/` `` — when `featured` is null, `featured?.slug?.current` is `undefined`, `?? '#'` fires, producing `/blog/#/`.
-"View all articles" link: `href="#"` — raw hash anchor.
-Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug.current}/\` : '/blog/'`; changed view-all href to `/blog/`.
-
-**Files changed:**
-
-- `apps/web/src/pages/blog/index.astro` — BUG 2 (pill JS added), BUG 3 (featured href + view-all href fixed)
-- `apps/web/src/pages/blog/[category]/index.astro` — BUG 1 (subcategoryLabel filter removed)
-- `tasks/todo.md` — this review
-
-### Quality gate
-
-- `pnpm --filter web build` — PASS (17 routes prerendered, 0 errors) — 2026-05-07
-
----
-
 ## DEC-002 Phase 2 — Rebuild providers.astro (System A) — 2026-05-08 [x] COMPLETE 2026-05-08
 
 ### Steps
@@ -636,7 +358,7 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 - [x] E. 2026-05-08 Deployed Studio (SANITY_AUTH_TOKEN=$SANITY_DEPLOY_TOKEN pnpm exec sanity deploy)
 - [x] F. 2026-05-08 Rewrote careers.astro — stripped System B CSS, replaced hardcoded JOBS with Sanity fetch via define:vars, empty state fallback
 - [x] G. 2026-05-08 Parity check EXIT 0. Build PASS (complete in 41.74s).
-- [ ] H. Commit + push
+- [x] H. 2026-05-08 Committed 03197ff + pushed to main (feat(careers): migrate job listings to Sanity CMS)
 
 ### Session Review — 2026-05-08 (Phase 4 — Careers Sanity Migration)
 
@@ -659,4 +381,58 @@ Fix: changed featured href to `featured?.slug?.current ? \`/blog/${featured.slug
 - Removed hardcoded `const JOBS = [...]` array (4 stale entries, ~143 lines)
 - `renderJobs()`: added empty state check — renders "No open positions at this time." when `JOBS.length === 0`
 
-**How verified:** `scripts/design-parity-check.sh` EXIT 0. `pnpm --filter web build` PASS (complete in 41.74s) — 2026-05-08.
+## **How verified:** `scripts/design-parity-check.sh` EXIT 0. `pnpm --filter web build` PASS (complete in 41.74s) — 2026-05-08.
+
+## Strip shared selectors from 7 System A pages — 2026-05-09 [x] COMPLETE 2026-05-09
+
+Per DEC-001 / docs/css-architecture.md. Branch: chore/strip-page-shared-selectors.
+
+### Steps
+
+- [x] A. 2026-05-09 index.astro — strip + verify
+- [x] B. 2026-05-09 about.astro — strip + verify
+- [x] C. 2026-05-09 patients.astro — strip + verify
+- [x] D. 2026-05-09 careers.astro — strip + verify
+- [x] E. 2026-05-09 contact.astro — strip + verify
+- [x] F. 2026-05-09 privacy.astro — strip + verify
+- [x] G. 2026-05-09 terms.astro — strip + verify
+- [x] H. 2026-05-09 Build PASS (17 routes, 0 errors)
+- [x] I. 2026-05-09 CHECK 7 + CHECK 8 all pages — PASS
+- [x] J. 2026-05-09 /pre → commit b22a085 → merge → push main 4ef6cdd → Cloudflare auto-deploy
+
+### Session Review — 2026-05-09 (Strip shared selectors)
+
+**What was built:** Stripped all global.css-owned selectors from 7 System A page `<style is:global>` blocks. Added `scripts/strip-shared-selectors.py` for repeatable enforcement. Fixed pre-existing CHECK 2 violations in privacy.astro and terms.astro (`page.body` → `page?.body ?? []`).
+
+**Style block changes (before → after, rules removed):**
+
+| Page           | Before | After | Delta | Rules removed |
+| -------------- | ------ | ----- | ----- | ------------- |
+| index.astro    | 2519   | 2287  | -232  | 35            |
+| about.astro    | 2670   | 2438  | -232  | 35            |
+| patients.astro | 2993   | 2752  | -241  | 37            |
+| careers.astro  | 2479   | 2471  | -8    | 2             |
+| contact.astro  | 1233   | 1001  | -232  | 35            |
+| privacy.astro  | 1933   | 1701  | -232  | 35            |
+| terms.astro    | 882    | 750   | -132  | 16            |
+
+**Note:** `body { padding-bottom: 78px }` inside `@media (max-width: 768px)` kept in all pages — page-specific mobile sticky nav offset.
+
+**Note on history:** Previous session (2026-05-08) recorded this as done in a different tasks/todo.md (outside the repo). Commit never reached GitHub. This session confirmed by checking page line counts against expected post-strip values.
+
+**Files changed:** 7 page .astro files, scripts/strip-shared-selectors.py (new).
+
+**Quality gate:** `pnpm --filter web build` PASS. CHECK 7 + CHECK 8 PASS on all 7 pages.
+
+---
+
+## 6-Item Bug Fix + Feature Task — 2026-05-09
+
+### Items
+
+- [ ] 1. Set privacyPage lastUpdated in Sanity to "May 4, 2026"
+- [ ] 2. Homepage: "Conditions We Treat" CTAs — fix to match design-source
+- [ ] 3. Providers: "What you need to apply" section (l506 qualifications tabs) — fix to match design-source
+- [ ] 4. Homepage: "Who are you here to help?" hover behavior — fix desktop hover/mobile tap
+- [ ] 5. Footer logo: fix wrong colors (should be white logo on transparent bg)
+- [ ] 6. Careers: JD upload script (reads .docx from content/job-descriptions/, imports to Sanity)

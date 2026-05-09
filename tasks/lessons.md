@@ -125,3 +125,9 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 - 2026-05-04: Entire HTML sections replaced with Sanity .map() loops on Patients page. Sections empty when Sanity unpopulated. (OBS-012)
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
+
+### 15. The tasks/ directory that counts is in the git repo — not the home directory
+
+The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo (`apps/web/src/../tasks/`). There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
+
+**How to apply:** When starting a session with a fresh clone at `byt-website-work/`, the correct todo.md is at `byt-website-work/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
