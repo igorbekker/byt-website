@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useClient } from 'sanity';
-import JSZip from 'jszip';
 
 const API_VERSION = '2024-01-01';
 
@@ -161,6 +160,7 @@ export function DocxImportTool() {
 
     try {
       const buffer = await file.arrayBuffer();
+      const { default: JSZip } = await import('jszip');
       const zip = await JSZip.loadAsync(buffer);
       const xmlFile = zip.file('word/document.xml');
       if (!xmlFile) throw new Error('word/document.xml not found — is this a valid .docx?');
