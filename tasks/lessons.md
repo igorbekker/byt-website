@@ -66,11 +66,13 @@ design-source/ is a structural reference frozen at design time — never modify 
 When content changes (email, fax, phone, copy, image): update the value in Sanity Studio or schema defaults — not in design-source/, and not as a new hardcoded value in .astro.
 The .astro file wires the field as `{sanityVar ?? "original-design-source-placeholder"}`. The fallback is the original design-source value; the live content comes from Sanity.
 
-### 9. Before declaring a file missing — check all recent commits
+### 9. Before declaring anything missing — investigate first
 
-When files appear absent from the working tree, check `git log --oneline` for recent upload or rename commits before reporting them as gone. Igor may have uploaded replacements and then deleted the old versions in separate commits — the new files land at the same path.
+When files appear absent or a visual bug looks like a missing/wrong asset: (1) check `git log --oneline` for recent upload or rename commits before reporting a file gone — Igor may have uploaded replacements in a separate commit; (2) check that the referenced filename actually exists in `apps/web/public/assets/` and matches what design-source uses.
 
-**Rule:** Run `git show --name-only <commit>` on any suspicious recent commit before escalating a missing-file blocker.
+**Why:** Prior incidents — files reported missing were present in recent commits; `logo-white-trans.png` was analyzed at the wrong path and declared correct when the right file was never copied to `public/assets/`.
+
+**How to apply:** Run `git show --name-only <commit>` on suspicious recent commits. For asset bugs: verify the exact filename exists in `public/assets/` before concluding the code is correct.
 
 ### 10. When audience categories don't map to form options — skip preselection
 
@@ -136,17 +138,7 @@ Placing `<script is:inline>` after `</BaseLayout>` causes Astro to render it aft
 
 ---
 
-### 16. When a visual bug is "not reproducible from static analysis" — check if the asset file EXISTS
-
-When Footer.astro referenced `logo-white.png` instead of `logo-white-trans.png`, the previous investigation analyzed the PNG header bytes of `logo-white.png` and concluded "RGBA transparent, correct." That was wrong. The correct file (`logo-white-trans.png`) was in `design-source/assets/` but never copied to `public/assets/`.
-
-**Why:** Checking whether an image file has the right pixel values is not the same as checking whether the RIGHT FILE is being referenced.
-
-**How to apply:** For any visual bug involving an image or asset: (1) check that the referenced filename actually exists in the serving directory (`apps/web/public/assets/`); (2) check that the filename matches what design-source uses. If a `logo-*-trans.png` or similar variant exists in design-source but NOT in public/, that is the bug.
-
----
-
-### 17. The tasks/ directory that counts is in the git repo — not the home directory
+### 16. The tasks/ directory that counts is in the git repo — not the home directory
 
 The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo (`apps/web/src/../tasks/`). There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
 
