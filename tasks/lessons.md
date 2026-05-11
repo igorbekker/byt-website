@@ -126,7 +126,27 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
 
-### 15. The tasks/ directory that counts is in the git repo — not the home directory
+### 15. `<script is:inline>` must be INSIDE `<BaseLayout>`, not after it
+
+Placing `<script is:inline>` after `</BaseLayout>` causes Astro to render it after `</body></html>` in the compiled output. Scripts there have unreliable event-listener registration. All page `<script is:inline>` blocks must be the last element inside `<BaseLayout>` — matching the pattern in about.astro, patients.astro.
+
+**Why:** index.astro had hover mouseenter listeners that never fired because the script appeared after `</html>` instead of inside `<body>`.
+
+**How to apply:** When adding or verifying a `<script is:inline>` tag in any page, confirm it is inside `<BaseLayout>...</BaseLayout>`, not a sibling after it. Check with: `grep -n '</BaseLayout>\|<script is:inline'` — script line number must be LOWER than the `</BaseLayout>` line.
+
+---
+
+### 16. When a visual bug is "not reproducible from static analysis" — check if the asset file EXISTS
+
+When Footer.astro referenced `logo-white.png` instead of `logo-white-trans.png`, the previous investigation analyzed the PNG header bytes of `logo-white.png` and concluded "RGBA transparent, correct." That was wrong. The correct file (`logo-white-trans.png`) was in `design-source/assets/` but never copied to `public/assets/`.
+
+**Why:** Checking whether an image file has the right pixel values is not the same as checking whether the RIGHT FILE is being referenced.
+
+**How to apply:** For any visual bug involving an image or asset: (1) check that the referenced filename actually exists in the serving directory (`apps/web/public/assets/`); (2) check that the filename matches what design-source uses. If a `logo-*-trans.png` or similar variant exists in design-source but NOT in public/, that is the bug.
+
+---
+
+### 17. The tasks/ directory that counts is in the git repo — not the home directory
 
 The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo (`apps/web/src/../tasks/`). There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
 

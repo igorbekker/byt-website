@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-09 — Strip global.css-owned selectors from 7 System A pages (commit b22a085, main 4ef6cdd)
+- **Last work:** 2026-05-11 — Fix router hover (script outside BaseLayout) + footer logo (wrong asset file)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -529,3 +529,47 @@ Per DEC-001 / docs/css-architecture.md. Branch: chore/strip-page-shared-selector
 **How verified:** `python3 scripts/import-jds.py` ran to completion. Followed with Sanity GROQ query confirming both documents exist with correct titles and tracks.
 
 **Files changed:** `scripts/import-jds.py` (new file, 203 lines)
+
+---
+
+## Re-fix Items 4 & 5 — 2026-05-11 [x] COMPLETE 2026-05-11
+
+### Steps
+
+- [x] A. 2026-05-11 Investigated Item 4: confirmed `<script is:inline>` in index.astro was outside `</BaseLayout>` — renders after `</body></html>` in compiled output; all other pages place script inside BaseLayout
+- [x] B. 2026-05-11 Investigated Item 5: confirmed `logo-white-trans.png` exists in `design-source/assets/` but was never copied to `apps/web/public/assets/`; Footer.astro referenced `logo-white.png` (opaque bg) throughout
+- [x] C. 2026-05-11 Fix Item 4: moved `</BaseLayout>` to after `</script>`, removed `matchMedia('(hover: hover)')` gate
+- [x] D. 2026-05-11 Fix Item 5: copied `design-source/assets/logo-white-trans.png` → `apps/web/public/assets/logo-white-trans.png`; updated Footer.astro line 25
+- [x] E. 2026-05-11 Build PASS (all routes, 0 errors)
+- [x] F. 2026-05-11 Parity check PASS (1 pre-existing warning on `<a>` tag count, EXIT 0)
+- [x] G. 2026-05-11 Confirmed compiled dist/client/index.html: `mouseenter` inside `</main>`, `</body>`, `</html>` — script is in body ✓; `logo-white-trans` in footer HTML ✓
+
+### Session Review — 2026-05-11 (Re-fix Items 4 & 5)
+
+#### Item 4 — Router hover (re-fix)
+
+**Root cause:** `<script is:inline>` in index.astro was placed AFTER `</BaseLayout>` (line 2191), causing Astro to render it after `</body></html>` in the compiled HTML. Scripts placed after `</html>` have unreliable timing. All other pages (about.astro, patients.astro) correctly place the script INSIDE `</BaseLayout>` as the last element in the slot. Additionally, the `matchMedia('(hover: hover)')` gate was preventing listener registration in some environments (touch-capable laptops, certain browsers).
+
+**Fix:**
+
+- Moved `</BaseLayout>` to after the closing `</script>` tag — script now renders inside `<body>` before `</main>`
+- Removed the `matchMedia` gate: always attach `mouseenter` and `mouseleave` listeners (mouseenter doesn't fire on pure touch devices, so ungated is safe)
+
+**How verified:** `pnpm --filter web build` PASS. `grep` of dist/client/index.html confirmed: `mouseenter` appears before `</main>`, `</body>`, `</html>`.
+
+**Files changed:** `apps/web/src/pages/index.astro` (3 lines: `</BaseLayout>` moved, 2 lines of matchMedia removed)
+
+---
+
+#### Item 5 — Footer logo (re-fix)
+
+**Root cause:** Previous session concluded "logo-white.png is RGBA transparent — correct" via Python PNG header analysis. That was wrong. The real issue: `logo-white-trans.png` exists in `design-source/assets/` (the transparent-background version) but was NEVER copied to `apps/web/public/assets/`. Footer.astro referenced `logo-white.png` throughout, which has an opaque white background — visible as a white box on the dark `--navy-deep` footer.
+
+**Fix:**
+
+- Copied `design-source/assets/logo-white-trans.png` → `apps/web/public/assets/logo-white-trans.png`
+- Updated `apps/web/src/components/ui/Footer.astro` line 25: `/assets/logo-white.png` → `/assets/logo-white-trans.png`
+
+**How verified:** Asset file confirmed present (24426 bytes). `grep` of dist/client/index.html confirms `logo-white-trans` in footer markup.
+
+**Files changed:** `apps/web/src/components/ui/Footer.astro` (1 line), `apps/web/public/assets/logo-white-trans.png` (new file)
