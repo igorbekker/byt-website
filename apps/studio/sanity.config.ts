@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './schemas';
 import { structure } from './structure';
 import { MarkdownImportTool } from './tools/MarkdownImportTool';
+import { DocxImportTool } from './tools/DocxImportTool';
 
 export default defineConfig({
   name: 'byt-website',
@@ -19,6 +20,11 @@ export default defineConfig({
       name: 'markdown-import',
       title: 'Import Article',
       component: MarkdownImportTool,
+    },
+    {
+      name: 'docx-import',
+      title: 'Import Job Description',
+      component: DocxImportTool,
     },
   ],
 });
