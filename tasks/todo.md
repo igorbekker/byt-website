@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-11 — Fix router hover (script outside BaseLayout) + footer logo (wrong asset file)
+- **Last work:** 2026-05-11 — Careers click handler fix (define:vars IIFE) + Studio DocxImportTool
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -529,6 +529,65 @@ Per DEC-001 / docs/css-architecture.md. Branch: chore/strip-page-shared-selector
 **How verified:** `python3 scripts/import-jds.py` ran to completion. Followed with Sanity GROQ query confirming both documents exist with correct titles and tracks.
 
 **Files changed:** `scripts/import-jds.py` (new file, 203 lines)
+
+---
+
+## Careers Issues — 2026-05-11 [x] COMPLETE 2026-05-11
+
+### Issue 1 — Job card click handlers not working on live site
+
+- [x] A. 2026-05-11 Diagnosed root cause: `define:vars={{ JOBS }}` wraps entire script in IIFE — `openJobModal`, `closeJobModal`, `updateFileLabel` trapped inside closure, inaccessible from HTML `onclick`/`onchange` attributes
+- [x] B. 2026-05-11 Fixed: added `window.openJobModal = openJobModal; window.closeJobModal = closeJobModal; window.updateFileLabel = updateFileLabel;` at end of script block in `apps/web/src/pages/careers.astro`
+- [x] C. 2026-05-11 Build PASS. Verified compiled dist/client/careers/index.html lines 229–231 contain all three window assignments
+
+### Issue 2 — Sanity Studio JD importer tool
+
+- [x] D. 2026-05-11 Added `jszip` + `@types/jszip` to `apps/studio/package.json`; ran `pnpm install`
+- [x] E. 2026-05-11 Created `apps/studio/tools/DocxImportTool.tsx` — file upload, jszip docx parse, section marker extraction, review panel with editable fields + track dropdown, `client.create()` draft jobPosting
+- [x] F. 2026-05-11 Registered tool in `apps/studio/sanity.config.ts` as `"Import Job Description"`
+- [x] G. 2026-05-11 Studio typecheck PASS. Studio build PASS.
+
+### Session Review — 2026-05-11 (Careers Issues)
+
+#### Issue 1 — Job card click handlers
+
+**Root cause:** `<script is:inline define:vars={{ JOBS }}>` causes Astro to wrap the entire script in `(function(){ const JOBS=[...]; ... })()`. Three functions were defined inside the IIFE — `openJobModal`, `closeJobModal`, `updateFileLabel` — but called from HTML `onclick`/`onchange` attributes which look in global (`window`) scope only.
+
+**Fix:** Added three window assignment lines at the end of the script block (before `</script>`):
+
+```javascript
+window.openJobModal = openJobModal;
+window.closeJobModal = closeJobModal;
+window.updateFileLabel = updateFileLabel;
+```
+
+**How verified:** `pnpm --filter web build` PASS. `grep` of `dist/client/careers/index.html` confirmed all three assignments present at lines 229–231.
+
+**Files changed:** `apps/web/src/pages/careers.astro` (3 lines added)
+
+---
+
+#### Issue 2 — Sanity Studio DocxImportTool
+
+**What was built:** `apps/studio/tools/DocxImportTool.tsx` — custom Sanity Studio tool that:
+
+- Accepts `.docx` file upload via file input
+- Parses docx in browser: `JSZip.loadAsync(buffer)` → `word/document.xml` → `DOMParser` → `<w:p>`/`<w:t>` text extraction
+- Identifies sections by markers: About the Role, Responsibilities, Requirements, Why Join Us
+- Detects track from filename: `teletherapy`/`online`/`remote` → `teletherapy`; `onsite`/`geriatric`/`facility` → `facility`
+- Review panel: editable title, location, employment type, track dropdown, about-role preview (300 chars), duty/req/offer counts
+- `client.create()` creates `jobPosting` document as draft (`_id: drafts.UUID`)
+- Success state with link to draft in Studio + "Import Another" button
+
+**Dependencies added:** `jszip@^3.10.1`, `@types/jszip@^3.4.1`
+
+**How verified:** `pnpm --filter studio typecheck` PASS (0 errors). `pnpm --filter studio build` PASS.
+
+**Files changed:**
+
+- `apps/studio/tools/DocxImportTool.tsx` (new, ~280 lines)
+- `apps/studio/sanity.config.ts` (+2 lines: import + tool registration)
+- `apps/studio/package.json` (+2 lines: jszip deps)
 
 ---
 

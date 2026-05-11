@@ -2466,5 +2466,9 @@ const JOBS = (rawJobs ?? []).map((job) => ({
         alert('Something went wrong. Please try again or email us directly.');
       }
     }
+
+    window.openJobModal = openJobModal;
+    window.closeJobModal = closeJobModal;
+    window.updateFileLabel = updateFileLabel;
   </script>
 </BaseLayout>
