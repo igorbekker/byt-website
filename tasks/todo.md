@@ -125,3 +125,43 @@ window.updateFileLabel = updateFileLabel;
 **How verified:** Asset file confirmed present (24426 bytes). `grep` of dist/client/index.html confirms `logo-white-trans` in footer markup.
 
 **Files changed:** `apps/web/src/components/ui/Footer.astro` (1 line), `apps/web/public/assets/logo-white-trans.png` (new file)
+
+---
+
+### Wire 13 homepage images — 2026-05-12 [x] COMPLETE 2026-05-12
+
+Replace all Unsplash placeholder URLs on the homepage with project-owned JPGs.
+Commit: c5dbfef — branch feat/homepage-images → merged to main → pushed → Cloudflare auto-deploying
+
+- [x] A. 2026-05-12 Downloaded all 13 home-\*.jpg from GitHub remote to design-source/assets/
+- [x] B. 2026-05-12 Created apps/web/public/images/ and copied all 13 JPGs there
+- [x] C. 2026-05-12 Updated index.astro — hero img src fallback → /images/home-hero.jpg
+- [x] D. 2026-05-12 Updated index.astro — 3 router .r-wide-image bg URLs (communities, patients, providers)
+- [x] E. 2026-05-12 Updated index.astro — 2 .twoways-card-bg URLs (tele, facility)
+- [x] F. 2026-05-12 Updated index.astro — 4 .l349-img bg URLs (depression, grief, ptsd, relationships)
+- [x] G. 2026-05-12 Updated index.astro — 2 .testimonial-avatar bg URLs + FTC "Image for illustration" disclosure
+- [x] H. 2026-05-12 Updated index.astro — .provider-bg Sanity fallback → /images/home-provider-bg.jpg
+- [x] I. 2026-05-12 pnpm --filter web build — PASSED (17 routes, 0 errors); all 13 images in dist/client/images/
+
+### Session Review — 2026-05-12
+
+**What was done:** Wired 13 project-owned JPGs into the homepage, replacing all Unsplash placeholder URLs.
+
+**Files changed:**
+
+- `apps/web/public/images/home-*.jpg` (13 new files)
+- `apps/web/src/pages/index.astro` — 13 URL replacements, 2 FTC disclosure `<p>` tags added, placeholder initials removed
+
+**Implementation notes:**
+
+- Hero: `src` fallback → `/images/home-hero.jpg`; Sanity URL still takes precedence
+- Router cards (3): `.r-wide-image` inline bg-image updated
+- Two Ways (2): `.twoways-card-bg` inline bg-image updated
+- Conditions (4): `.l349-img` inline background updated
+- Testimonials (2): `.testimonial-avatar` bg updated; `<p style="font-size:11px;color:#9CA3AF;...">Image for illustration</p>` added after each `.testimonial-attribution`
+- Provider bg: Sanity `??` fallback updated
+- No CSS classes renamed, no DOM restructured, no object-fit/position CSS touched
+
+**Verification:** Build PASS — 17 routes, 0 errors. All 13 files in dist/client/images/ ✓
+
+**Issues:** Review section accidentally written to wrong todo.md (byt-website project dir instead of repo). Corrected in /post.
