@@ -1903,10 +1903,9 @@ const [page, testimonials] = await Promise.all([
         </div>
       </div>
       <div class="h98-bg">
-        <!-- Placeholder hero photo: warm therapy session imagery -->
         <img
-          src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1920&q=80"
-          alt="Therapist with patient"
+          src="/images/providers-hero.jpg"
+          alt="Licensed therapist arriving at a Florida senior community"
           loading="eager"
         />
       </div>
@@ -1933,8 +1932,8 @@ const [page, testimonials] = await Promise.all([
         <a href="#" class="l422-card is-default">
           <div class="l422-card-img">
             <img
-              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80"
-              alt="Therapist on telehealth video call"
+              src="/images/providers-track-tele.jpg"
+              alt="Therapist working from a home office"
             />
           </div>
           <div class="l422-card-content">
@@ -1983,8 +1982,8 @@ const [page, testimonials] = await Promise.all([
         <a href="#" class="l422-card">
           <div class="l422-card-img">
             <img
-              src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80"
-              alt="Senior care facility setting"
+              src="/images/providers-track-facility.jpg"
+              alt="Therapist working on-site with a resident"
             />
           </div>
           <div class="l422-card-content">
@@ -2469,14 +2468,20 @@ const [page, testimonials] = await Promise.all([
             }
           </p>
           <div class="t37-meta">
-            <div class="t37-avatar t37-avatar-init">
-              {testimonials?.[0]?.authorInitials ?? 'FB'}
-            </div>
+            <img
+              class="t37-avatar"
+              src="/images/providers-testimonial-avatar.jpg"
+              alt=""
+              role="presentation"
+            />
             <div>
               <p class="name">{testimonials?.[0]?.authorRole ?? '[Credential] · Facility-Based'}</p>
               <p>{testimonials?.[0]?.authorOrg ?? '[County], Southeast Florida'}</p>
             </div>
           </div>
+          <small style="display:block;font-size:12px;color:#9CA3AF;margin-top:4px;"
+            >Image for representation</small
+          >
         </div>
         <div class="t37-cell t37-test">
           <div class="t37-stars">

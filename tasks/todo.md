@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-11 — Careers click handler fix (define:vars IIFE) + Studio DocxImportTool
+- **Last work:** 2026-05-12 — Placed 4 providers images, replaced Unsplash placeholders + testimonial avatar div → img
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -125,6 +125,42 @@ window.updateFileLabel = updateFileLabel;
 **How verified:** Asset file confirmed present (24426 bytes). `grep` of dist/client/index.html confirms `logo-white-trans` in footer markup.
 
 **Files changed:** `apps/web/src/components/ui/Footer.astro` (1 line), `apps/web/public/assets/logo-white-trans.png` (new file)
+
+---
+
+### Place 4 providers images — 2026-05-12 [x] COMPLETE 2026-05-12
+
+Replace Unsplash placeholder URLs on providers.astro with project-owned JPGs. Replace testimonial avatar gradient div with img tag.
+
+- [x] A. 2026-05-12 Pulled 4 providers-\*.jpg from origin/main (were in design-source/assets/, not local)
+- [x] B. 2026-05-12 Copied all 4 to apps/web/public/images/
+- [x] C. 2026-05-12 Updated providers.astro — .h98-bg > img → /images/providers-hero.jpg
+- [x] D. 2026-05-12 Updated providers.astro — .l422-card:nth-child(1) img → /images/providers-track-tele.jpg (Teletherapy card)
+- [x] E. 2026-05-12 Updated providers.astro — .l422-card:nth-child(2) img → /images/providers-track-facility.jpg (Facility-Based card)
+- [x] F. 2026-05-12 Replaced .t37-avatar div (testimonials[0]) with <img> tag; alt="" role="presentation"
+- [x] G. 2026-05-12 Added FTC disclosure <small> below t37-meta for testimonial [0]
+- [x] H. 2026-05-12 pnpm --filter web build — PASSED (all routes, 0 errors); all 4 images in dist/client/images/
+
+### Session Review — 2026-05-12 (Providers images)
+
+**What was done:** Wired 4 project-owned JPGs into providers.astro, replacing Unsplash placeholders. Replaced the gradient-placeholder `<div class="t37-avatar t37-avatar-init">` for testimonial [0] with a proper `<img>` tag. Added FTC "Image for representation" disclosure.
+
+**Files changed:**
+
+- `apps/web/public/images/providers-hero.jpg` (new)
+- `apps/web/public/images/providers-track-tele.jpg` (new)
+- `apps/web/public/images/providers-track-facility.jpg` (new)
+- `apps/web/public/images/providers-testimonial-avatar.jpg` (new)
+- `apps/web/src/pages/providers.astro` — 3 img src replacements, 1 div→img swap, 1 FTC disclosure added
+
+**Implementation notes:**
+
+- Task spec had facility/tele mapped to wrong nth-child selectors; confirmed DOM order and swapped (`:nth-child(1)` = Teletherapy, `:nth-child(2)` = Facility-Based)
+- Testimonial [0] (FB, Facility-Based) gets the avatar photo; testimonial [1] (TT, Teletherapy) stays as gradient placeholder
+- FTC disclosure: `<small style="display:block;font-size:12px;color:#9CA3AF;margin-top:4px;">Image for representation</small>` after t37-meta div
+- No CSS classes renamed, no DOM restructured, no other HTML touched
+
+**Verification:** Build PASS — all routes, 0 errors. All 4 files confirmed in dist/client/images/ ✓
 
 ---
 

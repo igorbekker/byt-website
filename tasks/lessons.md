@@ -138,6 +138,16 @@ Placing `<script is:inline>` after `</BaseLayout>` causes Astro to render it aft
 
 ---
 
+### 17. When a written spec conflicts with the live DOM — trust the DOM
+
+If a task brief says "image X goes to selector :nth-child(1)" but reading the actual `.astro` file shows `:nth-child(1)` renders a different section than the brief implies, trust the DOM and flag the mismatch before touching anything.
+
+**Why:** The task spec was written from a visual description ("facility card is first"), but the actual HTML had the Teletherapy card as `:nth-child(1)`. Blindly following the spec would have put the wrong image on each card.
+
+**How to apply:** Before every image/content placement task, read the exact HTML at the target selector and print what it actually contains. Flag any mismatch between the spec and the DOM. Wait for user confirmation before applying the mapping.
+
+---
+
 ### 16. The tasks/ directory that counts is in the git repo — not the home directory
 
 The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo (`apps/web/src/../tasks/`). There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
