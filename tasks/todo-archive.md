@@ -2507,3 +2507,42 @@ Result: all `.btn btn-secondary` "Apply Now" buttons had transparent/invisible b
 **Item 5:** Investigated footer logo — static analysis showed logo-white.png was RGBA transparent. No code change. (Subsequent session found the real issue: wrong filename — logo-white-trans.png never copied to public/.)
 
 **Item 6:** Created `scripts/import-jds.py` — batch import .docx JDs to Sanity. Test run: 2 jobPostings created (IDs: `zBm7mJ8yrXMZXZmFsmlt7L`, `zBm7mJ8yrXMZXZmFsmltC1`).
+
+---
+
+## Archived 2026-05-13 — Tasks completed 2026-05-11
+
+### Careers Issues — 2026-05-11 [x] COMPLETE 2026-05-11
+
+#### Issue 1 — Job card click handlers not working on live site
+
+- [x] A. 2026-05-11 Diagnosed root cause: `define:vars={{ JOBS }}` wraps entire script in IIFE — `openJobModal`, `closeJobModal`, `updateFileLabel` trapped inside closure, inaccessible from HTML `onclick`/`onchange` attributes
+- [x] B. 2026-05-11 Fixed: added `window.openJobModal = openJobModal; window.closeJobModal = closeJobModal; window.updateFileLabel = updateFileLabel;` at end of script block in `apps/web/src/pages/careers.astro`
+- [x] C. 2026-05-11 Build PASS. Verified compiled dist/client/careers/index.html lines 229–231 contain all three window assignments
+
+#### Issue 2 — Sanity Studio JD importer tool
+
+- [x] D. 2026-05-11 Added `jszip` + `@types/jszip` to `apps/studio/package.json`; ran `pnpm install`
+- [x] E. 2026-05-11 Created `apps/studio/tools/DocxImportTool.tsx` — file upload, jszip docx parse, section marker extraction, review panel with editable fields + track dropdown, `client.create()` draft jobPosting
+- [x] F. 2026-05-11 Registered tool in `apps/studio/sanity.config.ts` as `"Import Job Description"`
+- [x] G. 2026-05-11 Studio typecheck PASS. Studio build PASS.
+
+#### Session Review — 2026-05-11 (Careers Issues)
+
+**Issue 1 root cause:** `<script is:inline define:vars={{ JOBS }}>` causes Astro to wrap the entire script in an IIFE. Three functions were defined inside — `openJobModal`, `closeJobModal`, `updateFileLabel` — but called from HTML `onclick`/`onchange` attributes which look in global (`window`) scope only. Fix: three `window.X = X` assignments at end of script block.
+
+**Issue 2:** `apps/studio/tools/DocxImportTool.tsx` — custom Sanity Studio tool. Accepts `.docx` upload; parses via JSZip; identifies sections by markers; review panel with editable fields + track dropdown; `client.create()` creates `jobPosting` draft. Dependencies: `jszip@^3.10.1`, `@types/jszip@^3.4.1`.
+
+**Files changed:** `careers.astro` (+3 lines), `DocxImportTool.tsx` (new ~280 lines), `sanity.config.ts` (+2), `package.json` (+2)
+
+---
+
+### Re-fix Items 4 & 5 — 2026-05-11 [x] COMPLETE 2026-05-11
+
+- [x] A. 2026-05-11 Investigated Item 4: `<script is:inline>` in index.astro was outside `</BaseLayout>` — renders after `</body></html>`
+- [x] B. 2026-05-11 Investigated Item 5: `logo-white-trans.png` in design-source/assets/ was never copied to `apps/web/public/assets/`; Footer.astro referenced `logo-white.png` (opaque bg)
+- [x] C. 2026-05-11 Fix Item 4: moved `</BaseLayout>` to after `</script>`, removed `matchMedia('(hover: hover)')` gate
+- [x] D. 2026-05-11 Fix Item 5: copied `logo-white-trans.png` → `public/assets/`; updated Footer.astro line 25
+- [x] E. 2026-05-11 Build PASS, parity check PASS, compiled output verified
+
+**Files changed:** `index.astro` (3 lines), `Footer.astro` (1 line), `logo-white-trans.png` (new asset)

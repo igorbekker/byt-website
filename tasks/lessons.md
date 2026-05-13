@@ -56,9 +56,15 @@ For deploys: push to main. Cloudflare deploys automatically. Do not manually tri
 
 Run `/begin` at session start — read CLAUDE.md, todo.md, lessons.md before doing anything. Never modify governance files (CLAUDE.md, `.claude/agents/`, `.claude/skills/`, `.claude/settings.json`) without Igor's explicit approval in the current session. Never log DEC entries as self-approved — only Igor approves decisions.
 
-### 7. Build gates: is:inline, parity check, public/ test
+### 7. `<script is:inline>` — use it for all page scripts, place it inside BaseLayout
 
-All `<script>` tags from design-source must use `is:inline`. Run `scripts/design-parity-check.sh` before committing any page `.astro` file. When debugging parity issues, copy the HTML file to `public/`, deploy as static, and verify — if it renders correctly, every deviation in the `.astro` version is something you introduced.
+All `<script>` tags copied from design-source must use `is:inline`. Scripts placed outside `<BaseLayout>` render after `</body></html>` in Astro's compiled output and have unreliable event-listener registration.
+
+**Rule:** Every page `<script is:inline>` block must be the last element INSIDE `<BaseLayout>` — not a sibling after it.
+
+**Why:** index.astro had hover mouseenter listeners that never fired because the script appeared after `</html>`. All other pages (about.astro, patients.astro) correctly place the script inside `<BaseLayout>`.
+
+**How to apply:** When adding or verifying a `<script is:inline>` tag, confirm placement with: `grep -n '</BaseLayout>\|<script is:inline'` — the script line number must be LOWER than `</BaseLayout>`. Also run `scripts/design-parity-check.sh` before committing any page `.astro` file. When debugging parity issues, copy the HTML file to `public/` and deploy as static — if it renders correctly, every deviation in the `.astro` version is something you introduced.
 
 ### 8. design-source/ is read-only — content changes go to Sanity, never hardcoded
 
@@ -109,6 +115,20 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 
 **How to apply:** Read the instruction literally. If it says "the logo," change the logo img dimensions only. If the container also needs to change, that is a separate decision that requires explicit confirmation.
 
+### 15. The tasks/ directory that counts is in the git repo — not the home directory
+
+The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
+
+**How to apply:** When starting a session with a fresh clone, the correct todo.md is at `<clone>/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
+
+### 16. When a written spec conflicts with the live DOM — trust the DOM
+
+If a task brief says "image X goes to selector :nth-child(1)" but reading the actual `.astro` file shows `:nth-child(1)` renders a different section than the brief implies, trust the DOM and flag the mismatch before touching anything.
+
+**Why:** Recurring pattern — task specs are written from visual descriptions ("facility card is first") but the actual HTML order differs. Blindly following the spec puts the wrong image on each card. Happened on both providers.astro and patients.astro.
+
+**How to apply:** Before every image/content placement task, read the exact HTML at each target selector and print what it actually contains (the surrounding label/heading text, not just the nth-child position). Flag any mismatch between the spec and the DOM. Wait for user confirmation before applying the mapping.
+
 ---
 
 ## Incident Log
@@ -127,29 +147,3 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 - 2026-05-04: Entire HTML sections replaced with Sanity .map() loops on Patients page. Sections empty when Sanity unpopulated. (OBS-012)
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
-
-### 15. `<script is:inline>` must be INSIDE `<BaseLayout>`, not after it
-
-Placing `<script is:inline>` after `</BaseLayout>` causes Astro to render it after `</body></html>` in the compiled output. Scripts there have unreliable event-listener registration. All page `<script is:inline>` blocks must be the last element inside `<BaseLayout>` — matching the pattern in about.astro, patients.astro.
-
-**Why:** index.astro had hover mouseenter listeners that never fired because the script appeared after `</html>` instead of inside `<body>`.
-
-**How to apply:** When adding or verifying a `<script is:inline>` tag in any page, confirm it is inside `<BaseLayout>...</BaseLayout>`, not a sibling after it. Check with: `grep -n '</BaseLayout>\|<script is:inline'` — script line number must be LOWER than the `</BaseLayout>` line.
-
----
-
-### 17. When a written spec conflicts with the live DOM — trust the DOM
-
-If a task brief says "image X goes to selector :nth-child(1)" but reading the actual `.astro` file shows `:nth-child(1)` renders a different section than the brief implies, trust the DOM and flag the mismatch before touching anything.
-
-**Why:** The task spec was written from a visual description ("facility card is first"), but the actual HTML had the Teletherapy card as `:nth-child(1)`. Blindly following the spec would have put the wrong image on each card.
-
-**How to apply:** Before every image/content placement task, read the exact HTML at the target selector and print what it actually contains. Flag any mismatch between the spec and the DOM. Wait for user confirmation before applying the mapping.
-
----
-
-### 16. The tasks/ directory that counts is in the git repo — not the home directory
-
-The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo (`apps/web/src/../tasks/`). There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
-
-**How to apply:** When starting a session with a fresh clone at `byt-website-work/`, the correct todo.md is at `byt-website-work/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
