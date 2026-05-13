@@ -201,3 +201,43 @@ Commit: c5dbfef — branch feat/homepage-images → merged to main → pushed �
 **Verification:** Build PASS — 17 routes, 0 errors. All 13 files in dist/client/images/ ✓
 
 **Issues:** Review section accidentally written to wrong todo.md (byt-website project dir instead of repo). Corrected in /post.
+
+---
+
+### Wire 7 patients page images — 2026-05-13 [x] COMPLETE 2026-05-13
+
+Replace all Unsplash placeholder fallback URLs on patients.astro with project-owned JPGs.
+
+- [x] A. 2026-05-13 Confirmed all 7 images exist in design-source/assets/ on GitHub remote
+- [x] B. 2026-05-13 Printed current state of all 7 slots — all had <img> tags, all had Unsplash fallbacks
+- [x] C. 2026-05-13 Copied 7 JPGs from design-source/assets/ to apps/web/public/images/
+- [x] D. 2026-05-13 Updated .ph-hero-bg img — fallback src + alt
+- [x] E. 2026-05-13 Updated 4 .ph-card-img img slots (families, adults, caregivers, espanol) — fallback src + alt
+- [x] F. 2026-05-13 Updated 2 .ph-way-bg img slots (tele `:nth-child(1)`, facility `:nth-child(2)`) — fallback src + alt
+- [x] G. 2026-05-13 pnpm --filter web build — PASSED (17 routes, 0 errors); all 7 images confirmed in dist/client/images/
+
+### Session Review — 2026-05-13
+
+**What was done:** Wired 7 project-owned JPGs into patients.astro, replacing all Unsplash placeholder fallback URLs. Sanity ternaries preserved — local images are fallbacks only.
+
+**Files changed:**
+
+- `apps/web/public/images/patients-hero-bg.jpg` (new)
+- `apps/web/public/images/patients-card-families.jpg` (new)
+- `apps/web/public/images/patients-card-adults.jpg` (new)
+- `apps/web/public/images/patients-card-caregivers.jpg` (new)
+- `apps/web/public/images/patients-card-espanol.jpg` (new)
+- `apps/web/public/images/patients-track-tele.jpg` (new)
+- `apps/web/public/images/patients-track-facility.jpg` (new)
+- `apps/web/src/pages/patients.astro` — 7 fallback src replacements + alt text updates
+
+**Implementation notes:**
+
+- Task spec had facility/tele mapped to wrong nth-child selectors (Lesson 17 applies); confirmed DOM order: `:nth-child(1)` = Teletherapy, `:nth-child(2)` = Facility
+- All slots already had `<img>` tags — no placeholder div → img swaps needed
+- Sanity ternary structure preserved: `src={sanityVar ?? '/images/filename.jpg'}`
+- No CSS classes renamed, no DOM restructured, no other HTML touched
+
+**Verification:** Build PASS — 17 routes, 0 errors. All 7 files confirmed in dist/client/images/ ✓
+
+**Issues:** Task review initially written to wrong tasks/ directory (/home/personal/projects/byt-website/tasks/ instead of repo). Corrected before commit.
