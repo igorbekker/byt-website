@@ -138,3 +138,35 @@ Replace all Unsplash placeholder fallback URLs on patients.astro with project-ow
 **Verification:** Build PASS — 17 routes, 0 errors. All 7 files confirmed in dist/client/images/ ✓
 
 **Issues:** Task review initially written to wrong tasks/ directory (/home/personal/projects/byt-website/tasks/ instead of repo). Corrected before commit.
+
+---
+
+### Wire 2 About Us page images — 2026-05-13 [x] COMPLETE 2026-05-13
+
+Install hero team photo and CTA background on about.astro.
+
+- [x] A. 2026-05-13 Created apps/web/public/images/about/ and copied about-hero-team.png + about-cta-bg.png from design-source/assets/
+- [x] B. 2026-05-13 Updated .about-hero-image img — static src (no Sanity ternary existed); alt → "Better You Therapy clinical team in South Florida"
+- [x] C. 2026-05-13 Updated .about-cta-bg — replaced Unsplash fallback URL; Sanity ternary preserved as primary
+- [x] D. 2026-05-13 pnpm --filter web build — PASSED (0 errors); both images confirmed in dist/client/images/about/
+
+### Session Review — 2026-05-13 (About Images)
+
+**What was done:** Wired 2 project-owned PNGs into about.astro, replacing Unsplash placeholder URLs. Sanity ternary for CTA bg preserved — local image is fallback only. Hero slot had no Sanity ternary; static path set directly.
+
+**Files changed:**
+
+- `apps/web/public/images/about/about-hero-team.png` (new)
+- `apps/web/public/images/about/about-cta-bg.png` (new)
+- `apps/web/src/pages/about.astro` — 2 URL replacements
+
+**Implementation notes:**
+
+- Hero: `.about-hero-image img` had no Sanity ternary — replaced static Unsplash `src` directly with `/images/about/about-hero-team.png`
+- CTA bg: `.about-cta-bg` had `page?.ctaBackgroundImage?.asset?.url ?? [unsplash]` — kept Sanity primary, replaced fallback only
+- Overlay CSS (`opacity: 0.22` + navy gradient on `.about-cta-overlay`) left untouched per instructions
+- No CSS classes renamed, no DOM restructured, no other HTML touched
+
+**Verification:** Build PASS — 0 errors. Both files confirmed in dist/client/images/about/ ✓
+
+**Issues:** Session review initially written to wrong tasks/ directory (/home/personal/projects/byt-website/tasks/ instead of repo). Lesson 15 violated. Corrected during /post.
