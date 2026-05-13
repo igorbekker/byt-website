@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-13 — Wired 7 patients page images, replaced Unsplash fallbacks
+- **Last work:** 2026-05-13 — Wired 5 Communities page images; 3 placed, 2 slots reported missing
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -170,3 +170,42 @@ Install hero team photo and CTA background on about.astro.
 **Verification:** Build PASS — 0 errors. Both files confirmed in dist/client/images/about/ ✓
 
 **Issues:** Session review initially written to wrong tasks/ directory (/home/personal/projects/byt-website/tasks/ instead of repo). Lesson 15 violated. Corrected during /post.
+
+---
+
+### Wire 5 Communities page images — 2026-05-13
+
+Branch: feat/communities-images
+
+- [x] A. 2026-05-13 Created apps/web/public/images/communities/
+- [x] B. 2026-05-13 Copied 3 clean images (empty-room, handoff, exterior) from design-source/assets/
+- [x] C. 2026-05-13 Cropped 100px from bottom of 2 Gemini images (hero, therapist-resident) using jimp
+- [x] D. 2026-05-13 SLOT A — updated .h84-image img: Sanity ternary + /images/communities/communities-hero.png fallback
+- [x] E. 2026-05-13 SLOT D — updated l521 Step 1 card img: communities-handoff.png
+- [x] F. 2026-05-13 SLOT E — updated .l16-image img: communities-therapist-resident.png
+- [x] G. 2026-05-13 pnpm --filter web build — PASSED (0 errors); all 5 images in dist/client/images/communities/
+
+---
+
+### Session Review — 2026-05-13 (Communities Images)
+
+**What was done:** Wired 5 project-owned images into communities.astro, replacing Unsplash placeholders. Two Gemini images cropped 100px from bottom to remove watermark.
+
+**Slot status:**
+
+| Image                              | Slot                                    | Status  | Details                                                                                         |
+| ---------------------------------- | --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| communities-hero.png               | SLOT A — .h84-image img                 | placed  | Sanity ternary added; heroImage field existed in interface but was unused in HTML               |
+| communities-exterior.png           | SLOT B — .l192-image                    | no slot | .l192-image contains SVG map only; no img placeholder exists                                    |
+| communities-empty-room.png         | SLOT C — between hero and l521          | no slot | No section exists between hero and l521                                                         |
+| communities-handoff.png            | SLOT D — l521 Step 1 .l521-card-img img | placed  | l521 cards DO have img slots (task note about "solid gradients" was outdated); placed in Step 1 |
+| communities-therapist-resident.png | SLOT E — .l16-image img                 | placed  | l16 section exists and has img slot                                                             |
+
+**Files changed:**
+
+- `apps/web/public/images/communities/` — 5 new images (2 Gemini-cropped, 3 clean copies)
+- `apps/web/src/pages/communities.astro` — 3 img src/alt replacements
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. All 5 images confirmed in dist/client/images/communities/ ✓
+
+**Issues:** None
