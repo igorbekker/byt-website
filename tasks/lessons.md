@@ -115,6 +115,12 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 
 **How to apply:** Read the instruction literally. If it says "the logo," change the logo img dimensions only. If the container also needs to change, that is a separate decision that requires explicit confirmation.
 
+### 15. The tasks/ directory that counts is in the git repo — not the home directory
+
+The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
+
+**How to apply:** When starting a session with a fresh clone, the correct todo.md is at `<clone>/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
+
 ### 16. Middleware token roles: read token fetches, write token tracks — never gate redirects on the write token
 
 When building middleware that (a) fetches data from a read API and (b) optionally writes analytics back:
@@ -129,12 +135,6 @@ When building middleware that (a) fetches data from a read API and (b) optionall
 1. Call `loadRedirectMap(readToken)` — `readToken` is optional; unauthenticated reads work on public datasets.
 2. Only wrap hit-tracking in `if (writeToken)` — if absent, fire the redirect anyway and skip the counter.
    Never use the write token as a gate for read operations.
-
-### 15. The tasks/ directory that counts is in the git repo — not the home directory
-
-The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
-
-**How to apply:** When starting a session with a fresh clone, the correct todo.md is at `<clone>/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
 
 ## Incident Log
 

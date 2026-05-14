@@ -1,6 +1,83 @@
 # todo Archive — Phase 5 + Phase 6 Early History
 
 Archived 2026-05-04. Contains Phase 5 approval checklist, Phase 6 Homepage/test.html/Communities/Providers original reviews (all from 2026-05-02).
+Archived 2026-05-14: Place 4 providers images (2026-05-12), Wire 13 homepage images (2026-05-12).
+
+---
+
+### Place 4 providers images — 2026-05-12 [x] COMPLETE 2026-05-12
+
+Replace Unsplash placeholder URLs on providers.astro with project-owned JPGs. Replace testimonial avatar gradient div with img tag.
+
+- [x] A. 2026-05-12 Pulled 4 providers-\*.jpg from origin/main (were in design-source/assets/, not local)
+- [x] B. 2026-05-12 Copied all 4 to apps/web/public/images/
+- [x] C. 2026-05-12 Updated providers.astro — .h98-bg > img → /images/providers-hero.jpg
+- [x] D. 2026-05-12 Updated providers.astro — .l422-card:nth-child(1) img → /images/providers-track-tele.jpg (Teletherapy card)
+- [x] E. 2026-05-12 Updated providers.astro — .l422-card:nth-child(2) img → /images/providers-track-facility.jpg (Facility-Based card)
+- [x] F. 2026-05-12 Replaced .t37-avatar div (testimonials[0]) with <img> tag; alt="" role="presentation"
+- [x] G. 2026-05-12 Added FTC disclosure <small> below t37-meta for testimonial [0]
+- [x] H. 2026-05-12 pnpm --filter web build — PASSED (all routes, 0 errors); all 4 images in dist/client/images/
+
+### Session Review — 2026-05-12 (Providers images)
+
+**What was done:** Wired 4 project-owned JPGs into providers.astro, replacing Unsplash placeholders. Replaced the gradient-placeholder `<div class="t37-avatar t37-avatar-init">` for testimonial [0] with a proper `<img>` tag. Added FTC "Image for representation" disclosure.
+
+**Files changed:**
+
+- `apps/web/public/images/providers-hero.jpg` (new)
+- `apps/web/public/images/providers-track-tele.jpg` (new)
+- `apps/web/public/images/providers-track-facility.jpg` (new)
+- `apps/web/public/images/providers-testimonial-avatar.jpg` (new)
+- `apps/web/src/pages/providers.astro` — 3 img src replacements, 1 div→img swap, 1 FTC disclosure added
+
+**Implementation notes:**
+
+- Task spec had facility/tele mapped to wrong nth-child selectors; confirmed DOM order and swapped (`:nth-child(1)` = Teletherapy, `:nth-child(2)` = Facility-Based)
+- Testimonial [0] (FB, Facility-Based) gets the avatar photo; testimonial [1] (TT, Teletherapy) stays as gradient placeholder
+- FTC disclosure: `<small style="display:block;font-size:12px;color:#9CA3AF;margin-top:4px;">Image for representation</small>` after t37-meta div
+- No CSS classes renamed, no DOM restructured, no other HTML touched
+
+**Verification:** Build PASS — all routes, 0 errors. All 4 files confirmed in dist/client/images/ ✓
+
+---
+
+### Wire 13 homepage images — 2026-05-12 [x] COMPLETE 2026-05-12
+
+Replace all Unsplash placeholder URLs on the homepage with project-owned JPGs.
+Commit: c5dbfef — branch feat/homepage-images → merged to main → pushed → Cloudflare auto-deploying
+
+- [x] A. 2026-05-12 Downloaded all 13 home-\*.jpg from GitHub remote to design-source/assets/
+- [x] B. 2026-05-12 Created apps/web/public/images/ and copied all 13 JPGs there
+- [x] C. 2026-05-12 Updated index.astro — hero img src fallback → /images/home-hero.jpg
+- [x] D. 2026-05-12 Updated index.astro — 3 router .r-wide-image bg URLs (communities, patients, providers)
+- [x] E. 2026-05-12 Updated index.astro — 2 .twoways-card-bg URLs (tele, facility)
+- [x] F. 2026-05-12 Updated index.astro — 4 .l349-img bg URLs (depression, grief, ptsd, relationships)
+- [x] G. 2026-05-12 Updated index.astro — 2 .testimonial-avatar bg URLs + FTC "Image for illustration" disclosure
+- [x] H. 2026-05-12 Updated index.astro — .provider-bg Sanity fallback → /images/home-provider-bg.jpg
+- [x] I. 2026-05-12 pnpm --filter web build — PASSED (17 routes, 0 errors); all 13 images in dist/client/images/
+
+### Session Review — 2026-05-12
+
+**What was done:** Wired 13 project-owned JPGs into the homepage, replacing all Unsplash placeholder URLs.
+
+**Files changed:**
+
+- `apps/web/public/images/home-*.jpg` (13 new files)
+- `apps/web/src/pages/index.astro` — 13 URL replacements, 2 FTC disclosure `<p>` tags added, placeholder initials removed
+
+**Implementation notes:**
+
+- Hero: `src` fallback → `/images/home-hero.jpg`; Sanity URL still takes precedence
+- Router cards (3): `.r-wide-image` inline bg-image updated
+- Two Ways (2): `.twoways-card-bg` inline bg-image updated
+- Conditions (4): `.l349-img` inline background updated
+- Testimonials (2): `.testimonial-avatar` bg updated; `<p style="font-size:11px;color:#9CA3AF;...">Image for illustration</p>` added after each `.testimonial-attribution`
+- Provider bg: Sanity `??` fallback updated
+- No CSS classes renamed, no DOM restructured, no object-fit/position CSS touched
+
+**Verification:** Build PASS — 17 routes, 0 errors. All 13 files in dist/client/images/ ✓
+
+**Issues:** Review section accidentally written to wrong todo.md (byt-website project dir instead of repo). Corrected in /post.
 
 ---
 

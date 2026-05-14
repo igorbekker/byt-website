@@ -17,17 +17,28 @@ interface RedirectDoc {
 type SortKey = 'sourcePath' | 'destinationPath' | 'statusCode' | 'hitCount' | 'lastHitAt';
 type SortDir = 'asc' | 'desc';
 
-function parseCSV(text: string): Array<Record<string, string>> {
+interface ParsedCSV {
+  rows: Array<{ sourcePath: string; destinationPath: string }>;
+  skipped: number;
+}
+
+function parseCSV(text: string): ParsedCSV {
   const lines = text
     .trim()
     .split('\n')
     .filter((l) => l.trim());
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
-  return lines.slice(1).map((line) => {
+  if (lines.length < 2) return { rows: [], skipped: 0 };
+  let skipped = 0;
+  const rows: ParsedCSV['rows'] = [];
+  for (const line of lines.slice(1)) {
     const vals = line.split(',').map((v) => v.trim().replace(/^"|"$/g, ''));
-    return Object.fromEntries(headers.map((h, i) => [h, vals[i] ?? '']));
-  });
+    if (vals.length !== 2 || !vals[0] || !vals[1]) {
+      skipped++;
+      continue;
+    }
+    rows.push({ sourcePath: vals[0], destinationPath: vals[1] });
+  }
+  return { rows, skipped };
 }
 
 function codeBadgeStyle(code: number): React.CSSProperties {
@@ -105,13 +116,14 @@ export function RedirectManager() {
       setImportResult(null);
       try {
         const text = await file.text();
-        const rows = parseCSV(text);
-        const valid = rows.filter((r) => r.sourcePath && r.destinationPath);
-        if (!valid.length)
-          throw new Error('No valid rows found — need sourcePath and destinationPath columns');
+        const { rows, skipped } = parseCSV(text);
+        if (!rows.length)
+          throw new Error(
+            'No valid rows found — CSV must have a header row and at least one data row with exactly 2 columns.',
+          );
 
         const tx = client.transaction();
-        for (const row of valid) {
+        for (const row of rows) {
           const slug = row.sourcePath
             .replace(/[^a-z0-9]/gi, '-')
             .replace(/-+/g, '-')
@@ -122,14 +134,18 @@ export function RedirectManager() {
             _type: 'redirect',
             sourcePath: row.sourcePath,
             destinationPath: row.destinationPath,
-            statusCode: Number(row.statusCode) || 301,
+            statusCode: 301,
             isActive: true,
-            notes: row.notes ?? '',
+            notes: '',
             hitCount: 0,
           });
         }
         await tx.commit();
-        setImportResult({ msg: `Imported ${valid.length} redirect(s).`, ok: true });
+        const summary =
+          skipped > 0
+            ? `Imported ${rows.length} redirects. Skipped ${skipped} malformed rows.`
+            : `Imported ${rows.length} redirects.`;
+        setImportResult({ msg: summary, ok: true });
         await fetchRedirects();
       } catch (err) {
         setImportResult({ msg: err instanceof Error ? err.message : String(err), ok: false });
@@ -270,9 +286,9 @@ export function RedirectManager() {
       <p style={styles.hint}>
         CSV format:{' '}
         <code style={{ background: '#f3f4f6', padding: '1px 4px', borderRadius: 3 }}>
-          sourcePath,destinationPath,statusCode,notes
+          sourcePath,destinationPath
         </code>{' '}
-        — one redirect per row. statusCode defaults to 301 if omitted.
+        — first row is header (skipped). One redirect per row. All imports use 301.
       </p>
     </div>
   );
