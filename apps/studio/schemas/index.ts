@@ -32,6 +32,7 @@ import { blogPost } from './documents/blogPost';
 import { blogCategory } from './documents/blogCategory';
 import { author } from './documents/author';
 import { jobPosting } from './documents/jobPosting';
+import { redirect } from './documents/redirect';
 
 export const schemaTypes = [
   // Objects
@@ -60,4 +61,5 @@ export const schemaTypes = [
   blogCategory,
   author,
   jobPosting,
+  redirect,
 ];

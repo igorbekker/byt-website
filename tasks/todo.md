@@ -343,3 +343,46 @@ window.submitGeneral = submitGeneral;
 **Verification:** `pnpm --filter web build` PASS — 0 errors ✓
 
 **Issues:** None
+
+---
+
+### Redirect Manager — Sanity schema + Studio tool + Astro middleware — 2026-05-14
+
+- [x] A. 2026-05-14 Created `apps/studio/schemas/documents/redirect.ts` — document type with sourcePath, destinationPath, statusCode (301/302/410), isActive, notes, hitCount (readOnly), lastHitAt (readOnly)
+- [x] B. 2026-05-14 Registered `redirect` in `apps/studio/schemas/index.ts`
+- [x] C. 2026-05-14 Created `apps/studio/tools/RedirectManager.tsx` — searchable/sortable table, CSV import, inline isActive toggle, active/inactive count badges
+- [x] D. 2026-05-14 Registered `RedirectManager` in `apps/studio/sanity.config.ts` as "Redirects" tool
+- [x] E. 2026-05-14 Created `apps/web/src/middleware.ts` — in-memory TTL cache, pathname match, 301/302 redirect, 410 Gone, fire-and-forget hit tracking via Cloudflare `waitUntil`
+- [x] F. 2026-05-14 Added `SANITY_WRITE_TOKEN` to `apps/web/.env.example`
+- [x] G. 2026-05-14 `pnpm --filter web build` — PASSED (0 errors, 18 routes)
+- [x] H. 2026-05-14 `pnpm --filter web check` — middleware.ts clean (0 errors); pre-existing errors in other files unchanged
+
+---
+
+### Session Review — 2026-05-14 (Redirect Manager)
+
+**What was done:** Built a full CMS-driven redirect manager: Sanity schema, Studio UI tool, and Astro middleware.
+
+**Architectural note:** The plan initially flagged OBS-015 (output: 'static' → 'hybrid' required for middleware). Astro 6 removed the `hybrid` option — `static` now supports middleware natively. No output mode change was needed; `astro.config.mjs` is unchanged.
+
+**Files created:**
+
+- `apps/studio/schemas/documents/redirect.ts` — `redirect` document type
+- `apps/studio/tools/RedirectManager.tsx` — Studio custom tool
+- `apps/web/src/middleware.ts` — Astro request-time middleware
+
+**Files edited:**
+
+- `apps/studio/schemas/index.ts` — added `redirect` import + registration
+- `apps/studio/sanity.config.ts` — added `RedirectManager` import + tool registration
+- `apps/web/.env.example` — added `SANITY_WRITE_TOKEN` key
+
+**Schema fields:** sourcePath (required, must start with `/`, unique), destinationPath (required, `/` or `https://`), statusCode (301/302/410, default 301), isActive (bool, default true), notes (text, optional), hitCount (number, readOnly, default 0), lastHitAt (datetime, readOnly).
+
+**Middleware behavior:** On each request, checks pathname against in-memory map (5-min TTL, fetched with `SANITY_API_READ_TOKEN`). On match: fire-and-forget PATCH to increment `hitCount`/`lastHitAt` via Cloudflare `ctx.waitUntil` (only if `SANITY_WRITE_TOKEN` is present), then returns 301/302 redirect or 410 Gone. Redirects always fire if the map loaded — write token absence only skips hit counting.
+
+**Environment:** `SANITY_WRITE_TOKEN` must be added to `.env.local` (local dev) and Cloudflare Pages → Settings → Environment variables (production). Get token from sanity.io/manage → project → API → Tokens (Editor or Write role).
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 18 routes ✓. `pnpm --filter web check` — middleware.ts clean ✓.
+
+**Issues:** None

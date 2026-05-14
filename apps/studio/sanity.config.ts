@@ -5,6 +5,7 @@ import { schemaTypes } from './schemas';
 import { structure } from './structure';
 import { MarkdownImportTool } from './tools/MarkdownImportTool';
 import { DocxImportTool } from './tools/DocxImportTool';
+import { RedirectManager } from './tools/RedirectManager';
 
 export default defineConfig({
   name: 'byt-website',
@@ -25,6 +26,11 @@ export default defineConfig({
       name: 'docx-import',
       title: 'Import Job Description',
       component: DocxImportTool,
+    },
+    {
+      name: 'redirect-manager',
+      title: 'Redirects',
+      component: RedirectManager,
     },
   ],
 });

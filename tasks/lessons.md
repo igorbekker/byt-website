@@ -115,6 +115,21 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 
 **How to apply:** Read the instruction literally. If it says "the logo," change the logo img dimensions only. If the container also needs to change, that is a separate decision that requires explicit confirmation.
 
+### 16. Middleware token roles: read token fetches, write token tracks — never gate redirects on the write token
+
+When building middleware that (a) fetches data from a read API and (b) optionally writes analytics back:
+
+- The **read token** controls whether the data fetch works — it must always be available for core functionality.
+- The **write token** controls optional side-effects (hit tracking, analytics) — it may legitimately be absent.
+
+**Why:** The initial middleware implementation used `SANITY_WRITE_TOKEN` as the single token for both fetching the redirect map and tracking hits, then returned `next()` (pass-through) if the token was missing. This meant the entire redirect system silently stopped working in any environment where only the read token was configured.
+
+**How to apply:** Separate the two concerns:
+
+1. Call `loadRedirectMap(readToken)` — `readToken` is optional; unauthenticated reads work on public datasets.
+2. Only wrap hit-tracking in `if (writeToken)` — if absent, fire the redirect anyway and skip the counter.
+   Never use the write token as a gate for read operations.
+
 ### 15. The tasks/ directory that counts is in the git repo — not the home directory
 
 The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
