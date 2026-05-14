@@ -121,6 +121,16 @@ The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There 
 
 **How to apply:** When starting a session with a fresh clone, the correct todo.md is at `<clone>/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
 
+### 17. Before reporting an image slot as "already local" — verify the filename matches the intended image
+
+When reading a slot that already has a local `/images/…` src, do not report it as done. Read the filename and confirm it is the correct image for that slot — not a leftover from a prior session's placeholder assignment.
+
+**Why:** .l16-image was assigned `communities-therapist-resident.png` in a prior session as a best-available placeholder. This session reported it as "already local" without checking whether the filename matched the intended `communities-l16-handles.png`. The mismatch was caught only because Igor asked for explicit src verification before committing.
+
+**How to apply:** For every image slot in a placement task, print the current src even when it is already local. Compare the filename to the intended file. If they differ, flag it before reporting the slot as done.
+
+---
+
 ### 16. When a written spec conflicts with the live DOM — trust the DOM
 
 If a task brief says "image X goes to selector :nth-child(1)" but reading the actual `.astro` file shows `:nth-child(1)` renders a different section than the brief implies, trust the DOM and flag the mismatch before touching anything.

@@ -209,3 +209,60 @@ Branch: feat/communities-images
 **Verification:** `pnpm --filter web build` PASS — 0 errors. All 5 images confirmed in dist/client/images/communities/ ✓
 
 **Issues:** None
+
+---
+
+### Wire remaining Communities + About images — 2026-05-14
+
+Replace all remaining Unsplash placeholders in communities.astro and about.astro with local images.
+
+- [x] A. 2026-05-14 Copied 10 missing communities images from design-source/assets/ to apps/web/public/images/communities/
+- [x] B. 2026-05-14 Copied about-story-hands.png from design-source/assets/ to apps/web/public/images/about/
+- [x] C. 2026-05-14 communities.astro — replaced Unsplash URLs in l521 Steps 2, 3, 4
+- [x] D. 2026-05-14 communities.astro — replaced 6 Unsplash URLs in l526 bento cards (Card 1–6)
+- [x] E. 2026-05-14 communities.astro — corrected .l16-image img: replaced communities-therapist-resident.png with communities-l16-handles.png (wrong file from prior session)
+- [x] F. 2026-05-14 about.astro — replaced Unsplash URL in .story-image img with about-story-hands.png
+- [x] G. 2026-05-14 pnpm --filter web build — PASSED (0 errors, 17 routes)
+
+---
+
+### Session Review — 2026-05-14
+
+**What was done:** Wired all remaining project-owned images into communities.astro and about.astro, eliminating every Unsplash URL from both files.
+
+**communities.astro changes:**
+
+| Section     | Old src                                         | New src                                                     |
+| ----------- | ----------------------------------------------- | ----------------------------------------------------------- |
+| l521 Step 2 | photo-1551836022 (Unsplash)                     | /images/communities/communities-step2-credentialing.png     |
+| l521 Step 3 | photo-1568377210220 (Unsplash)                  | /images/communities/communities-step3-arriving.png          |
+| l521 Step 4 | photo-1554224155-6726b3ff858f (Unsplash)        | /images/communities/communities-step4-billing.png           |
+| l526 Card 1 | photo-1559757148 (Unsplash)                     | /images/communities/communities-l526-card1-sessions.png     |
+| l526 Card 2 | photo-1505330622279 (Unsplash)                  | /images/communities/communities-l526-card2-ehr.png          |
+| l526 Card 3 | photo-1554224155-8d04cb21cd6c (Unsplash)        | /images/communities/communities-l526-card3-coordination.png |
+| l526 Card 4 | photo-1576091160399 (Unsplash)                  | /images/communities/communities-l526-card4-medicare.png     |
+| l526 Card 5 | photo-1573497019418 (Unsplash)                  | /images/communities/communities-l526-card5-training.png     |
+| l526 Card 6 | photo-1573497019940 (Unsplash)                  | /images/communities/communities-l526-card6-hipaa.png        |
+| .l16-image  | communities-therapist-resident.png (wrong file) | /images/communities/communities-l16-handles.png             |
+
+**about.astro changes:**
+
+| Section      | Old src                        | New src                             |
+| ------------ | ------------------------------ | ----------------------------------- |
+| .story-image | photo-1582213782179 (Unsplash) | /images/about/about-story-hands.png |
+
+**Sections already local — no change needed:**
+
+- communities.astro: .h84-image (hero), l521 Step 1, .l192-image (SVG only — no img tag)
+- about.astro: .about-hero-image, .about-cta-bg
+
+**Files changed:**
+
+- `apps/web/public/images/communities/` — 10 new images added
+- `apps/web/public/images/about/` — 1 new image added (about-story-hands.png)
+- `apps/web/src/pages/communities.astro` — 10 src/alt replacements
+- `apps/web/src/pages/about.astro` — 1 src/alt replacement
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 17 routes ✓. Zero Unsplash URLs remaining in both files ✓.
+
+**Issues:** .l16-image had communities-therapist-resident.png from prior session instead of communities-l16-handles.png. Caught during pre-commit verification. Corrected before commit.
