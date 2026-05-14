@@ -72,13 +72,13 @@ design-source/ is a structural reference frozen at design time — never modify 
 When content changes (email, fax, phone, copy, image): update the value in Sanity Studio or schema defaults — not in design-source/, and not as a new hardcoded value in .astro.
 The .astro file wires the field as `{sanityVar ?? "original-design-source-placeholder"}`. The fallback is the original design-source value; the live content comes from Sanity.
 
-### 9. Before declaring anything missing — investigate first
+### 9. Before reporting any image slot status — independently verify all three things
 
-When files appear absent or a visual bug looks like a missing/wrong asset: (1) check `git log --oneline` for recent upload or rename commits before reporting a file gone — Igor may have uploaded replacements in a separate commit; (2) check that the referenced filename actually exists in `apps/web/public/assets/` and matches what design-source uses.
+Before reporting a slot as done, missing, or already-correct, verify: (1) the file exists at the exact referenced path; (2) the filename matches the intended image for that slot — not a leftover placeholder from a prior session; (3) the DOM order at each target selector matches the spec — read the surrounding label/heading text, not just positional assumptions from the brief.
 
-**Why:** Prior incidents — files reported missing were present in recent commits; `logo-white-trans.png` was analyzed at the wrong path and declared correct when the right file was never copied to `public/assets/`.
+**Why:** Three recurring failures share this root cause — files reported missing were present in recent git commits; a slot reported as "already local" had the wrong filename (`communities-therapist-resident.png` instead of `communities-l16-handles.png`); specs written from visual descriptions had card order that differed from actual HTML, putting wrong images on wrong slots (providers.astro, patients.astro).
 
-**How to apply:** Run `git show --name-only <commit>` on suspicious recent commits. For asset bugs: verify the exact filename exists in `public/assets/` before concluding the code is correct.
+**How to apply:** For every slot in a placement task: print the current src even when already local, run `git show --name-only` on suspicious recent commits, and read the surrounding DOM context before mapping spec positions to HTML positions. Flag any mismatch before touching anything.
 
 ### 10. When audience categories don't map to form options — skip preselection
 
@@ -120,26 +120,6 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
 
 **How to apply:** When starting a session with a fresh clone, the correct todo.md is at `<clone>/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
-
-### 17. Before reporting an image slot as "already local" — verify the filename matches the intended image
-
-When reading a slot that already has a local `/images/…` src, do not report it as done. Read the filename and confirm it is the correct image for that slot — not a leftover from a prior session's placeholder assignment.
-
-**Why:** .l16-image was assigned `communities-therapist-resident.png` in a prior session as a best-available placeholder. This session reported it as "already local" without checking whether the filename matched the intended `communities-l16-handles.png`. The mismatch was caught only because Igor asked for explicit src verification before committing.
-
-**How to apply:** For every image slot in a placement task, print the current src even when it is already local. Compare the filename to the intended file. If they differ, flag it before reporting the slot as done.
-
----
-
-### 16. When a written spec conflicts with the live DOM — trust the DOM
-
-If a task brief says "image X goes to selector :nth-child(1)" but reading the actual `.astro` file shows `:nth-child(1)` renders a different section than the brief implies, trust the DOM and flag the mismatch before touching anything.
-
-**Why:** Recurring pattern — task specs are written from visual descriptions ("facility card is first") but the actual HTML order differs. Blindly following the spec puts the wrong image on each card. Happened on both providers.astro and patients.astro.
-
-**How to apply:** Before every image/content placement task, read the exact HTML at each target selector and print what it actually contains (the surrounding label/heading text, not just the nth-child position). Flag any mismatch between the spec and the DOM. Wait for user confirmation before applying the mapping.
-
----
 
 ## Incident Log
 
