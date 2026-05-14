@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-14 — Wired all remaining Communities + About images; 11 images, 0 Unsplash URLs remaining in either file
+- **Last work:** 2026-05-14 — Exposed submitJob/submitGeneral on window in careers.astro
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
