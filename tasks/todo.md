@@ -317,3 +317,29 @@ Identical pattern to FIX 2. Same endpoint `mykoqerq`.
 **Verification:** `pnpm --filter web build` PASS — 0 errors ✓
 
 **Issues:** None
+
+---
+
+### Expose submitJob + submitGeneral on window — 2026-05-14
+
+- [x] A. 2026-05-14 Added `window.submitJob = submitJob` and `window.submitGeneral = submitGeneral` to window assignments block in careers.astro
+- [x] B. 2026-05-14 pnpm --filter web build — PASSED (0 errors)
+
+---
+
+### Session Review — 2026-05-14 (Window Assignments)
+
+**What was done:** Added two window assignments in `careers.astro` so inline `onsubmit` handlers can resolve `submitJob` and `submitGeneral` at runtime.
+
+**Change:** In the `<script is:inline>` block, immediately after the existing `window.openJobModal`, `window.closeJobModal`, `window.updateFileLabel` assignments:
+
+```js
+window.submitJob = submitJob;
+window.submitGeneral = submitGeneral;
+```
+
+**Files changed:** `apps/web/src/pages/careers.astro`
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors ✓
+
+**Issues:** None
