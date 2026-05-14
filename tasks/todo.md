@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-13 — Wired 5 Communities page images; 3 placed, 2 slots reported missing
+- **Last work:** 2026-05-14 — Wired all remaining Communities + About images; 11 images, 0 Unsplash URLs remaining in either file
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -266,3 +266,54 @@ Replace all remaining Unsplash placeholders in communities.astro and about.astro
 **Verification:** `pnpm --filter web build` PASS — 0 errors, 17 routes ✓. Zero Unsplash URLs remaining in both files ✓.
 
 **Issues:** .l16-image had communities-therapist-resident.png from prior session instead of communities-l16-handles.png. Caught during pre-commit verification. Corrected before commit.
+
+---
+
+### Three files, five fixes — 2026-05-14
+
+- [x] A. 2026-05-14 FIX 1 — ModalForms.astro: removed "What to expect next →" link from #bookSuccess .next-row
+- [x] B. 2026-05-14 FIX 2 — Footer.astro: wired newsletter form to Formspree mykoqerq with async POST + error handling
+- [x] C. 2026-05-14 FIX 3 — NewsletterBlock.astro: same Formspree wire-up as FIX 2
+- [x] D. 2026-05-14 FIX 4 — careers.astro: hardcoded endpoint mzdoapyq, removed formId early-return, added hidden position input to both forms, openJobModal sets position to job.title
+- [x] E. 2026-05-14 FIX 5 — careers.astro: added .file-drop.drag-over CSS + dragover/dragleave/drop event listeners on all .file-drop elements
+- [x] F. 2026-05-14 pnpm --filter web build — PASSED (0 errors)
+
+---
+
+### Session Review — 2026-05-14 (Five Fixes)
+
+**What was done:** Three component/page files patched across five distinct fixes.
+
+**FIX 1 — ModalForms.astro, #bookSuccess .next-row:**
+Removed `<a href="/patients/" class="btn btn-coral">What to expect next →</a>`. Close button retained. No CSS changed.
+
+**FIX 2 — Footer.astro, footer newsletter script:**
+Replaced stub (instant success, no network call) with async Formspree POST to `https://formspree.io/f/mykoqerq`. JSON body `{ email }`, headers `Content-Type: application/json` + `Accept: application/json`. On success: "Subscribed ✓", clear input, reset after 2400ms. On error: alert + reset.
+
+**FIX 3 — NewsletterBlock.astro, blog newsletter script:**
+Identical pattern to FIX 2. Same endpoint `mykoqerq`.
+
+**FIX 4 — careers.astro, career form submission:**
+
+- Removed `data-formspree-id` attribute from both `#generalForm` and `#jobForm`
+- Hardcoded `https://formspree.io/f/mzdoapyq` directly in `submitJob` and `submitGeneral`
+- Removed `formId` early-return guard from both functions
+- Added `<input type="hidden" name="position" value="General Application" />` to `#generalForm`
+- Added `<input type="hidden" name="position" id="jobPositionInput" value="" />` to `#jobForm`
+- `openJobModal(id)` now sets `jobPositionInput.value = job.title` on each open
+
+**FIX 5 — careers.astro, file drag and drop:**
+
+- Added `.file-drop.drag-over { border-color: var(--coral); background: rgba(232,93,74,0.06); }` to CSS block
+- Added `dragover` (preventDefault + add class), `dragleave` (remove class), `drop` (preventDefault + remove class + set input.files + call updateFileLabel) listeners on all `.file-drop` elements
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro`
+- `apps/web/src/components/ui/Footer.astro`
+- `apps/web/src/components/blog/NewsletterBlock.astro`
+- `apps/web/src/pages/careers.astro`
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors ✓
+
+**Issues:** None

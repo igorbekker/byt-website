@@ -32,8 +32,6 @@ const [page, rawJobs] = await Promise.all([
   sanityClient.fetch<JobPosting[]>(JOB_POSTINGS_QUERY),
 ]);
 
-const applyId = import.meta.env.PUBLIC_FORMSPREE_APPLY_ID ?? '';
-
 function buildBodyHtml(job: JobPosting): string {
   const li = (items: string[] | undefined) => (items ?? []).map((i) => `<li>${i}</li>`).join('');
   return [
@@ -1816,6 +1814,10 @@ const JOBS = (rawJobs ?? []).map((job) => ({
       border-color: var(--coral);
       background: var(--coral-light);
     }
+    .file-drop.drag-over {
+      border-color: var(--coral);
+      background: rgba(232, 93, 74, 0.06);
+    }
     .file-drop input[type='file'] {
       display: none;
     }
@@ -2114,12 +2116,8 @@ const JOBS = (rawJobs ?? []).map((job) => ({
             "We're always interested in hearing from licensed clinicians who share our approach."
         }
       </p>
-      <form
-        class="general-form"
-        id="generalForm"
-        data-formspree-id={applyId}
-        onsubmit="submitGeneral(event)"
-      >
+      <form class="general-form" id="generalForm" onsubmit="submitGeneral(event)">
+        <input type="hidden" name="position" value="General Application" />
         <div class="form-row">
           <div class="form-field">
             <label for="g-name">Full Name</label>
@@ -2199,7 +2197,8 @@ const JOBS = (rawJobs ?? []).map((job) => ({
       <div class="modal-body" id="modalBody"></div>
       <div class="modal-form">
         <h4>Apply for this role</h4>
-        <form id="jobForm" data-formspree-id={applyId} onsubmit="submitJob(event)">
+        <form id="jobForm" onsubmit="submitJob(event)">
+          <input type="hidden" name="position" id="jobPositionInput" value="" />
           <div class="form-row">
             <div class="form-field">
               <label for="j-name">Full Name</label>
@@ -2367,6 +2366,7 @@ const JOBS = (rawJobs ?? []).map((job) => ({
   `;
       document.getElementById('modalBody').innerHTML = job.body;
       document.getElementById('jobForm').reset();
+      document.getElementById('jobPositionInput').value = job.title;
       document.getElementById('j-resume-label').innerHTML =
         '<strong>Choose a file</strong> or drag &amp; drop · PDF, DOC, DOCX';
       const overlay = document.getElementById('jobModal');
@@ -2393,20 +2393,34 @@ const JOBS = (rawJobs ?? []).map((job) => ({
       }
     }
 
+    document.querySelectorAll('.file-drop').forEach((drop) => {
+      drop.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        drop.classList.add('drag-over');
+      });
+      drop.addEventListener('dragleave', () => {
+        drop.classList.remove('drag-over');
+      });
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.classList.remove('drag-over');
+        const input = drop.querySelector('input[type="file"]');
+        if (input && e.dataTransfer.files.length) {
+          input.files = e.dataTransfer.files;
+          updateFileLabel(input);
+        }
+      });
+    });
+
     async function submitJob(e) {
       e.preventDefault();
       const form = e.target;
-      const formId = form.dataset.formspreeId;
-      if (!formId) {
-        alert('Form not configured. Please email us directly.');
-        return;
-      }
       const btn = form.querySelector('button[type="submit"]');
       const origText = btn.textContent;
       btn.disabled = true;
       btn.textContent = 'Sending…';
       try {
-        const res = await fetch('https://formspree.io/f/' + formId, {
+        const res = await fetch('https://formspree.io/f/mzdoapyq', {
           method: 'POST',
           body: new FormData(form),
           headers: { Accept: 'application/json' },
@@ -2432,17 +2446,12 @@ const JOBS = (rawJobs ?? []).map((job) => ({
     async function submitGeneral(e) {
       e.preventDefault();
       const form = e.target;
-      const formId = form.dataset.formspreeId;
-      if (!formId) {
-        alert('Form not configured. Please email us directly.');
-        return;
-      }
       const btn = form.querySelector('button[type="submit"]');
       const origText = btn.textContent;
       btn.disabled = true;
       btn.textContent = 'Sending…';
       try {
-        const res = await fetch('https://formspree.io/f/' + formId, {
+        const res = await fetch('https://formspree.io/f/mzdoapyq', {
           method: 'POST',
           body: new FormData(form),
           headers: { Accept: 'application/json' },
