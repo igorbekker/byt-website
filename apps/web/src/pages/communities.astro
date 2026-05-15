@@ -1914,8 +1914,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   <section id="l526-section" class="section">
     <div class="container">
       <div class="l526-head">
-        <h2>No cost to your facility</h2>
-        <p class="text-md">We bill Medicare and private insurance directly.</p>
+        <h2>{page?.noCostHeading ?? 'No cost to your facility'}</h2>
+        <p class="text-md">
+          {page?.noCostSubhead ?? 'We bill Medicare and private insurance directly.'}
+        </p>
       </div>
 
       <div class="l526-cols">
@@ -1924,19 +1926,28 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           <article class="l526-card large">
             <div class="l526-card-img">
               <img
-                src="/images/communities/communities-l526-card1-sessions.png"
-                alt="Therapist in session with elderly resident"
+                src={page?.noCostCards?.[0]?.image?.asset?.url ??
+                  '/images/communities/communities-l526-card1-sessions.png'}
+                alt={page?.noCostCards?.[0]?.image?.alt ??
+                  'Therapist in session with elderly resident'}
               />
             </div>
-            <span class="l526-tag">Sessions</span>
-            <h3>Weekly on-site therapy sessions</h3>
-            <p>Licensed therapist visits residents on a consistent schedule.</p>
+            <span class="l526-tag">{page?.noCostCards?.[0]?.tag ?? 'Sessions'}</span>
+            <h3>{page?.noCostCards?.[0]?.heading ?? 'Weekly on-site therapy sessions'}</h3>
+            <p>
+              {
+                page?.noCostCards?.[0]?.body ??
+                  'Licensed therapist visits residents on a consistent schedule.'
+              }
+            </p>
           </article>
           <article class="l526-card">
             <div class="l526-card-img">
               <img
-                src="/images/communities/communities-l526-card2-ehr.png"
-                alt="Electronic health records interface on laptop"
+                src={page?.noCostCards?.[1]?.image?.asset?.url ??
+                  '/images/communities/communities-l526-card2-ehr.png'}
+                alt={page?.noCostCards?.[1]?.image?.alt ??
+                  'Electronic health records interface on laptop'}
               />
             </div>
             <div class="l526-icon">
@@ -1951,8 +1962,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                   d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg
               >
             </div>
-            <h3>HIPAA-compliant documentation</h3>
-            <p>Progress notes and treatment plans in secure EHR.</p>
+            <h3>{page?.noCostCards?.[1]?.heading ?? 'HIPAA-compliant documentation'}</h3>
+            <p>
+              {page?.noCostCards?.[1]?.body ?? 'Progress notes and treatment plans in secure EHR.'}
+            </p>
           </article>
         </div>
 
@@ -1961,8 +1974,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           <article class="l526-card">
             <div class="l526-card-img">
               <img
-                src="/images/communities/communities-l526-card4-medicare.png"
-                alt="Electronic claims submission interface on monitor"
+                src={page?.noCostCards?.[2]?.image?.asset?.url ??
+                  '/images/communities/communities-l526-card4-medicare.png'}
+                alt={page?.noCostCards?.[2]?.image?.alt ??
+                  'Electronic claims submission interface on monitor'}
               />
             </div>
             <div class="l526-icon">
@@ -1980,19 +1995,28 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                   y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line></svg
               >
             </div>
-            <h3>Medicare and insurance billing</h3>
-            <p>All claims filed by our billing team.</p>
+            <h3>{page?.noCostCards?.[2]?.heading ?? 'Medicare and insurance billing'}</h3>
+            <p>{page?.noCostCards?.[2]?.body ?? 'All claims filed by our billing team.'}</p>
           </article>
           <article class="l526-card large">
             <div class="l526-card-img">
               <img
-                src="/images/communities/communities-l526-card3-coordination.png"
-                alt="Nurse and therapist reviewing patient information on tablet"
+                src={page?.noCostCards?.[3]?.image?.asset?.url ??
+                  '/images/communities/communities-l526-card3-coordination.png'}
+                alt={page?.noCostCards?.[3]?.image?.alt ??
+                  'Nurse and therapist reviewing patient information on tablet'}
               />
             </div>
-            <span class="l526-tag">Coordination</span>
-            <h3>Clinical team communication and care planning</h3>
-            <p>Your therapist integrates with nursing and wellness staff.</p>
+            <span class="l526-tag">{page?.noCostCards?.[3]?.tag ?? 'Coordination'}</span>
+            <h3>
+              {page?.noCostCards?.[3]?.heading ?? 'Clinical team communication and care planning'}
+            </h3>
+            <p>
+              {
+                page?.noCostCards?.[3]?.body ??
+                  'Your therapist integrates with nursing and wellness staff.'
+              }
+            </p>
           </article>
         </div>
 
@@ -2001,19 +2025,25 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           <article class="l526-card large">
             <div class="l526-card-img">
               <img
-                src="/images/communities/communities-l526-card5-training.png"
-                alt="Therapist leading staff training session at assisted living facility"
+                src={page?.noCostCards?.[4]?.image?.asset?.url ??
+                  '/images/communities/communities-l526-card5-training.png'}
+                alt={page?.noCostCards?.[4]?.image?.alt ??
+                  'Therapist leading staff training session at assisted living facility'}
               />
             </div>
-            <span class="l526-tag">Education</span>
-            <h3>Staff training on mental health recognition</h3>
-            <p>In-service resources available upon request.</p>
+            <span class="l526-tag">{page?.noCostCards?.[4]?.tag ?? 'Education'}</span>
+            <h3>
+              {page?.noCostCards?.[4]?.heading ?? 'Staff training on mental health recognition'}
+            </h3>
+            <p>{page?.noCostCards?.[4]?.body ?? 'In-service resources available upon request.'}</p>
           </article>
           <article class="l526-card">
             <div class="l526-card-img">
               <img
-                src="/images/communities/communities-l526-card6-hipaa.png"
-                alt="Secure filing cabinet with organized clinical records"
+                src={page?.noCostCards?.[5]?.image?.asset?.url ??
+                  '/images/communities/communities-l526-card6-hipaa.png'}
+                alt={page?.noCostCards?.[5]?.image?.alt ??
+                  'Secure filing cabinet with organized clinical records'}
               />
             </div>
             <div class="l526-icon">
@@ -2029,8 +2059,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
                 ></path></svg
               >
             </div>
-            <h3>Zero cost to your residents</h3>
-            <p>Medicare and insurance cover all therapy sessions.</p>
+            <h3>{page?.noCostCards?.[5]?.heading ?? 'Zero cost to your residents'}</h3>
+            <p>
+              {page?.noCostCards?.[5]?.body ?? 'Medicare and insurance cover all therapy sessions.'}
+            </p>
           </article>
         </div>
       </div>

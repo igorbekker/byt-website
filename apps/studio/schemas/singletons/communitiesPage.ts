@@ -61,6 +61,35 @@ export const communitiesPage = defineType({
       validation: (r) => r.max(12),
     }),
 
+    // ── No Cost ───────────────────────────────────────────────────────────
+    defineField({ name: 'noCostHeading', title: 'No Cost Heading', type: 'string' }),
+    defineField({ name: 'noCostSubhead', title: 'No Cost Subhead', type: 'text' }),
+    defineField({
+      name: 'noCostCards',
+      title: 'No Cost Cards',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'tag', title: 'Tag', type: 'string' }),
+            defineField({
+              name: 'heading',
+              title: 'Heading',
+              type: 'string',
+              validation: (r) => r.required(),
+            }),
+            defineField({ name: 'body', title: 'Body', type: 'text' }),
+            defineField({ name: 'image', title: 'Image', type: 'imageWithAlt' }),
+          ],
+          preview: {
+            select: { title: 'heading' },
+          },
+        },
+      ],
+      validation: (r) => r.max(6),
+    }),
+
     // ── Conditions Section ────────────────────────────────────────────────
     defineField({ name: 'conditionsEyebrow', title: 'Conditions Eyebrow', type: 'string' }),
     defineField({ name: 'conditionsHeading', title: 'Conditions Heading', type: 'string' }),

@@ -96,6 +96,8 @@ export const COMMUNITIES_PAGE_QUERY = `*[_type == "communitiesPage"][0]{
   processSteps[]{ stepNumber, heading, body },
   handlesEyebrow, handlesHeading, handlesSubhead,
   handlesItems[]{ heading, body },
+  noCostHeading, noCostSubhead,
+  noCostCards[]{ tag, heading, body, image{ asset->{ url }, alt } },
   conditionsEyebrow, conditionsHeading, conditionsSubhead,
   serviceAreaHeading, serviceAreaLede,
   ctaHeading, ctaSubhead,

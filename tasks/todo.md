@@ -463,6 +463,50 @@ Wire the orphan `disclaimerCopy` field and add two new heading fields to the Con
 
 ---
 
+### Wire noCost schema fields and Layout526 to Sanity — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Add `noCostHeading`, `noCostSubhead`, and `noCostCards` (array, max 6) to `communitiesPage.ts`; wire them into `COMMUNITIES_PAGE_QUERY`; replace all hardcoded text and image srcs in Layout526 of `communities.astro` with Sanity ternaries + verbatim fallbacks.
+
+- [x] A. 2026-05-15 Pre-flight: confirmed no noCost fields in communitiesPage.ts or COMMUNITIES_PAGE_QUERY; extracted all verbatim text from Layout526
+- [x] B. 2026-05-15 communitiesPage.ts — added noCostHeading (string), noCostSubhead (text), noCostCards (array of objects max 6: tag string, heading string required, body text, image imageWithAlt) between "What We Handle" and "Conditions" sections
+- [x] C. 2026-05-15 queries.ts — added noCostHeading, noCostSubhead, noCostCards[]{ tag, heading, body, image{ asset->{ url }, alt } } to COMMUNITIES_PAGE_QUERY
+- [x] D. 2026-05-15 communities.astro — wired section heading + subhead; wired all 6 cards (tag, heading, body, image src, alt) using [0]–[5] indexing with ?? fallbacks
+- [x] E. 2026-05-15 pnpm --filter web build — PASSED (0 errors, 18 routes)
+
+### Session Review — 2026-05-15 (noCost / Layout526 triad)
+
+**What was done:** Completed the schema–query–template triad for the Layout526 "No cost to your facility" section on the Communities page.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/communitiesPage.ts` — added 29 lines: noCostHeading, noCostSubhead, noCostCards (with tag/heading/body/image per card, max 6, required heading validation, preview select)
+- `apps/web/src/lib/queries.ts` — added 2 lines to COMMUNITIES_PAGE_QUERY: noCostHeading, noCostSubhead, noCostCards with nested image projection
+- `apps/web/src/pages/communities.astro` — 58 lines changed: section heading, subhead, and all 6 cards wired by position index
+
+**Wiring details:**
+
+| Field              | Fallback value                                                       |
+| ------------------ | -------------------------------------------------------------------- |
+| noCostHeading      | `'No cost to your facility'`                                         |
+| noCostSubhead      | `'We bill Medicare and private insurance directly.'`                 |
+| noCostCards[0].tag | `'Sessions'`                                                         |
+| noCostCards[0]     | heading: `'Weekly on-site therapy sessions'`                         |
+| noCostCards[1]     | heading: `'HIPAA-compliant documentation'` (no tag — SVG icon card)  |
+| noCostCards[2]     | heading: `'Medicare and insurance billing'` (no tag — SVG icon card) |
+| noCostCards[3].tag | `'Coordination'`                                                     |
+| noCostCards[3]     | heading: `'Clinical team communication and care planning'`           |
+| noCostCards[4].tag | `'Education'`                                                        |
+| noCostCards[4]     | heading: `'Staff training on mental health recognition'`             |
+| noCostCards[5]     | heading: `'Zero cost to your residents'` (no tag — SVG icon card)    |
+
+**Card layout:** `large` class on cards [0], [3], [4]; regular on [1], [2], [5] — unchanged. All 3 SVG icons untouched. No HTML structure, classes, or DOM order changed.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 18 routes ✓. `git diff --stat`: 3 files, 60 insertions, 29 deletions ✓.
+
+**Issues:** None
+
+---
+
 ### Rewrite CSV import in RedirectManager.tsx — 2026-05-14 [x] COMPLETE 2026-05-14
 
 Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). Skip header row unconditionally. Skip malformed rows. All imports hardcoded to 301/active/empty-notes.
