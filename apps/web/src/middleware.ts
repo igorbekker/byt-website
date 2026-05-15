@@ -76,6 +76,10 @@ function trackHit(match: RedirectEntry, writeToken: string): Promise<unknown> {
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // Cloudflare runtime only exists in live Workers — skip during static prerendering
+  const runtime = (context.locals as unknown as { runtime?: unknown }).runtime;
+  if (!runtime) return next();
+
   const readToken = getEnvVar(context.locals, 'SANITY_API_READ_TOKEN');
   const writeToken = getEnvVar(context.locals, 'SANITY_WRITE_TOKEN');
 

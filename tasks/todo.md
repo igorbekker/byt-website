@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-15 — Wire disclaimerCopy + add infoHeading/formHeading to Contact page
+- **Last work:** 2026-05-15 — Wire noCost schema fields and Layout526 to Sanity (communitiesPage)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -460,6 +460,31 @@ Wire the orphan `disclaimerCopy` field and add two new heading fields to the Con
 **Verification:** `pnpm --filter web build` PASS — 0 errors ✓. `git diff --stat` confirmed exactly 3 files changed, 13 insertions, 5 deletions.
 
 **Issues:** None
+
+---
+
+### Fix middleware prerender crash — communities blank white page — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Redirect middleware was crashing the `/communities` prerender. Root cause: Sanity has a redirect entry `/communities/` → `/communities`. During Astro static prerender, the URL is `http://localhost:4321/communities/` — the middleware matched this entry and called `Response.redirect('/communities', 301)`. In the Miniflare/Workerd prerender environment, `Response.redirect` with a relative path throws `TypeError: Unable to parse URL: /communities`, producing a 0-byte HTML file (blank white page). Predates the noCost commit.
+
+- [x] A. 2026-05-15 Diagnosed: 0-byte communities HTML, error from prerender middleware at Response.redirect with relative destinationPath
+- [x] B. 2026-05-15 Confirmed no-op middleware builds communities correctly; confirmed Sanity redirect entry `/communities/` → `/communities` exists
+- [x] C. 2026-05-15 Fixed: guard `if (!context.locals.runtime) return next()` — Cloudflare runtime only exists in live Workers, never during static prerender
+- [x] D. 2026-05-15 pnpm --filter web build — PASSED (0 errors); communities HTML 51,866 bytes with real page content ✓
+
+### Session Review — 2026-05-15 (Middleware prerender crash fix)
+
+**What was done:** Fixed a pre-existing middleware bug where the redirect middleware crashed during static prerendering, producing a 0-byte communities HTML file.
+
+**Root cause chain:** Astro prerender passes an absolute URL (`http://localhost:4321/communities/`) → middleware fetches Sanity redirects → entry `/communities/` matches → `Response.redirect('/communities', 301)` called with relative path → Cloudflare Workerd/Miniflare throws `TypeError: Unable to parse URL: /communities` → communities HTML is 0 bytes → blank white page in production.
+
+**Fix:** `if (!context.locals.runtime) return next()` — the `runtime` object only exists in live Cloudflare Workers (production and `wrangler dev`), never during build-time prerendering. This skips all redirect logic during the static build phase.
+
+**Files changed:** `apps/web/src/middleware.ts` — 1 line changed (guard replacing URL scheme check)
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. communities HTML: 51,866 bytes, real page content ✓.
+
+**Issues:** Bug predated today's noCost commit. Previously masked because the error appeared alongside "Build Complete!" and the 0-byte file wasn't noticed until the page rendered blank in production.
 
 ---
 

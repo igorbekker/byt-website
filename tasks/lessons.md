@@ -144,6 +144,14 @@ When writing a MANDATORY VERIFICATION checklist at the end of a task, every "YES
 
 **How to apply:** Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say "HTML structure changed: YES — [describe what changed and why]." Honest disclosures in the checklist are not failures; false "YES" claims are.
 
+### 18. "Build Complete!" does not mean every page built correctly — always check file size for key routes
+
+`pnpm --filter web build` reports "Complete!" even if individual routes fail during prerendering. A failed route produces a 0-byte HTML file and silently ships a blank white page to production.
+
+**Why:** The middleware threw `TypeError: Unable to parse URL` during the communities prerender. The build caught the error per-route but still reported overall success. The 0-byte `communities/index.html` deployed undetected.
+
+**How to apply:** After any build that touches middleware, routing, or page-level data fetching — run `wc -c dist/client/<key-routes>/index.html` to verify file sizes are non-zero. A healthy page is typically 30–100KB. A 0-byte or sub-1KB file is a blank-page signal. Add this check to /pre for any commit touching middleware.ts.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
