@@ -532,6 +532,28 @@ Add `noCostHeading`, `noCostSubhead`, and `noCostCards` (array, max 6) to `commu
 
 ---
 
+### Fix Communities hero CTA — restore openModal button — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Revert hero CTA from broken `<a>` tag back to `<button>` with `onclick="openModal('refer')"`.
+
+- [x] A. 2026-05-15 git pull origin main — already up to date
+- [x] B. 2026-05-15 Replaced `<a href={page?.heroCta?.href ?? '#cta'} class="btn btn-primary">…</a>` with `<button class="btn btn-primary" onclick="openModal('refer')">{page?.heroCta?.label ?? 'Refer a Resident'}</button>` in communities.astro line 1679
+- [x] C. 2026-05-15 git diff --stat — 1 file changed, 1 insertion, 3 deletions ✓
+
+### Session Review — 2026-05-15 (Communities hero CTA fix)
+
+**What was done:** Restored the hero CTA on communities.astro from a broken `<a>` anchor (which navigated to `heroCta.href` instead of triggering the modal) back to a `<button>` with `onclick="openModal('refer')"`.
+
+**Files changed:**
+
+- `apps/web/src/pages/communities.astro` — line 1679: `<a>` → `<button onclick="openModal('refer')">`, label fallback preserved
+
+**Verification:** `git diff --stat` confirmed 1 file changed, 1 insertion, 3 deletions. Label ternary `{page?.heroCta?.label ?? 'Refer a Resident'}` intact. No other lines touched ✓
+
+**Issues:** None
+
+---
+
 ### Rewrite CSV import in RedirectManager.tsx — 2026-05-14 [x] COMPLETE 2026-05-14
 
 Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). Skip header row unconditionally. Skip malformed rows. All imports hardcoded to 301/active/empty-notes.
