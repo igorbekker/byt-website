@@ -281,6 +281,8 @@ export const BLOG_SUBCATEGORY_PATHS_QUERY = `*[_type == "blogCategory" && define
 // ── LEGAL PAGES ───────────────────────────────────────────────────────────────
 
 export const PRIVACY_PAGE_QUERY = `*[_type == "privacyPage"][0]{
+  title,
+  lastUpdated,
   body[]{
     ...,
     _type == "block" => {

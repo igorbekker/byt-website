@@ -136,6 +136,14 @@ When building middleware that (a) fetches data from a read API and (b) optionall
 2. Only wrap hit-tracking in `if (writeToken)` — if absent, fire the redirect anyway and skip the counter.
    Never use the write token as a gate for read operations.
 
+### 17. Verification checklist items must match what the code actually does — no contradictions allowed
+
+When writing a MANDATORY VERIFICATION checklist at the end of a task, every "YES/NO" and every claimed value must be provably true based on the `git diff`. Do not mark "No HTML structure changed: YES" while simultaneously describing in the same message that the h1 was repositioned and a new element was added.
+
+**Why:** Igor caught an explicit contradiction: the verification said "YES, no structure changed" but the explanation in the same message described the structural moves. This wastes review time and erodes trust in verification outputs.
+
+**How to apply:** Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say "HTML structure changed: YES — [describe what changed and why]." Honest disclosures in the checklist are not failures; false "YES" claims are.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

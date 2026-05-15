@@ -5,6 +5,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { PRIVACY_PAGE_QUERY } from '../lib/queries';
 
 const page = await sanityClient.fetch<{
+  title?: string;
+  lastUpdated?: string;
   body: unknown[];
   seo?: { metaTitle?: string; metaDescription?: string };
 }>(PRIVACY_PAGE_QUERY);
@@ -1495,13 +1497,13 @@ const page = await sanityClient.fetch<{
 
   <main class="legal-page">
     <div class="legal-inner">
+      <h1>{page?.title ?? 'Privacy Policy'}</h1>
+      {page?.lastUpdated && <p>Last updated: {page?.lastUpdated ?? ''}</p>}
       {
         page?.body ? (
           <PortableText value={page?.body ?? []} />
         ) : (
           <>
-            <h1>Privacy Policy for Better You Therapy</h1>
-
             <p>
               Better You Therapy is accessible from
               https://testv22.demowebsitelinks.com/premier-choice-new/. One of our main priorities

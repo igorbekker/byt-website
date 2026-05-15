@@ -337,6 +337,33 @@ window.submitGeneral = submitGeneral;
 
 ---
 
+### Wire title and lastUpdated into Privacy page — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Connect the existing `title` and `lastUpdated` fields from `privacyPage.ts` schema through the GROQ query and into the page template.
+
+- [x] A. 2026-05-15 Pre-flight: confirmed `title` (line 13) and `lastUpdated` (lines 14–19) exist in `privacyPage.ts`; both absent from `PRIVACY_PAGE_QUERY`; title was hardcoded in fallback `<h1>` at line 1503 of `privacy.astro`; no `lastUpdated` element existed anywhere in the template
+- [x] B. 2026-05-15 Added `title,` and `lastUpdated,` to `PRIVACY_PAGE_QUERY` in `queries.ts`
+- [x] C. 2026-05-15 Added `title?: string; lastUpdated?: string;` to the TypeScript fetch interface in `privacy.astro`
+- [x] D. 2026-05-15 Moved `<h1>` outside the conditional block, wired as `{page?.title ?? 'Privacy Policy'}`; added conditional `{page?.lastUpdated && <p>Last updated: {page.lastUpdated}</p>}` after it; removed now-duplicate hardcoded `<h1>` from fallback branch
+- [x] E. 2026-05-15 `pnpm --filter web build` — PASSED
+
+### Session Review — 2026-05-15 (Privacy page title/lastUpdated)
+
+**What was done:** Completed the schema–query–template triad for `title` and `lastUpdated` on the Privacy Policy page.
+
+**Files changed:**
+
+- `apps/web/src/lib/queries.ts` — added `title,` and `lastUpdated,` to `PRIVACY_PAGE_QUERY`
+- `apps/web/src/pages/privacy.astro` — TS interface updated; `<h1>` moved above the conditional and wired from Sanity; `<p>Last updated: …</p>` added conditionally; hardcoded `<h1>` removed from fallback branch
+
+**Structural change note:** The `<h1>` was repositioned from inside the fallback-only branch to an unconditional position above the `{page?.body ? … : …}` block. This ensures title and lastUpdated render as independent fields regardless of whether a Sanity body exists. The hardcoded `<h1>Privacy Policy for Better You Therapy</h1>` was removed from the fallback to avoid duplication. The fallback branch retains all paragraph and heading content below the h1.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors ✓. `git diff --stat` confirmed exactly 2 files changed.
+
+**Issues:** Initial verification statement incorrectly claimed "No HTML structure changed: YES." User correctly flagged the contradiction. Structural change was real and intentional — logged in Lesson 17.
+
+---
+
 ### Rewrite CSV import in RedirectManager.tsx — 2026-05-14 [x] COMPLETE 2026-05-14
 
 Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). Skip header row unconditionally. Skip malformed rows. All imports hardcoded to 301/active/empty-notes.
