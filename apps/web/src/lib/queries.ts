@@ -294,6 +294,8 @@ export const PRIVACY_PAGE_QUERY = `*[_type == "privacyPage"][0]{
 }`;
 
 export const TERMS_PAGE_QUERY = `*[_type == "termsPage"][0]{
+  title,
+  lastUpdated,
   body[]{
     ...,
     _type == "block" => {

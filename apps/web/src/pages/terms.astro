@@ -5,6 +5,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { TERMS_PAGE_QUERY } from '../lib/queries';
 
 const page = await sanityClient.fetch<{
+  title?: string;
+  lastUpdated?: string;
   body: unknown[];
   seo?: { metaTitle?: string; metaDescription?: string };
 }>(TERMS_PAGE_QUERY);
@@ -499,14 +501,14 @@ const page = await sanityClient.fetch<{
   </style>
 
   <main class="doc">
+    <h1>{page?.title ?? 'Terms of Service'}</h1>
+    {page?.lastUpdated && <p class="updated">Last updated: {page?.lastUpdated}</p>}
     {
       page?.body ? (
         <PortableText value={page?.body ?? []} />
       ) : (
         <>
           <p class="doc-eyebrow">Legal</p>
-          <h1>Terms and Conditions</h1>
-          <p class="updated">Last updated: May 4, 2026</p>
 
           <p>
             Welcome to Better You Therapy. These terms and conditions outline the rules and

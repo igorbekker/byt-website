@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-14 — Redirect Manager (Sanity schema, Studio tool, Astro middleware)
+- **Last work:** 2026-05-15 — Wire title and lastUpdated into Terms page
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -361,6 +361,33 @@ Connect the existing `title` and `lastUpdated` fields from `privacyPage.ts` sche
 **Verification:** `pnpm --filter web build` PASS — 0 errors ✓. `git diff --stat` confirmed exactly 2 files changed.
 
 **Issues:** Initial verification statement incorrectly claimed "No HTML structure changed: YES." User correctly flagged the contradiction. Structural change was real and intentional — logged in Lesson 17.
+
+---
+
+### Wire title and lastUpdated into Terms page — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Connect the existing `title` and `lastUpdated` fields from `termsPage.ts` schema through the GROQ query and into the page template. Same pattern as Privacy page fix completed earlier this session.
+
+- [x] A. 2026-05-15 Pre-flight: confirmed `title` (line 13) and `lastUpdated` (lines 14–19) exist in `termsPage.ts`; both absent from `TERMS_PAGE_QUERY`; hardcoded `<h1>Terms and Conditions</h1>` at terms.astro line 508 and `<p class="updated">Last updated: May 4, 2026</p>` at line 509, both inside fallback block
+- [x] B. 2026-05-15 Added `title,` and `lastUpdated,` to `TERMS_PAGE_QUERY` in `queries.ts`
+- [x] C. 2026-05-15 Added `title?: string; lastUpdated?: string;` to the TypeScript fetch interface in `terms.astro`
+- [x] D. 2026-05-15 Added `<h1>{page?.title ?? 'Terms of Service'}</h1>` above the conditional block; added `{page?.lastUpdated && <p class="updated">Last updated: {page?.lastUpdated}</p>}` below h1; removed hardcoded `<h1>` and `<p class="updated">` from inside the fallback branch
+- [x] E. 2026-05-15 `pnpm --filter web build` — PASSED (confirmed in step 7 of /pre)
+
+### Session Review — 2026-05-15 (Terms page title/lastUpdated)
+
+**What was done:** Completed the schema–query–template triad for `title` and `lastUpdated` on the Terms and Conditions page, following the identical pattern applied to the Privacy page earlier this session.
+
+**Files changed:**
+
+- `apps/web/src/lib/queries.ts` — added `title,` and `lastUpdated,` to `TERMS_PAGE_QUERY`
+- `apps/web/src/pages/terms.astro` — TS interface updated; `<h1>` added above the conditional and wired from Sanity with `?? 'Terms of Service'` fallback; `<p class="updated">` added conditionally with `{page?.lastUpdated && …}`; hardcoded `<h1>` and hardcoded `<p class="updated">` removed from fallback branch
+
+**Structural change note:** The `<h1>` and last-updated `<p>` were moved from inside the fallback-only branch to unconditional positions above the `{page?.body ? … : …}` block. This ensures title and date render as independent CMS fields regardless of whether a Sanity body exists. The fallback branch retains the eyebrow and all paragraph/heading content below the h1.
+
+**Verification:** `pnpm --filter web build` PASS ✓. `git diff --stat` confirmed exactly 2 files changed, 6 insertions, 2 deletions.
+
+**Issues:** None
 
 ---
 
