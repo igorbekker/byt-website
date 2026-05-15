@@ -152,6 +152,14 @@ When writing a MANDATORY VERIFICATION checklist at the end of a task, every "YES
 
 **How to apply:** After any build that touches middleware, routing, or page-level data fetching — run `wc -c dist/client/<key-routes>/index.html` to verify file sizes are non-zero. A healthy page is typically 30–100KB. A 0-byte or sub-1KB file is a blank-page signal. Add this check to /pre for any commit touching middleware.ts.
 
+### 19. Commit protocol — stop and invoke /pre immediately when work is ready, don't wait to be reminded
+
+When a task is complete and verified, the very next action is to invoke the `/pre` skill. Do not summarize output, do not suggest next steps, do not describe what was done — stop and call `/pre`.
+
+**Why:** After seeding Sanity documents and reporting results, the commit step was described/implied without invoking `/pre` first. Igor had to explicitly remind: "dont forget rules like /pre." The rule is in CLAUDE.md under HARD STOP: "When work is ready to commit, stop completely and say: 'Ready for /pre — please run /pre before I commit.'" The `/pre` skill IS that stop — invoke it, don't narrate it.
+
+**How to apply:** The moment verification passes and work is ready, the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Just: `/pre`.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

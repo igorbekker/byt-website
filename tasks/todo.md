@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-15 — communities.astro CTA buttons restored to openModal('refer'); handlesItems[0–3] headings fixed in Sanity
+- **Last work:** 2026-05-15 — seeded 19 condition documents and 2 testimonial documents into Sanity via Mutations API
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -586,6 +586,72 @@ Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). S
 - `apps/studio/tools/RedirectManager.tsx`
 
 **Verification:** `pnpm --filter studio build` PASS — 0 errors ✓
+
+**Issues:** None
+
+---
+
+### Seed Sanity — conditions and testimonials — 2026-05-15 [x] COMPLETE 2026-05-15 17:xx
+
+Extract all condition and testimonial content from template fallbacks and create published Sanity documents.
+
+- [x] A. 2026-05-15 Pre-flight: read condition.ts schema (8 fields), testimonial.ts schema (8 fields), queries.ts (CONDITIONS_COMMUNITIES_QUERY, CONDITIONS_PATIENTS_QUERY, TESTIMONIALS_THERAPIST_QUERY)
+- [x] B. 2026-05-15 Extracted 11 conditions from communities.astro fallbacks (tagline + heading + body for each)
+- [x] C. 2026-05-15 Extracted 8 conditions from patients.astro fallbacks
+- [x] D. 2026-05-15 Extracted 2 placeholder therapist testimonials from providers.astro fallbacks
+- [x] E. 2026-05-15 Wrote scripts/seed-conditions-testimonials.mjs — createOrReplace via Sanity Mutations API, deterministic \_id, no npm deps (native fetch)
+- [x] F. 2026-05-15 Ran script — 19 condition docs + 2 testimonial docs created published (no drafts prefix)
+- [x] G. 2026-05-15 Verification queries confirmed: CONDITIONS_COMMUNITIES_QUERY → 11, CONDITIONS_PATIENTS_QUERY → 8, TESTIMONIALS_THERAPIST_QUERY → 2
+
+### Session Review — 2026-05-15 (Seed conditions + testimonials)
+
+**What was built:** Created 21 published Sanity documents (19 conditions, 2 testimonials) from template fallback values using the Sanity Mutations API. No code files changed — data-only operation.
+
+**Design decision — separate docs for overlapping conditions:** "Depression" and "Grief & loss" appear on both communities and patients pages but with completely different audience-specific body copy (senior/facility-focused vs general). Since the condition schema has a single `body` field, separate documents were created per audience context rather than sharing one document with one body:
+
+- `condition-communities-depression` (showOnCommunities: true) — senior living body copy
+- `condition-patients-depression` (showOnPatients: true) — general therapy body copy
+- Same pattern for Grief & loss
+
+**Condition documents created (19):**
+
+| \_id                                        | heading                          | showOnCommunities | showOnPatients |
+| ------------------------------------------- | -------------------------------- | ----------------- | -------------- |
+| condition-communities-depression            | Depression                       | true              | false          |
+| condition-communities-anxiety-disorders     | Anxiety disorders                | true              | false          |
+| condition-communities-anger-management      | Anger management                 | true              | false          |
+| condition-communities-behavior-problems     | Behavior problems                | true              | false          |
+| condition-communities-grief-loss            | Grief & loss                     | true              | false          |
+| condition-communities-memory-loss           | Memory loss                      | true              | false          |
+| condition-communities-transition-adjustment | Transition & adjustment disorder | true              | false          |
+| condition-communities-post-surgical         | Post-surgical mental health      | true              | false          |
+| condition-communities-post-traumatic-stress | Post-traumatic stress            | true              | false          |
+| condition-communities-chronic-disease       | Chronic disease coping           | true              | false          |
+| condition-communities-substance-dependency  | Drug & alcohol dependency        | true              | false          |
+| condition-patients-anxiety                  | Anxiety                          | false             | true           |
+| condition-patients-depression               | Depression                       | false             | true           |
+| condition-patients-grief-loss               | Grief & loss                     | false             | true           |
+| condition-patients-trauma-ptsd              | Trauma & PTSD                    | false             | true           |
+| condition-patients-life-transitions         | Life transitions                 | false             | true           |
+| condition-patients-caregiver-burnout        | Caregiver burnout                | false             | true           |
+| condition-patients-relationships            | Relationships                    | false             | true           |
+| condition-patients-self-esteem-identity     | Self-esteem & identity           | false             | true           |
+
+**Testimonial documents created (2):**
+
+| \_id                           | audienceType | authorRole                    |
+| ------------------------------ | ------------ | ----------------------------- |
+| testimonial-therapist-facility | therapist    | [Credential] · Facility-Based |
+| testimonial-therapist-tele     | therapist    | [Credential] · Teletherapy    |
+
+Note: Both testimonials are placeholders pending real collection. authorName set to "Licensed Therapist" to satisfy schema required validation.
+
+**Files changed:**
+
+- `scripts/seed-conditions-testimonials.mjs` (new — seed script, not deployed)
+- Sanity `production` dataset — 21 documents created via Mutations API
+
+**Verification:** Script output confirmed all 3 query counts match expectations. All documents have non-`drafts.` prefixed `_id`. Zero code files changed ✓
 
 **Issues:** None
 
