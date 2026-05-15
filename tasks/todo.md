@@ -313,6 +313,30 @@ window.submitGeneral = submitGeneral;
 
 ---
 
+### Add missing handlesSubhead field to Providers schema — 2026-05-15 [x] COMPLETE 2026-05-15
+
+- [x] A. 2026-05-15 Pre-flight: confirmed handlesSubhead missing from providersPage.ts schema, missing from PROVIDERS_PAGE_QUERY in queries.ts; already wired in providers.astro (TypeScript interface + template)
+- [x] B. 2026-05-15 Added `defineField({ name: 'handlesSubhead', title: 'Handles Subhead', type: 'text' })` to providersPage.ts after handlesHeading
+- [x] C. 2026-05-15 Added `handlesSubhead` to PROVIDERS_PAGE_QUERY in queries.ts after handlesHeading
+- [x] D. 2026-05-15 `pnpm --filter web build` — PASSED (0 errors, 18 routes)
+
+### Session Review — 2026-05-15 (handlesSubhead triad)
+
+**What was done:** Completed the schema–query–template triad for `handlesSubhead` on the Providers page. The field existed in the TypeScript interface and template in `providers.astro` but was absent from the Sanity schema and GROQ query, meaning it could never be populated from the CMS.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/providersPage.ts` — added `handlesSubhead` field after `handlesHeading`
+- `apps/web/src/lib/queries.ts` — added `handlesSubhead` to `PROVIDERS_PAGE_QUERY`
+
+**providers.astro:** No change — TypeScript interface (`handlesSubhead?: string`) and template reference (`{page?.handlesSubhead ?? 'The operational infrastructure that frees you to do therapy.'}`) were already in place.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 18 routes ✓. `git diff --stat` confirmed exactly 2 files changed, 2 insertions.
+
+**Issues:** None
+
+---
+
 ### Rewrite CSV import in RedirectManager.tsx — 2026-05-14 [x] COMPLETE 2026-05-14
 
 Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). Skip header row unconditionally. Skip malformed rows. All imports hardcoded to 301/active/empty-notes.

@@ -143,7 +143,7 @@ export const PROVIDERS_PAGE_QUERY = `*[_type == "providersPage"][0]{
     label, heading, body, statusNote,
     cta{ label, href, variant }
   },
-  handlesEyebrow, handlesHeading,
+  handlesEyebrow, handlesHeading, handlesSubhead,
   handlesItems[]{ heading, body },
   qualsEyebrow, qualsHeading,
   quals[]{ label, scope, body },

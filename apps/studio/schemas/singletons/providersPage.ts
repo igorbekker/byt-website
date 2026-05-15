@@ -60,6 +60,7 @@ export const providersPage = defineType({
     // ── What We Handle ────────────────────────────────────────────────────
     defineField({ name: 'handlesEyebrow', title: 'Handles Eyebrow', type: 'string' }),
     defineField({ name: 'handlesHeading', title: 'Handles Heading', type: 'string' }),
+    defineField({ name: 'handlesSubhead', title: 'Handles Subhead', type: 'text' }),
     defineField({
       name: 'handlesItems',
       title: 'Handles Items',
