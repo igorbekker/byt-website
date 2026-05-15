@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-15 — Wire title and lastUpdated into Terms page
+- **Last work:** 2026-05-15 — Wire disclaimerCopy + add infoHeading/formHeading to Contact page
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -422,6 +422,42 @@ Strip the redundant opening blocks that were embedded in the Sanity body for ter
 **Files changed:** None — Sanity content mutation only. Zero code files touched.
 
 **Verification:** Post-mutation fetch confirmed correct block 0 text for both documents. Full-body scans confirmed 0 h1 blocks and 0 "Last updated" blocks in both documents ✓
+
+**Issues:** None
+
+---
+
+### Wire disclaimerCopy + add infoHeading and formHeading to Contact page — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Wire the orphan `disclaimerCopy` field and add two new heading fields to the Contact page schema–query–template triad.
+
+- [x] A. 2026-05-15 Pre-flight: confirmed `disclaimerCopy` in schema (line 22) and CONTACT_PAGE_QUERY; `infoHeading` and `formHeading` absent from both; identified hardcoded h2 values and consent-label disclaimer text
+- [x] B. 2026-05-15 contactPage.ts — added `infoHeading` and `formHeading` defineField entries before `disclaimerCopy`
+- [x] C. 2026-05-15 queries.ts — added `infoHeading` and `formHeading` to CONTACT_PAGE_QUERY
+- [x] D. 2026-05-15 contact.astro — extended ContactPage interface; wired `page?.infoHeading`, `page?.formHeading`, and `page?.disclaimerCopy`
+- [x] E. 2026-05-15 `pnpm --filter web build` — PASSED (0 errors)
+
+### Session Review — 2026-05-15 (Contact page heading + disclaimer triad)
+
+**What was done:** Completed the schema–query–template triad for three Contact page fields: `infoHeading`, `formHeading` (new fields), and `disclaimerCopy` (orphan — existed in schema + query but not wired in template).
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/contactPage.ts` — added `infoHeading` and `formHeading` defineField entries
+- `apps/web/src/lib/queries.ts` — added `infoHeading` and `formHeading` to `CONTACT_PAGE_QUERY`
+- `apps/web/src/pages/contact.astro` — TS interface extended; three fields wired in template
+
+**Wiring details:**
+
+| Field            | Location in template                     | Fallback                                                                                                |
+| ---------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `infoHeading`    | `<h2>` above phone/email/hours info list | `'Reach our team directly.'`                                                                            |
+| `formHeading`    | `<h2>` inside the contact form card      | `'Send us a message'`                                                                                   |
+| `disclaimerCopy` | `<span>` inside `.form-consent` label    | Full original consent text with `<strong>988</strong>` and `<strong>911</strong>` preserved via ternary |
+
+**Implementation note:** `disclaimerCopy` fallback used a ternary (not `??`) because the original hardcoded span content contains `<strong>` tags. A `??` with a plain-string fallback would silently drop the bold formatting on "988" and "911" in the fallback branch. The ternary preserves the original HTML structure when no Sanity value is set.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors ✓. `git diff --stat` confirmed exactly 3 files changed, 13 insertions, 5 deletions.
 
 **Issues:** None
 

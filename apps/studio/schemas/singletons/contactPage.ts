@@ -19,6 +19,8 @@ export const contactPage = defineType({
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
     defineField({ name: 'heroImage', title: 'Hero Image', type: 'imageWithAlt' }),
     defineField({ name: 'hoursDescription', title: 'Hours Description', type: 'text' }),
+    defineField({ name: 'infoHeading', title: 'Info Section Heading', type: 'string' }),
+    defineField({ name: 'formHeading', title: 'Form Section Heading', type: 'string' }),
     defineField({ name: 'disclaimerCopy', title: 'Disclaimer Copy', type: 'text' }),
     defineField({ name: 'responseCopy', title: 'Response Copy', type: 'text' }),
     defineField({ name: 'seo', title: 'SEO', type: 'seoFields' }),

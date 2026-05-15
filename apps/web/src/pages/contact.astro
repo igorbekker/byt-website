@@ -10,6 +10,8 @@ interface ContactPage {
   hoursDescription?: string;
   disclaimerCopy?: string;
   responseCopy?: string;
+  infoHeading?: string;
+  formHeading?: string;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
@@ -805,7 +807,7 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
     <div class="contact-form-wrap fade-up">
       <div class="contact-info">
         <p class="eyebrow">Get in touch</p>
-        <h2>Reach our team directly.</h2>
+        <h2>{page?.infoHeading ?? 'Reach our team directly.'}</h2>
         <p>
           {
             page?.hoursDescription ??
@@ -879,7 +881,7 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
         data-formspree-id={contactId}
         onsubmit="handleContactSubmit(event)"
       >
-        <h2>Send us a message</h2>
+        <h2>{page?.formHeading ?? 'Send us a message'}</h2>
         <p class="form-sub">
           Required fields are marked with <span style="color:var(--coral)">*</span>
         </p>
@@ -929,9 +931,17 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
         <label class="form-consent">
           <input type="checkbox" required />
           <span
-            >I understand this form is not for emergencies. If you or someone you love is in crisis,
-            please call <strong>988</strong> or <strong>911</strong>. By submitting, I agree to be
-            contacted by Better You Therapy.</span
+            >{
+              page?.disclaimerCopy ? (
+                page.disclaimerCopy
+              ) : (
+                <>
+                  I understand this form is not for emergencies. If you or someone you love is in
+                  crisis, please call <strong>988</strong> or <strong>911</strong>. By submitting, I
+                  agree to be contacted by Better You Therapy.
+                </>
+              )
+            }</span
           >
         </label>
 
