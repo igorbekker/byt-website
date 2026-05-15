@@ -391,6 +391,42 @@ Connect the existing `title` and `lastUpdated` fields from `termsPage.ts` schema
 
 ---
 
+### Remove duplicate title/date blocks from Sanity body content — 2026-05-15 [x] COMPLETE 2026-05-15
+
+Strip the redundant opening blocks that were embedded in the Sanity body for termsPage and privacyPage. These caused double-render after the template was wired to render title and lastUpdated as independent fields.
+
+- [x] A. 2026-05-15 Pre-flight: fetched termsPage body — confirmed block 0 (h1 "Terms and Conditions") and block 1 (normal "Last updated: May 4, 2026") were duplicates of template-rendered fields
+- [x] B. 2026-05-15 Pre-flight: fetched privacyPage body — confirmed block 0 (h1 "Privacy Policy for Better You Therapy") was a duplicate; no "Last updated" block in privacy body
+- [x] C. 2026-05-15 Fetched full body arrays for both documents; trimmed via Python (terms: body[2:], privacy: body[1:]); wrote mutation payloads
+- [x] D. 2026-05-15 Applied Sanity patch mutations via API — both returned `operation: update`
+- [x] E. 2026-05-15 Post-flight: re-fetched first 4 blocks of each document; scanned full body for h1 and "Last updated" blocks
+
+### Session Review — 2026-05-15 (Duplicate body block removal)
+
+**What was done:** Removed redundant opening blocks from the Sanity body content of termsPage and privacyPage. These blocks (the page title as an h1 and "Last updated" as a normal paragraph) had been authored inside the body field as if the document were a self-contained plain-text file. After the template was updated to render `title` and `lastUpdated` as independent fields, those body blocks caused every piece of text to appear twice.
+
+**Sanity mutations applied:**
+
+| Document    | Blocks removed                                                        | Method                      |
+| ----------- | --------------------------------------------------------------------- | --------------------------- |
+| termsPage   | 0 (h1 "Terms and Conditions"), 1 (normal "Last updated: May 4, 2026") | `patch.set body = body[2:]` |
+| privacyPage | 0 (h1 "Privacy Policy for Better You Therapy")                        | `patch.set body = body[1:]` |
+
+**Post-mutation state:**
+
+| Document    | Block 0 text                                      | h1 blocks remaining | "Last updated" blocks remaining |
+| ----------- | ------------------------------------------------- | ------------------- | ------------------------------- |
+| termsPage   | "Welcome to Better You Therapy. These terms and…" | 0                   | 0                               |
+| privacyPage | "Better You Therapy is accessible from https://…" | 0                   | n/a (never present)             |
+
+**Files changed:** None — Sanity content mutation only. Zero code files touched.
+
+**Verification:** Post-mutation fetch confirmed correct block 0 text for both documents. Full-body scans confirmed 0 h1 blocks and 0 "Last updated" blocks in both documents ✓
+
+**Issues:** None
+
+---
+
 ### Rewrite CSV import in RedirectManager.tsx — 2026-05-14 [x] COMPLETE 2026-05-14
 
 Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). Skip header row unconditionally. Skip malformed rows. All imports hardcoded to 301/active/empty-notes.
