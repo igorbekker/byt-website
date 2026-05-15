@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-15 — Wire noCost schema fields and Layout526 to Sanity (communitiesPage)
+- **Last work:** 2026-05-15 — communities.astro CTA buttons restored to openModal('refer'); handlesItems[0–3] headings fixed in Sanity
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -588,3 +588,50 @@ Simplify CSV import to a strict 2-column format (sourcePath, destinationPath). S
 **Verification:** `pnpm --filter studio build` PASS — 0 errors ✓
 
 **Issues:** None
+
+---
+
+## Content Quality + Communities CTA Fix — 2026-05-15 [x] COMPLETE 2026-05-15
+
+### Steps
+
+- [x] A. 2026-05-15 Read communities.astro, patients.astro, index.astro — extracted all template fallback values and CTA behavior
+- [x] B. 2026-05-15 Fetched current Sanity state for communitiesPage, patientsPage, homePage
+- [x] C. 2026-05-15 Sanity mutation — communitiesPage.handlesItems[0–3] headings updated to match template fallbacks
+- [x] D. 2026-05-15 Investigated 5 remaining Sanity "issues" — all resolved as no-ops (see review)
+- [x] E. 2026-05-15 Fixed communities.astro heroCta — `<a href>` → `<button onclick="openModal('refer')">`
+- [x] F. 2026-05-15 Fixed communities.astro ctaCta — `<a href>` → `<button onclick="openModal('refer')">`
+
+### Session Review — 2026-05-15 (Content quality + communities CTA fix)
+
+**What was built:**
+
+1. **Sanity mutation — communitiesPage.handlesItems[0–3] headings** (the only valid Sanity mutation):
+   - [0]: "Weekly on-site therapy sessions" → "Scheduling and credentialing handled"
+   - [1]: "HIPAA-compliant documentation" → "Documentation and billing processed automatically"
+   - [2]: "Medicare and insurance billing" → "Clinical integration with your care team"
+   - [3]: "Clinical team communication and care planning" → "Progress reporting back to your nursing & wellness staff"
+   - Items [4] and [5] left intact
+
+2. **communities.astro — heroCta** (hero section): Changed `<a href={page?.heroCta?.href ?? '#cta'} class="btn btn-primary">` → `<button class="btn btn-primary" onclick="openModal('refer')">`. Label Sanity wiring preserved.
+
+3. **communities.astro — ctaCta** (Cta25 band): Changed `<a href={page?.ctaCta?.href ?? '/'} class="btn btn-primary">` → `<button class="btn btn-primary" onclick="openModal('refer')">`. Label Sanity wiring preserved.
+
+**Investigations (no mutations executed):**
+
+- `ctaHeading`: Template fallback = `'Ready to start'`. Design-source HTML = `"Ready to start"`. Current Sanity = `"Ready to start"`. Already correct, no truncation.
+- `processSteps body/number`: Template only renders `.heading` — no body or stepNumber fallbacks exist in template. Cannot derive from template fallbacks. stepNumbers "01"–"04" already set.
+- `patientsPage.heroHeading`: Template uses `set:html`. `<em>` tag is intentional. Leave as-is.
+- `homePage.routerCards`: Template renders zero `page?.routerCards` data — all 3 cards are hardcoded HTML. Sanity already populated with matching content. No mutation needed.
+- `heroCta/ctaCta hrefs`: Both were `"/communities"` (self-links). Root cause: DEC-002 Phase 3 rebuild (2026-05-08) converted these FROM modal buttons TO anchor links. Fixed now in this session.
+
+**History note:** The DEC-002 Phase 3 session (2026-05-08) review explicitly documents the `<button onclick="openModal('refer')">` → `<a href>` conversion as intentional. This session reverts that decision — both buttons correctly open the refer modal.
+
+**Files changed:**
+
+- `apps/web/src/pages/communities.astro` — 2 tag swaps (heroCta + ctaCta), 8 lines changed
+- Sanity `communitiesPage` document — handlesItems[0–3] headings patched via mutations API
+
+**How verified:** `git diff --stat` shows 1 file, 4 insertions, 4 deletions. Diff reviewed — only 2 tag swaps, no other changes. Build pending (step 7 of /pre).
+
+**Quality gate:** `pnpm --filter web build` PASS (all routes, 0 errors, 41.66s) — 2026-05-15.
