@@ -19,9 +19,49 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Wire blog article page hardcoded blocks (newsletter eyebrow/disclaimer now wired, related eyebrow CMS-SKIP, mobile CTA openModal)
+- **Last work:** 2026-05-18 — Create formSettings singleton and wire modal marketing copy into ModalForms
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Create formSettings singleton and wire modal marketing copy — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Create `formSettings` Sanity singleton for all Book/Refer modal marketing copy and wire into ModalForms.astro.
+
+- [x] PRE-FLIGHT: Read ModalForms.astro — extracted all marketing copy (eyebrows, headings, value props, consent, submit labels, fine print, success states, aside steps)
+- [x] PRE-FLIGHT: Read BaseLayout.astro — confirmed hours is hardcoded, no formSettings fetch exists
+- [x] PRE-FLIGHT: Confirmed no formSettings singleton exists in schema
+- [x] Created `apps/studio/schemas/singletons/formSettings.ts` with all 19 fields (book: 8, refer: 9, shared: 1 + hours)
+- [x] Registered formSettings in `apps/studio/schemas/index.ts`
+- [x] Added formSettings to Studio sidebar in `apps/studio/structure/index.ts`
+- [x] Added FORM_SETTINGS_QUERY to `apps/web/src/lib/queries.ts`
+- [x] Updated BaseLayout.astro: added FormSettings interface, parallel fetch, wired hours with fallback, passed all 19 props to ModalForms
+- [x] Expanded ModalForms.astro Props interface (all new fields optional), wired every marketing copy string with ?? fallback
+- [x] Build verified: `pnpm --filter web build` — PASSED (19 routes, 0 errors)
+- [x] Type check: 35 errors (all pre-existing sanity:client / implicit any — zero new errors introduced)
+
+### Session Review — 2026-05-18 (formSettings singleton)
+
+**What was done:** Created a new `formSettings` Sanity singleton with 19 fields covering all marketing copy in the Book and Refer modals. Registered it in the schema index and Studio sidebar. Added FORM_SETTINGS_QUERY to queries.ts. Updated BaseLayout to fetch formSettings in parallel with siteSettings and pass all props to ModalForms. Expanded ModalForms Props interface and wired every marketing copy string with `??` fallbacks to the original hardcoded text. No HTML structure, CSS, JavaScript, or form field labels were changed.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/formSettings.ts` (new)
+- `apps/studio/schemas/index.ts` (formSettings import + registration)
+- `apps/studio/structure/index.ts` (Form Settings sidebar item)
+- `apps/web/src/lib/queries.ts` (FORM_SETTINGS_QUERY added)
+- `apps/web/src/layouts/BaseLayout.astro` (FormSettings interface, parallel fetch, prop pass-through)
+- `apps/web/src/components/ui/ModalForms.astro` (Props expanded, 14 strings wired)
+
+**Implementation notes:**
+
+- `referSubhead` wires only the non-bold portion; `<strong>Zero cost...</strong>` remains hardcoded per Lesson 2 (no HTML structure changes)
+- `referAsideSteps[1].text` and `[2].text` wire the text after the hardcoded `<strong>` bold labels
+- Trust-strip value props indexed by position: `bookValueProps?.[0..2]?.text`
+- `hours` moved from hardcoded string in BaseLayout to `formSettings?.hours ?? 'Mon–Fri, 9am–6pm ET'`
+
+**Verification:** Build PASS — 19 routes, 0 errors. Zero new type errors.
 
 ---
 

@@ -1,5 +1,27 @@
 // GROQ queries — import and run via useSanityClient() from @sanity/astro
 
+export const FORM_SETTINGS_QUERY = `*[_type == "formSettings"][0]{
+  bookEyebrow,
+  bookHeading,
+  bookValueProps[]{ text },
+  bookConsentText,
+  bookSubmitLabel,
+  bookFinePrint,
+  bookSuccessHeading,
+  bookSuccessBody,
+  referEyebrow,
+  referHeading,
+  referSubhead,
+  referConsentText,
+  referSubmitLabel,
+  referSuccessHeading,
+  referSuccessBody,
+  referAsideEyebrow,
+  referAsideSteps[]{ stepNumber, text },
+  referAsideContactEyebrow,
+  hours
+}`;
+
 export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   businessName,
   phone,

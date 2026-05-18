@@ -11,6 +11,24 @@ interface Props {
   phone?: string;
   email?: string;
   hours?: string;
+  bookEyebrow?: string;
+  bookHeading?: string;
+  bookValueProps?: { text: string }[];
+  bookConsentText?: string;
+  bookSubmitLabel?: string;
+  bookFinePrint?: string;
+  bookSuccessHeading?: string;
+  bookSuccessBody?: string;
+  referEyebrow?: string;
+  referHeading?: string;
+  referSubhead?: string;
+  referConsentText?: string;
+  referSubmitLabel?: string;
+  referSuccessHeading?: string;
+  referSuccessBody?: string;
+  referAsideEyebrow?: string;
+  referAsideSteps?: { stepNumber: string; text: string }[];
+  referAsideContactEyebrow?: string;
 }
 const {
   bookId,
@@ -18,6 +36,24 @@ const {
   phone = '754-999-0011',
   email = 'hello@getbetteryou.com',
   hours = 'Mon–Fri, 9am–6pm ET',
+  bookEyebrow,
+  bookHeading,
+  bookValueProps,
+  bookConsentText,
+  bookSubmitLabel,
+  bookFinePrint,
+  bookSuccessHeading,
+  bookSuccessBody,
+  referEyebrow,
+  referHeading,
+  referSubhead,
+  referConsentText,
+  referSubmitLabel,
+  referSuccessHeading,
+  referSuccessBody,
+  referAsideEyebrow,
+  referAsideSteps,
+  referAsideContactEyebrow,
 } = Astro.props;
 ---
 
@@ -652,8 +688,10 @@ const {
     </button>
 
     <div class="modal-header">
-      <p class="eyebrow">Book a Virtual Session</p>
-      <h3 id="bookTitle">Get matched with a licensed therapist this week — by video.</h3>
+      <p class="eyebrow">{bookEyebrow ?? 'Book a Virtual Session'}</p>
+      <h3 id="bookTitle">
+        {bookHeading ?? 'Get matched with a licensed therapist this week — by video.'}
+      </h3>
       <p class="modal-sub">
         <strong>Virtual sessions only.</strong> All Better You Therapy bookings are secure online video
         visits with a Florida-licensed therapist. Our intake team confirms within one business day — usually
@@ -667,7 +705,8 @@ const {
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
-          > Florida-licensed therapists</span
+          >
+          {bookValueProps?.[0]?.text ?? 'Florida-licensed therapists'}</span
         >
         <span
           ><svg
@@ -676,7 +715,8 @@ const {
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
-          > Most insurance accepted</span
+          >
+          {bookValueProps?.[1]?.text ?? 'Most insurance accepted'}</span
         >
         <span
           ><svg
@@ -685,7 +725,8 @@ const {
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
-          > No waitlist</span
+          >
+          {bookValueProps?.[2]?.text ?? 'No waitlist'}</span
         >
       </div>
     </div>
@@ -826,18 +867,22 @@ const {
         <label class="form-consent">
           <input type="checkbox" required />
           <span
-            >I understand this form is not for emergencies and agree to be contacted by Better You
-            Therapy by phone, email, or text. <a
-              href="/privacy/"
-              style="color:var(--coral); text-decoration:underline">Privacy Policy</a
+            >{
+              bookConsentText ??
+                'I understand this form is not for emergencies and agree to be contacted by Better You Therapy by phone, email, or text.'
+            }
+            <a href="/privacy/" style="color:var(--coral); text-decoration:underline"
+              >Privacy Policy</a
             ></span
           >
         </label>
 
         <div class="form-actions">
-          <span class="form-fineprint">We respond within one business day.</span>
+          <span class="form-fineprint"
+            >{bookFinePrint ?? 'We respond within one business day.'}</span
+          >
           <button type="submit" class="btn btn-coral">
-            Request my session
+            {bookSubmitLabel ?? 'Request my session'}
             <svg
               width="14"
               height="14"
@@ -862,10 +907,12 @@ const {
             stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
           >
         </div>
-        <h4>You're in good hands.</h4>
+        <h4>{bookSuccessHeading ?? "You're in good hands."}</h4>
         <p>
-          Thanks — we'll reach out within one business day to match you with a licensed therapist
-          and confirm your first session.
+          {
+            bookSuccessBody ??
+              "Thanks — we'll reach out within one business day to match you with a licensed therapist and confirm your first session."
+          }
         </p>
         <div class="next-row">
           <button class="btn btn-ghost-ink" onclick="closeModal('book')">Close</button>
@@ -899,14 +946,16 @@ const {
     </button>
 
     <div class="modal-header">
-      <p class="eyebrow">Partner with Better You</p>
-      <h3 id="referTitle">Bring on-site mental health care to your facility.</h3>
+      <p class="eyebrow">{referEyebrow ?? 'Partner with Better You'}</p>
+      <h3 id="referTitle">
+        {referHeading ?? 'Bring on-site mental health care to your facility.'}
+      </h3>
       <p class="modal-sub">
-        Tell us about your facility and we'll set up a 20-minute intro call. We'll walk through how
-        on-site care works at your community, answer questions, and — when the time is right — build
-        a referral relationship that fits your team's workflow. <strong
-          >Zero cost to your facility or to residents.</strong
-        >
+        {
+          referSubhead ??
+            "Tell us about your facility and we'll set up a 20-minute intro call. We'll walk through how on-site care works at your community, answer questions, and — when the time is right — build a referral relationship that fits your team's workflow."
+        }
+        <strong>Zero cost to your facility or to residents.</strong>
       </p>
     </div>
 
@@ -1078,14 +1127,16 @@ const {
             <label class="form-consent">
               <input type="checkbox" required />
               <span
-                >I'd like Better You Therapy to contact me about an intro call. We'll never share
-                your information.</span
+                >{
+                  referConsentText ??
+                    "I'd like Better You Therapy to contact me about an intro call. We'll never share your information."
+                }</span
               >
             </label>
 
             <div class="form-actions" style="justify-content:flex-end">
               <button type="submit" class="btn btn-coral">
-                Request an intro call
+                {referSubmitLabel ?? 'Request an intro call'}
                 <svg
                   width="14"
                   height="14"
@@ -1111,10 +1162,12 @@ const {
               stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
             >
           </div>
-          <h4>Thanks — we'll be in touch.</h4>
+          <h4>{referSuccessHeading ?? "Thanks — we'll be in touch."}</h4>
           <p>
-            A member of our partnerships team will reach out within one business day to schedule a
-            20-minute intro call at a time that works for you.
+            {
+              referSuccessBody ??
+                'A member of our partnerships team will reach out within one business day to schedule a 20-minute intro call at a time that works for you.'
+            }
           </p>
           <div class="next-row">
             <button class="btn btn-ghost-ink" onclick="closeModal('refer')">Close</button>
@@ -1124,31 +1177,40 @@ const {
 
       <aside class="refer-aside">
         <div>
-          <p class="eyebrow">What to expect</p>
+          <p class="eyebrow">{referAsideEyebrow ?? 'What to expect'}</p>
           <ul>
             <li>
               <span class="check-num">1</span><div>
-                Intro call. 10 minutes. We learn about your community, your residents, your team —
-                and you learn how we work.
+                {
+                  referAsideSteps?.[0]?.text ??
+                    'Intro call. 10 minutes. We learn about your community, your residents, your team — and you learn how we work.'
+                }
               </div>
             </li>
             <li>
               <span class="check-num">2</span><div>
-                <strong style="color:#fff">On-site visit.</strong> We come meet your team in person. No
-                pressure, no contract — just a relationship.
+                <strong style="color:#fff">On-site visit.</strong>
+                {
+                  referAsideSteps?.[1]?.text ??
+                    'We come meet your team in person. No pressure, no contract — just a relationship.'
+                }
               </div>
             </li>
             <li>
               <span class="check-num">3</span><div>
-                <strong style="color:#fff">Referrals when ready.</strong> When a resident needs care,
-                your team sends a referral. We credential, schedule, see the resident, document, and bill
-                Medicare. Zero cost to you.
+                <strong style="color:#fff">Referrals when ready.</strong>
+                {
+                  referAsideSteps?.[2]?.text ??
+                    'When a resident needs care, your team sends a referral. We credential, schedule, see the resident, document, and bill Medicare. Zero cost to you.'
+                }
               </div>
             </li>
           </ul>
         </div>
         <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:1.25rem">
-          <p class="eyebrow" style="margin-bottom:.6rem">Prefer to talk first?</p>
+          <p class="eyebrow" style="margin-bottom:.6rem">
+            {referAsideContactEyebrow ?? 'Prefer to talk first?'}
+          </p>
           <div style="font-size:13px; line-height:1.7">
             <a
               href={`tel:${phone.replace(/\D/g, '')}`}

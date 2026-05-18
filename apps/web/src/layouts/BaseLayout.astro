@@ -10,7 +10,7 @@ import Nav from '../components/nav/Nav.astro';
 import Footer from '../components/ui/Footer.astro';
 import MobileCTABar from '../components/ui/MobileCTABar.astro';
 import ModalForms from '../components/ui/ModalForms.astro';
-import { SITE_SETTINGS_QUERY } from '../lib/queries';
+import { SITE_SETTINGS_QUERY, FORM_SETTINGS_QUERY } from '../lib/queries';
 import '../styles/global.css';
 
 interface SeoFields {
@@ -36,6 +36,28 @@ interface SiteSettings {
   seo?: SeoFields;
 }
 
+interface FormSettings {
+  bookEyebrow?: string;
+  bookHeading?: string;
+  bookValueProps?: { text: string }[];
+  bookConsentText?: string;
+  bookSubmitLabel?: string;
+  bookFinePrint?: string;
+  bookSuccessHeading?: string;
+  bookSuccessBody?: string;
+  referEyebrow?: string;
+  referHeading?: string;
+  referSubhead?: string;
+  referConsentText?: string;
+  referSubmitLabel?: string;
+  referSuccessHeading?: string;
+  referSuccessBody?: string;
+  referAsideEyebrow?: string;
+  referAsideSteps?: { stepNumber: string; text: string }[];
+  referAsideContactEyebrow?: string;
+  hours?: string;
+}
+
 interface Props {
   title: string;
   description?: string;
@@ -44,7 +66,10 @@ interface Props {
 
 const { title, description, seo: pageSeo } = Astro.props;
 
-const siteSettings = await sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY);
+const [siteSettings, formSettings] = await Promise.all([
+  sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
+  sanityClient.fetch<FormSettings>(FORM_SETTINGS_QUERY),
+]);
 
 const resolvedDescription =
   description ??
@@ -92,7 +117,25 @@ const resolvedSeo: SeoFields = pageSeo ?? siteSettings?.seo ?? {};
       referralId={import.meta.env.PUBLIC_FORMSPREE_REFERRAL_ID ?? ''}
       phone={siteSettings?.phone ?? '754-999-0011'}
       email={siteSettings?.email ?? 'hello@getbetteryou.com'}
-      hours={'Mon–Fri, 9am–6pm ET'}
+      hours={formSettings?.hours ?? 'Mon–Fri, 9am–6pm ET'}
+      bookEyebrow={formSettings?.bookEyebrow}
+      bookHeading={formSettings?.bookHeading}
+      bookValueProps={formSettings?.bookValueProps}
+      bookConsentText={formSettings?.bookConsentText}
+      bookSubmitLabel={formSettings?.bookSubmitLabel}
+      bookFinePrint={formSettings?.bookFinePrint}
+      bookSuccessHeading={formSettings?.bookSuccessHeading}
+      bookSuccessBody={formSettings?.bookSuccessBody}
+      referEyebrow={formSettings?.referEyebrow}
+      referHeading={formSettings?.referHeading}
+      referSubhead={formSettings?.referSubhead}
+      referConsentText={formSettings?.referConsentText}
+      referSubmitLabel={formSettings?.referSubmitLabel}
+      referSuccessHeading={formSettings?.referSuccessHeading}
+      referSuccessBody={formSettings?.referSuccessBody}
+      referAsideEyebrow={formSettings?.referAsideEyebrow}
+      referAsideSteps={formSettings?.referAsideSteps}
+      referAsideContactEyebrow={formSettings?.referAsideContactEyebrow}
     />
   </body>
 </html>

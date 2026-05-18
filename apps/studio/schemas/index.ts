@@ -14,6 +14,7 @@ import { processStep } from './objects/processStep';
 
 // Singletons
 import { siteSettings } from './singletons/siteSettings';
+import { formSettings } from './singletons/formSettings';
 import { homePage } from './singletons/homePage';
 import { aboutPage } from './singletons/aboutPage';
 import { patientsPage } from './singletons/patientsPage';
@@ -44,6 +45,7 @@ export const schemaTypes = [
   processStep,
   // Singletons
   siteSettings,
+  formSettings,
   homePage,
   aboutPage,
   patientsPage,
