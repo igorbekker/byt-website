@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Add audienceSelectorEyebrow (patients) and heroTeamImage/storyHandsImage/ctaEyebrow/ctaTertiary (about)
+- **Last work:** 2026-05-18 — Add heroEyebrow, openPositionsEyebrow, openPositionsHeading to careersPage schema, CAREERS_PAGE_QUERY, and careers.astro
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -789,3 +789,37 @@ Note: Both testimonials are placeholders pending real collection. authorName set
 **How verified:** `git diff --stat` shows 1 file, 4 insertions, 4 deletions. Diff reviewed — only 2 tag swaps, no other changes. Build pending (step 7 of /pre).
 
 **Quality gate:** `pnpm --filter web build` PASS (all routes, 0 errors, 41.66s) — 2026-05-15.
+
+---
+
+### Add heroEyebrow, openPositionsEyebrow, openPositionsHeading to Careers page — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Add 3 missing text fields to careersPage schema, wire into template, seed in Sanity.
+
+- [x] A. 2026-05-18 Pre-flight: confirmed all 3 fields absent from careersPage.ts, CAREERS_PAGE_QUERY, and careers.astro; "Don't See a Fit?" eyebrow (line 2111) is hardcoded but separate from noFitHeading (line 2112 — different text); not in scope for this task
+- [x] B. 2026-05-18 careersPage.ts — added heroEyebrow before heroHeading; added openPositionsEyebrow and openPositionsHeading before openPositionsIntro
+- [x] C. 2026-05-18 queries.ts — added heroEyebrow, openPositionsEyebrow, openPositionsHeading to CAREERS_PAGE_QUERY
+- [x] D. 2026-05-18 careers.astro — extended CareersPage interface; wired all 3 fields with ?? fallbacks
+- [x] E. 2026-05-18 pnpm --filter web build — PASSED (0 errors); careers/index.html 46,563 bytes ✓
+
+### Session Review — 2026-05-18 (Careers page 3-field triad)
+
+**What was done:** Completed schema–query–template triad for 3 new fields on the Careers page.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/careersPage.ts` — 3 fields added
+- `apps/web/src/lib/queries.ts` — 3 fields added to CAREERS_PAGE_QUERY
+- `apps/web/src/pages/careers.astro` — CareersPage interface extended; 3 lines wired
+
+**Wiring details:**
+
+| Field                  | Location in template                            | Fallback                              |
+| ---------------------- | ----------------------------------------------- | ------------------------------------- |
+| `heroEyebrow`          | `<p class="eyebrow">` in hero section           | `'Careers at Better You Therapy'`     |
+| `openPositionsEyebrow` | `<p class="eyebrow">` in Open Positions section | `'Open Positions'`                    |
+| `openPositionsHeading` | `<h2>` in Open Positions section                | `"Roles we're hiring for right now."` |
+
+**Note:** `<p class="eyebrow">Don't See a Fit?</p>` at line 2111 is a separate hardcoded eyebrow not in scope. `noFitHeading` (line 2112) holds different text and was already wired.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. careers/index.html 46,563 bytes ✓. Total code files changed: 3.

@@ -159,8 +159,8 @@ export const TESTIMONIALS_THERAPIST_QUERY = `*[_type == "testimonial" && audienc
 }`;
 
 export const CAREERS_PAGE_QUERY = `*[_type == "careersPage"][0]{
-  heroHeading, heroSubhead,
-  openPositionsIntro,
+  heroEyebrow, heroHeading, heroSubhead,
+  openPositionsEyebrow, openPositionsHeading, openPositionsIntro,
   noFitHeading, noFitBody,
   seo{ metaTitle, metaDescription }
 }`;

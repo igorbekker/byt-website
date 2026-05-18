@@ -4,8 +4,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { CAREERS_PAGE_QUERY, JOB_POSTINGS_QUERY } from '../lib/queries';
 
 interface CareersPage {
+  heroEyebrow?: string;
   heroHeading?: string;
   heroSubhead?: string;
+  openPositionsEyebrow?: string;
+  openPositionsHeading?: string;
   openPositionsIntro?: string;
   noFitHeading?: string;
   noFitBody?: string;
@@ -2071,7 +2074,9 @@ const JOBS = (rawJobs ?? []).map((job) => ({
   <!-- ── HERO ── -->
   <section class="about-hero careers-hero">
     <div class="about-hero-content">
-      <p class="eyebrow" style="font-size: 14px">Careers at Better You Therapy</p>
+      <p class="eyebrow" style="font-size: 14px">
+        {page?.heroEyebrow ?? 'Careers at Better You Therapy'}
+      </p>
       <h1
         style="font-size: 53.2px"
         set:html={page?.heroHeading ??
@@ -2090,8 +2095,8 @@ const JOBS = (rawJobs ?? []).map((job) => ({
   <section class="jobs">
     <div class="jobs-inner">
       <div class="jobs-header fade-up">
-        <p class="eyebrow">Open Positions</p>
-        <h2>Roles we're hiring for right now.</h2>
+        <p class="eyebrow">{page?.openPositionsEyebrow ?? 'Open Positions'}</p>
+        <h2>{page?.openPositionsHeading ?? "Roles we're hiring for right now."}</h2>
         <p>
           {
             page?.openPositionsIntro ??

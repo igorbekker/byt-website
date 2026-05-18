@@ -10,6 +10,7 @@ export const careersPage = defineType({
   title: 'Careers',
   type: 'document',
   fields: [
+    defineField({ name: 'heroEyebrow', title: 'Hero Eyebrow', type: 'string' }),
     defineField({
       name: 'heroHeading',
       title: 'Hero Heading',
@@ -17,6 +18,8 @@ export const careersPage = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
+    defineField({ name: 'openPositionsEyebrow', title: 'Open Positions Eyebrow', type: 'string' }),
+    defineField({ name: 'openPositionsHeading', title: 'Open Positions Heading', type: 'string' }),
     defineField({ name: 'openPositionsIntro', title: 'Open Positions Intro', type: 'text' }),
     defineField({ name: 'noFitHeading', title: 'No Fit Heading', type: 'string' }),
     defineField({ name: 'noFitBody', title: 'No Fit Body', type: 'text' }),
