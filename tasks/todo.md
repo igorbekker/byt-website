@@ -995,3 +995,45 @@ Wire both homepage Two Ways service cards from `twoWaysTracks[]` in Sanity.
 **Verification:** `pnpm --filter web build` PASS — 0 errors. CDN URLs `cdn.sanity.io/.../4bc9f3f...` (tele) and `cdn.sanity.io/.../8fbdbaab...` (facility) confirmed in dist/client/index.html. No HTML structure changed. 1 file changed.
 
 **Issues:** None
+
+---
+
+### Wire 4 homepage condition cards from Sanity — 2026-05-18 [~] IN PROGRESS
+
+Architecture: **PATH B** — CONDITIONS_HOME_QUERY exists (queries.ts:73–79), not imported. condition.ts has showOnHomepage flag. No conditionsCards array in homePage schema.
+
+- [x] A. 2026-05-18 condition.ts — added primaryCta and secondaryCta object fields (label, href)
+- [x] B. 2026-05-18 queries.ts — updated CONDITIONS_HOME_QUERY to include primaryCta { label, href } and secondaryCta { label, href }
+- [x] C. 2026-05-18 index.astro — imported CONDITIONS_HOME_QUERY; added Condition interface; added fetch; wired 4 l349-section cards with ?? fallbacks
+- [x] D. 2026-05-18 index.astro — wired 4 l349-img background images with template literal + ?? fallbacks
+- [x] E. 2026-05-18 pnpm --filter web build — PASSED (0 errors, 41.06s); index.html = 46,295 bytes; all 4 cards + images confirmed in built HTML
+- [ ] F. Studio deploy (git pull + sanity deploy)
+- [ ] G. Seed script — create 4 condition documents with showOnHomepage: true; run script
+- [ ] H. Upload 4 background images to Sanity with \_type: 'imageWithAlt'; patch image fields on each doc
+
+### Code Review — 2026-05-18 (conditions cards wiring — steps A–E, pre-commit)
+
+**Architecture path taken:** PATH B — CONDITIONS_HOME_QUERY existed unused; condition.ts already had showOnHomepage flag; no conditionsCards array existed in homePage schema.
+
+**Files changed (code only):**
+
+- `apps/studio/schemas/documents/condition.ts` — added `primaryCta` and `secondaryCta` object fields (each: label string, href string)
+- `apps/web/src/lib/queries.ts` — updated CONDITIONS_HOME_QUERY to project `primaryCta{ label, href }` and `secondaryCta{ label, href }`
+- `apps/web/src/pages/index.astro` — added CONDITIONS_HOME_QUERY import; added Condition interface; added `const conditions` fetch; wired all 4 l349-section cards (tagline, heading, body, primaryCta label+href, secondaryCta label+href); wired all 4 l349-img background image style attributes — all with `??` fallbacks to original hardcoded values
+
+**Wiring details:**
+
+| Card | tagline fallback  | heading fallback                    | primaryCta fallback                                       | secondaryCta fallback                             | image fallback                        |
+| ---- | ----------------- | ----------------------------------- | --------------------------------------------------------- | ------------------------------------------------- | ------------------------------------- |
+| [0]  | `'Depression'`    | `'Depression & Anxiety'`            | label: `'Book a session'`, href: `'/individual-therapy/'` | label: `'Refer a resident'`, href: `'/referral/'` | `/images/home-cond-depression.jpg`    |
+| [1]  | `'Grief & Loss'`  | `'Grief, Loss & Life Transitions'`  | same                                                      | same                                              | `/images/home-cond-grief.jpg`         |
+| [2]  | `'Trauma'`        | `'PTSD & Trauma'`                   | same                                                      | same                                              | `/images/home-cond-ptsd.jpg`          |
+| [3]  | `'Relationships'` | `'Relationships, Couples & Family'` | same                                                      | same                                              | `/images/home-cond-relationships.jpg` |
+
+**No HTML structure changed.** All SVG arrows, class names, data attributes, and DOM order are identical to design-source.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 41.06s. index.html = 46,295 bytes (non-zero). All 4 cards and 4 images confirmed in dist/client/index.html via grep. Pre-existing TypeScript errors (sanity:client module resolution, blog any-types) unchanged — no new errors introduced.
+
+**Pending (post-commit):** Studio deploy (F), seed 4 condition documents (G), upload + patch 4 images (H).
+
+**Issues:** None

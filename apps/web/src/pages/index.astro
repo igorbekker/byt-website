@@ -7,7 +7,7 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { HOME_PAGE_QUERY } from '../lib/queries';
+import { HOME_PAGE_QUERY, CONDITIONS_HOME_QUERY } from '../lib/queries';
 
 interface CtaLink {
   label: string;
@@ -46,6 +46,16 @@ interface ProcessStep {
   stepNumber: string;
   heading: string;
   body?: string;
+}
+
+interface Condition {
+  _id: string;
+  tagline: string;
+  heading: string;
+  body?: string;
+  image?: ImageWithAlt;
+  primaryCta?: CtaLink;
+  secondaryCta?: CtaLink;
 }
 
 interface HomePage {
@@ -89,6 +99,7 @@ interface HomePage {
 }
 
 const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
+const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
 ---
 
 <style is:global>
@@ -1956,16 +1967,22 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
   <section class="l349" id="l349">
     <div class="l349-left">
       <div class="l349-section" data-section="0">
-        <p class="l349-tagline">Depression</p>
-        <h2 class="l349-h2">Depression &amp; Anxiety</h2>
+        <p class="l349-tagline">{conditions?.[0]?.tagline ?? 'Depression'}</p>
+        <h2 class="l349-h2">{conditions?.[0]?.heading ?? 'Depression & Anxiety'}</h2>
         <p class="l349-body">
-          Persistent sadness, worry, and overwhelm are treatable. Our licensed therapists provide
-          evidence-based care that meets you or your loved one where they are.
+          {
+            conditions?.[0]?.body ??
+              'Persistent sadness, worry, and overwhelm are treatable. Our licensed therapists provide evidence-based care that meets you or your loved one where they are.'
+          }
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-          <a href="/referral/" class="l349-btn-ghost"
-            >Refer a resident <svg
+          <a
+            href={conditions?.[0]?.primaryCta?.href ?? '/individual-therapy/'}
+            class="l349-btn-outline">{conditions?.[0]?.primaryCta?.label ?? 'Book a session'}</a
+          >
+          <a href={conditions?.[0]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
+            >{conditions?.[0]?.secondaryCta?.label ?? 'Refer a resident'}
+            <svg
               width="15"
               height="15"
               viewBox="0 0 24 24"
@@ -1977,16 +1994,22 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         </div>
       </div>
       <div class="l349-section" data-section="1">
-        <p class="l349-tagline">Grief &amp; Loss</p>
-        <h2 class="l349-h2">Grief, Loss &amp; Life Transitions</h2>
+        <p class="l349-tagline">{conditions?.[1]?.tagline ?? 'Grief & Loss'}</p>
+        <h2 class="l349-h2">{conditions?.[1]?.heading ?? 'Grief, Loss & Life Transitions'}</h2>
         <p class="l349-body">
-          Loss of a loved one, a role, or a way of life — grief takes many forms. We provide a safe
-          space to process and move forward.
+          {
+            conditions?.[1]?.body ??
+              'Loss of a loved one, a role, or a way of life — grief takes many forms. We provide a safe space to process and move forward.'
+          }
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-          <a href="/referral/" class="l349-btn-ghost"
-            >Refer a resident <svg
+          <a
+            href={conditions?.[1]?.primaryCta?.href ?? '/individual-therapy/'}
+            class="l349-btn-outline">{conditions?.[1]?.primaryCta?.label ?? 'Book a session'}</a
+          >
+          <a href={conditions?.[1]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
+            >{conditions?.[1]?.secondaryCta?.label ?? 'Refer a resident'}
+            <svg
               width="15"
               height="15"
               viewBox="0 0 24 24"
@@ -1998,16 +2021,22 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         </div>
       </div>
       <div class="l349-section" data-section="2">
-        <p class="l349-tagline">Trauma</p>
-        <h2 class="l349-h2">PTSD &amp; Trauma</h2>
+        <p class="l349-tagline">{conditions?.[2]?.tagline ?? 'Trauma'}</p>
+        <h2 class="l349-h2">{conditions?.[2]?.heading ?? 'PTSD & Trauma'}</h2>
         <p class="l349-body">
-          Trauma-informed care from licensed therapists who understand how past experiences shape
-          present wellbeing.
+          {
+            conditions?.[2]?.body ??
+              'Trauma-informed care from licensed therapists who understand how past experiences shape present wellbeing.'
+          }
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-          <a href="/referral/" class="l349-btn-ghost"
-            >Refer a resident <svg
+          <a
+            href={conditions?.[2]?.primaryCta?.href ?? '/individual-therapy/'}
+            class="l349-btn-outline">{conditions?.[2]?.primaryCta?.label ?? 'Book a session'}</a
+          >
+          <a href={conditions?.[2]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
+            >{conditions?.[2]?.secondaryCta?.label ?? 'Refer a resident'}
+            <svg
               width="15"
               height="15"
               viewBox="0 0 24 24"
@@ -2019,16 +2048,22 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         </div>
       </div>
       <div class="l349-section" data-section="3">
-        <p class="l349-tagline">Relationships</p>
-        <h2 class="l349-h2">Relationships, Couples &amp; Family</h2>
+        <p class="l349-tagline">{conditions?.[3]?.tagline ?? 'Relationships'}</p>
+        <h2 class="l349-h2">{conditions?.[3]?.heading ?? 'Relationships, Couples & Family'}</h2>
         <p class="l349-body">
-          Communication, conflict, and connection — for couples, families, and caregivers navigating
-          change together.
+          {
+            conditions?.[3]?.body ??
+              'Communication, conflict, and connection — for couples, families, and caregivers navigating change together.'
+          }
         </p>
         <div class="l349-actions">
-          <a href="/individual-therapy/" class="l349-btn-outline">Book a session</a>
-          <a href="/referral/" class="l349-btn-ghost"
-            >Refer a resident <svg
+          <a
+            href={conditions?.[3]?.primaryCta?.href ?? '/individual-therapy/'}
+            class="l349-btn-outline">{conditions?.[3]?.primaryCta?.label ?? 'Book a session'}</a
+          >
+          <a href={conditions?.[3]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
+            >{conditions?.[3]?.secondaryCta?.label ?? 'Refer a resident'}
+            <svg
               width="15"
               height="15"
               viewBox="0 0 24 24"
@@ -2045,25 +2080,25 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         <div
           class="l349-img active"
           data-img="0"
-          style="background:url('/images/home-cond-depression.jpg') center/cover;"
+          style={`background:url('${conditions?.[0]?.image?.asset?.url ?? '/images/home-cond-depression.jpg'}') center/cover;`}
         >
         </div>
         <div
           class="l349-img"
           data-img="1"
-          style="background:url('/images/home-cond-grief.jpg') center/cover;"
+          style={`background:url('${conditions?.[1]?.image?.asset?.url ?? '/images/home-cond-grief.jpg'}') center/cover;`}
         >
         </div>
         <div
           class="l349-img"
           data-img="2"
-          style="background:url('/images/home-cond-ptsd.jpg') center/cover;"
+          style={`background:url('${conditions?.[2]?.image?.asset?.url ?? '/images/home-cond-ptsd.jpg'}') center/cover;`}
         >
         </div>
         <div
           class="l349-img"
           data-img="3"
-          style="background:url('/images/home-cond-relationships.jpg') center/cover;"
+          style={`background:url('${conditions?.[3]?.image?.asset?.url ?? '/images/home-cond-relationships.jpg'}') center/cover;`}
         >
         </div>
       </div>

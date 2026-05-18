@@ -75,7 +75,9 @@ export const CONDITIONS_HOME_QUERY = `*[_type == "condition" && showOnHomepage =
   tagline,
   heading,
   body,
-  image{ asset->{ url }, alt }
+  image{ asset->{ url }, alt },
+  primaryCta{ label, href },
+  secondaryCta{ label, href }
 }`;
 
 export const TESTIMONIALS_HOME_QUERY = `*[_type == "testimonial"] | order(_createdAt desc)[0...6] {

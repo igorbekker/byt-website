@@ -39,6 +39,24 @@ export const condition = defineType({
       description: 'The sticky-scroll section image',
     }),
     defineField({
+      name: 'primaryCta',
+      title: 'Primary CTA',
+      type: 'object',
+      fields: [
+        defineField({ name: 'label', title: 'Label', type: 'string' }),
+        defineField({ name: 'href', title: 'Href', type: 'string' }),
+      ],
+    }),
+    defineField({
+      name: 'secondaryCta',
+      title: 'Secondary CTA',
+      type: 'object',
+      fields: [
+        defineField({ name: 'label', title: 'Label', type: 'string' }),
+        defineField({ name: 'href', title: 'Href', type: 'string' }),
+      ],
+    }),
+    defineField({
       name: 'order',
       title: 'Order',
       type: 'number',
