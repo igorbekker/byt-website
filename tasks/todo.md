@@ -911,3 +911,45 @@ Wire hero image, 2 track images, 5 handles tag labels, 5 tab trigger labels, tes
 **No HTML structure changed.** All edits are text/src replacements only.
 
 **Verification:** `pnpm --filter web build` PASS — 0 errors, 37.98s ✓. Total code files changed: 3.
+
+---
+
+### Wire routerCards text, CTAs, and images from Sanity — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Wire all 3 homepage audience router cards — both desktop (r-wide-content) and mobile (r-narrow-content) variants — from `routerCards[]` in Sanity.
+
+- [x] A. 2026-05-18 Pre-flight: confirmed `audienceCard` schema has all needed fields (tagline, heading, bodyCollapsed, bodyExpanded, image, cta); `HOME_PAGE_QUERY` already fetches full routerCards[] projection; `AudienceCard` TS interface already complete in index.astro
+- [x] B. 2026-05-18 Pre-flight: fetched published homePage routerCards — all 3 cards fully populated (tagline, heading, bodyCollapsed, bodyExpanded, cta.label, cta.href, image.asset.url); no seed mutations needed
+- [x] C. 2026-05-18 index.astro — Card [0]: wired tagline, heading, bodyExpanded, bodyCollapsed, cta.label, cta.href, image in style= for both desktop and mobile variants; template literal used for background-image URL
+- [x] D. 2026-05-18 index.astro — Card [1]: same wiring pattern using routerCards?.[1] with ?? fallbacks
+- [x] E. 2026-05-18 index.astro — Card [2]: same wiring pattern using routerCards?.[2] with ?? fallbacks
+- [x] F. 2026-05-18 pnpm --filter web build — PASSED (0 errors, 41.74s); index.html = 46,237 bytes ✓; CDN image URLs confirmed in built HTML; design-parity-check.sh — PASS (exit 0)
+
+### Session Review — 2026-05-18 (routerCards wiring)
+
+**What was done:** Wired all 3 homepage audience router cards from Sanity. No schema, query, or TypeScript changes were needed — all infrastructure was already in place. Only `index.astro` was edited to replace hardcoded text, CTA hrefs, and background-image URLs with Sanity expressions and `??` fallbacks.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — 33 insertions, 38 deletions; 1 file only
+
+**Wiring details (per card, both variants):**
+
+| Card | Field     | Desktop source                          | Mobile source      | Fallback                                                      |
+| ---- | --------- | --------------------------------------- | ------------------ | ------------------------------------------------------------- |
+| [0]  | tagline   | `routerCards?.[0]?.tagline`             | same index         | `'Facilities'`                                                |
+| [0]  | heading   | `routerCards?.[0]?.heading`             | same index         | `'For Wellness Directors & Facility Admins'`                  |
+| [0]  | body      | `bodyExpanded`                          | `bodyCollapsed`    | hardcoded originals                                           |
+| [0]  | CTA label | `routerCards?.[0]?.cta?.label`          | same index         | `'Refer a Resident'`                                          |
+| [0]  | CTA href  | `routerCards?.[0]?.cta?.href`           | same index         | `'/communities/'`                                             |
+| [0]  | image     | `image?.asset?.url` in template literal | n/a (desktop only) | `'/images/home-router-communities.jpg'`                       |
+| [1]  | —         | same pattern                            | —                  | `'Patients & Families'` / `'/patients/'` / `'Book a Session'` |
+| [2]  | —         | same pattern                            | —                  | `'Therapists'` / `'/providers/'` / `'Work with Us'`           |
+
+**Implementation note:** Background images use Astro template literal syntax in the `style` attribute: ``style={`background-image:url('${page?.routerCards?.[n]?.image?.asset?.url ?? '/images/home-router-X.jpg'}');...`}``. Cards [1] and [2] r-wide-image divs retain `display:none` as part of their inline style string (prepended to the template literal) — preserving the JS accordion behavior.
+
+**Sanity data state at wiring time:** All 3 cards fully populated — no mutations executed.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. index.html = 46,237 bytes. CDN URLs rendering for all 3 card images confirmed in dist output. Design parity check: PASS. git diff --stat: 1 file, 33 insertions, 38 deletions ✓
+
+**Issues:** None

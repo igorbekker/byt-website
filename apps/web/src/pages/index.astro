@@ -1593,15 +1593,23 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
       <div class="r-card r-card-wide r-active" data-idx="0" onclick="activateRouterCard(0)">
         <div class="r-wide-content">
           <div>
-            <p class="r-tagline">Facilities</p>
-            <h3 class="r-heading">For Wellness Directors &amp; Facility Admins</h3>
+            <p class="r-tagline">{page?.routerCards?.[0]?.tagline ?? 'Facilities'}</p>
+            <h3 class="r-heading">
+              {page?.routerCards?.[0]?.heading ?? 'For Wellness Directors & Facility Admins'}
+            </h3>
             <p class="r-body">
-              Your residents deserve mental health care. We make sure nothing stands in the way.
-              Zero cost. We handle billing, scheduling, and documentation.
+              {
+                page?.routerCards?.[0]?.bodyExpanded ??
+                  'Your residents deserve mental health care. We make sure nothing stands in the way. Zero cost. We handle billing, scheduling, and documentation.'
+              }
             </p>
           </div>
-          <a href="/communities/" class="r-cta" onclick="event.stopPropagation()">
-            Refer a Resident
+          <a
+            href={page?.routerCards?.[0]?.cta?.href ?? '/communities/'}
+            class="r-cta"
+            onclick="event.stopPropagation()"
+          >
+            {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
             <svg
               width="14"
               height="14"
@@ -1616,7 +1624,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         </div>
         <div
           class="r-wide-image"
-          style="background-image:url('/images/home-router-communities.jpg');background-size:cover;background-position:center;"
+          style={`background-image:url('${page?.routerCards?.[0]?.image?.asset?.url ?? '/images/home-router-communities.jpg'}');background-size:cover;background-position:center;`}
         >
         </div>
         <div class="r-narrow-content" style="display:none">
@@ -1639,14 +1647,23 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             </svg>
           </div>
           <div>
-            <p class="r-tagline">Facilities</p>
-            <h3 class="r-heading">For Wellness Directors &amp; Facility Admins</h3>
+            <p class="r-tagline">{page?.routerCards?.[0]?.tagline ?? 'Facilities'}</p>
+            <h3 class="r-heading">
+              {page?.routerCards?.[0]?.heading ?? 'For Wellness Directors & Facility Admins'}
+            </h3>
             <p class="r-body">
-              Zero cost to your facility. We handle billing, scheduling, and documentation.
+              {
+                page?.routerCards?.[0]?.bodyCollapsed ??
+                  'Zero cost to your facility. We handle billing, scheduling, and documentation.'
+              }
             </p>
           </div>
-          <a href="/communities/" class="r-cta" onclick="event.stopPropagation()">
-            Refer a Resident
+          <a
+            href={page?.routerCards?.[0]?.cta?.href ?? '/communities/'}
+            class="r-cta"
+            onclick="event.stopPropagation()"
+          >
+            {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
             <svg
               width="14"
               height="14"
@@ -1664,15 +1681,23 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
       <div class="r-card r-card-narrow r-inactive" data-idx="1" onclick="activateRouterCard(1)">
         <div class="r-wide-content" style="display:none">
           <div>
-            <p class="r-tagline">Patients &amp; Families</p>
-            <h3 class="r-heading">For Adults, Families &amp; Caregivers</h3>
+            <p class="r-tagline">{page?.routerCards?.[1]?.tagline ?? 'Patients & Families'}</p>
+            <h3 class="r-heading">
+              {page?.routerCards?.[1]?.heading ?? 'For Adults, Families & Caregivers'}
+            </h3>
             <p class="r-body">
-              You've decided it's time to get help — or someone you love has. Let's make that happen
-              this week. No waitlist. No runaround.
+              {
+                page?.routerCards?.[1]?.bodyExpanded ??
+                  "You've decided it's time to get help — or someone you love has. Let's make that happen this week. No waitlist. No runaround."
+              }
             </p>
           </div>
-          <a href="/patients/" class="r-cta" onclick="event.stopPropagation()">
-            Book a Session
+          <a
+            href={page?.routerCards?.[1]?.cta?.href ?? '/patients/'}
+            class="r-cta"
+            onclick="event.stopPropagation()"
+          >
+            {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
             <svg
               width="14"
               height="14"
@@ -1687,7 +1712,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         </div>
         <div
           class="r-wide-image"
-          style="display:none;background-image:url('/images/home-router-patients.jpg');background-size:cover;background-position:center;"
+          style={`display:none;background-image:url('${page?.routerCards?.[1]?.image?.asset?.url ?? '/images/home-router-patients.jpg'}');background-size:cover;background-position:center;`}
         >
         </div>
         <div class="r-narrow-content">
@@ -1708,15 +1733,23 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             </svg>
           </div>
           <div>
-            <p class="r-tagline">Patients &amp; Families</p>
-            <h3 class="r-heading">For Adults, Families &amp; Caregivers</h3>
+            <p class="r-tagline">{page?.routerCards?.[1]?.tagline ?? 'Patients & Families'}</p>
+            <h3 class="r-heading">
+              {page?.routerCards?.[1]?.heading ?? 'For Adults, Families & Caregivers'}
+            </h3>
             <p class="r-body">
-              You've decided it's time to get help — or someone you love has. Let's make that happen
-              this week.
+              {
+                page?.routerCards?.[1]?.bodyCollapsed ??
+                  "You've decided it's time to get help — or someone you love has. Let's make that happen this week."
+              }
             </p>
           </div>
-          <a href="/patients/" class="r-cta" onclick="event.stopPropagation()">
-            Book a Session
+          <a
+            href={page?.routerCards?.[1]?.cta?.href ?? '/patients/'}
+            class="r-cta"
+            onclick="event.stopPropagation()"
+          >
+            {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
             <svg
               width="14"
               height="14"
@@ -1734,15 +1767,23 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
       <div class="r-card r-card-narrow r-inactive" data-idx="2" onclick="activateRouterCard(2)">
         <div class="r-wide-content" style="display:none">
           <div>
-            <p class="r-tagline">Therapists</p>
-            <h3 class="r-heading">For Licensed Therapists in Florida</h3>
+            <p class="r-tagline">{page?.routerCards?.[2]?.tagline ?? 'Therapists'}</p>
+            <h3 class="r-heading">
+              {page?.routerCards?.[2]?.heading ?? 'For Licensed Therapists in Florida'}
+            </h3>
             <p class="r-body">
-              You became a therapist to do therapy. We built the model that makes that possible.
-              Transparent revenue split from day one.
+              {
+                page?.routerCards?.[2]?.bodyExpanded ??
+                  'You became a therapist to do therapy. We built the model that makes that possible. Transparent revenue split from day one.'
+              }
             </p>
           </div>
-          <a href="/providers/" class="r-cta" onclick="event.stopPropagation()">
-            Work with Us
+          <a
+            href={page?.routerCards?.[2]?.cta?.href ?? '/providers/'}
+            class="r-cta"
+            onclick="event.stopPropagation()"
+          >
+            {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
             <svg
               width="14"
               height="14"
@@ -1757,7 +1798,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         </div>
         <div
           class="r-wide-image"
-          style="display:none;background-image:url('/images/home-router-providers.jpg');background-size:cover;background-position:center;"
+          style={`display:none;background-image:url('${page?.routerCards?.[2]?.image?.asset?.url ?? '/images/home-router-providers.jpg'}');background-size:cover;background-position:center;`}
         >
         </div>
         <div class="r-narrow-content">
@@ -1779,15 +1820,23 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
             </svg>
           </div>
           <div>
-            <p class="r-tagline">Therapists</p>
-            <h3 class="r-heading">For Licensed Therapists in Florida</h3>
+            <p class="r-tagline">{page?.routerCards?.[2]?.tagline ?? 'Therapists'}</p>
+            <h3 class="r-heading">
+              {page?.routerCards?.[2]?.heading ?? 'For Licensed Therapists in Florida'}
+            </h3>
             <p class="r-body">
-              You became a therapist to do therapy. We built the model that makes that possible.
-              Transparent revenue split from day one.
+              {
+                page?.routerCards?.[2]?.bodyCollapsed ??
+                  'You became a therapist to do therapy. We built the model that makes that possible. Transparent revenue split from day one.'
+              }
             </p>
           </div>
-          <a href="/providers/" class="r-cta" onclick="event.stopPropagation()">
-            Work with Us
+          <a
+            href={page?.routerCards?.[2]?.cta?.href ?? '/providers/'}
+            class="r-cta"
+            onclick="event.stopPropagation()"
+          >
+            {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
             <svg
               width="14"
               height="14"
