@@ -1252,3 +1252,44 @@ Wire the two global `siteSettings` fields (`newsletterEyebrow`, `newsletterDiscl
 **Total code files changed:** 1
 
 **Verification:** `pnpm --filter web build` PASS — 0 errors, 42.66s. blog/index.html = 34,909 bytes ✓
+
+---
+
+### Wire newsletter sections on Blog Category and Subcategory pages + add blogCategory heading fields — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Add `subtopicsHeading` and `categoryPostsHeading` to `blogCategory.ts`, wire both into `BLOG_CATEGORY_QUERY`, then fetch `siteSettings` on both blog listing pages and wire newsletter eyebrow + disclaimer. Wire heading fields on category page only.
+
+- [x] A. 2026-05-18 Pre-flight: confirmed `subtopicsHeading` + `categoryPostsHeading` absent from blogCategory.ts and BLOG_CATEGORY_QUERY; hardcoded fallbacks extracted from category page (subtopicsHeading: "Pick the one that fits your situation.", categoryPostsHeading: "Articles tagged at the category level."); newsletter eyebrow "Stay in the loop" + disclaimer "We never share your email. Unsubscribe in one click." hardcoded on both pages; siteSettings NOT fetched on either page
+- [x] B. 2026-05-18 blogCategory.ts — added `subtopicsHeading` (string) + `categoryPostsHeading` (string) before `subtopics` array
+- [x] C. 2026-05-18 queries.ts — added `subtopicsHeading, categoryPostsHeading` to BLOG_CATEGORY_QUERY
+- [x] D. 2026-05-18 blog/[category]/index.astro — added SITE_SETTINGS_QUERY import; added SiteSettings interface; added `siteSettings` to Promise.all; added `subtopicsHeading?` + `categoryPostsHeading?` to BlogCategory interface; wired 4 elements with ?? fallbacks
+- [x] E. 2026-05-18 blog/[category]/[sub]/index.astro — added SITE_SETTINGS_QUERY import; added SiteSettings interface; added `siteSettings` to Promise.all; wired newsletter eyebrow + disclaimer with ?? fallbacks
+- [x] F. 2026-05-18 pnpm typecheck — web PASS; studio pre-existing redirect.ts error (unrelated) confirmed pre-existing via stash test
+
+### Session Review — 2026-05-18 (Blog Category + Subcategory newsletter wiring)
+
+**What was done:** Completed the full triad for 2 new `blogCategory` fields and wired `siteSettings` newsletter fields on both blog listing pages.
+
+**Files changed:**
+
+- `apps/studio/schemas/documents/blogCategory.ts` — 2 fields added (`subtopicsHeading`, `categoryPostsHeading`) before `subtopics` array
+- `apps/web/src/lib/queries.ts` — 2 fields added to `BLOG_CATEGORY_QUERY`
+- `apps/web/src/pages/blog/[category]/index.astro` — import added, `SiteSettings` + `BlogCategory` interfaces extended, siteSettings fetch added, 4 elements wired
+- `apps/web/src/pages/blog/[category]/[sub]/index.astro` — import added, `SiteSettings` interface added, siteSettings fetch added, 2 elements wired
+
+**Wiring details:**
+
+| Page        | Field                                | Element                             | Fallback                                                 |
+| ----------- | ------------------------------------ | ----------------------------------- | -------------------------------------------------------- |
+| category    | `category?.subtopicsHeading`         | `<h2>` in subcats-header            | `'Pick the one that fits your situation.'`               |
+| category    | `category?.categoryPostsHeading`     | `<h2>` in article-list-header       | `'Articles tagged at the category level.'`               |
+| category    | `siteSettings?.newsletterEyebrow`    | `<p class="eyebrow">` in newsletter | `'Stay in the loop'`                                     |
+| category    | `siteSettings?.newsletterDisclaimer` | `<p class="newsletter-tiny">`       | `'We never share your email. Unsubscribe in one click.'` |
+| subcategory | `siteSettings?.newsletterEyebrow`    | `<p class="eyebrow">` in newsletter | `'Stay in the loop'`                                     |
+| subcategory | `siteSettings?.newsletterDisclaimer` | `<p class="newsletter-tiny">`       | `'We never share your email. Unsubscribe in one click.'` |
+
+**No HTML structure changed:** YES — only text node replacements, no class/DOM changes.
+
+**Verification:** `pnpm typecheck` web PASS — 0 errors. Studio redirect.ts error confirmed pre-existing (stash test). Build pending at commit time.
+
+**Total code files changed:** 4

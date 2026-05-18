@@ -231,6 +231,7 @@ export const BLOG_CATEGORIES_QUERY = `*[_type == "blogCategory"] | order(order a
 
 export const BLOG_CATEGORY_QUERY = `*[_type == "blogCategory" && slug.current == $categorySlug][0]{
   _id, title, slug{ current }, description,
+  subtopicsHeading, categoryPostsHeading,
   subtopics[]{ title, slug, description }
 }`;
 

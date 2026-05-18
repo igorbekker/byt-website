@@ -11,13 +11,21 @@ import {
   BLOG_CATEGORY_QUERY,
   BLOG_CATEGORY_POSTS_QUERY,
   BLOG_CATEGORY_PATHS_QUERY,
+  SITE_SETTINGS_QUERY,
 } from '../../../lib/queries';
+
+interface SiteSettings {
+  newsletterEyebrow?: string;
+  newsletterDisclaimer?: string;
+}
 
 interface BlogCategory {
   _id: string;
   title: string;
   slug: { current: string };
   description?: string;
+  subtopicsHeading?: string;
+  categoryPostsHeading?: string;
   subtopics?: Array<{ title: string; slug: string; description?: string }>;
 }
 
@@ -39,9 +47,10 @@ export async function getStaticPaths() {
 
 const { category: categorySlug } = Astro.params;
 
-const [category, posts] = await Promise.all([
+const [category, posts, siteSettings] = await Promise.all([
   sanityClient.fetch<BlogCategory>(BLOG_CATEGORY_QUERY, { categorySlug }),
   sanityClient.fetch<BlogPostCard[]>(BLOG_CATEGORY_POSTS_QUERY, { categorySlug }),
+  sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
 ]);
 
 function fmtDate(iso: string | undefined): string {
@@ -1465,7 +1474,7 @@ const categoryLevelPosts = posts ?? [];
     <div class="subcats-inner">
       <div class="subcats-header fade-up">
         <p class="eyebrow">Browse Subtopics</p>
-        <h2>Pick the one that fits your situation.</h2>
+        <h2>{category?.subtopicsHeading ?? 'Pick the one that fits your situation.'}</h2>
       </div>
 
       <div class="subcat-blocks">
@@ -1508,7 +1517,7 @@ const categoryLevelPosts = posts ?? [];
     <div class="article-list-inner">
       <div class="article-list-header fade-up">
         <p class="eyebrow">In this category</p>
-        <h2>Articles tagged at the category level.</h2>
+        <h2>{category?.categoryPostsHeading ?? 'Articles tagged at the category level.'}</h2>
         <p>
           Cross-cutting pieces that don't belong to one subtopic — frameworks, overviews, and
           editorial essays that apply across the whole category. Browse the subtopics above for
@@ -1575,7 +1584,7 @@ const categoryLevelPosts = posts ?? [];
   <!-- ── NEWSLETTER ── -->
   <section class="newsletter">
     <div class="newsletter-inner fade-up">
-      <p class="eyebrow">Stay in the loop</p>
+      <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
       <h2>One thoughtful email a month.</h2>
       <p>
         New articles, clinical resources, and the occasional behind-the-scenes note. No fluff, easy
@@ -1588,7 +1597,12 @@ const categoryLevelPosts = posts ?? [];
         <input type="email" placeholder="you@example.com" required />
         <button type="submit" class="btn btn-coral">Subscribe</button>
       </form>
-      <p class="newsletter-tiny">We never share your email. Unsubscribe in one click.</p>
+      <p class="newsletter-tiny">
+        {
+          siteSettings?.newsletterDisclaimer ??
+            'We never share your email. Unsubscribe in one click.'
+        }
+      </p>
     </div>
   </section>
 

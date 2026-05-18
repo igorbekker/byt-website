@@ -11,7 +11,13 @@ import {
   BLOG_CATEGORY_QUERY,
   BLOG_SUBCATEGORY_POSTS_QUERY,
   BLOG_SUBCATEGORY_PATHS_QUERY,
+  SITE_SETTINGS_QUERY,
 } from '../../../../lib/queries';
+
+interface SiteSettings {
+  newsletterEyebrow?: string;
+  newsletterDisclaimer?: string;
+}
 
 interface BlogCategory {
   _id: string;
@@ -44,12 +50,13 @@ export async function getStaticPaths() {
 
 const { category: categorySlug, sub: subSlug } = Astro.params;
 
-const [category, posts] = await Promise.all([
+const [category, posts, siteSettings] = await Promise.all([
   sanityClient.fetch<BlogCategory>(BLOG_CATEGORY_QUERY, { categorySlug }),
   sanityClient.fetch<BlogPostCard[]>(BLOG_SUBCATEGORY_POSTS_QUERY, {
     categorySlug,
     subSlug,
   }),
+  sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
 ]);
 
 const currentSub = category?.subtopics?.find((s) => s.slug === subSlug);
@@ -1557,7 +1564,7 @@ function fmtDate(iso: string | undefined): string {
   <!-- ── NEWSLETTER ── -->
   <section class="newsletter">
     <div class="newsletter-inner fade-up">
-      <p class="eyebrow">Stay in the loop</p>
+      <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
       <h2>One thoughtful email a month.</h2>
       <p>
         New articles, clinical resources, and the occasional behind-the-scenes note. No fluff, easy
@@ -1570,7 +1577,12 @@ function fmtDate(iso: string | undefined): string {
         <input type="email" placeholder="you@example.com" required />
         <button type="submit" class="btn btn-coral">Subscribe</button>
       </form>
-      <p class="newsletter-tiny">We never share your email. Unsubscribe in one click.</p>
+      <p class="newsletter-tiny">
+        {
+          siteSettings?.newsletterDisclaimer ??
+            'We never share your email. Unsubscribe in one click.'
+        }
+      </p>
     </div>
   </section>
 

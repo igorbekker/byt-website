@@ -38,6 +38,8 @@ export const blogCategory = defineType({
       description: 'Emoji or icon key for display',
     }),
     defineField({ name: 'order', title: 'Order', type: 'number' }),
+    defineField({ name: 'subtopicsHeading', title: 'Subtopics Heading', type: 'string' }),
+    defineField({ name: 'categoryPostsHeading', title: 'Category Posts Heading', type: 'string' }),
     defineField({
       name: 'subtopics',
       title: 'Subtopics',
