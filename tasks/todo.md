@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Wire blog article page hardcoded blocks (newsletter, related eyebrow, mobile CTA) to Sanity/openModal
+- **Last work:** 2026-05-18 — Wire blog article page hardcoded blocks (newsletter eyebrow/disclaimer now wired, related eyebrow CMS-SKIP, mobile CTA openModal)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -32,15 +32,15 @@ Wire newsletter section, "Continue reading" eyebrow, and mobile CTA bar on `apps
 - [x] Confirmed siteSettings not fetched — added SITE_SETTINGS_QUERY import + SiteSettings interface + parallel fetch
 - [x] Newsletter heading wired: `{siteSettings?.newsletterHeading ?? 'Mental health insights, delivered.'}`
 - [x] Newsletter body wired: `{siteSettings?.newsletterBody ?? 'Evidence-based articles...'}`
-- [x] Newsletter eyebrow "Stay informed" → CMS-SKIP (no schema field for newsletterEyebrow)
-- [x] Newsletter disclaimer → CMS-SKIP (no schema field for newsletterDisclaimer)
+- [x] Newsletter eyebrow wired: `{siteSettings?.newsletterEyebrow ?? 'Stay informed'}` (schema field added in parallel remote commit)
+- [x] Newsletter disclaimer wired: `{siteSettings?.newsletterDisclaimer ?? 'Your privacy is protected...'}` (schema field added in parallel remote commit)
 - [x] "Continue reading" eyebrow → CMS-SKIP: UI label
 - [x] Mobile CTA bar: converted `<a href>` → `<button onclick="openModal('book/refer')">` with siteSettings labels
 - [x] Build verified: `pnpm --filter web build` — PASSED (all routes, 0 errors)
 
 ### Session Review — 2026-05-18 (Blog Article wiring)
 
-**What was done:** Added siteSettings fetch to blog article page and wired newsletter heading/body from Sanity. Marked newsletter eyebrow, disclaimer, and "Continue reading" eyebrow as CMS-SKIP (no schema fields). Converted mobile CTA bar from `<a href>` navigation links to `<button onclick="openModal()">` modal triggers with wired labels from siteSettings.
+**What was done:** Added siteSettings fetch to blog article page and wired newsletter heading, body, eyebrow, and disclaimer from Sanity (eyebrow/disclaimer fields were added in a parallel remote commit). Marked "Continue reading" eyebrow as CMS-SKIP (UI label). Converted mobile CTA bar from `<a href>` navigation links to `<button onclick="openModal()">` modal triggers with wired labels from siteSettings.
 
 **Files changed:**
 
@@ -1179,3 +1179,76 @@ Architecture path: **PATH B** — TESTIMONIALS_HOME_QUERY existed in queries.ts,
 **Verification:** `pnpm --filter web build` PASS — 0 errors. index.html 46,491 bytes. Both CDN avatar URLs + both quote texts confirmed in dist/client/index.html ✓. Sanity order(\_id desc) query confirmed director=[0], daughter=[1] ✓.
 
 **Total code files changed:** 2
+
+---
+
+### Add newsletterEyebrow and newsletterDisclaimer to siteSettings — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Add two new fields to the global siteSettings schema and GROQ query. No template wiring in this task (deferred to Prompts 13–15).
+
+- [x] A. 2026-05-18 Pre-flight: confirmed newsletterEyebrow + newsletterDisclaimer absent from siteSettings.ts (lines 78–79 only have newsletterHeading + newsletterBody); confirmed both absent from SITE_SETTINGS_QUERY; extracted hardcoded eyebrow "Stay in the loop" + disclaimer "We never share your email. Unsubscribe in one click." from blog/index.astro (lines 1475, 1492); [slug].astro has different text ("Stay informed" / "Your privacy is protected. We never share your information.")
+- [x] B. 2026-05-18 siteSettings.ts — added `defineField({ name: 'newsletterEyebrow', title: 'Newsletter Eyebrow', type: 'string' })` and `defineField({ name: 'newsletterDisclaimer', title: 'Newsletter Disclaimer', type: 'text' })` after newsletterBody (lines 81–82)
+- [x] C. 2026-05-18 queries.ts — added `newsletterEyebrow` and `newsletterDisclaimer` to SITE_SETTINGS_QUERY after newsletterBody
+- [x] D. 2026-05-18 Commit b0ff439 pushed to origin/main
+- [x] E. 2026-05-18 Studio deployed — https://byt-website.sanity.studio/
+- [x] F. 2026-05-18 Seeded published siteSettings: newsletterEyebrow + newsletterDisclaimer (transactionId: KRroYNn1MtkjP4cuvNOUJ2)
+- [x] G. 2026-05-18 Fetch confirmed: newsletterEyebrow = "Stay in the loop", newsletterDisclaimer = "We never share your email. Unsubscribe in one click."
+
+### Session Review — 2026-05-18 (newsletterEyebrow + newsletterDisclaimer)
+
+**What was done:** Added two new fields to the global `siteSettings` Sanity schema and GROQ query. No template files changed — wiring deferred to Prompts 13–15.
+
+**Pre-flight note:** `blog/index.astro` and `blog/[slug].astro` have divergent hardcoded text for these fields:
+
+- `index.astro`: eyebrow = "Stay in the loop", disclaimer = "We never share your email. Unsubscribe in one click."
+- `[slug].astro`: eyebrow = "Stay informed", disclaimer = "Your privacy is protected. We never share your information."
+
+Seeding will use `index.astro` values as primary blog page. Igor to reconcile [slug].astro text during Prompt 13–15 wiring.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/siteSettings.ts` — 2 fields added after newsletterBody (lines 81–82)
+- `apps/web/src/lib/queries.ts` — 2 fields added to SITE_SETTINGS_QUERY
+
+**No template files changed:** YES
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 43.40s ✓. Studio deployed ✓. Sanity fetch confirmed both fields ✓.
+
+**Commit:** b0ff439 — pushed to origin/main
+
+---
+
+### Wire newsletterEyebrow and newsletterDisclaimer on Blog Index from siteSettings — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Wire the two global `siteSettings` fields (`newsletterEyebrow`, `newsletterDisclaimer`) into `blog/index.astro`. Schema and query already exist from prior task (b0ff439).
+
+- [x] A. 2026-05-18 Pre-flight: confirmed eyebrow hardcoded as "Stay in the loop" (line 1475), disclaimer hardcoded as "We never share your email. Unsubscribe in one click." (line 1490); siteSettings NOT fetched on this page; SITE_SETTINGS_QUERY confirmed to include both fields
+- [x] B. 2026-05-18 Added `SITE_SETTINGS_QUERY` to import list
+- [x] C. 2026-05-18 Added `SiteSettings` interface with `newsletterEyebrow?: string` and `newsletterDisclaimer?: string`
+- [x] D. 2026-05-18 Added `sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY)` to `Promise.all`; destructured as `siteSettings`
+- [x] E. 2026-05-18 Wired eyebrow: `{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}`
+- [x] F. 2026-05-18 Wired disclaimer: `{siteSettings?.newsletterDisclaimer ?? 'We never share your email. Unsubscribe in one click.'}`
+- [x] G. 2026-05-18 Build verified: PASS, 42.66s, blog/index.html = 34,909 bytes ✓
+
+### Session Review — 2026-05-18 (Blog Index newsletter eyebrow + disclaimer wiring)
+
+**What was done:** Fetched `siteSettings` on `blog/index.astro` (first time on this page) and wired two newsletter fields from the global siteSettings document. Heading and subhead remain on `blogIndexPage` fields as instructed.
+
+**Pre-flight confirmed:** siteSettings was NOT previously fetched on this page. Import and fetch added as part of this task.
+
+**Fields wired:**
+
+| Field                  | Element                                     | Fallback                                                 |
+| ---------------------- | ------------------------------------------- | -------------------------------------------------------- |
+| `newsletterEyebrow`    | `<p class="eyebrow">` in newsletter section | `'Stay in the loop'`                                     |
+| `newsletterDisclaimer` | `<p class="newsletter-tiny">` below form    | `'We never share your email. Unsubscribe in one click.'` |
+
+**NOT touched:** `newsletterHeading` (stays on `page?.newsletterHeading`), `newsletterSubhead` (stays on `page?.newsletterSubhead`). No HTML structure, classes, or styling changed.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/index.astro` — import added, interface added, fetch added, 2 elements wired
+
+**Total code files changed:** 1
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 42.66s. blog/index.html = 34,909 bytes ✓

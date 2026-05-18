@@ -38,8 +38,10 @@ interface BlogPost {
 }
 
 interface SiteSettings {
+  newsletterEyebrow?: string;
   newsletterHeading?: string;
   newsletterBody?: string;
+  newsletterDisclaimer?: string;
   navCtaLabel?: string;
   navCtaSecondaryLabel?: string;
 }
@@ -2238,8 +2240,9 @@ const articleJsonLd = JSON.stringify({
 
   <section class="newsletter">
     <div class="newsletter-inner">
-      {/* CMS-SKIP: no schema field for newsletterEyebrow */}
-      <p class="eyebrow" style="color:var(--coral);">Stay informed</p>
+      <p class="eyebrow" style="color:var(--coral);">
+        {siteSettings?.newsletterEyebrow ?? 'Stay informed'}
+      </p>
       <h2>{siteSettings?.newsletterHeading ?? 'Mental health insights, delivered.'}</h2>
       <p>
         {
@@ -2251,8 +2254,12 @@ const articleJsonLd = JSON.stringify({
         <input type="email" placeholder="Your email address" aria-label="Email address" />
         <button type="submit" class="btn btn-coral">Subscribe</button>
       </form>
-      {/* CMS-SKIP: no schema field for newsletterDisclaimer */}
-      <p class="newsletter-tiny">Your privacy is protected. We never share your information.</p>
+      <p class="newsletter-tiny">
+        {
+          siteSettings?.newsletterDisclaimer ??
+            'Your privacy is protected. We never share your information.'
+        }
+      </p>
     </div>
   </section>
 

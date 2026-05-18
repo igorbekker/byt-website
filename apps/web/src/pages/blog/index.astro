@@ -12,7 +12,13 @@ import {
   BLOG_CATEGORIES_QUERY,
   BLOG_POSTS_ALL_QUERY,
   BLOG_FEATURED_POST_QUERY,
+  SITE_SETTINGS_QUERY,
 } from '../../lib/queries';
+
+interface SiteSettings {
+  newsletterEyebrow?: string;
+  newsletterDisclaimer?: string;
+}
 
 interface BlogIndexPage {
   heroHeading?: string;
@@ -45,11 +51,12 @@ interface BlogPostCard {
   author?: { name: string; credentials?: string; initials?: string };
 }
 
-const [page, categories, posts, featured] = await Promise.all([
+const [page, categories, posts, featured, siteSettings] = await Promise.all([
   sanityClient.fetch<BlogIndexPage>(BLOG_INDEX_PAGE_QUERY),
   sanityClient.fetch<BlogCategory[]>(BLOG_CATEGORIES_QUERY),
   sanityClient.fetch<BlogPostCard[]>(BLOG_POSTS_ALL_QUERY),
   sanityClient.fetch<BlogPostCard>(BLOG_FEATURED_POST_QUERY),
+  sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
 ]);
 
 function fmtDate(iso: string | undefined): string {
@@ -1472,7 +1479,7 @@ function fmtDate(iso: string | undefined): string {
   <!-- ── NEWSLETTER ── -->
   <section class="newsletter">
     <div class="newsletter-inner fade-up">
-      <p class="eyebrow">Stay in the loop</p>
+      <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
       <h2>{page?.newsletterHeading ?? 'One thoughtful email a month.'}</h2>
       <p>
         {
@@ -1487,7 +1494,12 @@ function fmtDate(iso: string | undefined): string {
         <input type="email" placeholder="you@example.com" required />
         <button type="submit" class="btn btn-coral">Subscribe</button>
       </form>
-      <p class="newsletter-tiny">We never share your email. Unsubscribe in one click.</p>
+      <p class="newsletter-tiny">
+        {
+          siteSettings?.newsletterDisclaimer ??
+            'We never share your email. Unsubscribe in one click.'
+        }
+      </p>
     </div>
   </section>
 
