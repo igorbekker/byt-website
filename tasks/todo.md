@@ -831,6 +831,42 @@ Add processStep images, handlesImage, heroEyebrow to schema, query, and template
 
 ---
 
+### Add CMS-SKIP comments to excluded hardcoded elements — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Annotate all hardcoded elements explicitly excluded from CMS management with `<!-- CMS-SKIP: [reason] -->` comments across 5 page files. Do NOT tag anything wired to Sanity.
+
+- [x] A. 2026-05-18 communities.astro — 4 step labels (UI label) + 6 SVG/geographic items (county labels g block, LAKE text, compass, legend, county pills, facility-type pills)
+- [x] B. 2026-05-18 patients.astro — 4 Explore labels (UI affordance label) + 2 Learn more labels (UI affordance label)
+- [x] C. 2026-05-18 providers.astro — 9 Apply Now CTAs (repeated CTA, parent object has cta.label) + 4 compliance badges (compliance/trust badge) + 1 footnote (legal disclaimer); Sanity-wired `{page?.ctaCta?.label ?? 'Apply Now'}` correctly excluded
+- [x] D. 2026-05-18 careers.astro — 20 general form items + 8 modal form items (form structure)
+- [x] E. 2026-05-18 contact.astro — 1 required fields note + 18 form elements (form structure)
+- [x] F. 2026-05-18 git diff --stat — 79 insertions, 0 deletions confirmed
+
+### Session Review — 2026-05-18 (CMS-SKIP annotations)
+
+**What was done:** Added `<!-- CMS-SKIP: [reason] -->` HTML comments above all hardcoded elements explicitly excluded from CMS management. Zero element text or HTML structure was changed — comment insertions only.
+
+**CMS-SKIP counts by file:**
+
+| File              | Count  | Reasons                                                             |
+| ----------------- | ------ | ------------------------------------------------------------------- |
+| communities.astro | 10     | UI label (4), geographic data in SVG (6)                            |
+| patients.astro    | 6      | UI affordance label (6)                                             |
+| providers.astro   | 16     | repeated CTA (11), compliance/trust badge (4), legal disclaimer (1) |
+| careers.astro     | 28     | form structure (28)                                                 |
+| contact.astro     | 19     | form structure (19)                                                 |
+| **Total**         | **79** |                                                                     |
+
+**Sanity-wired exclusions (not tagged):**
+
+- `{page?.ctaCta?.label ?? 'Apply Now'}` in providers.astro CTA section — confirmed clean via grep
+
+**Verification:** `git diff --stat` — 79 insertions, 0 deletions across 5 files ✓. No element text or HTML structure changed ✓. No Sanity-wired elements tagged ✓.
+
+**Issues:** Edit string mismatch on communities.astro county labels — extra leading spaces in first attempt old_string. Fixed by re-reading exact lines at offset 2560.
+
+---
+
 ### Add heroEyebrow, openPositionsEyebrow, openPositionsHeading to Careers page — 2026-05-18 [x] COMPLETE 2026-05-18
 
 Add 3 missing text fields to careersPage schema, wire into template, seed in Sanity.

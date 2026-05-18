@@ -882,43 +882,61 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
         onsubmit="handleContactSubmit(event)"
       >
         <h2>{page?.formHeading ?? 'Send us a message'}</h2>
+        <!-- CMS-SKIP: form structure -->
         <p class="form-sub">
           Required fields are marked with <span style="color:var(--coral)">*</span>
         </p>
 
         <div class="form-grid">
           <div class="form-field">
+            <!-- CMS-SKIP: form structure -->
             <label for="firstName">First name <span class="req">*</span></label>
+            <!-- CMS-SKIP: form structure -->
             <input id="firstName" name="firstName" type="text" required placeholder="Jane" />
           </div>
           <div class="form-field">
+            <!-- CMS-SKIP: form structure -->
             <label for="lastName">Last name <span class="req">*</span></label>
+            <!-- CMS-SKIP: form structure -->
             <input id="lastName" name="lastName" type="text" required placeholder="Doe" />
           </div>
 
           <div class="form-field">
+            <!-- CMS-SKIP: form structure -->
             <label for="email">Email <span class="req">*</span></label>
+            <!-- CMS-SKIP: form structure -->
             <input id="email" name="email" type="email" required placeholder="jane@email.com" />
           </div>
           <div class="form-field">
+            <!-- CMS-SKIP: form structure -->
             <label for="phone">Phone</label>
+            <!-- CMS-SKIP: form structure -->
             <input id="phone" name="phone" type="tel" placeholder="(555) 555-5555" />
           </div>
 
           <div class="form-field form-field-full">
+            <!-- CMS-SKIP: form structure -->
             <label for="reason">I'm reaching out as <span class="req">*</span></label>
             <select id="reason" name="reason" required>
+              <!-- CMS-SKIP: form structure -->
               <option value="" disabled selected>Select an option</option>
+              <!-- CMS-SKIP: form structure -->
               <option>An adult or family seeking therapy</option>
+              <!-- CMS-SKIP: form structure -->
               <option>A facility / wellness director</option>
+              <!-- CMS-SKIP: form structure -->
               <option>A licensed therapist interested in joining</option>
+              <!-- CMS-SKIP: form structure -->
               <option>A referring provider</option>
+              <!-- CMS-SKIP: form structure -->
               <option>Press, partnership, or other</option>
             </select>
           </div>
 
           <div class="form-field form-field-full">
+            <!-- CMS-SKIP: form structure -->
             <label for="message">How can we help? <span class="req">*</span></label>
+            <!-- CMS-SKIP: form structure -->
             <textarea
               id="message"
               name="message"
@@ -946,6 +964,7 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
         </label>
 
         <div class="form-actions">
+          <!-- CMS-SKIP: form structure -->
           <button type="submit" class="btn btn-coral">Send Message &rarr;</button>
           <span class="form-fineprint"
             >{page?.responseCopy ?? 'We respond within one business day.'}</span
