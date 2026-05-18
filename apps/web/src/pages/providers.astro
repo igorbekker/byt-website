@@ -16,15 +16,18 @@ interface ProvidersPage {
     heading?: string;
     body?: string;
     statusNote?: string;
+    image?: { asset?: { url: string }; alt?: string };
     cta?: { label: string; href?: string };
   }>;
   handlesEyebrow?: string;
   handlesHeading?: string;
   handlesSubhead?: string;
-  handlesItems?: Array<{ heading?: string; body?: string }>;
+  handlesItems?: Array<{ tag?: string; heading?: string; body?: string }>;
   qualsEyebrow?: string;
   qualsHeading?: string;
-  quals?: Array<{ label?: string; scope?: string; body?: string }>;
+  quals?: Array<{ label?: string; tabLabel?: string; scope?: string; body?: string }>;
+  testimonialsHeading?: string;
+  testimonialsSubhead?: string;
   ctaHeading?: string;
   ctaSubhead?: string;
   ctaCta?: { label: string; href?: string };
@@ -1904,8 +1907,8 @@ const [page, testimonials] = await Promise.all([
       </div>
       <div class="h98-bg">
         <img
-          src="/images/providers-hero.jpg"
-          alt="Licensed therapist arriving at a Florida senior community"
+          src={page?.heroImage?.asset?.url ?? '/images/providers-hero.jpg'}
+          alt={page?.heroImage?.alt ?? 'Licensed therapist arriving at a Florida senior community'}
           loading="eager"
         />
       </div>
@@ -1932,8 +1935,8 @@ const [page, testimonials] = await Promise.all([
         <a href="#" class="l422-card is-default">
           <div class="l422-card-img">
             <img
-              src="/images/providers-track-tele.jpg"
-              alt="Therapist working from a home office"
+              src={page?.tracks?.[0]?.image?.asset?.url ?? '/images/providers-track-tele.jpg'}
+              alt={page?.tracks?.[0]?.image?.alt ?? 'Therapist working from a home office'}
             />
           </div>
           <div class="l422-card-content">
@@ -1982,8 +1985,8 @@ const [page, testimonials] = await Promise.all([
         <a href="#" class="l422-card">
           <div class="l422-card-img">
             <img
-              src="/images/providers-track-facility.jpg"
-              alt="Therapist working on-site with a resident"
+              src={page?.tracks?.[1]?.image?.asset?.url ?? '/images/providers-track-facility.jpg'}
+              alt={page?.tracks?.[1]?.image?.alt ?? 'Therapist working on-site with a resident'}
             />
           </div>
           <div class="l422-card-content">
@@ -2049,7 +2052,7 @@ const [page, testimonials] = await Promise.all([
         <div class="l374-card feature">
           <div class="body">
             <div>
-              <p class="tag">Billing</p>
+              <p class="tag">{page?.handlesItems?.[0]?.tag ?? 'Billing'}</p>
               <h3>{page?.handlesItems?.[0]?.heading ?? 'Medicare and insurance billing'}</h3>
               <p>
                 {
@@ -2088,7 +2091,7 @@ const [page, testimonials] = await Promise.all([
         <div class="l374-card">
           <div class="body">
             <div>
-              <p class="tag">Referrals</p>
+              <p class="tag">{page?.handlesItems?.[1]?.tag ?? 'Referrals'}</p>
               <h3>{page?.handlesItems?.[1]?.heading ?? 'Patient referrals'}</h3>
               <p>
                 {
@@ -2120,7 +2123,7 @@ const [page, testimonials] = await Promise.all([
         <div class="l374-card">
           <div class="body">
             <div>
-              <p class="tag">EHR</p>
+              <p class="tag">{page?.handlesItems?.[2]?.tag ?? 'EHR'}</p>
               <h3>{page?.handlesItems?.[2]?.heading ?? 'EHR access'}</h3>
               <p>
                 {
@@ -2154,7 +2157,7 @@ const [page, testimonials] = await Promise.all([
         <div class="l374-card">
           <div class="body">
             <div>
-              <p class="tag">Clinical</p>
+              <p class="tag">{page?.handlesItems?.[3]?.tag ?? 'Clinical'}</p>
               <h3>{page?.handlesItems?.[3]?.heading ?? 'Clinical Director oversight'}</h3>
               <p>
                 {
@@ -2194,7 +2197,7 @@ const [page, testimonials] = await Promise.all([
         <div class="l374-card">
           <div class="body">
             <div>
-              <p class="tag">Credentialing</p>
+              <p class="tag">{page?.handlesItems?.[4]?.tag ?? 'Credentialing'}</p>
               <h3>{page?.handlesItems?.[4]?.heading ?? 'Credentialing support'}</h3>
               <p>
                 {
@@ -2376,11 +2379,21 @@ const [page, testimonials] = await Promise.all([
         </div>
 
         <div class="l506-list" role="tablist">
-          <button class="l506-trigger active" data-tab="tab-1">Florida license</button>
-          <button class="l506-trigger" data-tab="tab-2">Medicare &amp; Insurance enrollment</button>
-          <button class="l506-trigger" data-tab="tab-3">Clinical experience</button>
-          <button class="l506-trigger" data-tab="tab-4">SE Florida · facility</button>
-          <button class="l506-trigger" data-tab="tab-5">Home office · telehealth</button>
+          <button class="l506-trigger active" data-tab="tab-1"
+            >{page?.quals?.[0]?.tabLabel ?? 'Florida license'}</button
+          >
+          <button class="l506-trigger" data-tab="tab-2"
+            >{page?.quals?.[1]?.tabLabel ?? 'Medicare & Insurance enrollment'}</button
+          >
+          <button class="l506-trigger" data-tab="tab-3"
+            >{page?.quals?.[2]?.tabLabel ?? 'Clinical experience'}</button
+          >
+          <button class="l506-trigger" data-tab="tab-4"
+            >{page?.quals?.[3]?.tabLabel ?? 'SE Florida · facility'}</button
+          >
+          <button class="l506-trigger" data-tab="tab-5"
+            >{page?.quals?.[4]?.tabLabel ?? 'Home office · telehealth'}</button
+          >
         </div>
       </div>
     </div>
@@ -2391,8 +2404,10 @@ const [page, testimonials] = await Promise.all([
     <div class="container">
       <div class="t37-head">
         <div class="t37-head-inner">
-          <h1>What our therapists are saying</h1>
-          <p class="text-md">Peer proof from clinicians already working with BYT.</p>
+          <h1>{page?.testimonialsHeading ?? 'What our therapists are saying'}</h1>
+          <p class="text-md">
+            {page?.testimonialsSubhead ?? 'Peer proof from clinicians already working with BYT.'}
+          </p>
         </div>
       </div>
 

@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Add heroEyebrow, openPositionsEyebrow, openPositionsHeading to careersPage schema, CAREERS_PAGE_QUERY, and careers.astro
+- **Last work:** 2026-05-18 — Wire 15 hardcoded elements on Providers page (hero image, track images, handles tags, tab labels, testimonials heading/subhead)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -862,3 +862,52 @@ Add 3 missing text fields to careersPage schema, wire into template, seed in San
 **Note:** `<p class="eyebrow">Don't See a Fit?</p>` at line 2111 is a separate hardcoded eyebrow not in scope. `noFitHeading` (line 2112) holds different text and was already wired.
 
 **Verification:** `pnpm --filter web build` PASS — 0 errors. careers/index.html 46,563 bytes ✓. Total code files changed: 3.
+
+---
+
+### Fix 15 hardcoded elements on Providers page — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Wire hero image, 2 track images, 5 handles tag labels, 5 tab trigger labels, testimonials heading + subhead.
+
+- [x] A. 2026-05-18 Pre-flight: confirmed tracks[].image, handlesItems[].tag, quals[].tabLabel, testimonialsHeading, testimonialsSubhead all absent from schema and query; heroImage in schema+query but NOT wired in template; all 3 image files confirmed in /public/images/
+- [x] B. 2026-05-18 providersPage.ts — added image (imageWithAlt) to tracks array item; added tag (string) to handlesItems array item; added tabLabel (string) to quals array item; added testimonialsHeading (string) + testimonialsSubhead (text) before CTA Band section
+- [x] C. 2026-05-18 queries.ts — added image{ asset->{ url }, alt } to tracks[]; added tag to handlesItems[]; added tabLabel to quals[]; added testimonialsHeading + testimonialsSubhead
+- [x] D. 2026-05-18 providers.astro — updated ProvidersPage interface (tracks image, handlesItems tag, quals tabLabel, testimonialsHeading, testimonialsSubhead); wired hero image src+alt; wired track[0]+[1] image src+alt; wired 5 handles tags; wired 5 tab trigger labels; wired testimonials h1+subhead
+- [x] E. 2026-05-18 pnpm --filter web build — PASSED (0 errors, 37.98s); providers/index.html confirmed built ✓
+
+### Session Review — 2026-05-18 (Providers page 15-element triad)
+
+**What was done:** Completed the schema–query–template triad for 15 hardcoded elements on the Providers page. `heroImage` already existed in schema and query but had never been wired into the template `<img>` tag — fixed in this pass along with 14 new fields.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/providersPage.ts` — 4 additions: tracks[].image, handlesItems[].tag, quals[].tabLabel, testimonialsHeading, testimonialsSubhead (7 new lines)
+- `apps/web/src/lib/queries.ts` — 4 additions to PROVIDERS_PAGE_QUERY: tracks image, handlesItems tag, quals tabLabel, testimonialsHeading+subhead
+- `apps/web/src/pages/providers.astro` — ProvidersPage interface extended; 15 elements wired with ?? fallbacks
+
+**Wiring details:**
+
+| Element             | Fallback                                                      |
+| ------------------- | ------------------------------------------------------------- |
+| heroImage src       | `/images/providers-hero.jpg`                                  |
+| heroImage alt       | `'Licensed therapist arriving at a Florida senior community'` |
+| tracks[0].image src | `/images/providers-track-tele.jpg`                            |
+| tracks[0].image alt | `'Therapist working from a home office'`                      |
+| tracks[1].image src | `/images/providers-track-facility.jpg`                        |
+| tracks[1].image alt | `'Therapist working on-site with a resident'`                 |
+| handlesItems[0].tag | `'Billing'`                                                   |
+| handlesItems[1].tag | `'Referrals'`                                                 |
+| handlesItems[2].tag | `'EHR'`                                                       |
+| handlesItems[3].tag | `'Clinical'`                                                  |
+| handlesItems[4].tag | `'Credentialing'`                                             |
+| quals[0].tabLabel   | `'Florida license'`                                           |
+| quals[1].tabLabel   | `'Medicare & Insurance enrollment'`                           |
+| quals[2].tabLabel   | `'Clinical experience'`                                       |
+| quals[3].tabLabel   | `'SE Florida · facility'`                                     |
+| quals[4].tabLabel   | `'Home office · telehealth'`                                  |
+| testimonialsHeading | `'What our therapists are saying'`                            |
+| testimonialsSubhead | `'Peer proof from clinicians already working with BYT.'`      |
+
+**No HTML structure changed.** All edits are text/src replacements only.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 37.98s ✓. Total code files changed: 3.

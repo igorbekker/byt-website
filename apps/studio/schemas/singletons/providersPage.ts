@@ -47,6 +47,7 @@ export const providersPage = defineType({
             }),
             defineField({ name: 'body', title: 'Body', type: 'text' }),
             defineField({ name: 'statusNote', title: 'Status Note', type: 'text' }),
+            defineField({ name: 'image', title: 'Card Image', type: 'imageWithAlt' }),
             defineField({ name: 'cta', title: 'CTA', type: 'ctaLink' }),
           ],
           preview: {
@@ -69,6 +70,7 @@ export const providersPage = defineType({
         {
           type: 'object',
           fields: [
+            defineField({ name: 'tag', title: 'Tag Label', type: 'string' }),
             defineField({
               name: 'heading',
               title: 'Heading',
@@ -97,6 +99,7 @@ export const providersPage = defineType({
           type: 'object',
           fields: [
             defineField({ name: 'label', title: 'Heading', type: 'string' }),
+            defineField({ name: 'tabLabel', title: 'Tab Label', type: 'string' }),
             defineField({
               name: 'scope',
               title: 'Applies To',
@@ -117,6 +120,10 @@ export const providersPage = defineType({
         },
       ],
     }),
+
+    // ── Testimonials ──────────────────────────────────────────────────────
+    defineField({ name: 'testimonialsHeading', title: 'Testimonials Heading', type: 'string' }),
+    defineField({ name: 'testimonialsSubhead', title: 'Testimonials Subhead', type: 'text' }),
 
     // ── CTA Band ──────────────────────────────────────────────────────────
     defineField({ name: 'ctaHeading', title: 'CTA Heading', type: 'string' }),

@@ -144,12 +144,14 @@ export const PROVIDERS_PAGE_QUERY = `*[_type == "providersPage"][0]{
   tracksEyebrow, tracksHeading, tracksSubhead,
   tracks[]{
     label, heading, body, statusNote,
+    image{ asset->{ url }, alt },
     cta{ label, href, variant }
   },
   handlesEyebrow, handlesHeading, handlesSubhead,
-  handlesItems[]{ heading, body },
+  handlesItems[]{ tag, heading, body },
   qualsEyebrow, qualsHeading,
-  quals[]{ label, scope, body },
+  quals[]{ label, tabLabel, scope, body },
+  testimonialsHeading, testimonialsSubhead,
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
   seo{ metaTitle, metaDescription }
