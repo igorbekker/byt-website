@@ -745,6 +745,45 @@ Note: Both testimonials are placeholders pending real collection. authorName set
 
 ---
 
+### Fix 7 hardcoded elements on Communities page — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Add processStep images, handlesImage, heroEyebrow to schema, query, and template.
+
+- [x] A. 2026-05-18 Pre-flight: processStep.ts has no image field; communitiesPage.ts missing handlesImage + heroEyebrow; COMMUNITIES_PAGE_QUERY missing all 3; all 5 image files confirmed in /public/images/communities/
+- [x] B. 2026-05-18 processStep.ts — added `defineField({ name: 'image', title: 'Image', type: 'imageWithAlt' })` after body
+- [x] C. 2026-05-18 communitiesPage.ts — added `heroEyebrow` before heroHeading; added `handlesImage` before No Cost section
+- [x] D. 2026-05-18 queries.ts — added heroEyebrow to COMMUNITIES_PAGE_QUERY; updated processSteps[] to include image{ asset->{ url }, alt }; added handlesImage{ asset->{ url }, alt }
+- [x] E. 2026-05-18 communities.astro — ProcessStep interface: added image?; CommunitiesPage interface: added heroEyebrow? and handlesImage?; wired all 7 elements with ?? fallbacks
+- [x] F. 2026-05-18 pnpm --filter web build — PASSED (0 errors); communities/index.html = 52,299 bytes ✓
+
+### Session Review — 2026-05-18 (Communities 7-element triad)
+
+**What was done:** Completed the schema–query–template triad for 7 hardcoded elements on the Communities page: 4 process step images + alts, 1 handles section image + alt, 1 hero eyebrow text.
+
+**Files changed:**
+
+- `apps/studio/schemas/objects/processStep.ts` — added `image` field (imageWithAlt)
+- `apps/studio/schemas/singletons/communitiesPage.ts` — added `heroEyebrow` + `handlesImage`
+- `apps/web/src/lib/queries.ts` — updated COMMUNITIES_PAGE_QUERY: heroEyebrow, processSteps image, handlesImage
+- `apps/web/src/pages/communities.astro` — ProcessStep + CommunitiesPage interfaces extended; 7 elements wired
+
+**Wiring details:**
+
+| Element               | Fallback                                                  |
+| --------------------- | --------------------------------------------------------- |
+| heroEyebrow           | `'For Wellness Directors'`                                |
+| processSteps[0].image | `/images/communities/communities-handoff.png`             |
+| processSteps[1].image | `/images/communities/communities-step2-credentialing.png` |
+| processSteps[2].image | `/images/communities/communities-step3-arriving.png`      |
+| processSteps[3].image | `/images/communities/communities-step4-billing.png`       |
+| handlesImage          | `/images/communities/communities-l16-handles.png`         |
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. communities/index.html = 52,299 bytes ✓. No HTML structure changed. 4 files, 3 code files.
+
+**Issues:** None
+
+---
+
 ## Content Quality + Communities CTA Fix — 2026-05-15 [x] COMPLETE 2026-05-15
 
 ### Steps

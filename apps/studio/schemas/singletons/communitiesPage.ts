@@ -11,6 +11,7 @@ export const communitiesPage = defineType({
   type: 'document',
   fields: [
     // ── Hero ─────────────────────────────────────────────────────────────
+    defineField({ name: 'heroEyebrow', title: 'Hero Eyebrow', type: 'string' }),
     defineField({
       name: 'heroHeading',
       title: 'Hero Heading',
@@ -60,6 +61,8 @@ export const communitiesPage = defineType({
       ],
       validation: (r) => r.max(12),
     }),
+
+    defineField({ name: 'handlesImage', title: 'Handles Section Image', type: 'imageWithAlt' }),
 
     // ── No Cost ───────────────────────────────────────────────────────────
     defineField({ name: 'noCostHeading', title: 'No Cost Heading', type: 'string' }),

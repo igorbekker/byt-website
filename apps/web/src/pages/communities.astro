@@ -28,6 +28,7 @@ interface ProcessStep {
   stepNumber?: number;
   heading?: string;
   body?: string;
+  image?: ImageWithAlt;
 }
 
 interface HandlesItem {
@@ -41,6 +42,7 @@ interface SeoFields {
 }
 
 interface CommunitiesPage {
+  heroEyebrow?: string;
   heroHeading?: string;
   heroSubhead?: string;
   heroCta?: CtaLink;
@@ -53,6 +55,7 @@ interface CommunitiesPage {
   handlesHeading?: string;
   handlesSubhead?: string;
   handlesItems?: HandlesItem[];
+  handlesImage?: ImageWithAlt;
   conditionsEyebrow?: string;
   conditionsHeading?: string;
   conditionsSubhead?: string;
@@ -1667,7 +1670,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     <div class="container">
       <div class="h84-grid">
         <div class="h84-text">
-          <span class="h84-eyebrow">For Wellness Directors</span>
+          <span class="h84-eyebrow">{page?.heroEyebrow ?? 'For Wellness Directors'}</span>
           <h1>{page?.heroHeading ?? 'Every resident deserves mental health support'}</h1>
           <p class="lede">
             {
@@ -1706,8 +1709,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <article class="l521-card">
           <div class="l521-card-img">
             <img
-              src="/images/communities/communities-handoff.png"
-              alt="Professional document handoff between facility administrator and visiting therapist"
+              src={page?.processSteps?.[0]?.image?.asset?.url ??
+                '/images/communities/communities-handoff.png'}
+              alt={page?.processSteps?.[0]?.image?.alt ??
+                'Professional document handoff between facility administrator and visiting therapist'}
             />
           </div>
           <div class="l521-step"><span class="num">1</span> Step</div>
@@ -1736,8 +1741,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <article class="l521-card">
           <div class="l521-card-img">
             <img
-              src="/images/communities/communities-step2-credentialing.png"
-              alt="Therapist credentialing and scheduling paperwork"
+              src={page?.processSteps?.[1]?.image?.asset?.url ??
+                '/images/communities/communities-step2-credentialing.png'}
+              alt={page?.processSteps?.[1]?.image?.alt ??
+                'Therapist credentialing and scheduling paperwork'}
             />
           </div>
           <div class="l521-step"><span class="num">2</span> Step</div>
@@ -1768,8 +1775,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <article class="l521-card">
           <div class="l521-card-img">
             <img
-              src="/images/communities/communities-step3-arriving.png"
-              alt="Therapist arriving at assisted living facility entrance"
+              src={page?.processSteps?.[2]?.image?.asset?.url ??
+                '/images/communities/communities-step3-arriving.png'}
+              alt={page?.processSteps?.[2]?.image?.alt ??
+                'Therapist arriving at assisted living facility entrance'}
             />
           </div>
           <div class="l521-step"><span class="num">3</span> Step</div>
@@ -1794,8 +1803,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <article class="l521-card">
           <div class="l521-card-img">
             <img
-              src="/images/communities/communities-step4-billing.png"
-              alt="Electronic Medicare billing and claims processing"
+              src={page?.processSteps?.[3]?.image?.asset?.url ??
+                '/images/communities/communities-step4-billing.png'}
+              alt={page?.processSteps?.[3]?.image?.alt ??
+                'Electronic Medicare billing and claims processing'}
             />
           </div>
           <div class="l521-step"><span class="num">4</span> Step</div>
@@ -1902,8 +1913,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         </div>
         <div class="l16-image">
           <img
-            src="/images/communities/communities-l16-handles.png"
-            alt="Therapist coordinating care with nursing staff at assisted living facility"
+            src={page?.handlesImage?.asset?.url ??
+              '/images/communities/communities-l16-handles.png'}
+            alt={page?.handlesImage?.alt ??
+              'Therapist coordinating care with nursing staff at assisted living facility'}
           />
         </div>
       </div>

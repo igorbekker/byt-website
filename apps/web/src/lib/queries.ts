@@ -89,13 +89,14 @@ export const TESTIMONIALS_HOME_QUERY = `*[_type == "testimonial"] | order(_creat
 }`;
 
 export const COMMUNITIES_PAGE_QUERY = `*[_type == "communitiesPage"][0]{
-  heroHeading, heroSubhead,
+  heroEyebrow, heroHeading, heroSubhead,
   heroCta{ label, href, variant },
   heroImage{ asset->{ url }, alt },
   processEyebrow, processHeading, processSubhead,
-  processSteps[]{ stepNumber, heading, body },
+  processSteps[]{ stepNumber, heading, body, image{ asset->{ url }, alt } },
   handlesEyebrow, handlesHeading, handlesSubhead,
   handlesItems[]{ heading, body },
+  handlesImage{ asset->{ url }, alt },
   noCostHeading, noCostSubhead,
   noCostCards[]{ tag, heading, body, image{ asset->{ url }, alt } },
   conditionsEyebrow, conditionsHeading, conditionsSubhead,

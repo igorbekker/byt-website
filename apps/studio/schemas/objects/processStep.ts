@@ -27,6 +27,7 @@ export const processStep = defineType({
       title: 'Body',
       type: 'text',
     }),
+    defineField({ name: 'image', title: 'Image', type: 'imageWithAlt' }),
   ],
   preview: {
     select: { title: 'heading', subtitle: 'stepNumber' },
