@@ -1069,3 +1069,54 @@ Architecture: **PATH B** — CONDITIONS_HOME_QUERY exists (queries.ts:73–79), 
 **Sanity data:** All 6 steps already populated — no mutation needed.
 **Verification:** astro check — no new errors in index.astro.
 **Total code files changed:** 1
+
+---
+
+### Wire 2 homepage testimonial cards from Sanity — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Architecture path: **PATH B** — TESTIMONIALS_HOME_QUERY existed in queries.ts, not imported; updated to filter `featured == true`; added `authorPhoto`.
+
+- [x] Pre-flight: index.astro BLOCK 7 testimonials section found (lines 2229–2290); 2 hardcoded cards confirmed
+- [x] Pre-flight: TESTIMONIALS_HOME_QUERY exists in queries.ts (line 83) but not imported; needs `featured` filter + `authorPhoto`
+- [x] Pre-flight: homePage schema has testimonialsEyebrow/Heading/Subhead (already wired); no testimonials array on homePage
+- [x] Pre-flight: testimonial.ts schema has `featured` boolean + `authorPhoto` (imageWithAlt); 0 existing `featured: true` docs
+- [x] queries.ts — updated TESTIMONIALS_HOME_QUERY: filter `featured == true`, `order(_id desc)`, limit `[0...2]`, added `authorPhoto{ asset->{ url }, alt }`, removed unused `authorInitials` + `audienceType`
+- [x] index.astro — added TESTIMONIALS_HOME_QUERY to import; added Testimonial interface; added homeTestimonials fetch; wired card [0] quote/authorRole/authorOrg/authorPhoto; wired card [1] same with ?? fallbacks
+- [x] pnpm --filter web build — PASSED (0 errors, 42.73s); index.html 46,491 bytes ✓
+- [x] Seeded 2 testimonial docs with featured: true (transactionId: GeUlnxKcHh69hwnAxTXcOw)
+- [x] Uploaded 2 avatar images to Sanity CDN; patched authorPhoto on both docs (transactionId: GeUlnxKcHh69hwnAxTXgpS)
+- [x] Verification query confirmed: order(\_id desc) returns director [0], daughter [1] ✓
+- [x] Final build: CDN URLs rendering in dist/client/index.html; both quotes confirmed ✓
+
+### Session Review — 2026-05-18 (Homepage testimonials wiring)
+
+**Architecture path taken:** PATH B
+
+**Files changed (code):**
+
+- `apps/web/src/lib/queries.ts` — TESTIMONIALS_HOME_QUERY updated: `featured == true` filter, `order(_id desc)`, limit 2, `authorPhoto` added, `authorInitials`/`audienceType` removed
+- `apps/web/src/pages/index.astro` — TESTIMONIALS_HOME_QUERY import added; `Testimonial` interface added; `homeTestimonials` fetch added; both cards wired
+
+**Sanity mutations (data only):**
+
+- 2 testimonial docs created: `testimonial-homepage-director`, `testimonial-homepage-daughter` (featured: true)
+- 2 avatar images uploaded to CDN; patched via authorPhoto reference on both docs
+
+**Wiring details:**
+
+| Card | Field        | Source                                           | Fallback                                    |
+| ---- | ------------ | ------------------------------------------------ | ------------------------------------------- |
+| [0]  | quote        | `homeTestimonials?.[0]?.quote`                   | "Better You placed a licensed clinician..." |
+| [0]  | authorRole   | `homeTestimonials?.[0]?.authorRole`              | `'Director of Wellness'`                    |
+| [0]  | authorOrg    | `homeTestimonials?.[0]?.authorOrg`               | `'Assisted Living · Palm Beach County'`     |
+| [0]  | avatar image | `homeTestimonials?.[0]?.authorPhoto?.asset?.url` | `/images/home-testimonial-director.jpg`     |
+| [1]  | quote        | `homeTestimonials?.[1]?.quote`                   | "My mom had been on a waitlist..."          |
+| [1]  | authorRole   | `homeTestimonials?.[1]?.authorRole`              | `'Adult Daughter'`                          |
+| [1]  | authorOrg    | `homeTestimonials?.[1]?.authorOrg`               | `'Family member · Southeast Florida'`       |
+| [1]  | avatar image | `homeTestimonials?.[1]?.authorPhoto?.asset?.url` | `/images/home-testimonial-daughter.jpg`     |
+
+**No HTML structure changed.** All class names, DOM order, and the "Image for illustration" disclaimer `<p>` are identical to the original hardcoded template.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. index.html 46,491 bytes. Both CDN avatar URLs + both quote texts confirmed in dist/client/index.html ✓. Sanity order(\_id desc) query confirmed director=[0], daughter=[1] ✓.
+
+**Total code files changed:** 2

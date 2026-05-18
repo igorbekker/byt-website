@@ -80,14 +80,12 @@ export const CONDITIONS_HOME_QUERY = `*[_type == "condition" && showOnHomepage =
   secondaryCta{ label, href }
 }`;
 
-export const TESTIMONIALS_HOME_QUERY = `*[_type == "testimonial"] | order(_createdAt desc)[0...6] {
+export const TESTIMONIALS_HOME_QUERY = `*[_type == "testimonial" && featured == true] | order(_id desc)[0...2] {
   _id,
   quote,
-  authorName,
   authorRole,
   authorOrg,
-  authorInitials,
-  audienceType
+  authorPhoto{ asset->{ url }, alt }
 }`;
 
 export const COMMUNITIES_PAGE_QUERY = `*[_type == "communitiesPage"][0]{

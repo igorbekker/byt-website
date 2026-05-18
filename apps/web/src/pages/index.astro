@@ -7,7 +7,7 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { HOME_PAGE_QUERY, CONDITIONS_HOME_QUERY } from '../lib/queries';
+import { HOME_PAGE_QUERY, CONDITIONS_HOME_QUERY, TESTIMONIALS_HOME_QUERY } from '../lib/queries';
 
 interface CtaLink {
   label: string;
@@ -58,6 +58,14 @@ interface Condition {
   secondaryCta?: CtaLink;
 }
 
+interface Testimonial {
+  _id: string;
+  quote?: string;
+  authorRole?: string;
+  authorOrg?: string;
+  authorPhoto?: ImageWithAlt;
+}
+
 interface HomePage {
   heroEyebrow?: string;
   heroHeadline?: string;
@@ -100,6 +108,7 @@ interface HomePage {
 
 const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
 const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
+const homeTestimonials = await sanityClient.fetch<Testimonial[]>(TESTIMONIALS_HOME_QUERY);
 ---
 
 <style is:global>
@@ -2245,19 +2254,24 @@ const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
         <div class="testimonial-card">
           <div class="testimonial-quote-mark">"</div>
           <p class="testimonial-text">
-            Better You placed a licensed clinician on-site within two weeks. No billing burden on
-            our team, and our residents have weekly continuity of care they didn't have before.
-            [Sample testimonial]
+            {
+              homeTestimonials?.[0]?.quote ??
+                "Better You placed a licensed clinician on-site within two weeks. No billing burden on our team, and our residents have weekly continuity of care they didn't have before."
+            }
           </p>
           <div class="testimonial-attribution">
             <div
               class="testimonial-avatar"
-              style="background:url('/images/home-testimonial-director.jpg') center/cover;color:transparent;"
+              style={`background:url('${homeTestimonials?.[0]?.authorPhoto?.asset?.url ?? '/images/home-testimonial-director.jpg'}') center/cover;color:transparent;`}
             >
             </div>
             <div>
-              <div class="testimonial-name">Director of Wellness</div>
-              <div class="testimonial-role">Assisted Living · Palm Beach County</div>
+              <div class="testimonial-name">
+                {homeTestimonials?.[0]?.authorRole ?? 'Director of Wellness'}
+              </div>
+              <div class="testimonial-role">
+                {homeTestimonials?.[0]?.authorOrg ?? 'Assisted Living · Palm Beach County'}
+              </div>
             </div>
           </div>
           <p style="font-size:11px;color:#9CA3AF;margin:0.375rem 0 0 0;line-height:1.4;">
@@ -2267,18 +2281,24 @@ const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
         <div class="testimonial-card">
           <div class="testimonial-quote-mark">"</div>
           <p class="testimonial-text">
-            My mom had been on a waitlist for months. One call to Better You and she had her first
-            session that same week — right from her apartment. [Sample testimonial]
+            {
+              homeTestimonials?.[1]?.quote ??
+                'My mom had been on a waitlist for months. One call to Better You and she had her first session that same week — right from her apartment.'
+            }
           </p>
           <div class="testimonial-attribution">
             <div
               class="testimonial-avatar"
-              style="background:url('/images/home-testimonial-daughter.jpg') center/cover;color:transparent;"
+              style={`background:url('${homeTestimonials?.[1]?.authorPhoto?.asset?.url ?? '/images/home-testimonial-daughter.jpg'}') center/cover;color:transparent;`}
             >
             </div>
             <div>
-              <div class="testimonial-name">Adult Daughter</div>
-              <div class="testimonial-role">Family member · Southeast Florida</div>
+              <div class="testimonial-name">
+                {homeTestimonials?.[1]?.authorRole ?? 'Adult Daughter'}
+              </div>
+              <div class="testimonial-role">
+                {homeTestimonials?.[1]?.authorOrg ?? 'Family member · Southeast Florida'}
+              </div>
             </div>
           </div>
           <p style="font-size:11px;color:#9CA3AF;margin:0.375rem 0 0 0;line-height:1.4;">
