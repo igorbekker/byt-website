@@ -179,7 +179,9 @@ export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{
 
 export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   heroHeading, heroSubhead,
+  heroTeamImage{ asset->{ url }, alt },
   missionEyebrow, missionQuote, missionBody,
+  storyHandsImage{ asset->{ url }, alt },
   storyEyebrow, storyHeading,
   storyBody[]{
     ...,
@@ -197,9 +199,10 @@ export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   principles[]{ number, heading, body },
   practiceEyebrow, practiceHeading,
   practicePillars[]{ number, label, heading, body },
-  ctaHeading, ctaSubhead,
+  ctaEyebrow, ctaHeading, ctaSubhead,
   ctaPrimary{ label, href, variant },
   ctaSecondary{ label, href, variant },
+  ctaTertiary{ label, href },
   ctaBackgroundImage{ asset->{ url }, alt },
   seo{ metaTitle, metaDescription }
 }`;

@@ -2140,8 +2140,8 @@ const sb = page?.storyBody ?? [];
     </div>
     <div class="about-hero-image">
       <img
-        src="/images/about/about-hero-team.png"
-        alt="Better You Therapy clinical team in South Florida"
+        src={page?.heroTeamImage?.asset?.url ?? '/images/about/about-hero-team.png'}
+        alt={page?.heroTeamImage?.alt ?? 'Better You Therapy clinical team in South Florida'}
         onerror="this.style.display='none'"
       />
     </div>
@@ -2167,8 +2167,8 @@ const sb = page?.storyBody ?? [];
     <div class="story-inner fade-up">
       <div class="story-image">
         <img
-          src="/images/about/about-story-hands.png"
-          alt="Team hands stacked together in unity"
+          src={page?.storyHandsImage?.asset?.url ?? '/images/about/about-story-hands.png'}
+          alt={page?.storyHandsImage?.alt ?? 'Team hands stacked together in unity'}
           onerror="this.parentElement.style.background='linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 100%)'"
         />
       </div>
@@ -2332,7 +2332,7 @@ const sb = page?.storyBody ?? [];
     </div>
     <div class="about-cta-overlay"></div>
     <div class="about-cta-inner fade-up">
-      <p class="eyebrow">Work With Us</p>
+      <p class="eyebrow">{page?.ctaEyebrow ?? 'Work With Us'}</p>
       <h2>{page?.ctaHeading ?? "However you found us, we're glad you're here."}</h2>
       <p>
         {
@@ -2347,7 +2347,9 @@ const sb = page?.storyBody ?? [];
         <button class="btn btn-outline-white" onclick="openModal('refer')"
           >{page?.ctaSecondary?.label ?? 'Refer a Resident'} &rarr;</button
         >
-        <a href="/careers/" class="btn btn-outline-white">Join Our Team &rarr;</a>
+        <a href={page?.ctaTertiary?.href ?? '/careers/'} class="btn btn-outline-white"
+          >{page?.ctaTertiary?.label ?? 'Join Our Team'} &rarr;</a
+        >
       </div>
     </div>
   </section>

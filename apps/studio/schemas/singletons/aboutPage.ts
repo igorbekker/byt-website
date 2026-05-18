@@ -18,6 +18,7 @@ export const aboutPage = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: 'heroSubhead', title: 'Hero Subhead', type: 'text' }),
+    defineField({ name: 'heroTeamImage', title: 'Hero Team Image', type: 'imageWithAlt' }),
 
     // ── Mission ───────────────────────────────────────────────────────────
     defineField({ name: 'missionEyebrow', title: 'Mission Eyebrow', type: 'string' }),
@@ -30,6 +31,7 @@ export const aboutPage = defineType({
     defineField({ name: 'missionBody', title: 'Mission Body', type: 'text' }),
 
     // ── Story ─────────────────────────────────────────────────────────────
+    defineField({ name: 'storyHandsImage', title: 'Story Hands Image', type: 'imageWithAlt' }),
     defineField({ name: 'storyEyebrow', title: 'Story Eyebrow', type: 'string' }),
     defineField({ name: 'storyHeading', title: 'Story Heading', type: 'string' }),
     defineField({
@@ -118,10 +120,20 @@ export const aboutPage = defineType({
     }),
 
     // ── CTA Band ──────────────────────────────────────────────────────────
+    defineField({ name: 'ctaEyebrow', title: 'CTA Eyebrow', type: 'string' }),
     defineField({ name: 'ctaHeading', title: 'CTA Heading', type: 'string' }),
     defineField({ name: 'ctaSubhead', title: 'CTA Subhead', type: 'text' }),
     defineField({ name: 'ctaPrimary', title: 'CTA Primary', type: 'ctaLink' }),
     defineField({ name: 'ctaSecondary', title: 'CTA Secondary', type: 'ctaLink' }),
+    defineField({
+      name: 'ctaTertiary',
+      title: 'CTA Tertiary Link',
+      type: 'object',
+      fields: [
+        defineField({ name: 'label', title: 'Label', type: 'string' }),
+        defineField({ name: 'href', title: 'Href', type: 'string' }),
+      ],
+    }),
     defineField({
       name: 'ctaBackgroundImage',
       title: 'CTA Background Image',
