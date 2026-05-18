@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Wire 6 How It Works steps (teletherapySteps[0–2] + facilitySteps[0–2]) from Sanity into index.astro
+- **Last work:** 2026-05-18 — Add CMS-SKIP comments to excluded hardcoded elements across 5 page files (79 insertions, 0 deletions)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
