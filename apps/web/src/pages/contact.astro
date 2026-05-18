@@ -791,7 +791,7 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
       />
     </div>
     <div class="contact-hero-content">
-      <p class="eyebrow">Contact Us</p>
+      <p class="eyebrow">{page?.heroEyebrow ?? 'Contact Us'}</p>
       <h1>{page?.heroHeading ?? "We'd love to hear from you."}</h1>
       <p>
         {
@@ -806,7 +806,7 @@ const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
   <section class="contact-form-section">
     <div class="contact-form-wrap fade-up">
       <div class="contact-info">
-        <p class="eyebrow">Get in touch</p>
+        <p class="eyebrow">{page?.infoEyebrow ?? 'Get in touch'}</p>
         <h2>{page?.infoHeading ?? 'Reach our team directly.'}</h2>
         <p>
           {

@@ -171,9 +171,9 @@ export const JOB_POSTINGS_QUERY = `*[_type == "jobPosting" && status == "open"] 
 }`;
 
 export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{
-  heroHeading, heroSubhead,
+  heroEyebrow, heroHeading, heroSubhead,
   heroImage{ asset->{ url }, alt },
-  hoursDescription, disclaimerCopy, responseCopy, infoHeading, formHeading,
+  hoursDescription, disclaimerCopy, responseCopy, infoEyebrow, infoHeading, formHeading,
   seo{ metaTitle, metaDescription }
 }`;
 

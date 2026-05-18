@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-15 — seeded 19 condition documents and 2 testimonial documents into Sanity via Mutations API
+- **Last work:** 2026-05-18 — Add heroEyebrow and infoEyebrow to Contact page schema, query, and template
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -527,6 +527,39 @@ Add `noCostHeading`, `noCostSubhead`, and `noCostCards` (array, max 6) to `commu
 **Card layout:** `large` class on cards [0], [3], [4]; regular on [1], [2], [5] — unchanged. All 3 SVG icons untouched. No HTML structure, classes, or DOM order changed.
 
 **Verification:** `pnpm --filter web build` PASS — 0 errors, 18 routes ✓. `git diff --stat`: 3 files, 60 insertions, 29 deletions ✓.
+
+**Issues:** None
+
+---
+
+### Add heroEyebrow + infoEyebrow to Contact page — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Add two missing eyebrow fields to contactPage schema, wire into GROQ query, and connect in contact.astro template.
+
+- [x] A. 2026-05-18 Pre-flight: confirmed heroEyebrow and infoEyebrow absent from contactPage.ts schema, CONTACT_PAGE_QUERY, and contact.astro (lines 794, 809 hardcoded)
+- [x] B. 2026-05-18 contactPage.ts — added `defineField({ name: 'heroEyebrow', title: 'Hero Eyebrow', type: 'string' })` before heroHeading; added `defineField({ name: 'infoEyebrow', title: 'Info Section Eyebrow', type: 'string' })` before infoHeading
+- [x] C. 2026-05-18 queries.ts — added `heroEyebrow` and `infoEyebrow` to CONTACT_PAGE_QUERY
+- [x] D. 2026-05-18 contact.astro — wired `{page?.heroEyebrow ?? 'Contact Us'}` at line 794; wired `{page?.infoEyebrow ?? 'Get in touch'}` at line 809
+- [x] E. 2026-05-18 pnpm --filter web build — PASSED (0 errors)
+
+### Session Review — 2026-05-18 (Contact page eyebrow triad)
+
+**What was done:** Completed the schema–query–template triad for `heroEyebrow` and `infoEyebrow` on the Contact page. Both were hardcoded strings in the template with no CMS control.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/contactPage.ts` — added `heroEyebrow` before `heroHeading`; added `infoEyebrow` before `infoHeading`
+- `apps/web/src/lib/queries.ts` — added both fields to `CONTACT_PAGE_QUERY`
+- `apps/web/src/pages/contact.astro` — wired both eyebrow `<p>` elements with `??` fallbacks
+
+**Wiring details:**
+
+| Field         | Location in template               | Fallback         |
+| ------------- | ---------------------------------- | ---------------- |
+| `heroEyebrow` | `<p class="eyebrow">` in hero      | `'Contact Us'`   |
+| `infoEyebrow` | `<p class="eyebrow">` in info/form | `'Get in touch'` |
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors ✓. 3 files changed, no HTML structure altered.
 
 **Issues:** None
 
