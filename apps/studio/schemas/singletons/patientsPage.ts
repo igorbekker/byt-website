@@ -23,6 +23,11 @@ export const patientsPage = defineType({
 
     // ── Audience Selector ─────────────────────────────────────────────────
     defineField({
+      name: 'audienceSelectorEyebrow',
+      title: 'Audience Selector Eyebrow',
+      type: 'string',
+    }),
+    defineField({
       name: 'audienceSelectorHeading',
       title: 'Audience Selector Heading',
       type: 'string',

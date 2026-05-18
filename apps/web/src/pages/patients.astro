@@ -2162,7 +2162,7 @@ const c = conditions ?? [];
   <!-- ── LAYOUT399: WHAT BRINGS YOU HERE — 4-CARD ROUTER ── -->
   <section class="ph-router">
     <div class="ph-router-head">
-      <p class="eyebrow">Choose</p>
+      <p class="eyebrow">{page?.audienceSelectorEyebrow ?? 'Choose'}</p>
       <h2>{page?.audienceSelectorHeading ?? 'What brings you here?'}</h2>
     </div>
     <p class="ph-router-sub">{page?.audienceSelectorSubhead ?? 'Find the right path to care.'}</p>

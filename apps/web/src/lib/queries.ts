@@ -113,7 +113,7 @@ export const PATIENTS_PAGE_QUERY = `*[_type == "patientsPage"][0]{
   heroHeading, heroSubhead,
   heroImage{ asset->{ url }, alt },
   heroPrimaryCta{ label, href, variant },
-  audienceSelectorHeading, audienceSelectorSubhead,
+  audienceSelectorEyebrow, audienceSelectorHeading, audienceSelectorSubhead,
   audienceSelectorCards[]{
     label, heading, body,
     cta{ label, href, variant },
