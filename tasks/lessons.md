@@ -160,6 +160,14 @@ When a task is complete and verified, the very next action is to invoke the `/pr
 
 **How to apply:** The moment verification passes and work is ready, the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Just: `/pre`.
 
+### 20. /pre is not optional even for "simple" tasks — the size of the change is irrelevant
+
+The commit protocol applies to every commit, no exceptions. This was violated twice in one session (patients and about page wiring) despite Lesson 19 existing. The pre-task briefing explicitly listed commit steps, but `/pre` was skipped and replaced with direct `git commit` calls.
+
+**Why:** The task brief included the commit command literally, and it was executed without stopping for `/pre`. The brevity of the change ("just a few field additions") does not override the protocol.
+
+**How to apply:** When the task brief itself contains `git commit` instructions, treat them as the desired end state, not as a license to skip `/pre`. The moment edits pass verification, stop and wait for Igor to type `/pre` before touching git.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
@@ -176,3 +184,4 @@ When a task is complete and verified, the very next action is to invoke the `/pr
 - 2026-05-04: Entire HTML sections replaced with Sanity .map() loops on Patients page. Sections empty when Sanity unpopulated. (OBS-012)
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
+- 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 19 existed and was ignored. Repeat violation.
