@@ -1166,10 +1166,10 @@ Add two new fields to the global siteSettings schema and GROQ query. No template
 - [x] A. 2026-05-18 Pre-flight: confirmed newsletterEyebrow + newsletterDisclaimer absent from siteSettings.ts (lines 78–79 only have newsletterHeading + newsletterBody); confirmed both absent from SITE_SETTINGS_QUERY; extracted hardcoded eyebrow "Stay in the loop" + disclaimer "We never share your email. Unsubscribe in one click." from blog/index.astro (lines 1475, 1492); [slug].astro has different text ("Stay informed" / "Your privacy is protected. We never share your information.")
 - [x] B. 2026-05-18 siteSettings.ts — added `defineField({ name: 'newsletterEyebrow', title: 'Newsletter Eyebrow', type: 'string' })` and `defineField({ name: 'newsletterDisclaimer', title: 'Newsletter Disclaimer', type: 'text' })` after newsletterBody (lines 81–82)
 - [x] C. 2026-05-18 queries.ts — added `newsletterEyebrow` and `newsletterDisclaimer` to SITE_SETTINGS_QUERY after newsletterBody
-- [ ] D. Commit + push: "feat(siteSettings): add newsletterEyebrow and newsletterDisclaimer"
-- [ ] E. Studio deploy from /home/personal/projects/byt-website/apps/studio
-- [ ] F. Seed siteSettings published document: newsletterEyebrow + newsletterDisclaimer
-- [ ] G. Fetch and confirm both fields
+- [x] D. 2026-05-18 Commit b0ff439 pushed to origin/main
+- [x] E. 2026-05-18 Studio deployed — https://byt-website.sanity.studio/
+- [x] F. 2026-05-18 Seeded published siteSettings: newsletterEyebrow + newsletterDisclaimer (transactionId: KRroYNn1MtkjP4cuvNOUJ2)
+- [x] G. 2026-05-18 Fetch confirmed: newsletterEyebrow = "Stay in the loop", newsletterDisclaimer = "We never share your email. Unsubscribe in one click."
 
 ### Session Review — 2026-05-18 (newsletterEyebrow + newsletterDisclaimer)
 
@@ -1189,4 +1189,6 @@ Seeding will use `index.astro` values as primary blog page. Igor to reconcile [s
 
 **No template files changed:** YES
 
-**Verification:** Build pending (step 7 of /pre).
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 43.40s ✓. Studio deployed ✓. Sanity fetch confirmed both fields ✓.
+
+**Commit:** b0ff439 — pushed to origin/main
