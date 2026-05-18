@@ -77,6 +77,8 @@ export const siteSettings = defineType({
     }),
     defineField({ name: 'newsletterHeading', title: 'Newsletter Heading', type: 'string' }),
     defineField({ name: 'newsletterBody', title: 'Newsletter Body', type: 'text' }),
+    defineField({ name: 'newsletterEyebrow', title: 'Newsletter Eyebrow', type: 'string' }),
+    defineField({ name: 'newsletterDisclaimer', title: 'Newsletter Disclaimer', type: 'text' }),
     defineField({
       name: 'seo',
       title: 'Default SEO',

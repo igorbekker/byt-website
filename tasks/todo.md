@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Add CMS-SKIP comments to excluded hardcoded elements across 5 page files (79 insertions, 0 deletions)
+- **Last work:** 2026-05-18 — Add newsletterEyebrow and newsletterDisclaimer to siteSettings schema + GROQ
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1156,3 +1156,37 @@ Architecture path: **PATH B** — TESTIMONIALS_HOME_QUERY existed in queries.ts,
 **Verification:** `pnpm --filter web build` PASS — 0 errors. index.html 46,491 bytes. Both CDN avatar URLs + both quote texts confirmed in dist/client/index.html ✓. Sanity order(\_id desc) query confirmed director=[0], daughter=[1] ✓.
 
 **Total code files changed:** 2
+
+---
+
+### Add newsletterEyebrow and newsletterDisclaimer to siteSettings — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Add two new fields to the global siteSettings schema and GROQ query. No template wiring in this task (deferred to Prompts 13–15).
+
+- [x] A. 2026-05-18 Pre-flight: confirmed newsletterEyebrow + newsletterDisclaimer absent from siteSettings.ts (lines 78–79 only have newsletterHeading + newsletterBody); confirmed both absent from SITE_SETTINGS_QUERY; extracted hardcoded eyebrow "Stay in the loop" + disclaimer "We never share your email. Unsubscribe in one click." from blog/index.astro (lines 1475, 1492); [slug].astro has different text ("Stay informed" / "Your privacy is protected. We never share your information.")
+- [x] B. 2026-05-18 siteSettings.ts — added `defineField({ name: 'newsletterEyebrow', title: 'Newsletter Eyebrow', type: 'string' })` and `defineField({ name: 'newsletterDisclaimer', title: 'Newsletter Disclaimer', type: 'text' })` after newsletterBody (lines 81–82)
+- [x] C. 2026-05-18 queries.ts — added `newsletterEyebrow` and `newsletterDisclaimer` to SITE_SETTINGS_QUERY after newsletterBody
+- [ ] D. Commit + push: "feat(siteSettings): add newsletterEyebrow and newsletterDisclaimer"
+- [ ] E. Studio deploy from /home/personal/projects/byt-website/apps/studio
+- [ ] F. Seed siteSettings published document: newsletterEyebrow + newsletterDisclaimer
+- [ ] G. Fetch and confirm both fields
+
+### Session Review — 2026-05-18 (newsletterEyebrow + newsletterDisclaimer)
+
+**What was done:** Added two new fields to the global `siteSettings` Sanity schema and GROQ query. No template files changed — wiring deferred to Prompts 13–15.
+
+**Pre-flight note:** `blog/index.astro` and `blog/[slug].astro` have divergent hardcoded text for these fields:
+
+- `index.astro`: eyebrow = "Stay in the loop", disclaimer = "We never share your email. Unsubscribe in one click."
+- `[slug].astro`: eyebrow = "Stay informed", disclaimer = "Your privacy is protected. We never share your information."
+
+Seeding will use `index.astro` values as primary blog page. Igor to reconcile [slug].astro text during Prompt 13–15 wiring.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/siteSettings.ts` — 2 fields added after newsletterBody (lines 81–82)
+- `apps/web/src/lib/queries.ts` — 2 fields added to SITE_SETTINGS_QUERY
+
+**No template files changed:** YES
+
+**Verification:** Build pending (step 7 of /pre).
