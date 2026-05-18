@@ -1192,3 +1192,40 @@ Seeding will use `index.astro` values as primary blog page. Igor to reconcile [s
 **Verification:** `pnpm --filter web build` PASS — 0 errors, 43.40s ✓. Studio deployed ✓. Sanity fetch confirmed both fields ✓.
 
 **Commit:** b0ff439 — pushed to origin/main
+
+---
+
+### Wire newsletterEyebrow and newsletterDisclaimer on Blog Index from siteSettings — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Wire the two global `siteSettings` fields (`newsletterEyebrow`, `newsletterDisclaimer`) into `blog/index.astro`. Schema and query already exist from prior task (b0ff439).
+
+- [x] A. 2026-05-18 Pre-flight: confirmed eyebrow hardcoded as "Stay in the loop" (line 1475), disclaimer hardcoded as "We never share your email. Unsubscribe in one click." (line 1490); siteSettings NOT fetched on this page; SITE_SETTINGS_QUERY confirmed to include both fields
+- [x] B. 2026-05-18 Added `SITE_SETTINGS_QUERY` to import list
+- [x] C. 2026-05-18 Added `SiteSettings` interface with `newsletterEyebrow?: string` and `newsletterDisclaimer?: string`
+- [x] D. 2026-05-18 Added `sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY)` to `Promise.all`; destructured as `siteSettings`
+- [x] E. 2026-05-18 Wired eyebrow: `{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}`
+- [x] F. 2026-05-18 Wired disclaimer: `{siteSettings?.newsletterDisclaimer ?? 'We never share your email. Unsubscribe in one click.'}`
+- [x] G. 2026-05-18 Build verified: PASS, 42.66s, blog/index.html = 34,909 bytes ✓
+
+### Session Review — 2026-05-18 (Blog Index newsletter eyebrow + disclaimer wiring)
+
+**What was done:** Fetched `siteSettings` on `blog/index.astro` (first time on this page) and wired two newsletter fields from the global siteSettings document. Heading and subhead remain on `blogIndexPage` fields as instructed.
+
+**Pre-flight confirmed:** siteSettings was NOT previously fetched on this page. Import and fetch added as part of this task.
+
+**Fields wired:**
+
+| Field                  | Element                                     | Fallback                                                 |
+| ---------------------- | ------------------------------------------- | -------------------------------------------------------- |
+| `newsletterEyebrow`    | `<p class="eyebrow">` in newsletter section | `'Stay in the loop'`                                     |
+| `newsletterDisclaimer` | `<p class="newsletter-tiny">` below form    | `'We never share your email. Unsubscribe in one click.'` |
+
+**NOT touched:** `newsletterHeading` (stays on `page?.newsletterHeading`), `newsletterSubhead` (stays on `page?.newsletterSubhead`). No HTML structure, classes, or styling changed.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/index.astro` — import added, interface added, fetch added, 2 elements wired
+
+**Total code files changed:** 1
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 42.66s. blog/index.html = 34,909 bytes ✓
