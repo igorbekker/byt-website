@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Wire 15 hardcoded elements on Providers page (hero image, track images, handles tags, tab labels, testimonials heading/subhead)
+- **Last work:** 2026-05-18 — Wire routerCards text, CTAs, and images from Sanity (all 3 homepage audience router cards, desktop + mobile)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -951,5 +951,47 @@ Wire all 3 homepage audience router cards — both desktop (r-wide-content) and 
 **Sanity data state at wiring time:** All 3 cards fully populated — no mutations executed.
 
 **Verification:** `pnpm --filter web build` PASS — 0 errors. index.html = 46,237 bytes. CDN URLs rendering for all 3 card images confirmed in dist output. Design parity check: PASS. git diff --stat: 1 file, 33 insertions, 38 deletions ✓
+
+**Issues:** None
+
+---
+
+### Wire twoWaysTracks text, CTAs, and images from Sanity — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Wire both homepage Two Ways service cards from `twoWaysTracks[]` in Sanity.
+
+- [x] A. 2026-05-18 Pre-flight: confirmed serviceTrack schema has all needed fields (label, heading, body, cta, image); HOME_PAGE_QUERY already fetches full projection; ServiceTrack TS interface already in index.astro; both tracks fully populated in Sanity (confirmed via API)
+- [x] B. 2026-05-18 index.astro — Card [0]: wired image in style= (template literal), label, heading, body, cta.label with ?? fallbacks; button onclick kept as openModal('book')
+- [x] C. 2026-05-18 index.astro — Card [1]: same wiring using twoWaysTracks?.[1] with ?? fallbacks; button onclick kept as openModal('refer')
+- [x] D. 2026-05-18 pnpm --filter web build — PASSED (0 errors, 42.5s); CDN image URLs confirmed in built HTML for both cards
+
+### Session Review — 2026-05-18 (twoWaysTracks wiring)
+
+**What was done:** Wired both homepage Two Ways cards from Sanity. No schema, query, or TypeScript changes needed — all infrastructure was already in place. Only `index.astro` was edited to replace hardcoded image URLs, label, heading, body, and CTA label with Sanity expressions and `??` fallbacks.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — 1 file only
+
+**Wiring details:**
+
+| Card | Field     | Source                                  | Fallback                                               |
+| ---- | --------- | --------------------------------------- | ------------------------------------------------------ |
+| [0]  | image     | `twoWaysTracks?.[0]?.image?.asset?.url` | `'/images/home-twoways-tele.jpg'`                      |
+| [0]  | label     | `twoWaysTracks?.[0]?.label`             | `'Teletherapy — Anywhere in Florida'`                  |
+| [0]  | heading   | `twoWaysTracks?.[0]?.heading`           | `'Therapy available this week, from wherever you are'` |
+| [0]  | body      | `twoWaysTracks?.[0]?.body`              | full original paragraph text                           |
+| [0]  | CTA label | `twoWaysTracks?.[0]?.cta?.label`        | `'Book a Session'`                                     |
+| [1]  | image     | `twoWaysTracks?.[1]?.image?.asset?.url` | `'/images/home-twoways-facility.jpg'`                  |
+| [1]  | label     | `twoWaysTracks?.[1]?.label`             | `'In-Facility — Southeast Florida'`                    |
+| [1]  | heading   | `twoWaysTracks?.[1]?.heading`           | `'On-site mental health care at your facility'`        |
+| [1]  | body      | `twoWaysTracks?.[1]?.body`              | full original paragraph text                           |
+| [1]  | CTA label | `twoWaysTracks?.[1]?.cta?.label`        | `'Refer a Resident'`                                   |
+
+**CTA href note:** Both CTAs are `<button onclick="openModal()">` elements (not anchor tags). CTA href from Sanity is not wired — wiring href would require button→anchor conversion, a structural change prohibited by CLAUDE.md. Label only is wired.
+
+**Sanity data state at wiring time:** Both tracks fully populated — no seed mutations executed. Both images have asset refs confirmed via API.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors. CDN URLs `cdn.sanity.io/.../4bc9f3f...` (tele) and `cdn.sanity.io/.../8fbdbaab...` (facility) confirmed in dist/client/index.html. No HTML structure changed. 1 file changed.
 
 **Issues:** None

@@ -1888,38 +1888,53 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
         <div class="twoways-card twoways-card-lead">
           <div
             class="twoways-card-bg"
-            style="background-image:url('/images/home-twoways-tele.jpg');background-color:#0A2D52;"
+            style={`background-image:url('${page?.twoWaysTracks?.[0]?.image?.asset?.url ?? '/images/home-twoways-tele.jpg'}');background-color:#0A2D52;`}
           >
           </div>
           <div class="twoways-card-overlay"></div>
           <div class="twoways-card-content">
-            <div class="twoways-card-label">Teletherapy — Anywhere in Florida</div>
-            <h3>Therapy available this week, from wherever you are</h3>
+            <div class="twoways-card-label">
+              {page?.twoWaysTracks?.[0]?.label ?? 'Teletherapy — Anywhere in Florida'}
+            </div>
+            <h3>
+              {
+                page?.twoWaysTracks?.[0]?.heading ??
+                  'Therapy available this week, from wherever you are'
+              }
+            </h3>
             <p>
-              Licensed therapists available via secure video. Adults, couples, and families.
-              Cash-pay or insurance. No waitlist.
+              {
+                page?.twoWaysTracks?.[0]?.body ??
+                  'Licensed therapists available via secure video. Adults, couples, and families. Cash-pay or insurance. No waitlist.'
+              }
             </p>
             <button class="btn btn-white" onclick="openModal('book')">
-              Book a Session &rarr;
+              {page?.twoWaysTracks?.[0]?.cta?.label ?? 'Book a Session'} &rarr;
             </button>
           </div>
         </div>
         <div class="twoways-card">
           <div
             class="twoways-card-bg"
-            style="background-image:url('/images/home-twoways-facility.jpg');background-color:#0A2D52;"
+            style={`background-image:url('${page?.twoWaysTracks?.[1]?.image?.asset?.url ?? '/images/home-twoways-facility.jpg'}');background-color:#0A2D52;`}
           >
           </div>
           <div class="twoways-card-overlay"></div>
           <div class="twoways-card-content">
-            <div class="twoways-card-label">In-Facility — Southeast Florida</div>
-            <h3>On-site mental health care at your facility</h3>
+            <div class="twoways-card-label">
+              {page?.twoWaysTracks?.[1]?.label ?? 'In-Facility — Southeast Florida'}
+            </div>
+            <h3>
+              {page?.twoWaysTracks?.[1]?.heading ?? 'On-site mental health care at your facility'}
+            </h3>
             <p>
-              Licensed therapists placed inside assisted living, skilled nursing, and continuing
-              care facilities. Medicare-billed. Zero cost to the facility or resident.
+              {
+                page?.twoWaysTracks?.[1]?.body ??
+                  'Licensed therapists placed inside assisted living, skilled nursing, and continuing care facilities. Medicare-billed. Zero cost to the facility or resident.'
+              }
             </p>
             <button class="btn btn-white-outline" onclick="openModal('refer')">
-              Refer a Resident &rarr;
+              {page?.twoWaysTracks?.[1]?.cta?.label ?? 'Refer a Resident'} &rarr;
             </button>
           </div>
         </div>
