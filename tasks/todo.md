@@ -19,9 +19,32 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Add CMS-SKIP comments to excluded hardcoded elements across 5 page files (79 insertions, 0 deletions)
+- **Last work:** 2026-05-18 — Wire blog article page hardcoded blocks (newsletter, related eyebrow, mobile CTA) to Sanity/openModal
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Wire hardcoded blocks on Blog Article page — 2026-05-18 [x] COMPLETE 2026-05-18
+
+Wire newsletter section, "Continue reading" eyebrow, and mobile CTA bar on `apps/web/src/pages/blog/[slug].astro`.
+
+- [x] Confirmed siteSettings not fetched — added SITE_SETTINGS_QUERY import + SiteSettings interface + parallel fetch
+- [x] Newsletter heading wired: `{siteSettings?.newsletterHeading ?? 'Mental health insights, delivered.'}`
+- [x] Newsletter body wired: `{siteSettings?.newsletterBody ?? 'Evidence-based articles...'}`
+- [x] Newsletter eyebrow "Stay informed" → CMS-SKIP (no schema field for newsletterEyebrow)
+- [x] Newsletter disclaimer → CMS-SKIP (no schema field for newsletterDisclaimer)
+- [x] "Continue reading" eyebrow → CMS-SKIP: UI label
+- [x] Mobile CTA bar: converted `<a href>` → `<button onclick="openModal('book/refer')">` with siteSettings labels
+- [x] Build verified: `pnpm --filter web build` — PASSED (all routes, 0 errors)
+
+### Session Review — 2026-05-18 (Blog Article wiring)
+
+**What was done:** Added siteSettings fetch to blog article page and wired newsletter heading/body from Sanity. Marked newsletter eyebrow, disclaimer, and "Continue reading" eyebrow as CMS-SKIP (no schema fields). Converted mobile CTA bar from `<a href>` navigation links to `<button onclick="openModal()">` modal triggers with wired labels from siteSettings.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/[slug].astro` (modified)
 
 ---
 

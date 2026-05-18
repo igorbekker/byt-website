@@ -13,6 +13,7 @@ import {
   BLOG_POST_PATHS_QUERY,
   BLOG_CATEGORY_PATHS_QUERY,
   BLOG_RELATED_POSTS_QUERY,
+  SITE_SETTINGS_QUERY,
 } from '../../lib/queries';
 
 interface BlogPost {
@@ -34,6 +35,13 @@ interface BlogPost {
     bio?: unknown[];
   };
   seo?: { metaTitle?: string; metaDescription?: string };
+}
+
+interface SiteSettings {
+  newsletterHeading?: string;
+  newsletterBody?: string;
+  navCtaLabel?: string;
+  navCtaSecondaryLabel?: string;
 }
 
 interface RelatedPost {
@@ -66,7 +74,10 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-const post = await sanityClient.fetch<BlogPost>(BLOG_POST_QUERY, { slug });
+const [post, siteSettings] = await Promise.all([
+  sanityClient.fetch<BlogPost>(BLOG_POST_QUERY, { slug }),
+  sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
+]);
 
 if (!post) return Astro.redirect('/404');
 
@@ -2189,6 +2200,7 @@ const articleJsonLd = JSON.stringify({
     <div class="related-inner">
       <div class="related-header">
         <div>
+          {/* CMS-SKIP: UI label */}
           <p
             class="eyebrow"
             style="color:var(--coral);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:.5rem;"
@@ -2226,24 +2238,32 @@ const articleJsonLd = JSON.stringify({
 
   <section class="newsletter">
     <div class="newsletter-inner">
+      {/* CMS-SKIP: no schema field for newsletterEyebrow */}
       <p class="eyebrow" style="color:var(--coral);">Stay informed</p>
-      <h2>Mental health insights, delivered.</h2>
+      <h2>{siteSettings?.newsletterHeading ?? 'Mental health insights, delivered.'}</h2>
       <p>
-        Evidence-based articles and practical guides for your wellbeing journey. No spam,
-        unsubscribe anytime.
+        {
+          siteSettings?.newsletterBody ??
+            'Evidence-based articles and practical guides for your wellbeing journey. No spam, unsubscribe anytime.'
+        }
       </p>
       <form class="newsletter-form">
         <input type="email" placeholder="Your email address" aria-label="Email address" />
         <button type="submit" class="btn btn-coral">Subscribe</button>
       </form>
+      {/* CMS-SKIP: no schema field for newsletterDisclaimer */}
       <p class="newsletter-tiny">Your privacy is protected. We never share your information.</p>
     </div>
   </section>
 
   <!-- Mobile sticky CTA bar (shown via media query) -->
   <div class="mobile-cta-bar" aria-label="Primary actions">
-    <a href="/patients/" class="btn btn-coral">Book a Session</a>
-    <a href="/referral/" class="btn btn-outline-ink">Refer a Resident</a>
+    <button class="btn btn-coral" onclick="openModal('book')"
+      >{siteSettings?.navCtaLabel ?? 'Book a Session'}</button
+    >
+    <button class="btn btn-outline-ink" onclick="openModal('refer')"
+      >{siteSettings?.navCtaSecondaryLabel ?? 'Refer a Resident'}</button
+    >
   </div>
 
   <script is:inline>
