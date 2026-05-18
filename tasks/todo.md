@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Wire routerCards text, CTAs, and images from Sanity (all 3 homepage audience router cards, desktop + mobile)
+- **Last work:** 2026-05-18 — Wire 6 How It Works steps (teletherapySteps[0–2] + facilitySteps[0–2]) from Sanity into index.astro
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -998,7 +998,7 @@ Wire both homepage Two Ways service cards from `twoWaysTracks[]` in Sanity.
 
 ---
 
-### Wire 4 homepage condition cards from Sanity — 2026-05-18 [~] IN PROGRESS
+### Wire 4 homepage condition cards from Sanity — 2026-05-18 [x] COMPLETE 2026-05-18
 
 Architecture: **PATH B** — CONDITIONS_HOME_QUERY exists (queries.ts:73–79), not imported. condition.ts has showOnHomepage flag. No conditionsCards array in homePage schema.
 
@@ -1007,9 +1007,9 @@ Architecture: **PATH B** — CONDITIONS_HOME_QUERY exists (queries.ts:73–79), 
 - [x] C. 2026-05-18 index.astro — imported CONDITIONS_HOME_QUERY; added Condition interface; added fetch; wired 4 l349-section cards with ?? fallbacks
 - [x] D. 2026-05-18 index.astro — wired 4 l349-img background images with template literal + ?? fallbacks
 - [x] E. 2026-05-18 pnpm --filter web build — PASSED (0 errors, 41.06s); index.html = 46,295 bytes; all 4 cards + images confirmed in built HTML
-- [ ] F. Studio deploy (git pull + sanity deploy)
-- [ ] G. Seed script — create 4 condition documents with showOnHomepage: true; run script
-- [ ] H. Upload 4 background images to Sanity with \_type: 'imageWithAlt'; patch image fields on each doc
+- [x] F. 2026-05-18 Studio deployed — byt-website.sanity.studio (git pull already up to date; cache cleared; schema deployed)
+- [x] G. 2026-05-18 Seeded 4 condition documents with showOnHomepage: true (transactionId: GeUlnxKcHh69hwnAxTEink; all 4 operation: create)
+- [x] H. 2026-05-18 Uploaded 4 images to Sanity CDN; patched image field on each document; API fetch confirmed all 4 CDN URLs present
 
 ### Code Review — 2026-05-18 (conditions cards wiring — steps A–E, pre-commit)
 
@@ -1037,3 +1037,35 @@ Architecture: **PATH B** — CONDITIONS_HOME_QUERY exists (queries.ts:73–79), 
 **Pending (post-commit):** Studio deploy (F), seed 4 condition documents (G), upload + patch 4 images (H).
 
 **Issues:** None
+
+### Wire 6 How It Works steps from Sanity — 2026-05-18 [x] COMPLETE 2026-05-18
+
+- [x] Pre-flight: index.astro steps extracted (6 hardcoded h4 + p pairs confirmed)
+- [x] Pre-flight: processStep schema has heading + body fields ✅
+- [x] Pre-flight: queries.ts fetches teletherapySteps[]{ stepNumber, heading, body } and facilitySteps[]{ stepNumber, heading, body } ✅
+- [x] Pre-flight: Sanity published homePage — all 6 steps have heading + body populated ✅ (no mutation needed)
+- [x] index.astro — wired teletherapySteps[0,1,2] heading + body with ?? fallbacks
+- [x] index.astro — wired facilitySteps[0,1,2] heading + body with ?? fallbacks
+- [x] astro check — no new errors in index.astro
+
+### Code Review — 2026-05-18 (How It Works steps wiring)
+
+**Files changed:** `apps/web/src/pages/index.astro` only (1 file)
+
+**What changed:** Replaced 6 hardcoded h4 and 6 hardcoded p strings in BLOCK 6 (How It Works) with Sanity wiring + ?? fallbacks. No schema changes, no query changes, no HTML structure changes.
+
+**Wiring details:**
+
+| Track    | Step | h4 fallback                                 | p fallback                       |
+| -------- | ---- | ------------------------------------------- | -------------------------------- |
+| tele     | [0]  | 'Tell Us What You\'re Looking For'          | 'A short intake...'              |
+| tele     | [1]  | 'We Match You With a Licensed Therapist'    | 'We handle the matching...'      |
+| tele     | [2]  | 'Your First Session Is Available This Week' | 'No waitlist...'                 |
+| facility | [0]  | 'You Refer a Resident'                      | 'A simple referral form...'      |
+| facility | [1]  | 'We Handle Scheduling and Medicare Billing' | 'Consent, credentialing...'      |
+| facility | [2]  | 'Your Therapist Arrives On-Site, Weekly'    | 'Your residents receive care...' |
+
+**Tab switching, step numbers, HTML structure:** Unchanged.
+**Sanity data:** All 6 steps already populated — no mutation needed.
+**Verification:** astro check — no new errors in index.astro.
+**Total code files changed:** 1

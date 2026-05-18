@@ -2123,22 +2123,44 @@ const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
             <div class="step">
               <div class="step-num tele-num">1</div>
               <div class="step-text">
-                <h4>Tell Us What You're Looking For</h4>
-                <p>A short intake — your needs, availability, and preferences. Under 5 minutes.</p>
+                <h4>{page?.teletherapySteps?.[0]?.heading ?? "Tell Us What You're Looking For"}</h4>
+                <p>
+                  {
+                    page?.teletherapySteps?.[0]?.body ??
+                      'A short intake — your needs, availability, and preferences. Under 5 minutes.'
+                  }
+                </p>
               </div>
             </div>
             <div class="step">
               <div class="step-num tele-num">2</div>
               <div class="step-text">
-                <h4>We Match You With a Licensed Therapist</h4>
-                <p>We handle the matching. You get a therapist suited to your specific needs.</p>
+                <h4>
+                  {page?.teletherapySteps?.[1]?.heading ?? 'We Match You With a Licensed Therapist'}
+                </h4>
+                <p>
+                  {
+                    page?.teletherapySteps?.[1]?.body ??
+                      'We handle the matching. You get a therapist suited to your specific needs.'
+                  }
+                </p>
               </div>
             </div>
             <div class="step">
               <div class="step-num tele-num">3</div>
               <div class="step-text">
-                <h4>Your First Session Is Available This Week</h4>
-                <p>No waitlist. Secure video sessions on your schedule.</p>
+                <h4>
+                  {
+                    page?.teletherapySteps?.[2]?.heading ??
+                      'Your First Session Is Available This Week'
+                  }
+                </h4>
+                <p>
+                  {
+                    page?.teletherapySteps?.[2]?.body ??
+                      'No waitlist. Secure video sessions on your schedule.'
+                  }
+                </p>
               </div>
             </div>
           </div>
@@ -2156,26 +2178,40 @@ const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
             <div class="step">
               <div class="step-num facility-num">1</div>
               <div class="step-text">
-                <h4>You Refer a Resident</h4>
+                <h4>{page?.facilitySteps?.[0]?.heading ?? 'You Refer a Resident'}</h4>
                 <p>
-                  A simple referral form. We take it from there — no paperwork burden for your team.
+                  {
+                    page?.facilitySteps?.[0]?.body ??
+                      'A simple referral form. We take it from there — no paperwork burden for your team.'
+                  }
                 </p>
               </div>
             </div>
             <div class="step">
               <div class="step-num facility-num">2</div>
               <div class="step-text">
-                <h4>We Handle Scheduling and Medicare Billing</h4>
-                <p>Consent, credentialing, billing to Medicare Part B. All handled by BYT.</p>
+                <h4>
+                  {page?.facilitySteps?.[1]?.heading ?? 'We Handle Scheduling and Medicare Billing'}
+                </h4>
+                <p>
+                  {
+                    page?.facilitySteps?.[1]?.body ??
+                      'Consent, credentialing, billing to Medicare Part B. All handled by BYT.'
+                  }
+                </p>
               </div>
             </div>
             <div class="step">
               <div class="step-num facility-num">3</div>
               <div class="step-text">
-                <h4>Your Therapist Arrives On-Site, Weekly</h4>
+                <h4>
+                  {page?.facilitySteps?.[2]?.heading ?? 'Your Therapist Arrives On-Site, Weekly'}
+                </h4>
                 <p>
-                  Your residents receive care in their own room. Weekly visits. Zero cost to the
-                  facility.
+                  {
+                    page?.facilitySteps?.[2]?.body ??
+                      'Your residents receive care in their own room. Weekly visits. Zero cost to the facility.'
+                  }
                 </p>
               </div>
             </div>
