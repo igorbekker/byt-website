@@ -40,9 +40,11 @@ interface PracticePillar {
 interface AboutPage {
   heroHeading?: string;
   heroSubhead?: string;
+  heroTeamImage?: ImageWithAlt;
   missionEyebrow?: string;
   missionQuote?: string;
   missionBody?: string;
+  storyHandsImage?: ImageWithAlt;
   storyEyebrow?: string;
   storyHeading?: string;
   storyBody?: PortableTextBlock[];
@@ -56,10 +58,12 @@ interface AboutPage {
   practiceEyebrow?: string;
   practiceHeading?: string;
   practicePillars?: PracticePillar[];
+  ctaEyebrow?: string;
   ctaHeading?: string;
   ctaSubhead?: string;
   ctaPrimary?: CtaLink;
   ctaSecondary?: CtaLink;
+  ctaTertiary?: { label?: string; href?: string };
   ctaBackgroundImage?: ImageWithAlt;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
