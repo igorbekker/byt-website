@@ -1566,6 +1566,7 @@ Resolve all remaining HARDCODED violations across 4 pages via CMS-SKIP comments 
 - `apps/web/src/pages/about.astro` — 1 CMS-SKIP comment (AN initials)
 - `apps/web/src/pages/communities.astro` — 1 CMS-SKIP comment (Call verb)
 - `apps/web/src/pages/contact.astro` — heroImage alt wired with Sanity + fallback
+- `scripts/design-parity-check.sh` — excluded `renderOrder.map()` from the no-.map() check (false positive from Igor's composability feature)
 
 **No HTML structure changed:** YES — comments and one attr value only.
 
