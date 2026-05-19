@@ -28,5 +28,6 @@ export const pageSection = defineType({
       initialValue: true,
       description: 'Uncheck to hide this section. Empty sections array = all sections visible.',
     }),
+    defineField({ name: 'order', title: 'Order', type: 'number', initialValue: 0 }),
   ],
 });

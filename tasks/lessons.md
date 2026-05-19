@@ -184,6 +184,18 @@ grep -n $'\xe2\x80\x98' apps/web/src/pages/<page>.astro
 
 Any hit that uses U+2018 as the OPENING delimiter must be converted to ASCII `"`. U+2019 apostrophes INSIDE ASCII-quoted strings are fine and must be preserved — only replace the outermost delimiter characters. Internal U+201C/U+201D curly double quotes are also fine inside ASCII `"` delimiters.
 
+### 22. General-purpose agents rewriting large .astro files corrupt HTML attribute quotes
+
+When a general-purpose agent reads a `.astro` file and rewrites it (e.g. to restructure section guards into a `.map()`), it may replace ASCII double quotes in HTML attributes (`class="..."`, `onerror="..."`) with Unicode curly double quotes U+201C/U+201D. This produces identical-looking output in the terminal but breaks esbuild with `Unexpected """`.
+
+**Why:** Agents use LLM-generated text output when writing files. The LLM sometimes "typographically corrects" straight ASCII `"` to curly `"` (U+201C) and `"` (U+201D) in HTML contexts, identical to word processors. esbuild rejects U+201C as a JS string delimiter and as an HTML attribute delimiter.
+
+**How to apply:** Never use a general-purpose agent to rewrite an entire large `.astro` file. Instead:
+
+1. Make only the minimal targeted edits needed (type update, helper addition, section guard → map conversion) using the `Edit` tool with exact old/new strings.
+2. If an agent-rewritten file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted `Edit` calls.
+3. After any agent-file-write, run `python3 -c "... if b'\\xe2\\x80\\x9c' in content: print('CORRUPTED')"` to detect Unicode curly double quotes before building.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

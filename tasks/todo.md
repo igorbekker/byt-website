@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-18 — Create formSettings singleton and wire modal marketing copy into ModalForms
+- **Last work:** 2026-05-19 — Add section visibility toggles to all 7 page singletons
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1502,5 +1502,43 @@ Add a `pageSection` object type and `sections[]` field to all 7 singletons so ed
 - `patients.astro` belief section contained two fallback strings (`beliefQuote`, `beliefBody`) that used U+2018/U+2019 (curly single quotes) as JavaScript string delimiters — valid in Astro's standalone template pass but rejected by esbuild when compiled into a `{condition && jsx}` conditional. Fixed by replacing the outer U+2018/U+2019 delimiters with ASCII double quotes, preserving all string content including internal U+201C/U+201D curly double quotes and U+2019 apostrophes.
 - `patients.astro` `sectionEnabled` function uses `sec` as the parameter name (instead of `s`) to avoid shadowing the outer `const s` routing card variable.
 - The JSX pattern `{sectionEnabled('id') && ( <section>...</section> )}` was used consistently across all pages — no HTML inside sections was modified.
+
+---
+
+### Add section ordering to all 7 page singletons — 2026-05-19 [x] COMPLETE 2026-05-19 16:15
+
+Add `order` field to `pageSection` object and wire `renderOrder` + map-based rendering into all 7 page templates so sections can be reordered from Sanity without code changes.
+
+- [x] PRE-FLIGHT: Read `pageSection.ts` — confirmed only `sectionId` and `enabled` fields existed
+- [x] PRE-FLIGHT: Read `index.astro` — confirmed sequential `{sectionEnabled(id) && (...)}` pattern, 8 sections
+- [x] Added `order: number, initialValue: 0` field to `apps/studio/schemas/objects/pageSection.ts`
+- [x] Updated `sections` type in all 7 page interfaces to include `order?: number`
+- [x] Added `sectionOrder(id)` helper and `renderOrder` array (sorted by `.order`, default 999) to all 7 page frontmatter blocks
+- [x] Restructured all 7 page template bodies: replaced sequential `{sectionEnabled(id) && (...)}` blocks with a single `{renderOrder.map(({ id }) => { ... })}` block
+- [x] `index.astro` conditions section: merged the header `<div>` (previously outside the guard) into a Fragment `<>...</>` inside the conditions map branch
+- [x] Typed all `find` callbacks in `sectionOrder` with explicit parameter types to avoid new `ts(7006)` errors
+- [x] Build verified: `pnpm --filter web build` — PASSED (all 19 routes, 0 errors)
+- [x] Type check: 13 errors (all pre-existing `sanity:client` + `sectionEnabled` implicit any — zero new errors introduced)
+
+### Session Review — 2026-05-19 (section ordering)
+
+**What was built:** Extended the `pageSection` object with an `order: number` field (initialValue 0). Added `sectionOrder()` and `renderOrder` to all 7 page frontmatter blocks. Replaced sequential conditional rendering with a single `renderOrder.map()` that respects sort order. Default order values (10, 20, 30…) will be seeded into Sanity after studio deploy.
+
+**Files changed:**
+
+- `apps/studio/schemas/objects/pageSection.ts` — `order` field added
+- `apps/web/src/pages/index.astro` — type, sectionOrder, renderOrder, map (8 sections; conditions Fragment fix)
+- `apps/web/src/pages/about.astro` — type, sectionOrder, renderOrder, map (6 sections)
+- `apps/web/src/pages/communities.astro` — type, sectionOrder, renderOrder, map (7 sections)
+- `apps/web/src/pages/patients.astro` — type, sectionOrder, renderOrder, map (6 sections)
+- `apps/web/src/pages/providers.astro` — type, sectionOrder, renderOrder, map (6 sections)
+- `apps/web/src/pages/careers.astro` — type, sectionOrder, renderOrder, map (3 sections)
+- `apps/web/src/pages/contact.astro` — type, sectionOrder, renderOrder, map (2 sections)
+
+**Implementation notes:**
+
+- `index.astro` conditions section had its header `<div class="l349-section-header">` outside the `sectionEnabled` guard. After map transformation, both the header and the `<section class="l349">` are wrapped in a Fragment `<>...</>` inside the conditions branch so they move together.
+- Two agent runs corrupted `about.astro` and `patients.astro` by replacing ASCII double quotes in HTML attribute values with Unicode curly double quotes (U+201C/U+201D), breaking the esbuild compilation. Both files were restored from git and re-patched with targeted `Edit` tool operations.
+- All `sectionOrder` find callbacks typed explicitly (`s: { sectionId: string; enabled?: boolean; order?: number }`) to avoid introducing new `ts(7006)` errors beyond the pre-existing ones.
 
 **Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors ✓. Build time ~41s ✓.

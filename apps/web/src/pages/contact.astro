@@ -12,7 +12,7 @@ interface ContactPage {
   responseCopy?: string;
   infoHeading?: string;
   formHeading?: string;
-  sections?: Array<{ sectionId: string; enabled?: boolean }>;
+  sections?: Array<{ sectionId: string; enabled?: boolean; order?: number }>;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
@@ -40,6 +40,19 @@ function sectionEnabled(id: string): boolean {
   const entry = arr.find((s) => s.sectionId === id);
   return entry ? entry.enabled !== false : true;
 }
+
+const sectionOrder = (id: string): number => {
+  if (!page?.sections || page.sections.length === 0) return 999;
+  const section = page.sections.find(
+    (s: { sectionId: string; enabled?: boolean; order?: number }) => s.sectionId === id,
+  );
+  return section?.order ?? 999;
+};
+
+const renderOrder = [
+  { id: 'hero', order: sectionOrder('hero') },
+  { id: 'contact_form', order: sectionOrder('contact_form') },
+].sort((a, b) => a.order - b.order);
 ---
 
 <BaseLayout
@@ -788,226 +801,239 @@ function sectionEnabled(id: string): boolean {
     }
   </style>
 
-  <!-- ── HERO ── -->
   {
-    sectionEnabled('hero') && (
-      <section class="contact-hero">
-        <div class="contact-hero-image">
-          <img
-            src={
-              page?.heroImage?.asset?.url ??
-              'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=85&auto=format&fit=crop'
-            }
-            alt="Two people in conversation across a desk"
-            onerror="this.style.display='none'"
-          />
-        </div>
-        <div class="contact-hero-content">
-          <p class="eyebrow">{page?.heroEyebrow ?? 'Contact Us'}</p>
-          <h1>{page?.heroHeading ?? "We'd love to hear from you."}</h1>
-          <p>
-            {page?.heroSubhead ??
-              "Whether you're a family looking for care, a facility exploring partnership, or a therapist interested in joining our team — send us a note and we'll get back to you within one business day."}
-          </p>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── FORM ── -->
-  {
-    sectionEnabled('contact_form') && (
-      <section class="contact-form-section">
-        <div class="contact-form-wrap fade-up">
-          <div class="contact-info">
-            <p class="eyebrow">{page?.infoEyebrow ?? 'Get in touch'}</p>
-            <h2>{page?.infoHeading ?? 'Reach our team directly.'}</h2>
-            <p>
-              {page?.hoursDescription ??
-                'Prefer to call or email? Our intake team is available Monday through Friday, 9am to 6pm Eastern.'}
-            </p>
-
-            <ul class="contact-info-list">
-              <li class="contact-info-item">
-                <div class="contact-info-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
-                <div>
-                  <div class="contact-info-label">Phone</div>
-                  <div class="contact-info-value">
-                    <a href={`tel:${phoneDigits}`}>{phone}</a>
-                  </div>
-                </div>
-              </li>
-              <li class="contact-info-item">
-                <div class="contact-info-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <>
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                      <polyline points="22,6 12,13 2,6" />
-                    </>
-                  </svg>
-                </div>
-                <div>
-                  <div class="contact-info-label">Email</div>
-                  <div class="contact-info-value">
-                    <a href={`mailto:${email}`}>{email}</a>
-                  </div>
-                </div>
-              </li>
-              <li class="contact-info-item">
-                <div class="contact-info-icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <>
-                      <polyline points="6 9 6 2 18 2 18 9" />
-                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                      <rect x="6" y="14" width="12" height="8" />
-                    </>
-                  </svg>
-                </div>
-                <div>
-                  <div class="contact-info-label">Fax</div>
-                  <div class="contact-info-value">
-                    <a href={`tel:${faxDigits}`}>{fax}</a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <form
-            class="contact-form"
-            data-formspree-id={contactId}
-            onsubmit="handleContactSubmit(event)"
-          >
-            <h2>{page?.formHeading ?? 'Send us a message'}</h2>
-            {/* CMS-SKIP: form structure */}
-            <p class="form-sub">
-              Required fields are marked with <span style="color:var(--coral)">*</span>
-            </p>
-
-            <div class="form-grid">
-              <div class="form-field">
-                {/* CMS-SKIP: form structure */}
-                <label for="firstName">
-                  First name <span class="req">*</span>
-                </label>
-                {/* CMS-SKIP: form structure */}
-                <input id="firstName" name="firstName" type="text" required placeholder="Jane" />
-              </div>
-              <div class="form-field">
-                {/* CMS-SKIP: form structure */}
-                <label for="lastName">
-                  Last name <span class="req">*</span>
-                </label>
-                {/* CMS-SKIP: form structure */}
-                <input id="lastName" name="lastName" type="text" required placeholder="Doe" />
-              </div>
-
-              <div class="form-field">
-                {/* CMS-SKIP: form structure */}
-                <label for="email">
-                  Email <span class="req">*</span>
-                </label>
-                {/* CMS-SKIP: form structure */}
-                <input id="email" name="email" type="email" required placeholder="jane@email.com" />
-              </div>
-              <div class="form-field">
-                {/* CMS-SKIP: form structure */}
-                <label for="phone">Phone</label>
-                {/* CMS-SKIP: form structure */}
-                <input id="phone" name="phone" type="tel" placeholder="(555) 555-5555" />
-              </div>
-
-              <div class="form-field form-field-full">
-                {/* CMS-SKIP: form structure */}
-                <label for="reason">
-                  I'm reaching out as <span class="req">*</span>
-                </label>
-                <select id="reason" name="reason" required>
-                  {/* CMS-SKIP: form structure */}
-                  <option value="" disabled selected>
-                    Select an option
-                  </option>
-                  {/* CMS-SKIP: form structure */}
-                  <option>An adult or family seeking therapy</option>
-                  {/* CMS-SKIP: form structure */}
-                  <option>A facility / wellness director</option>
-                  {/* CMS-SKIP: form structure */}
-                  <option>A licensed therapist interested in joining</option>
-                  {/* CMS-SKIP: form structure */}
-                  <option>A referring provider</option>
-                  {/* CMS-SKIP: form structure */}
-                  <option>Press, partnership, or other</option>
-                </select>
-              </div>
-
-              <div class="form-field form-field-full">
-                {/* CMS-SKIP: form structure */}
-                <label for="message">
-                  How can we help? <span class="req">*</span>
-                </label>
-                {/* CMS-SKIP: form structure */}
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  placeholder="Tell us a little about what you're looking for. The more context you share, the faster we can route you to the right person."
-                />
-              </div>
+    renderOrder.map(({ id }) => {
+      if (!sectionEnabled(id)) return null;
+      if (id === 'hero')
+        return (
+          <section class="contact-hero">
+            <div class="contact-hero-image">
+              <img
+                src={
+                  page?.heroImage?.asset?.url ??
+                  'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=85&auto=format&fit=crop'
+                }
+                alt="Two people in conversation across a desk"
+                onerror="this.style.display='none'"
+              />
             </div>
-
-            <label class="form-consent">
-              <input type="checkbox" required />
-              <span>
-                {page?.disclaimerCopy ? (
-                  page.disclaimerCopy
-                ) : (
-                  <>
-                    I understand this form is not for emergencies. If you or someone you love is in
-                    crisis, please call <strong>988</strong> or <strong>911</strong>. By submitting,
-                    I agree to be contacted by Better You Therapy.
-                  </>
-                )}
-              </span>
-            </label>
-
-            <div class="form-actions">
-              {/* CMS-SKIP: form structure */}
-              <button type="submit" class="btn btn-coral">
-                Send Message &rarr;
-              </button>
-              <span class="form-fineprint">
-                {page?.responseCopy ?? 'We respond within one business day.'}
-              </span>
+            <div class="contact-hero-content">
+              <p class="eyebrow">{page?.heroEyebrow ?? 'Contact Us'}</p>
+              <h1>{page?.heroHeading ?? "We'd love to hear from you."}</h1>
+              <p>
+                {page?.heroSubhead ??
+                  "Whether you're a family looking for care, a facility exploring partnership, or a therapist interested in joining our team — send us a note and we'll get back to you within one business day."}
+              </p>
             </div>
-          </form>
-        </div>
-      </section>
-    )
+          </section>
+        );
+      if (id === 'contact_form')
+        return (
+          <section class="contact-form-section">
+            <div class="contact-form-wrap fade-up">
+              <div class="contact-info">
+                <p class="eyebrow">{page?.infoEyebrow ?? 'Get in touch'}</p>
+                <h2>{page?.infoHeading ?? 'Reach our team directly.'}</h2>
+                <p>
+                  {page?.hoursDescription ??
+                    'Prefer to call or email? Our intake team is available Monday through Friday, 9am to 6pm Eastern.'}
+                </p>
+
+                <ul class="contact-info-list">
+                  <li class="contact-info-item">
+                    <div class="contact-info-icon">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="contact-info-label">Phone</div>
+                      <div class="contact-info-value">
+                        <a href={`tel:${phoneDigits}`}>{phone}</a>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="contact-info-item">
+                    <div class="contact-info-icon">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <>
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                          <polyline points="22,6 12,13 2,6" />
+                        </>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="contact-info-label">Email</div>
+                      <div class="contact-info-value">
+                        <a href={`mailto:${email}`}>{email}</a>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="contact-info-item">
+                    <div class="contact-info-icon">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <>
+                          <polyline points="6 9 6 2 18 2 18 9" />
+                          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                          <rect x="6" y="14" width="12" height="8" />
+                        </>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="contact-info-label">Fax</div>
+                      <div class="contact-info-value">
+                        <a href={`tel:${faxDigits}`}>{fax}</a>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <form
+                class="contact-form"
+                data-formspree-id={contactId}
+                onsubmit="handleContactSubmit(event)"
+              >
+                <h2>{page?.formHeading ?? 'Send us a message'}</h2>
+                {/* CMS-SKIP: form structure */}
+                <p class="form-sub">
+                  Required fields are marked with <span style="color:var(--coral)">*</span>
+                </p>
+
+                <div class="form-grid">
+                  <div class="form-field">
+                    {/* CMS-SKIP: form structure */}
+                    <label for="firstName">
+                      First name <span class="req">*</span>
+                    </label>
+                    {/* CMS-SKIP: form structure */}
+                    <input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      required
+                      placeholder="Jane"
+                    />
+                  </div>
+                  <div class="form-field">
+                    {/* CMS-SKIP: form structure */}
+                    <label for="lastName">
+                      Last name <span class="req">*</span>
+                    </label>
+                    {/* CMS-SKIP: form structure */}
+                    <input id="lastName" name="lastName" type="text" required placeholder="Doe" />
+                  </div>
+
+                  <div class="form-field">
+                    {/* CMS-SKIP: form structure */}
+                    <label for="email">
+                      Email <span class="req">*</span>
+                    </label>
+                    {/* CMS-SKIP: form structure */}
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      placeholder="jane@email.com"
+                    />
+                  </div>
+                  <div class="form-field">
+                    {/* CMS-SKIP: form structure */}
+                    <label for="phone">Phone</label>
+                    {/* CMS-SKIP: form structure */}
+                    <input id="phone" name="phone" type="tel" placeholder="(555) 555-5555" />
+                  </div>
+
+                  <div class="form-field form-field-full">
+                    {/* CMS-SKIP: form structure */}
+                    <label for="reason">
+                      I'm reaching out as <span class="req">*</span>
+                    </label>
+                    <select id="reason" name="reason" required>
+                      {/* CMS-SKIP: form structure */}
+                      <option value="" disabled selected>
+                        Select an option
+                      </option>
+                      {/* CMS-SKIP: form structure */}
+                      <option>An adult or family seeking therapy</option>
+                      {/* CMS-SKIP: form structure */}
+                      <option>A facility / wellness director</option>
+                      {/* CMS-SKIP: form structure */}
+                      <option>A licensed therapist interested in joining</option>
+                      {/* CMS-SKIP: form structure */}
+                      <option>A referring provider</option>
+                      {/* CMS-SKIP: form structure */}
+                      <option>Press, partnership, or other</option>
+                    </select>
+                  </div>
+
+                  <div class="form-field form-field-full">
+                    {/* CMS-SKIP: form structure */}
+                    <label for="message">
+                      How can we help? <span class="req">*</span>
+                    </label>
+                    {/* CMS-SKIP: form structure */}
+                    <textarea
+                      id="message"
+                      name="message"
+                      required
+                      placeholder="Tell us a little about what you're looking for. The more context you share, the faster we can route you to the right person."
+                    />
+                  </div>
+                </div>
+
+                <label class="form-consent">
+                  <input type="checkbox" required />
+                  <span>
+                    {page?.disclaimerCopy ? (
+                      page.disclaimerCopy
+                    ) : (
+                      <>
+                        I understand this form is not for emergencies. If you or someone you love is
+                        in crisis, please call <strong>988</strong> or <strong>911</strong>. By
+                        submitting, I agree to be contacted by Better You Therapy.
+                      </>
+                    )}
+                  </span>
+                </label>
+
+                <div class="form-actions">
+                  {/* CMS-SKIP: form structure */}
+                  <button type="submit" class="btn btn-coral">
+                    Send Message &rarr;
+                  </button>
+                  <span class="form-fineprint">
+                    {page?.responseCopy ?? 'We respond within one business day.'}
+                  </span>
+                </div>
+              </form>
+            </div>
+          </section>
+        );
+      return null;
+    })
   }
 
   <script is:inline>

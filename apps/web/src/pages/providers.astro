@@ -31,7 +31,7 @@ interface ProvidersPage {
   ctaHeading?: string;
   ctaSubhead?: string;
   ctaCta?: { label: string; href?: string };
-  sections?: Array<{ sectionId: string; enabled?: boolean }>;
+  sections?: Array<{ sectionId: string; enabled?: boolean; order?: number }>;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
@@ -55,6 +55,23 @@ function sectionEnabled(id: string): boolean {
   const entry = arr.find((s) => s.sectionId === id);
   return entry ? entry.enabled !== false : true;
 }
+
+const sectionOrder = (id: string): number => {
+  if (!page?.sections || page.sections.length === 0) return 999;
+  const section = page.sections.find(
+    (s: { sectionId: string; enabled?: boolean; order?: number }) => s.sectionId === id,
+  );
+  return section?.order ?? 999;
+};
+
+const renderOrder = [
+  { id: 'hero', order: sectionOrder('hero') },
+  { id: 'tracks', order: sectionOrder('tracks') },
+  { id: 'why_join', order: sectionOrder('why_join') },
+  { id: 'qualifications', order: sectionOrder('qualifications') },
+  { id: 'testimonials', order: sectionOrder('testimonials') },
+  { id: 'cta', order: sectionOrder('cta') },
+].sort((a, b) => a.order - b.order);
 ---
 
 <BaseLayout
@@ -1896,772 +1913,789 @@ function sectionEnabled(id: string): boolean {
     }
   </style>
 
-  <!-- ══════════════════════ Header98 ══════════════════════ -->
   {
-    sectionEnabled('hero') && (
-      <section id="relume" class="h98">
-        <div class="container h98-card">
-          <div class="h98-content">
-            <div class="inner">
-              <h1>{page?.heroHeading ?? 'You became a therapist to do therapy.'}</h1>
-              <p class="h98-subhead">
-                {page?.heroSubhead ??
-                  'Not to manage billing, chase referrals, or build a business from scratch.'}
-              </p>
-            </div>
-            <div class="h98-actions">
-              {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-              <a href="/careers/" class="btn btn-primary">
-                Apply Now
-              </a>
-            </div>
-          </div>
-          <div class="h98-bg">
-            <img
-              src={page?.heroImage?.asset?.url ?? '/images/providers-hero.jpg'}
-              alt={
-                page?.heroImage?.alt ?? 'Licensed therapist arriving at a Florida senior community'
-              }
-              loading="eager"
-            />
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ══════════════════════ Layout422 ══════════════════════ -->
-  {
-    sectionEnabled('tracks') && (
-      <section id="relume" class="section">
-        <div class="container">
-          <div class="l422-head">
-            <p class="l422-eyebrow">{page?.tracksEyebrow ?? 'Ways to work with us'}</p>
-            <h2>
-              {page?.tracksHeading ??
-                'One license. Two role tracks. Pick the one that fits your life.'}
-            </h2>
-            <p class="text-md">
-              {page?.tracksSubhead ??
-                'On-site at senior living communities across Southeast Florida, or fully remote teletherapy anywhere in the state. Same operational support — different ways to practice.'}
-            </p>
-          </div>
-
-          <div class="l422-cards">
-            <a href="#" class="l422-card is-default">
-              <div class="l422-card-img">
-                <img
-                  src={page?.tracks?.[0]?.image?.asset?.url ?? '/images/providers-track-tele.jpg'}
-                  alt={page?.tracks?.[0]?.image?.alt ?? 'Therapist working from a home office'}
-                />
-              </div>
-              <div class="l422-card-content">
-                <div class="l422-card-text">
-                  <h3>{page?.tracks?.[0]?.heading ?? 'Teletherapy — Anywhere in Florida'}</h3>
-                  <div class="l422-card-body mobile-only">
-                    <p>
-                      {page?.tracks?.[0]?.body ??
-                        'Statewide telehealth — no geographic restriction beyond a Florida license. Cash-pay $175/session; insurance billing handled by BYT. Currently accepting applications as the teletherapy line launches. Early applicants prioritized.'}
-                    </p>
-                    <div class="l422-card-cta">
-                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                      <button class="btn-link alt">
-                        Apply Now{' '}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M9 6l6 6-6 6" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="l422-card-body desktop-only">
-                  <p>
-                    {page?.tracks?.[0]?.body ??
-                      'Floriday statewide telehealth — no geographic restriction beyond a Florida license. Insurance and billing handled by us.'}
+    renderOrder.map(({ id }) => {
+      if (!sectionEnabled(id)) return null;
+      if (id === 'hero')
+        return (
+          <section id="relume" class="h98">
+            <div class="container h98-card">
+              <div class="h98-content">
+                <div class="inner">
+                  <h1>{page?.heroHeading ?? 'You became a therapist to do therapy.'}</h1>
+                  <p class="h98-subhead">
+                    {page?.heroSubhead ??
+                      'Not to manage billing, chase referrals, or build a business from scratch.'}
                   </p>
-                  <div class="l422-card-cta">
-                    {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                    <button class="btn-link alt">
-                      Apply Now{' '}
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 6l6 6-6 6" />
-                      </svg>
-                    </button>
-                  </div>
+                </div>
+                <div class="h98-actions">
+                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                  <a href="/careers/" class="btn btn-primary">
+                    Apply Now
+                  </a>
                 </div>
               </div>
-            </a>
-
-            <a href="#" class="l422-card">
-              <div class="l422-card-img">
+              <div class="h98-bg">
                 <img
-                  src={
-                    page?.tracks?.[1]?.image?.asset?.url ?? '/images/providers-track-facility.jpg'
+                  src={page?.heroImage?.asset?.url ?? '/images/providers-hero.jpg'}
+                  alt={
+                    page?.heroImage?.alt ??
+                    'Licensed therapist arriving at a Florida senior community'
                   }
-                  alt={page?.tracks?.[1]?.image?.alt ?? 'Therapist working on-site with a resident'}
+                  loading="eager"
                 />
               </div>
-              <div class="l422-card-content">
-                <div class="l422-card-text">
-                  <h3>{page?.tracks?.[1]?.heading ?? 'Facility-Based — Southeast Florida'}</h3>
-                  <div class="l422-card-body mobile-only">
-                    <p>
-                      {page?.tracks?.[1]?.body ??
-                        'On-site at ALFs, SNFs, and CCRCs in Palm Beach, Martin, St. Lucie, or Okeechobee counties. Established patient pipeline from Wellness Director referrals — no cold-calling, no marketing. You set your weekly availability; we coordinate scheduling around your calendar.'}
-                    </p>
-                    <div class="l422-card-cta">
-                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                      <button class="btn-link alt">
-                        Apply Now{' '}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M9 6l6 6-6 6" />
-                        </svg>
-                      </button>
+            </div>
+          </section>
+        );
+      if (id === 'tracks')
+        return (
+          <section id="relume" class="section">
+            <div class="container">
+              <div class="l422-head">
+                <p class="l422-eyebrow">{page?.tracksEyebrow ?? 'Ways to work with us'}</p>
+                <h2>
+                  {page?.tracksHeading ??
+                    'One license. Two role tracks. Pick the one that fits your life.'}
+                </h2>
+                <p class="text-md">
+                  {page?.tracksSubhead ??
+                    'On-site at senior living communities across Southeast Florida, or fully remote teletherapy anywhere in the state. Same operational support — different ways to practice.'}
+                </p>
+              </div>
+
+              <div class="l422-cards">
+                <a href="#" class="l422-card is-default">
+                  <div class="l422-card-img">
+                    <img
+                      src={
+                        page?.tracks?.[0]?.image?.asset?.url ?? '/images/providers-track-tele.jpg'
+                      }
+                      alt={page?.tracks?.[0]?.image?.alt ?? 'Therapist working from a home office'}
+                    />
+                  </div>
+                  <div class="l422-card-content">
+                    <div class="l422-card-text">
+                      <h3>{page?.tracks?.[0]?.heading ?? 'Teletherapy — Anywhere in Florida'}</h3>
+                      <div class="l422-card-body mobile-only">
+                        <p>
+                          {page?.tracks?.[0]?.body ??
+                            'Statewide telehealth — no geographic restriction beyond a Florida license. Cash-pay $175/session; insurance billing handled by BYT. Currently accepting applications as the teletherapy line launches. Early applicants prioritized.'}
+                        </p>
+                        <div class="l422-card-cta">
+                          {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                          <button class="btn-link alt">
+                            Apply Now{' '}
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M9 6l6 6-6 6" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="l422-card-body desktop-only">
+                      <p>
+                        {page?.tracks?.[0]?.body ??
+                          'Floriday statewide telehealth — no geographic restriction beyond a Florida license. Insurance and billing handled by us.'}
+                      </p>
+                      <div class="l422-card-cta">
+                        {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                        <button class="btn-link alt">
+                          Apply Now{' '}
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path d="M9 6l6 6-6 6" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="l422-card-body desktop-only">
-                  <p>
-                    {page?.tracks?.[1]?.body ??
-                      'On-site at ALFs, SNFs, and CCRCs in Palm Beach, Martin, St. Lucie, or Okeechobee counties. Established patient pipeline.'}
-                  </p>
-                  <div class="l422-card-cta">
-                    {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                    <button class="btn-link alt">
-                      Apply Now{' '}
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 6l6 6-6 6" />
-                      </svg>
-                    </button>
+                </a>
+
+                <a href="#" class="l422-card">
+                  <div class="l422-card-img">
+                    <img
+                      src={
+                        page?.tracks?.[1]?.image?.asset?.url ??
+                        '/images/providers-track-facility.jpg'
+                      }
+                      alt={
+                        page?.tracks?.[1]?.image?.alt ?? 'Therapist working on-site with a resident'
+                      }
+                    />
                   </div>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ══════════════════════ Layout374 ══════════════════════ -->
-  {
-    sectionEnabled('why_join') && (
-      <section id="l374-section" class="section">
-        <div class="container">
-          <div class="l374-head">
-            <div class="l374-head-inner">
-              <p class="l374-eyebrow">{page?.handlesEyebrow ?? 'What we handle'}</p>
-              <h2>{page?.handlesHeading ?? 'So you can focus on clinical work'}</h2>
-              <p class="text-md">
-                {page?.handlesSubhead ??
-                  'The operational infrastructure that frees you to do therapy.'}
-              </p>
-            </div>
-          </div>
-
-          <div class="l374-grid">
-            <div class="l374-card feature">
-              <div class="body">
-                <div>
-                  <p class="tag">{page?.handlesItems?.[0]?.tag ?? 'Billing'}</p>
-                  <h3>{page?.handlesItems?.[0]?.heading ?? 'Medicare and insurance billing'}</h3>
-                  <p>
-                    {page?.handlesItems?.[0]?.body ??
-                      'Our billing team handles all claims — Medicare, commercial insurance, cash-pay reconciliation. You never file paperwork, never chase a denial, never sit on hold with a payer.'}
-                  </p>
-                </div>
-                <div class="actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-secondary">
-                    Apply Now
-                  </a>
-                </div>
-              </div>
-              <div class="image">
-                <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
-                  <>
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="70"
-                      fill="none"
-                      stroke="rgba(255,255,255,.18)"
-                      stroke-width="1.5"
-                    />
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="45"
-                      fill="none"
-                      stroke="rgba(255,255,255,.25)"
-                      stroke-width="1.5"
-                    />
-                    <path
-                      d="M70 100h60M100 70v60"
-                      stroke="rgba(255,255,255,.5)"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                    />
-                  </>
-                </svg>
-              </div>
-            </div>
-
-            <div class="l374-card">
-              <div class="body">
-                <div>
-                  <p class="tag">{page?.handlesItems?.[1]?.tag ?? 'Referrals'}</p>
-                  <h3>{page?.handlesItems?.[1]?.heading ?? 'Patient referrals'}</h3>
-                  <p>
-                    {page?.handlesItems?.[1]?.body ??
-                      'Facility-based: Wellness Directors send referrals. Teletherapy: we sourced and match patients. No self-marketing required.'}
-                  </p>
-                </div>
-              </div>
-              <div class="image">
-                <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
-                  <>
-                    <path
-                      d="M50 100h80M115 80l25 20-25 20"
-                      fill="none"
-                      stroke="rgba(255,255,255,.5)"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <circle
-                      cx="100"
-                      cy="100"
-                      r="70"
-                      fill="none"
-                      stroke="rgba(255,255,255,.18)"
-                      stroke-width="1.5"
-                    />
-                  </>
-                </svg>
-              </div>
-            </div>
-
-            <div class="l374-card">
-              <div class="body">
-                <div>
-                  <p class="tag">{page?.handlesItems?.[2]?.tag ?? 'EHR'}</p>
-                  <h3>{page?.handlesItems?.[2]?.heading ?? 'EHR access'}</h3>
-                  <p>
-                    {page?.handlesItems?.[2]?.body ??
-                      'EHR provided. Progress notes, treatment plans, and documentation in one system — no setup, no per-seat fees.'}
-                  </p>
-                </div>
-              </div>
-              <div class="image">
-                <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
-                  <>
-                    <rect
-                      x="65"
-                      y="55"
-                      width="70"
-                      height="90"
-                      rx="6"
-                      fill="none"
-                      stroke="rgba(255,255,255,.4)"
-                      stroke-width="2"
-                    />
-                    <path
-                      d="M80 90h40M80 105h30M85 130l8 8 18-18"
-                      stroke="rgba(255,255,255,.55)"
-                      stroke-width="2"
-                      fill="none"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </>
-                </svg>
-              </div>
-            </div>
-
-            <div class="l374-card">
-              <div class="body">
-                <div>
-                  <p class="tag">{page?.handlesItems?.[3]?.tag ?? 'Clinical'}</p>
-                  <h3>{page?.handlesItems?.[3]?.heading ?? 'Clinical Director oversight'}</h3>
-                  <p>
-                    {page?.handlesItems?.[3]?.body ??
-                      "Peer consultation and clinical oversight from Clinical Director. You're never practicing alone."}
-                  </p>
-                </div>
-              </div>
-              <div class="image">
-                <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
-                  <>
-                    <path
-                      d="M60 145V70l40-20 40 20v75"
-                      fill="none"
-                      stroke="rgba(255,255,255,.45)"
-                      stroke-width="2"
-                      stroke-linejoin="round"
-                    />
-                    <rect x="80" y="90" width="12" height="14" fill="rgba(255,255,255,.3)" />
-                    <rect x="108" y="90" width="12" height="14" fill="rgba(255,255,255,.3)" />
-                    <rect x="92" y="120" width="16" height="25" fill="rgba(255,255,255,.4)" />
-                  </>
-                </svg>
-              </div>
-            </div>
-
-            <div class="l374-card">
-              <div class="body">
-                <div>
-                  <p class="tag">{page?.handlesItems?.[4]?.tag ?? 'Credentialing'}</p>
-                  <h3>{page?.handlesItems?.[4]?.heading ?? 'Credentialing support'}</h3>
-                  <p>
-                    {page?.handlesItems?.[4]?.body ??
-                      'We assists with Medicare & Insurance enrollment and facility credentialing.'}
-                  </p>
-                </div>
-              </div>
-              <div class="image">
-                <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
-                  <>
-                    <rect
-                      x="55"
-                      y="65"
-                      width="90"
-                      height="80"
-                      rx="6"
-                      fill="none"
-                      stroke="rgba(255,255,255,.4)"
-                      stroke-width="2"
-                    />
-                    <line
-                      x1="55"
-                      y1="85"
-                      x2="145"
-                      y2="85"
-                      stroke="rgba(255,255,255,.4)"
-                      stroke-width="2"
-                    />
-                    <line
-                      x1="75"
-                      y1="55"
-                      x2="75"
-                      y2="75"
-                      stroke="rgba(255,255,255,.55)"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                    />
-                    <line
-                      x1="125"
-                      y1="55"
-                      x2="125"
-                      y2="75"
-                      stroke="rgba(255,255,255,.55)"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                    />
-                    <circle cx="100" cy="115" r="4" fill="rgba(255,255,255,.6)" />
-                  </>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ══════════════════════ Layout506 ══════════════════════ -->
-  {
-    sectionEnabled('qualifications') && (
-      <section id="relume" class="section">
-        <div class="container">
-          <div class="l506-head">
-            <p class="eyebrow">{page?.qualsEyebrow ?? 'Qualifications'}</p>
-            <h1>{page?.qualsHeading ?? 'What you need to apply'}</h1>
-          </div>
-
-          <div class="l506-tabs" id="l506">
-            <div class="l506-panel active" data-panel="tab-1">
-              <div class="l506-panel-inner">
-                <div class="l506-icon">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M5 12l5 5L20 7" />
-                  </svg>
-                </div>
-                <h2>{page?.quals?.[0]?.label ?? 'Active Florida license'}</h2>
-                <p>
-                  {page?.quals?.[0]?.body ??
-                    'Psychologist, LCSW, LMHC, LPC, or LMFT. Full credential list required at application.'}
-                </p>
-                <div class="l506-panel-actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-secondary">
-                    Apply Now
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="l506-panel" data-panel="tab-2">
-              <div class="l506-panel-inner">
-                <div class="l506-icon">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M5 12l5 5L20 7" />
-                  </svg>
-                </div>
-                <h2>{page?.quals?.[1]?.label ?? 'Active Medicare & Insurance enrollment'}</h2>
-                <p>
-                  {page?.quals?.[1]?.body ??
-                    "Already enrolled, or willing to enroll. We handle all Medicare and private insurance enrollment process if you're not yet credentialed."}
-                </p>
-                <div class="l506-panel-actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-secondary">
-                    Apply Now
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="l506-panel" data-panel="tab-3">
-              <div class="l506-panel-inner">
-                <div class="l506-icon">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M5 12l5 5L20 7" />
-                  </svg>
-                </div>
-                <h2>{page?.quals?.[2]?.label ?? 'Clinical experience'}</h2>
-                <p>
-                  {page?.quals?.[2]?.body ??
-                    'Experience in individual, group, or specialized populations preferred — not required. We onboard newly-licensed clinicians too.'}
-                </p>
-                <div class="l506-panel-actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-secondary">
-                    Apply Now
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="l506-panel" data-panel="tab-4">
-              <div class="l506-panel-inner">
-                <div class="l506-icon">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M5 12l5 5L20 7" />
-                  </svg>
-                </div>
-                <h2>{page?.quals?.[3]?.label ?? 'Southeast Florida geography'}</h2>
-                <p>
-                  {page?.quals?.[3]?.body ??
-                    'Facility-based track only. You must live within reasonable driving distance of Palm Beach, Martin, St. Lucie, or Okeechobee counties.'}
-                </p>
-                <div class="l506-panel-actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-secondary">
-                    Apply Now
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="l506-panel" data-panel="tab-5">
-              <div class="l506-panel-inner">
-                <div class="l506-icon">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M5 12l5 5L20 7" />
-                  </svg>
-                </div>
-                <h2>{page?.quals?.[4]?.label ?? 'HIPAA-compliant home office'}</h2>
-                <p>
-                  {page?.quals?.[4]?.body ?? 'Private, secure space for sessions. Locked door.'}
-                </p>
-                <div class="l506-panel-actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-secondary">
-                    Apply Now
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="l506-list" role="tablist">
-              <button class="l506-trigger active" data-tab="tab-1">
-                {page?.quals?.[0]?.tabLabel ?? 'Florida license'}
-              </button>
-              <button class="l506-trigger" data-tab="tab-2">
-                {page?.quals?.[1]?.tabLabel ?? 'Medicare & Insurance enrollment'}
-              </button>
-              <button class="l506-trigger" data-tab="tab-3">
-                {page?.quals?.[2]?.tabLabel ?? 'Clinical experience'}
-              </button>
-              <button class="l506-trigger" data-tab="tab-4">
-                {page?.quals?.[3]?.tabLabel ?? 'SE Florida · facility'}
-              </button>
-              <button class="l506-trigger" data-tab="tab-5">
-                {page?.quals?.[4]?.tabLabel ?? 'Home office · telehealth'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ══════════════════════ Testimonial37 ══════════════════════ -->
-  {
-    sectionEnabled('testimonials') && (
-      <section class="section t37-section">
-        <div class="container">
-          <div class="t37-head">
-            <div class="t37-head-inner">
-              <h1>{page?.testimonialsHeading ?? 'What our therapists are saying'}</h1>
-              <p class="text-md">
-                {page?.testimonialsSubhead ??
-                  'Peer proof from clinicians already working with BYT.'}
-              </p>
-            </div>
-          </div>
-
-          <div class="t37-grid">
-            <div class="t37-cell t37-badge">
-              <div class="t37-badge-mark">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </>
-                </svg>
-              </div>
-              {/* CMS-SKIP: compliance/trust badge */}
-              <div class="t37-badge-text">
-                <p class="t37-badge-eyebrow">NPI</p>
-                <p class="t37-badge-label">Registered</p>
-              </div>
-            </div>
-            <div class="t37-cell t37-badge">
-              <div class="t37-badge-mark">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </>
-                </svg>
-              </div>
-              {/* CMS-SKIP: compliance/trust badge */}
-              <div class="t37-badge-text">
-                <p class="t37-badge-eyebrow">HIPAA</p>
-                <p class="t37-badge-label">Compliant</p>
-              </div>
-            </div>
-            <div class="t37-cell t37-test order-last">
-              <div class="t37-stars">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-              </div>
-              <p class="t37-quote">
-                {testimonials?.[0]?.quote ??
-                  '"[Provider testimonial — pending collection. Quote will speak to operational relief: billing, scheduling, and referrals handled so the clinician can focus on clinical work.]"'}
-              </p>
-              <div class="t37-meta">
-                <img
-                  class="t37-avatar"
-                  src="/images/providers-testimonial-avatar.jpg"
-                  alt=""
-                  role="presentation"
-                />
-                <div>
-                  <p class="name">
-                    {testimonials?.[0]?.authorRole ?? '[Credential] · Facility-Based'}
-                  </p>
-                  <p>{testimonials?.[0]?.authorOrg ?? '[County], Southeast Florida'}</p>
-                </div>
-              </div>
-              {/* CMS-SKIP: legal disclaimer */}
-              <small style="display:block;font-size:12px;color:#9CA3AF;margin-top:4px;">
-                Image for representation
-              </small>
-            </div>
-            <div class="t37-cell t37-test">
-              <div class="t37-stars">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
-                </svg>
-              </div>
-              <p class="t37-quote">
-                {testimonials?.[1]?.quote ??
-                  '"[Provider testimonial — pending collection. Quote will speak to flexibility and matched referrals: practicing on your own schedule without building a private practice from scratch.]"'}
-              </p>
-              <div class="t37-meta">
-                <div class="t37-avatar t37-avatar-init">
-                  {testimonials?.[1]?.authorInitials ?? 'TT'}
-                </div>
-                <div>
-                  <p class="name">
-                    {testimonials?.[1]?.authorRole ?? '[Credential] · Teletherapy'}
-                  </p>
-                  <p>{testimonials?.[1]?.authorOrg ?? 'FL telehealth'}</p>
-                </div>
-              </div>
-            </div>
-            <div class="t37-cell t37-badge">
-              <div class="t37-badge-mark">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </>
-                </svg>
-              </div>
-              {/* CMS-SKIP: compliance/trust badge */}
-              <div class="t37-badge-text">
-                <p class="t37-badge-eyebrow">Florida</p>
-                <p class="t37-badge-label">Licensed</p>
-              </div>
-            </div>
-            <div class="t37-cell t37-badge">
-              <div class="t37-badge-mark">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </>
-                </svg>
-              </div>
-              {/* CMS-SKIP: compliance/trust badge */}
-              <div class="t37-badge-text">
-                <p class="t37-badge-eyebrow">Medicare &amp; Insurance</p>
-                <p class="t37-badge-label">Enrolled</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ══════════════════════ Cta36 ══════════════════════ -->
-  {
-    sectionEnabled('cta') && (
-      <section class="section cta36-section">
-        <div class="container">
-          <div class="cta36-grid">
-            <div class="cta36-cell">
-              <div class="icon-circle">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="9" y1="15" x2="15" y2="15" />
-                  </>
-                </svg>
-              </div>
-              <h2>{page?.ctaHeading ?? 'Ready to do the work you were trained for?'}</h2>
-              <p>{page?.ctaSubhead ?? 'Application only takes 3 minutes.'}</p>
-              <div class="cta36-actions">
-                <a href="/careers/" class="btn btn-primary">
-                  {page?.ctaCta?.label ?? 'Apply Now'}
+                  <div class="l422-card-content">
+                    <div class="l422-card-text">
+                      <h3>{page?.tracks?.[1]?.heading ?? 'Facility-Based — Southeast Florida'}</h3>
+                      <div class="l422-card-body mobile-only">
+                        <p>
+                          {page?.tracks?.[1]?.body ??
+                            'On-site at ALFs, SNFs, and CCRCs in Palm Beach, Martin, St. Lucie, or Okeechobee counties. Established patient pipeline from Wellness Director referrals — no cold-calling, no marketing. You set your weekly availability; we coordinate scheduling around your calendar.'}
+                        </p>
+                        <div class="l422-card-cta">
+                          {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                          <button class="btn-link alt">
+                            Apply Now{' '}
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path d="M9 6l6 6-6 6" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="l422-card-body desktop-only">
+                      <p>
+                        {page?.tracks?.[1]?.body ??
+                          'On-site at ALFs, SNFs, and CCRCs in Palm Beach, Martin, St. Lucie, or Okeechobee counties. Established patient pipeline.'}
+                      </p>
+                      <div class="l422-card-cta">
+                        {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                        <button class="btn-link alt">
+                          Apply Now{' '}
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path d="M9 6l6 6-6 6" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </a>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-    )
+          </section>
+        );
+      if (id === 'why_join')
+        return (
+          <section id="l374-section" class="section">
+            <div class="container">
+              <div class="l374-head">
+                <div class="l374-head-inner">
+                  <p class="l374-eyebrow">{page?.handlesEyebrow ?? 'What we handle'}</p>
+                  <h2>{page?.handlesHeading ?? 'So you can focus on clinical work'}</h2>
+                  <p class="text-md">
+                    {page?.handlesSubhead ??
+                      'The operational infrastructure that frees you to do therapy.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l374-grid">
+                <div class="l374-card feature">
+                  <div class="body">
+                    <div>
+                      <p class="tag">{page?.handlesItems?.[0]?.tag ?? 'Billing'}</p>
+                      <h3>
+                        {page?.handlesItems?.[0]?.heading ?? 'Medicare and insurance billing'}
+                      </h3>
+                      <p>
+                        {page?.handlesItems?.[0]?.body ??
+                          'Our billing team handles all claims — Medicare, commercial insurance, cash-pay reconciliation. You never file paperwork, never chase a denial, never sit on hold with a payer.'}
+                      </p>
+                    </div>
+                    <div class="actions">
+                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                      <a href="/careers/" class="btn btn-secondary">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                  <div class="image">
+                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                      <>
+                        <circle
+                          cx="100"
+                          cy="100"
+                          r="70"
+                          fill="none"
+                          stroke="rgba(255,255,255,.18)"
+                          stroke-width="1.5"
+                        />
+                        <circle
+                          cx="100"
+                          cy="100"
+                          r="45"
+                          fill="none"
+                          stroke="rgba(255,255,255,.25)"
+                          stroke-width="1.5"
+                        />
+                        <path
+                          d="M70 100h60M100 70v60"
+                          stroke="rgba(255,255,255,.5)"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                      </>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="l374-card">
+                  <div class="body">
+                    <div>
+                      <p class="tag">{page?.handlesItems?.[1]?.tag ?? 'Referrals'}</p>
+                      <h3>{page?.handlesItems?.[1]?.heading ?? 'Patient referrals'}</h3>
+                      <p>
+                        {page?.handlesItems?.[1]?.body ??
+                          'Facility-based: Wellness Directors send referrals. Teletherapy: we sourced and match patients. No self-marketing required.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="image">
+                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                      <>
+                        <path
+                          d="M50 100h80M115 80l25 20-25 20"
+                          fill="none"
+                          stroke="rgba(255,255,255,.5)"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <circle
+                          cx="100"
+                          cy="100"
+                          r="70"
+                          fill="none"
+                          stroke="rgba(255,255,255,.18)"
+                          stroke-width="1.5"
+                        />
+                      </>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="l374-card">
+                  <div class="body">
+                    <div>
+                      <p class="tag">{page?.handlesItems?.[2]?.tag ?? 'EHR'}</p>
+                      <h3>{page?.handlesItems?.[2]?.heading ?? 'EHR access'}</h3>
+                      <p>
+                        {page?.handlesItems?.[2]?.body ??
+                          'EHR provided. Progress notes, treatment plans, and documentation in one system — no setup, no per-seat fees.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="image">
+                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                      <>
+                        <rect
+                          x="65"
+                          y="55"
+                          width="70"
+                          height="90"
+                          rx="6"
+                          fill="none"
+                          stroke="rgba(255,255,255,.4)"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M80 90h40M80 105h30M85 130l8 8 18-18"
+                          stroke="rgba(255,255,255,.55)"
+                          stroke-width="2"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="l374-card">
+                  <div class="body">
+                    <div>
+                      <p class="tag">{page?.handlesItems?.[3]?.tag ?? 'Clinical'}</p>
+                      <h3>{page?.handlesItems?.[3]?.heading ?? 'Clinical Director oversight'}</h3>
+                      <p>
+                        {page?.handlesItems?.[3]?.body ??
+                          "Peer consultation and clinical oversight from Clinical Director. You're never practicing alone."}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="image">
+                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                      <>
+                        <path
+                          d="M60 145V70l40-20 40 20v75"
+                          fill="none"
+                          stroke="rgba(255,255,255,.45)"
+                          stroke-width="2"
+                          stroke-linejoin="round"
+                        />
+                        <rect x="80" y="90" width="12" height="14" fill="rgba(255,255,255,.3)" />
+                        <rect x="108" y="90" width="12" height="14" fill="rgba(255,255,255,.3)" />
+                        <rect x="92" y="120" width="16" height="25" fill="rgba(255,255,255,.4)" />
+                      </>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="l374-card">
+                  <div class="body">
+                    <div>
+                      <p class="tag">{page?.handlesItems?.[4]?.tag ?? 'Credentialing'}</p>
+                      <h3>{page?.handlesItems?.[4]?.heading ?? 'Credentialing support'}</h3>
+                      <p>
+                        {page?.handlesItems?.[4]?.body ??
+                          'We assists with Medicare & Insurance enrollment and facility credentialing.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="image">
+                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                      <>
+                        <rect
+                          x="55"
+                          y="65"
+                          width="90"
+                          height="80"
+                          rx="6"
+                          fill="none"
+                          stroke="rgba(255,255,255,.4)"
+                          stroke-width="2"
+                        />
+                        <line
+                          x1="55"
+                          y1="85"
+                          x2="145"
+                          y2="85"
+                          stroke="rgba(255,255,255,.4)"
+                          stroke-width="2"
+                        />
+                        <line
+                          x1="75"
+                          y1="55"
+                          x2="75"
+                          y2="75"
+                          stroke="rgba(255,255,255,.55)"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                        />
+                        <line
+                          x1="125"
+                          y1="55"
+                          x2="125"
+                          y2="75"
+                          stroke="rgba(255,255,255,.55)"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                        />
+                        <circle cx="100" cy="115" r="4" fill="rgba(255,255,255,.6)" />
+                      </>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      if (id === 'qualifications')
+        return (
+          <section id="relume" class="section">
+            <div class="container">
+              <div class="l506-head">
+                <p class="eyebrow">{page?.qualsEyebrow ?? 'Qualifications'}</p>
+                <h1>{page?.qualsHeading ?? 'What you need to apply'}</h1>
+              </div>
+
+              <div class="l506-tabs" id="l506">
+                <div class="l506-panel active" data-panel="tab-1">
+                  <div class="l506-panel-inner">
+                    <div class="l506-icon">
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                    </div>
+                    <h2>{page?.quals?.[0]?.label ?? 'Active Florida license'}</h2>
+                    <p>
+                      {page?.quals?.[0]?.body ??
+                        'Psychologist, LCSW, LMHC, LPC, or LMFT. Full credential list required at application.'}
+                    </p>
+                    <div class="l506-panel-actions">
+                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                      <a href="/careers/" class="btn btn-secondary">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="l506-panel" data-panel="tab-2">
+                  <div class="l506-panel-inner">
+                    <div class="l506-icon">
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                    </div>
+                    <h2>{page?.quals?.[1]?.label ?? 'Active Medicare & Insurance enrollment'}</h2>
+                    <p>
+                      {page?.quals?.[1]?.body ??
+                        "Already enrolled, or willing to enroll. We handle all Medicare and private insurance enrollment process if you're not yet credentialed."}
+                    </p>
+                    <div class="l506-panel-actions">
+                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                      <a href="/careers/" class="btn btn-secondary">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="l506-panel" data-panel="tab-3">
+                  <div class="l506-panel-inner">
+                    <div class="l506-icon">
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                    </div>
+                    <h2>{page?.quals?.[2]?.label ?? 'Clinical experience'}</h2>
+                    <p>
+                      {page?.quals?.[2]?.body ??
+                        'Experience in individual, group, or specialized populations preferred — not required. We onboard newly-licensed clinicians too.'}
+                    </p>
+                    <div class="l506-panel-actions">
+                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                      <a href="/careers/" class="btn btn-secondary">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="l506-panel" data-panel="tab-4">
+                  <div class="l506-panel-inner">
+                    <div class="l506-icon">
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                    </div>
+                    <h2>{page?.quals?.[3]?.label ?? 'Southeast Florida geography'}</h2>
+                    <p>
+                      {page?.quals?.[3]?.body ??
+                        'Facility-based track only. You must live within reasonable driving distance of Palm Beach, Martin, St. Lucie, or Okeechobee counties.'}
+                    </p>
+                    <div class="l506-panel-actions">
+                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                      <a href="/careers/" class="btn btn-secondary">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="l506-panel" data-panel="tab-5">
+                  <div class="l506-panel-inner">
+                    <div class="l506-icon">
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                    </div>
+                    <h2>{page?.quals?.[4]?.label ?? 'HIPAA-compliant home office'}</h2>
+                    <p>
+                      {page?.quals?.[4]?.body ?? 'Private, secure space for sessions. Locked door.'}
+                    </p>
+                    <div class="l506-panel-actions">
+                      {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                      <a href="/careers/" class="btn btn-secondary">
+                        Apply Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="l506-list" role="tablist">
+                  <button class="l506-trigger active" data-tab="tab-1">
+                    {page?.quals?.[0]?.tabLabel ?? 'Florida license'}
+                  </button>
+                  <button class="l506-trigger" data-tab="tab-2">
+                    {page?.quals?.[1]?.tabLabel ?? 'Medicare & Insurance enrollment'}
+                  </button>
+                  <button class="l506-trigger" data-tab="tab-3">
+                    {page?.quals?.[2]?.tabLabel ?? 'Clinical experience'}
+                  </button>
+                  <button class="l506-trigger" data-tab="tab-4">
+                    {page?.quals?.[3]?.tabLabel ?? 'SE Florida · facility'}
+                  </button>
+                  <button class="l506-trigger" data-tab="tab-5">
+                    {page?.quals?.[4]?.tabLabel ?? 'Home office · telehealth'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      if (id === 'testimonials')
+        return (
+          <section class="section t37-section">
+            <div class="container">
+              <div class="t37-head">
+                <div class="t37-head-inner">
+                  <h1>{page?.testimonialsHeading ?? 'What our therapists are saying'}</h1>
+                  <p class="text-md">
+                    {page?.testimonialsSubhead ??
+                      'Peer proof from clinicians already working with BYT.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="t37-grid">
+                <div class="t37-cell t37-badge">
+                  <div class="t37-badge-mark">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
+                        <path d="m9 12 2 2 4-4" />
+                      </>
+                    </svg>
+                  </div>
+                  {/* CMS-SKIP: compliance/trust badge */}
+                  <div class="t37-badge-text">
+                    <p class="t37-badge-eyebrow">NPI</p>
+                    <p class="t37-badge-label">Registered</p>
+                  </div>
+                </div>
+                <div class="t37-cell t37-badge">
+                  <div class="t37-badge-mark">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
+                        <path d="m9 12 2 2 4-4" />
+                      </>
+                    </svg>
+                  </div>
+                  {/* CMS-SKIP: compliance/trust badge */}
+                  <div class="t37-badge-text">
+                    <p class="t37-badge-eyebrow">HIPAA</p>
+                    <p class="t37-badge-label">Compliant</p>
+                  </div>
+                </div>
+                <div class="t37-cell t37-test order-last">
+                  <div class="t37-stars">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                  </div>
+                  <p class="t37-quote">
+                    {testimonials?.[0]?.quote ??
+                      '"[Provider testimonial — pending collection. Quote will speak to operational relief: billing, scheduling, and referrals handled so the clinician can focus on clinical work.]"'}
+                  </p>
+                  <div class="t37-meta">
+                    <img
+                      class="t37-avatar"
+                      src="/images/providers-testimonial-avatar.jpg"
+                      alt=""
+                      role="presentation"
+                    />
+                    <div>
+                      <p class="name">
+                        {testimonials?.[0]?.authorRole ?? '[Credential] · Facility-Based'}
+                      </p>
+                      <p>{testimonials?.[0]?.authorOrg ?? '[County], Southeast Florida'}</p>
+                    </div>
+                  </div>
+                  {/* CMS-SKIP: legal disclaimer */}
+                  <small style="display:block;font-size:12px;color:#9CA3AF;margin-top:4px;">
+                    Image for representation
+                  </small>
+                </div>
+                <div class="t37-cell t37-test">
+                  <div class="t37-stars">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
+                    </svg>
+                  </div>
+                  <p class="t37-quote">
+                    {testimonials?.[1]?.quote ??
+                      '"[Provider testimonial — pending collection. Quote will speak to flexibility and matched referrals: practicing on your own schedule without building a private practice from scratch.]"'}
+                  </p>
+                  <div class="t37-meta">
+                    <div class="t37-avatar t37-avatar-init">
+                      {testimonials?.[1]?.authorInitials ?? 'TT'}
+                    </div>
+                    <div>
+                      <p class="name">
+                        {testimonials?.[1]?.authorRole ?? '[Credential] · Teletherapy'}
+                      </p>
+                      <p>{testimonials?.[1]?.authorOrg ?? 'FL telehealth'}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="t37-cell t37-badge">
+                  <div class="t37-badge-mark">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
+                        <path d="m9 12 2 2 4-4" />
+                      </>
+                    </svg>
+                  </div>
+                  {/* CMS-SKIP: compliance/trust badge */}
+                  <div class="t37-badge-text">
+                    <p class="t37-badge-eyebrow">Florida</p>
+                    <p class="t37-badge-label">Licensed</p>
+                  </div>
+                </div>
+                <div class="t37-cell t37-badge">
+                  <div class="t37-badge-mark">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
+                        <path d="m9 12 2 2 4-4" />
+                      </>
+                    </svg>
+                  </div>
+                  {/* CMS-SKIP: compliance/trust badge */}
+                  <div class="t37-badge-text">
+                    <p class="t37-badge-eyebrow">Medicare &amp; Insurance</p>
+                    <p class="t37-badge-label">Enrolled</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      if (id === 'cta')
+        return (
+          <section class="section cta36-section">
+            <div class="container">
+              <div class="cta36-grid">
+                <div class="cta36-cell">
+                  <div class="icon-circle">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="9" y1="15" x2="15" y2="15" />
+                      </>
+                    </svg>
+                  </div>
+                  <h2>{page?.ctaHeading ?? 'Ready to do the work you were trained for?'}</h2>
+                  <p>{page?.ctaSubhead ?? 'Application only takes 3 minutes.'}</p>
+                  <div class="cta36-actions">
+                    <a href="/careers/" class="btn btn-primary">
+                      {page?.ctaCta?.label ?? 'Apply Now'}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      return null;
+    })
   }
 
   <script is:inline>

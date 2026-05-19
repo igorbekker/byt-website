@@ -56,7 +56,7 @@ interface PatientsPage {
   ctaHeading?: string;
   ctaSubhead?: string;
   ctaCta?: CtaLink;
-  sections?: Array<{ sectionId: string; enabled?: boolean }>;
+  sections?: Array<{ sectionId: string; enabled?: boolean; order?: number }>;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
@@ -79,9 +79,28 @@ const c = conditions ?? [];
 function sectionEnabled(id: string): boolean {
   const arr = page?.sections;
   if (!arr?.length) return true;
-  const entry = arr.find((sec) => sec.sectionId === id);
+  const entry = arr.find(
+    (sec: { sectionId: string; enabled?: boolean; order?: number }) => sec.sectionId === id,
+  );
   return entry ? entry.enabled !== false : true;
 }
+
+const sectionOrder = (id: string): number => {
+  if (!page?.sections || page.sections.length === 0) return 999;
+  const section = page.sections.find(
+    (s: { sectionId: string; enabled?: boolean; order?: number }) => s.sectionId === id,
+  );
+  return section?.order ?? 999;
+};
+
+const renderOrder = [
+  { id: 'hero', order: sectionOrder('hero') },
+  { id: 'audience_selector', order: sectionOrder('audience_selector') },
+  { id: 'delivery', order: sectionOrder('delivery') },
+  { id: 'belief', order: sectionOrder('belief') },
+  { id: 'conditions', order: sectionOrder('conditions') },
+  { id: 'cta', order: sectionOrder('cta') },
+].sort((a, b) => a.order - b.order);
 ---
 
 <BaseLayout
@@ -2141,499 +2160,488 @@ function sectionEnabled(id: string): boolean {
     }
   </style>
 
-  <!-- ── HEADER98: FULL-BLEED HERO ── -->
   {
-    sectionEnabled('hero') && (
-      <section class="ph-hero">
-        <div class="ph-hero-bg">
-          <img
-            src={page?.heroImage?.asset?.url ?? '/images/patients-hero-bg.jpg'}
-            alt={page?.heroImage?.alt ?? 'Warm morning light through sheer curtains'}
-            onerror="this.style.display='none'"
-          />
-          <div class="ph-hero-tint" />
-        </div>
-        <div class="ph-hero-content">
-          <h1 set:html={page?.heroHeading ?? 'Care that meets you <em>where you are</em>'} />
-          <p>
-            {page?.heroSubhead ??
-              'Licensed therapists at your facility in Palm Beach, Martin, St. Lucie, and Okeechobee counties, or secure video sessions from anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
-          </p>
-          <div class="ph-hero-cta">
-            <button class="btn btn-coral" onclick="openModal('book')">
-              {page?.heroPrimaryCta?.label ?? 'Book a session'}
-            </button>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── LAYOUT399: WHAT BRINGS YOU HERE — 4-CARD ROUTER ── -->
-  {
-    sectionEnabled('audience_selector') && (
-      <section class="ph-router">
-        <div class="ph-router-head">
-          <p class="eyebrow">{page?.audienceSelectorEyebrow ?? 'Choose'}</p>
-          <h2>{page?.audienceSelectorHeading ?? 'What brings you here?'}</h2>
-        </div>
-        <p class="ph-router-sub">
-          {page?.audienceSelectorSubhead ?? 'Find the right path to care.'}
-        </p>
-
-        <div class="ph-router-grid">
-          <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
-            <div class="ph-card-body">
-              <p class="ph-card-tag">{s[0]?.label ?? 'Families'}</p>
-              <h3>{s[0]?.heading ?? 'Seniors and families'}</h3>
-              <p>
-                {s[0]?.body ??
-                  'Your parent didn’t stop having an inner life when they moved into a facility.'}
-              </p>
-              {/* CMS-SKIP: UI affordance label */}
-              <span class="ph-card-link">
-                Explore <span class="arrow">&rsaquo;</span>
-              </span>
-            </div>
-            <div class="ph-card-img">
+    renderOrder.map(({ id }) => {
+      if (!sectionEnabled(id)) return null;
+      if (id === 'hero')
+        return (
+          <section class="ph-hero">
+            <div class="ph-hero-bg">
               <img
-                src={s[0]?.image?.asset?.url ?? '/images/patients-card-families.jpg'}
-                alt={s[0]?.image?.alt ?? 'Adult daughter visiting her elderly mother'}
-                onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
-              />
-            </div>
-          </a>
-
-          <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
-            <div class="ph-card-body">
-              <p class="ph-card-tag">{s[1]?.label ?? 'Adults'}</p>
-              <h3>{s[1]?.heading ?? 'Individual therapy'}</h3>
-              <p>
-                {s[1]?.body ??
-                  'You’ve already decided you want to talk to someone. The system shouldn’t be the reason you don’t.'}
-              </p>
-              {/* CMS-SKIP: UI affordance label */}
-              <span class="ph-card-link">
-                Explore <span class="arrow">&rsaquo;</span>
-              </span>
-            </div>
-            <div class="ph-card-img">
-              <img
-                src={s[1]?.image?.asset?.url ?? '/images/patients-card-adults.jpg'}
-                alt={s[1]?.image?.alt ?? 'Man walking on a sunny Florida sidewalk'}
-                onerror="this.parentElement.classList.add('img-ph','img-ph-coral')"
-              />
-            </div>
-          </a>
-
-          <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
-            <div class="ph-card-body">
-              <p class="ph-card-tag">{s[2]?.label ?? 'Support'}</p>
-              <h3>{s[2]?.heading ?? 'Caregivers'}</h3>
-              <p>
-                {s[2]?.body ??
-                  'You’ve been taking care of everyone else. You deserve the same access to care.'}
-              </p>
-              {/* CMS-SKIP: UI affordance label */}
-              <span class="ph-card-link">
-                Explore <span class="arrow">&rsaquo;</span>
-              </span>
-            </div>
-            <div class="ph-card-img">
-              <img
-                src={s[2]?.image?.asset?.url ?? '/images/patients-card-caregivers.jpg'}
-                alt={s[2]?.image?.alt ?? 'Woman having a quiet moment on her porch'}
-                onerror="this.parentElement.classList.add('img-ph','img-ph-navy')"
-              />
-            </div>
-          </a>
-
-          <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
-            <div class="ph-card-body">
-              <p class="ph-card-tag">{s[3]?.label ?? 'Español'}</p>
-              <h3>{s[3]?.heading ?? 'Terapia en español'}</h3>
-              <p>
-                {s[3]?.body ??
-                  'Cuidar de tu familia empieza contigo. Buscar ayuda no es debilidad.'}
-              </p>
-              {/* CMS-SKIP: UI affordance label */}
-              <span class="ph-card-link">
-                Explore <span class="arrow">&rsaquo;</span>
-              </span>
-            </div>
-            <div class="ph-card-img">
-              <img
-                src={s[3]?.image?.asset?.url ?? '/images/patients-card-espanol.jpg'}
-                alt={s[3]?.image?.alt ?? 'Mujer en su cocina con una taza de café'}
-                onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
-              />
-            </div>
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── LAYOUT422: TWO WAYS TO GET STARTED ── -->
-  {
-    sectionEnabled('delivery') && (
-      <section class="ph-twoways">
-        <div class="ph-twoways-head">
-          <p class="eyebrow">{page?.deliveryEyebrow ?? 'Delivery'}</p>
-          <h2>{page?.deliveryHeading ?? 'Two ways to get started'}</h2>
-          <p class="ph-twoways-sub">
-            {page?.deliverySubhead ?? 'Pick the model that works for your life right now.'}
-          </p>
-        </div>
-
-        <div class="ph-twoways-grid">
-          <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
-            <div class="ph-way-bg">
-              <img
-                src={d[0]?.image?.asset?.url ?? '/images/patients-track-tele.jpg'}
-                alt="Young woman in a video therapy session from home"
+                src={page?.heroImage?.asset?.url ?? '/images/patients-hero-bg.jpg'}
+                alt={page?.heroImage?.alt ?? 'Warm morning light through sheer curtains'}
                 onerror="this.style.display='none'"
               />
-              <div class="ph-way-tint" />
+              <div class="ph-hero-tint" />
             </div>
-            <div class="ph-way-foot">
-              <p class="ph-way-tag">{d[0]?.label ?? 'Teletherapy'}</p>
-              <h3>{d[0]?.heading ?? 'Secure video from anywhere in Florida'}</h3>
-              <div class="ph-way-extra">
-                <p>
-                  {d[0]?.body ??
-                    '50-minute sessions on a HIPAA-compliant platform. Evening and weekend availability. Most major insurance accepted, with Spanish-speaking therapists on staff.'}
-                </p>
-                {/* CMS-SKIP: UI affordance label */}
-                <span class="ph-way-link">
-                  Learn more <span class="arrow">&rsaquo;</span>
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
-            <div class="ph-way-bg">
-              <img
-                src={d[1]?.image?.asset?.url ?? '/images/patients-track-facility.jpg'}
-                alt="Senior resident talking with her therapist"
-                onerror="this.style.display='none'"
-              />
-              <div class="ph-way-tint" />
-            </div>
-            <div class="ph-way-foot">
-              <p class="ph-way-tag">{d[1]?.label ?? 'On-site'}</p>
-              <h3>{d[1]?.heading ?? 'On-site therapy at your facility'}</h3>
-              <div class="ph-way-extra">
-                <p>
-                  {d[1]?.body ??
-                    'Licensed therapists placed inside your facility weekly. Medicare and private insurance billed directly. Available in Palm Beach, Martin, St. Lucie, and Okeechobee counties.'}
-                </p>
-                {/* CMS-SKIP: UI affordance label */}
-                <span class="ph-way-link">
-                  Learn more <span class="arrow">&rsaquo;</span>
-                </span>
-              </div>
-            </div>
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── BELIEF BAND (preserved from prior version) ── -->
-  {
-    sectionEnabled('belief') && (
-      <section class="belief">
-        <div class="belief-inner">
-          <div class="belief-rule" aria-hidden="true" />
-          <h2>{page?.beliefQuote ?? '“Mental health care belongs to everyone.”'}</h2>
-          <p>
-            {page?.beliefBody ??
-              'Mental health care is not a luxury. It’s not reserved for people in crisis, or people with the right insurance, or people who can take a Tuesday afternoon off work to drive across town. It belongs to seniors aging in place, adults navigating the messy middle, caregivers running on empty, and Spanish-speaking families who deserve to be understood in their own language. We’re here to make that real.'}
-          </p>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── LAYOUT505: VERTICAL TABS — Conditions we treat ── -->
-  {
-    sectionEnabled('conditions') && (
-      <section class="ph-l505">
-        <div class="l505-head">
-          <p class="eyebrow">{page?.conditionsEyebrow ?? 'Conditions we treat'}</p>
-          <h2>{page?.conditionsHeading ?? 'Care for what’s actually going on'}</h2>
-          <p>
-            {page?.conditionsSubhead ??
-              'Evidence-based therapy for the most common reasons people reach out — across life stages, languages, and care settings.'}
-          </p>
-        </div>
-
-        <div class="l505-tabs" id="l505">
-          <div class="l505-list" role="tablist">
-            <button class="l505-trigger active" data-tab="l505-tab-1">
-              {c[0]?.tagline ?? 'Anxiety'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-2">
-              {c[1]?.tagline ?? 'Depression'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-3">
-              {c[2]?.tagline ?? 'Grief & loss'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-4">
-              {c[3]?.tagline ?? 'Trauma & PTSD'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-5">
-              {c[4]?.tagline ?? 'Life transitions'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-6">
-              {c[5]?.tagline ?? 'Caregiver burnout'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-7">
-              {c[6]?.tagline ?? 'Relationships'}
-            </button>
-            <button class="l505-trigger" data-tab="l505-tab-8">
-              {c[7]?.tagline ?? 'Self-esteem'}
-            </button>
-          </div>
-
-          <div class="l505-panel active" data-panel="l505-tab-1">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 8v4l3 2" />
-                  </>
-                </svg>
-              </div>
-              <h3>{c[0]?.heading ?? 'Anxiety'}</h3>
+            <div class="ph-hero-content">
+              <h1 set:html={page?.heroHeading ?? 'Care that meets you <em>where you are</em>'} />
               <p>
-                {c[0]?.body ??
-                  'Generalized worry, panic, social anxiety, and the running list of “what-ifs” that won’t quiet down. We use cognitive-behavioral and acceptance-based approaches to help you name what’s happening, build skills that actually work, and live without bracing for the next thing.'}
+                {page?.heroSubhead ??
+                  'Licensed therapists at your facility in Palm Beach, Martin, St. Lucie, and Okeechobee counties, or secure video sessions from anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
               </p>
-            </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-2">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
+              <div class="ph-hero-cta">
+                <button class="btn btn-coral" onclick="openModal('book')">
+                  {page?.heroPrimaryCta?.label ?? 'Book a session'}
+                </button>
               </div>
-              <h3>{c[1]?.heading ?? 'Depression'}</h3>
-              <p>
-                {c[1]?.body ??
-                  'Low mood, exhaustion, loss of interest, the sense that something has gone flat. Depression isn’t laziness or weakness — it’s treatable. Therapy helps you understand what’s underneath it and build a way back toward the things that matter.'}
-              </p>
             </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-3">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <h3>{c[2]?.heading ?? 'Grief & loss'}</h3>
-              <p>
-                {c[2]?.body ??
-                  'Death of a partner, parent, or friend. Loss of a relationship, a role, an identity, a future you expected. Grief doesn’t move in stages — it moves in waves. We give it the room and the language it needs.'}
-              </p>
+          </section>
+        );
+      if (id === 'audience_selector')
+        return (
+          <section class="ph-router">
+            <div class="ph-router-head">
+              <p class="eyebrow">{page?.audienceSelectorEyebrow ?? 'Choose'}</p>
+              <h2>{page?.audienceSelectorHeading ?? 'What brings you here?'}</h2>
             </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-4">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <h3>{c[3]?.heading ?? 'Trauma & PTSD'}</h3>
-              <p>
-                {c[3]?.body ??
-                  'Past combat, abuse, accidents, medical events, or single experiences that reshaped your nervous system. Trauma-informed therapy — including evidence-based PTSD modalities — helps you process what happened and reduce the symptoms that keep showing up uninvited.'}
-              </p>
-            </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-5">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M3 12h18M12 3v18" />
-                </svg>
-              </div>
-              <h3>{c[4]?.heading ?? 'Life transitions'}</h3>
-              <p>
-                {c[4]?.body ??
-                  'Career change, a move, becoming a parent, an empty nest, retirement, divorce, the death of a parent. Transitions are where identity gets renegotiated. Therapy helps you do that on purpose, instead of just reacting to it.'}
-              </p>
-            </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-6">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-              </div>
-              <h3>{c[5]?.heading ?? 'Caregiver burnout'}</h3>
-              <p>
-                {c[5]?.body ??
-                  'Caring for an aging parent, a partner with chronic illness, a child with complex needs. The exhaustion, guilt, resentment, and grief that come with it are real and they’re not character flaws. Therapy is for the caregiver, not just the person being cared for.'}
-              </p>
-            </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-7">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <>
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    <path d="M21 21v-2a4 4 0 0 0-3-3.87" />
-                  </>
-                </svg>
-              </div>
-              <h3>{c[6]?.heading ?? 'Relationships'}</h3>
-              <p>
-                {c[6]?.body ??
-                  'The patterns that keep replaying with partners, family, or friends. Communication that breaks down in the same place every time. We help you see the dynamic clearly and decide what to do with it — together or on your own.'}
-              </p>
-            </div>
-          </div>
-
-          <div class="l505-panel" data-panel="l505-tab-8">
-            <div class="l505-panel-inner">
-              <div class="l505-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                </svg>
-              </div>
-              <h3>{c[7]?.heading ?? 'Self-esteem & identity'}</h3>
-              <p>
-                {c[7]?.body ??
-                  'The inner critic that’s louder than it needs to be. Imposter feelings, perfectionism, the sense that you’re somehow getting it wrong. Therapy helps you separate the voice that’s been running the show from the person actually doing the living.'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- ── CTA35: TWO CTA COLUMNS ── -->
-  {
-    sectionEnabled('cta') && (
-      <section class="ph-cta35">
-        <div class="ph-cta35-grid">
-          <div class="ph-cta35-col">
-            <div class="ph-cta35-mark" aria-hidden="true">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" />
-                <path
-                  d="M16 24l6 6 12-14"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h2>{page?.ctaHeading ?? 'Access care that works'}</h2>
-            <p>
-              {page?.ctaSubhead ??
-                'On-site at your facility or from anywhere in Florida. Licensed therapists. Insurance accepted. Available this week.'}
+            <p class="ph-router-sub">
+              {page?.audienceSelectorSubhead ?? 'Find the right path to care.'}
             </p>
-            <div class="ph-cta35-actions">
-              <button class="btn btn-coral" onclick="openModal('book')">
-                {page?.ctaCta?.label ?? 'Book a session'}
-              </button>
+
+            <div class="ph-router-grid">
+              <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
+                <div class="ph-card-body">
+                  <p class="ph-card-tag">{s[0]?.label ?? 'Families'}</p>
+                  <h3>{s[0]?.heading ?? 'Seniors and families'}</h3>
+                  <p>
+                    {s[0]?.body ??
+                      'Your parent didn’t stop having an inner life when they moved into a facility.'}
+                  </p>
+                  {/* CMS-SKIP: UI affordance label */}
+                  <span class="ph-card-link">
+                    Explore <span class="arrow">&rsaquo;</span>
+                  </span>
+                </div>
+                <div class="ph-card-img">
+                  <img
+                    src={s[0]?.image?.asset?.url ?? '/images/patients-card-families.jpg'}
+                    alt={s[0]?.image?.alt ?? 'Adult daughter visiting her elderly mother'}
+                    onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
+                  />
+                </div>
+              </a>
+
+              <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
+                <div class="ph-card-body">
+                  <p class="ph-card-tag">{s[1]?.label ?? 'Adults'}</p>
+                  <h3>{s[1]?.heading ?? 'Individual therapy'}</h3>
+                  <p>
+                    {s[1]?.body ??
+                      'You’ve already decided you want to talk to someone. The system shouldn’t be the reason you don’t.'}
+                  </p>
+                  {/* CMS-SKIP: UI affordance label */}
+                  <span class="ph-card-link">
+                    Explore <span class="arrow">&rsaquo;</span>
+                  </span>
+                </div>
+                <div class="ph-card-img">
+                  <img
+                    src={s[1]?.image?.asset?.url ?? '/images/patients-card-adults.jpg'}
+                    alt={s[1]?.image?.alt ?? 'Man walking on a sunny Florida sidewalk'}
+                    onerror="this.parentElement.classList.add('img-ph','img-ph-coral')"
+                  />
+                </div>
+              </a>
+
+              <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
+                <div class="ph-card-body">
+                  <p class="ph-card-tag">{s[2]?.label ?? 'Support'}</p>
+                  <h3>{s[2]?.heading ?? 'Caregivers'}</h3>
+                  <p>
+                    {s[2]?.body ??
+                      'You’ve been taking care of everyone else. You deserve the same access to care.'}
+                  </p>
+                  {/* CMS-SKIP: UI affordance label */}
+                  <span class="ph-card-link">
+                    Explore <span class="arrow">&rsaquo;</span>
+                  </span>
+                </div>
+                <div class="ph-card-img">
+                  <img
+                    src={s[2]?.image?.asset?.url ?? '/images/patients-card-caregivers.jpg'}
+                    alt={s[2]?.image?.alt ?? 'Woman having a quiet moment on her porch'}
+                    onerror="this.parentElement.classList.add('img-ph','img-ph-navy')"
+                  />
+                </div>
+              </a>
+
+              <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-card">
+                <div class="ph-card-body">
+                  <p class="ph-card-tag">{s[3]?.label ?? 'Español'}</p>
+                  <h3>{s[3]?.heading ?? 'Terapia en español'}</h3>
+                  <p>
+                    {s[3]?.body ??
+                      'Cuidar de tu familia empieza contigo. Buscar ayuda no es debilidad.'}
+                  </p>
+                  {/* CMS-SKIP: UI affordance label */}
+                  <span class="ph-card-link">
+                    Explore <span class="arrow">&rsaquo;</span>
+                  </span>
+                </div>
+                <div class="ph-card-img">
+                  <img
+                    src={s[3]?.image?.asset?.url ?? '/images/patients-card-espanol.jpg'}
+                    alt={s[3]?.image?.alt ?? 'Mujer en su cocina con una taza de café'}
+                    onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
+                  />
+                </div>
+              </a>
             </div>
-          </div>
-        </div>
-      </section>
-    )
+          </section>
+        );
+      if (id === 'delivery')
+        return (
+          <section class="ph-twoways">
+            <div class="ph-twoways-head">
+              <p class="eyebrow">{page?.deliveryEyebrow ?? 'Delivery'}</p>
+              <h2>{page?.deliveryHeading ?? 'Two ways to get started'}</h2>
+              <p class="ph-twoways-sub">
+                {page?.deliverySubhead ?? 'Pick the model that works for your life right now.'}
+              </p>
+            </div>
+
+            <div class="ph-twoways-grid">
+              <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
+                <div class="ph-way-bg">
+                  <img
+                    src={d[0]?.image?.asset?.url ?? '/images/patients-track-tele.jpg'}
+                    alt="Young woman in a video therapy session from home"
+                    onerror="this.style.display='none'"
+                  />
+                  <div class="ph-way-tint" />
+                </div>
+                <div class="ph-way-foot">
+                  <p class="ph-way-tag">{d[0]?.label ?? 'Teletherapy'}</p>
+                  <h3>{d[0]?.heading ?? 'Secure video from anywhere in Florida'}</h3>
+                  <div class="ph-way-extra">
+                    <p>
+                      {d[0]?.body ??
+                        '50-minute sessions on a HIPAA-compliant platform. Evening and weekend availability. Most major insurance accepted, with Spanish-speaking therapists on staff.'}
+                    </p>
+                    {/* CMS-SKIP: UI affordance label */}
+                    <span class="ph-way-link">
+                      Learn more <span class="arrow">&rsaquo;</span>
+                    </span>
+                  </div>
+                </div>
+              </a>
+
+              <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
+                <div class="ph-way-bg">
+                  <img
+                    src={d[1]?.image?.asset?.url ?? '/images/patients-track-facility.jpg'}
+                    alt="Senior resident talking with her therapist"
+                    onerror="this.style.display='none'"
+                  />
+                  <div class="ph-way-tint" />
+                </div>
+                <div class="ph-way-foot">
+                  <p class="ph-way-tag">{d[1]?.label ?? 'On-site'}</p>
+                  <h3>{d[1]?.heading ?? 'On-site therapy at your facility'}</h3>
+                  <div class="ph-way-extra">
+                    <p>
+                      {d[1]?.body ??
+                        'Licensed therapists placed inside your facility weekly. Medicare and private insurance billed directly. Available in Palm Beach, Martin, St. Lucie, and Okeechobee counties.'}
+                    </p>
+                    {/* CMS-SKIP: UI affordance label */}
+                    <span class="ph-way-link">
+                      Learn more <span class="arrow">&rsaquo;</span>
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </section>
+        );
+      if (id === 'belief')
+        return (
+          <section class="belief">
+            <div class="belief-inner">
+              <div class="belief-rule" aria-hidden="true" />
+              <h2>{page?.beliefQuote ?? '“Mental health care belongs to everyone.”'}</h2>
+              <p>
+                {page?.beliefBody ??
+                  'Mental health care is not a luxury. It’s not reserved for people in crisis, or people with the right insurance, or people who can take a Tuesday afternoon off work to drive across town. It belongs to seniors aging in place, adults navigating the messy middle, caregivers running on empty, and Spanish-speaking families who deserve to be understood in their own language. We’re here to make that real.'}
+              </p>
+            </div>
+          </section>
+        );
+      if (id === 'conditions')
+        return (
+          <section class="ph-l505">
+            <div class="l505-head">
+              <p class="eyebrow">{page?.conditionsEyebrow ?? 'Conditions we treat'}</p>
+              <h2>{page?.conditionsHeading ?? 'Care for what’s actually going on'}</h2>
+              <p>
+                {page?.conditionsSubhead ??
+                  'Evidence-based therapy for the most common reasons people reach out — across life stages, languages, and care settings.'}
+              </p>
+            </div>
+
+            <div class="l505-tabs" id="l505">
+              <div class="l505-list" role="tablist">
+                <button class="l505-trigger active" data-tab="l505-tab-1">
+                  {c[0]?.tagline ?? 'Anxiety'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-2">
+                  {c[1]?.tagline ?? 'Depression'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-3">
+                  {c[2]?.tagline ?? 'Grief & loss'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-4">
+                  {c[3]?.tagline ?? 'Trauma & PTSD'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-5">
+                  {c[4]?.tagline ?? 'Life transitions'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-6">
+                  {c[5]?.tagline ?? 'Caregiver burnout'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-7">
+                  {c[6]?.tagline ?? 'Relationships'}
+                </button>
+                <button class="l505-trigger" data-tab="l505-tab-8">
+                  {c[7]?.tagline ?? 'Self-esteem'}
+                </button>
+              </div>
+
+              <div class="l505-panel active" data-panel="l505-tab-1">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 8v4l3 2" />
+                      </>
+                    </svg>
+                  </div>
+                  <h3>{c[0]?.heading ?? 'Anxiety'}</h3>
+                  <p>
+                    {c[0]?.body ??
+                      'Generalized worry, panic, social anxiety, and the running list of “what-ifs” that won’t quiet down. We use cognitive-behavioral and acceptance-based approaches to help you name what’s happening, build skills that actually work, and live without bracing for the next thing.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-2">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </div>
+                  <h3>{c[1]?.heading ?? 'Depression'}</h3>
+                  <p>
+                    {c[1]?.body ??
+                      'Low mood, exhaustion, loss of interest, the sense that something has gone flat. Depression isn’t laziness or weakness — it’s treatable. Therapy helps you understand what’s underneath it and build a way back toward the things that matter.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-3">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </div>
+                  <h3>{c[2]?.heading ?? 'Grief & loss'}</h3>
+                  <p>
+                    {c[2]?.body ??
+                      'Death of a partner, parent, or friend. Loss of a relationship, a role, an identity, a future you expected. Grief doesn’t move in stages — it moves in waves. We give it the room and the language it needs.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-4">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </div>
+                  <h3>{c[3]?.heading ?? 'Trauma & PTSD'}</h3>
+                  <p>
+                    {c[3]?.body ??
+                      'Past combat, abuse, accidents, medical events, or single experiences that reshaped your nervous system. Trauma-informed therapy — including evidence-based PTSD modalities — helps you process what happened and reduce the symptoms that keep showing up uninvited.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-5">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M3 12h18M12 3v18" />
+                    </svg>
+                  </div>
+                  <h3>{c[4]?.heading ?? 'Life transitions'}</h3>
+                  <p>
+                    {c[4]?.body ??
+                      'Career change, a move, becoming a parent, an empty nest, retirement, divorce, the death of a parent. Transitions are where identity gets renegotiated. Therapy helps you do that on purpose, instead of just reacting to it.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-6">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </div>
+                  <h3>{c[5]?.heading ?? 'Caregiver burnout'}</h3>
+                  <p>
+                    {c[5]?.body ??
+                      'Caring for an aging parent, a partner with chronic illness, a child with complex needs. The exhaustion, guilt, resentment, and grief that come with it are real and they’re not character flaws. Therapy is for the caregiver, not just the person being cared for.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-7">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <>
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        <path d="M21 21v-2a4 4 0 0 0-3-3.87" />
+                      </>
+                    </svg>
+                  </div>
+                  <h3>{c[6]?.heading ?? 'Relationships'}</h3>
+                  <p>
+                    {c[6]?.body ??
+                      'The patterns that keep replaying with partners, family, or friends. Communication that breaks down in the same place every time. We help you see the dynamic clearly and decide what to do with it — together or on your own.'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="l505-panel" data-panel="l505-tab-8">
+                <div class="l505-panel-inner">
+                  <div class="l505-icon">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                    </svg>
+                  </div>
+                  <h3>{c[7]?.heading ?? 'Self-esteem & identity'}</h3>
+                  <p>
+                    {c[7]?.body ??
+                      'The inner critic that’s louder than it needs to be. Imposter feelings, perfectionism, the sense that you’re somehow getting it wrong. Therapy helps you separate the voice that’s been running the show from the person actually doing the living.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      if (id === 'cta')
+        return (
+          <section class="ph-cta35">
+            <div class="ph-cta35-grid">
+              <div class="ph-cta35-col">
+                <div class="ph-cta35-mark" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" />
+                    <path
+                      d="M16 24l6 6 12-14"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <h2>{page?.ctaHeading ?? 'Access care that works'}</h2>
+                <p>
+                  {page?.ctaSubhead ??
+                    'On-site at your facility or from anywhere in Florida. Licensed therapists. Insurance accepted. Available this week.'}
+                </p>
+                <div class="ph-cta35-actions">
+                  <button class="btn btn-coral" onclick="openModal('book')">
+                    {page?.ctaCta?.label ?? 'Book a session'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      return null;
+    })
   }
 
   <script is:inline>
