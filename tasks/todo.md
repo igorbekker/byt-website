@@ -1333,3 +1333,73 @@ Add `subtopicsHeading` and `categoryPostsHeading` to `blogCategory.ts`, wire bot
 **Verification:** `pnpm typecheck` web PASS — 0 errors. Studio redirect.ts error confirmed pre-existing (stash test). Build pending at commit time.
 
 **Total code files changed:** 4
+
+---
+
+### Move modal form options to Sanity formOption documents — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Move all hardcoded `<option>`, radio button labels, and chip labels from ModalForms.astro into Sanity `formOption` documents. 10 groups, 52 documents.
+
+- [x] PRE-FLIGHT: Read ModalForms.astro — extracted all options verbatim; grouped by field; counted per group before touching anything
+- [x] Created `apps/studio/schemas/documents/formOption.ts` — fields: optionGroup (string, required, list of 10 groups), label (string, required), value (string), order (number), isActive (boolean, default true); preview shows label + group
+- [x] Registered `formOption` in `apps/studio/schemas/index.ts`
+- [x] Added `formOption` to Studio sidebar in `apps/studio/structure/index.ts` (under a divider, after Job Postings)
+- [x] Added `FORM_OPTIONS_QUERY` to `apps/web/src/lib/queries.ts` — active-only, ordered by group then order
+- [x] Updated `BaseLayout.astro`: added `FormOption` interface; added `FORM_OPTIONS_QUERY` to parallel fetch; computed `optionsByGroup` via reduce; passed `optionsByGroup` as new prop to ModalForms
+- [x] Updated `ModalForms.astro`: added `FormOption` interface + `optionsByGroup` prop (default `{}`); defined 10 `defaultXxx` arrays with all original hardcoded values; computed 10 `xxxOpts` resolved arrays (Sanity if present, default if not); replaced all 10 hardcoded option/radio/chip blocks with `.map()` renders
+- [x] Created `scripts/seed-form-options.mjs` — 52 documents with deterministic `_id`s, all published (no drafts prefix)
+- [x] Ran seed script — 52 formOption documents created in Sanity production
+- [x] Sanity verification query: `count(*[_type=="formOption" && isActive == true])` → 52 ✓
+- [x] `pnpm --filter web build` — PASSED (19 routes, 0 errors); key route sizes: index 47,479 bytes, patients 45,394 bytes, communities 53,794 bytes ✓
+
+### Session Review — 2026-05-19 (formOption documents)
+
+**What was done:** Created a `formOption` Sanity document type to hold all form dropdown options, radio button labels, and chip labels from the Book and Refer modals. Seeded 52 published documents across 10 groups. ModalForms now renders options from Sanity with full hardcoded fallback arrays — no change to form field structure, names, CSS, or JavaScript.
+
+**Files changed (code):**
+
+- `apps/studio/schemas/documents/formOption.ts` (new)
+- `apps/studio/schemas/index.ts` — import + registration added
+- `apps/studio/structure/index.ts` — Form Options item added after Job Postings (with divider)
+- `apps/web/src/lib/queries.ts` — `FORM_OPTIONS_QUERY` added
+- `apps/web/src/layouts/BaseLayout.astro` — `FormOption` interface, parallel fetch, `optionsByGroup` reduce, prop pass-through
+- `apps/web/src/components/ui/ModalForms.astro` — `FormOption` interface, `optionsByGroup` prop, 10 default arrays, 10 resolved arrays, 10 dynamic renders
+
+**Files changed (data/scripts):**
+
+- `scripts/seed-form-options.mjs` (new — not deployed)
+- Sanity `production` dataset — 52 `formOption` documents created
+
+**Option counts seeded:**
+
+| Group                | Count  |
+| -------------------- | ------ |
+| bookFor              | 3      |
+| conditionReasons     | 7      |
+| paymentMethods       | 4      |
+| availabilitySlots    | 4      |
+| facilityTypes        | 6      |
+| serviceCounties      | 7      |
+| bedCounts            | 5      |
+| existingCareStatuses | 4      |
+| facilityRoles        | 6      |
+| interestReasons      | 6      |
+| **Total**            | **52** |
+
+**Wiring pattern used:**
+
+```astro
+{conditionReasonOpts.map((opt) => <option value={opt.value || opt.label}>{opt.label}</option>)}
+```
+
+Fallback resolution: `optionsByGroup?.conditionReasons?.length ? optionsByGroup.conditionReasons : defaultConditionReasons`
+
+**Implementation notes:**
+
+- `bookFor` radios: first option gets `checked={i === 0}` to preserve default-checked behavior
+- Options with explicit `value` fields (bookFor radios, availability chips, interest chips) preserve their original `value` attributes; label-only options use label as value
+- Note: `isActive` filtering and `order` sorting happen in GROQ — no client-side sort needed
+
+**Verification:** Build PASS — 19 routes, 0 errors. Key routes non-zero bytes ✓. Sanity query confirmed 52 active documents ✓. All 10 hardcoded blocks replaced ✓.
+
+**Issues:** Seed script initially had wrong project ID (`avsm6e9m` instead of `bpjtbps6`). Caught immediately on first run, corrected before any data was written.

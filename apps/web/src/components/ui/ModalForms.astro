@@ -5,6 +5,13 @@
  * Source: design-source/pages/CTA Forms.html lines 153–469 (CSS), 584–897 (HTML)
  */
 
+interface FormOption {
+  optionGroup: string;
+  label: string;
+  value?: string;
+  order?: number;
+}
+
 interface Props {
   bookId: string;
   referralId: string;
@@ -29,6 +36,7 @@ interface Props {
   referAsideEyebrow?: string;
   referAsideSteps?: { stepNumber: string; text: string }[];
   referAsideContactEyebrow?: string;
+  optionsByGroup?: Record<string, FormOption[]>;
 }
 const {
   bookId,
@@ -54,7 +62,110 @@ const {
   referAsideEyebrow,
   referAsideSteps,
   referAsideContactEyebrow,
+  optionsByGroup = {},
 } = Astro.props;
+
+const defaultBookFor: FormOption[] = [
+  { optionGroup: 'bookFor', label: 'For myself', value: 'self' },
+  { optionGroup: 'bookFor', label: 'For a loved one', value: 'loved-one' },
+  { optionGroup: 'bookFor', label: 'Couples / family', value: 'couple' },
+];
+const defaultConditionReasons: FormOption[] = [
+  { optionGroup: 'conditionReasons', label: 'Depression or anxiety' },
+  { optionGroup: 'conditionReasons', label: 'Grief, loss, or life transition' },
+  { optionGroup: 'conditionReasons', label: 'Trauma / PTSD' },
+  { optionGroup: 'conditionReasons', label: 'Relationships, couples, or family' },
+  { optionGroup: 'conditionReasons', label: 'Caregiver stress or burnout' },
+  { optionGroup: 'conditionReasons', label: 'Something else' },
+  { optionGroup: 'conditionReasons', label: 'Not sure yet' },
+];
+const defaultPaymentMethods: FormOption[] = [
+  { optionGroup: 'paymentMethods', label: 'Medicare' },
+  { optionGroup: 'paymentMethods', label: 'Private insurance' },
+  { optionGroup: 'paymentMethods', label: 'Cash-pay / out-of-pocket' },
+  { optionGroup: 'paymentMethods', label: 'Not sure — please advise' },
+];
+const defaultAvailabilitySlots: FormOption[] = [
+  { optionGroup: 'availabilitySlots', label: 'Weekday mornings', value: 'weekday-am' },
+  { optionGroup: 'availabilitySlots', label: 'Weekday afternoons', value: 'weekday-pm' },
+  { optionGroup: 'availabilitySlots', label: 'Evenings', value: 'evenings' },
+  { optionGroup: 'availabilitySlots', label: 'Weekends', value: 'weekends' },
+];
+const defaultFacilityTypes: FormOption[] = [
+  { optionGroup: 'facilityTypes', label: 'Assisted Living (ALF)' },
+  { optionGroup: 'facilityTypes', label: 'Skilled Nursing (SNF)' },
+  { optionGroup: 'facilityTypes', label: 'Memory Care' },
+  { optionGroup: 'facilityTypes', label: 'Continuing Care (CCRC)' },
+  { optionGroup: 'facilityTypes', label: 'Independent Living' },
+  { optionGroup: 'facilityTypes', label: 'Other' },
+];
+const defaultServiceCounties: FormOption[] = [
+  { optionGroup: 'serviceCounties', label: 'Palm Beach' },
+  { optionGroup: 'serviceCounties', label: 'Broward' },
+  { optionGroup: 'serviceCounties', label: 'Miami-Dade' },
+  { optionGroup: 'serviceCounties', label: 'Martin' },
+  { optionGroup: 'serviceCounties', label: 'St. Lucie' },
+  { optionGroup: 'serviceCounties', label: 'Okeechobee' },
+  { optionGroup: 'serviceCounties', label: 'Other Florida county' },
+];
+const defaultBedCounts: FormOption[] = [
+  { optionGroup: 'bedCounts', label: 'Under 50' },
+  { optionGroup: 'bedCounts', label: '50–100' },
+  { optionGroup: 'bedCounts', label: '100–200' },
+  { optionGroup: 'bedCounts', label: '200+' },
+  { optionGroup: 'bedCounts', label: 'Not sure' },
+];
+const defaultExistingCareStatuses: FormOption[] = [
+  { optionGroup: 'existingCareStatuses', label: 'None — looking for a partner' },
+  { optionGroup: 'existingCareStatuses', label: 'Limited / occasional' },
+  { optionGroup: 'existingCareStatuses', label: 'Have a provider, exploring options' },
+  { optionGroup: 'existingCareStatuses', label: 'Just gathering information' },
+];
+const defaultFacilityRoles: FormOption[] = [
+  { optionGroup: 'facilityRoles', label: 'Wellness Director' },
+  { optionGroup: 'facilityRoles', label: 'Executive Director' },
+  { optionGroup: 'facilityRoles', label: 'Social Worker / Case Manager' },
+  { optionGroup: 'facilityRoles', label: 'Director of Nursing' },
+  { optionGroup: 'facilityRoles', label: 'Administrator' },
+  { optionGroup: 'facilityRoles', label: 'Other' },
+];
+const defaultInterestReasons: FormOption[] = [
+  { optionGroup: 'interestReasons', label: 'A resident needs care now', value: 'resident-need' },
+  { optionGroup: 'interestReasons', label: 'Support our care team', value: 'team-support' },
+  { optionGroup: 'interestReasons', label: 'Families keep asking', value: 'family-asks' },
+  { optionGroup: 'interestReasons', label: 'Survey / compliance', value: 'compliance' },
+  { optionGroup: 'interestReasons', label: 'Replacing a provider', value: 'replacing' },
+  { optionGroup: 'interestReasons', label: 'Just exploring', value: 'exploring' },
+];
+
+const bookForOpts = optionsByGroup?.bookFor?.length ? optionsByGroup.bookFor : defaultBookFor;
+const conditionReasonOpts = optionsByGroup?.conditionReasons?.length
+  ? optionsByGroup.conditionReasons
+  : defaultConditionReasons;
+const paymentMethodOpts = optionsByGroup?.paymentMethods?.length
+  ? optionsByGroup.paymentMethods
+  : defaultPaymentMethods;
+const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
+  ? optionsByGroup.availabilitySlots
+  : defaultAvailabilitySlots;
+const facilityTypeOpts = optionsByGroup?.facilityTypes?.length
+  ? optionsByGroup.facilityTypes
+  : defaultFacilityTypes;
+const serviceCountyOpts = optionsByGroup?.serviceCounties?.length
+  ? optionsByGroup.serviceCounties
+  : defaultServiceCounties;
+const bedCountOpts = optionsByGroup?.bedCounts?.length
+  ? optionsByGroup.bedCounts
+  : defaultBedCounts;
+const existingCareOpts = optionsByGroup?.existingCareStatuses?.length
+  ? optionsByGroup.existingCareStatuses
+  : defaultExistingCareStatuses;
+const facilityRoleOpts = optionsByGroup?.facilityRoles?.length
+  ? optionsByGroup.facilityRoles
+  : defaultFacilityRoles;
+const interestReasonOpts = optionsByGroup?.interestReasons?.length
+  ? optionsByGroup.interestReasons
+  : defaultInterestReasons;
 ---
 
 <style is:global>
@@ -737,18 +848,21 @@ const {
         <div class="form-section-label">Who's this session for?</div>
         <div class="form-field" style="margin-bottom:1.25rem">
           <div class="seg" role="radiogroup" aria-label="Who's this session for">
-            <label
-              ><input type="radio" name="bookFor" value="self" checked /><span>For myself</span
-              ></label
-            >
-            <label
-              ><input type="radio" name="bookFor" value="loved-one" /><span>For a loved one</span
-              ></label
-            >
-            <label
-              ><input type="radio" name="bookFor" value="couple" /><span>Couples / family</span
-              ></label
-            >
+            {
+              bookForOpts.map((opt, i) => (
+                <label>
+                  <>
+                    <input
+                      type="radio"
+                      name="bookFor"
+                      value={opt.value || opt.label}
+                      checked={i === 0}
+                    />
+                    <span>{opt.label}</span>
+                  </>
+                </label>
+              ))
+            }
           </div>
         </div>
 
@@ -807,23 +921,22 @@ const {
             <label for="bookReason">What brings you in? <span class="req">*</span></label>
             <select id="bookReason" name="reason" required>
               <option value="" disabled selected>Select what fits best</option>
-              <option>Depression or anxiety</option>
-              <option>Grief, loss, or life transition</option>
-              <option>Trauma / PTSD</option>
-              <option>Relationships, couples, or family</option>
-              <option>Caregiver stress or burnout</option>
-              <option>Something else</option>
-              <option>Not sure yet</option>
+              {
+                conditionReasonOpts.map((opt) => (
+                  <option value={opt.value || opt.label}>{opt.label}</option>
+                ))
+              }
             </select>
           </div>
           <div class="form-field">
             <label for="bookPayment">How will you pay? <span class="req">*</span></label>
             <select id="bookPayment" name="payment" required>
               <option value="" disabled selected>Select an option</option>
-              <option>Medicare</option>
-              <option>Private insurance</option>
-              <option>Cash-pay / out-of-pocket</option>
-              <option>Not sure — please advise</option>
+              {
+                paymentMethodOpts.map((opt) => (
+                  <option value={opt.value || opt.label}>{opt.label}</option>
+                ))
+              }
             </select>
           </div>
         </div>
@@ -832,21 +945,16 @@ const {
         <div class="form-field">
           <label>Best times to reach you</label>
           <div class="chip-group">
-            <label class="chip"
-              ><input type="checkbox" name="avail" value="weekday-am" /><span>Weekday mornings</span
-              ></label
-            >
-            <label class="chip"
-              ><input type="checkbox" name="avail" value="weekday-pm" /><span
-                >Weekday afternoons</span
-              ></label
-            >
-            <label class="chip"
-              ><input type="checkbox" name="avail" value="evenings" /><span>Evenings</span></label
-            >
-            <label class="chip"
-              ><input type="checkbox" name="avail" value="weekends" /><span>Weekends</span></label
-            >
+            {
+              availabilitySlotOpts.map((opt) => (
+                <label class="chip">
+                  <>
+                    <input type="checkbox" name="avail" value={opt.value || opt.label} />
+                    <span>{opt.label}</span>
+                  </>
+                </label>
+              ))
+            }
           </div>
         </div>
 
@@ -979,25 +1087,22 @@ const {
                 <label for="refFacType">Facility type <span class="req">*</span></label>
                 <select id="refFacType" name="facType" required>
                   <option value="" disabled selected>Select type</option>
-                  <option>Assisted Living (ALF)</option>
-                  <option>Skilled Nursing (SNF)</option>
-                  <option>Memory Care</option>
-                  <option>Continuing Care (CCRC)</option>
-                  <option>Independent Living</option>
-                  <option>Other</option>
+                  {
+                    facilityTypeOpts.map((opt) => (
+                      <option value={opt.value || opt.label}>{opt.label}</option>
+                    ))
+                  }
                 </select>
               </div>
               <div class="form-field">
                 <label for="refCounty">County <span class="req">*</span></label>
                 <select id="refCounty" name="county" required>
                   <option value="" disabled selected>Select county</option>
-                  <option>Palm Beach</option>
-                  <option>Broward</option>
-                  <option>Miami-Dade</option>
-                  <option>Martin</option>
-                  <option>St. Lucie</option>
-                  <option>Okeechobee</option>
-                  <option>Other Florida county</option>
+                  {
+                    serviceCountyOpts.map((opt) => (
+                      <option value={opt.value || opt.label}>{opt.label}</option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
@@ -1006,21 +1111,22 @@ const {
                 <label for="refBeds">Approximate bed count</label>
                 <select id="refBeds" name="beds">
                   <option value="" disabled selected>Select size</option>
-                  <option>Under 50</option>
-                  <option>50–100</option>
-                  <option>100–200</option>
-                  <option>200+</option>
-                  <option>Not sure</option>
+                  {
+                    bedCountOpts.map((opt) => (
+                      <option value={opt.value || opt.label}>{opt.label}</option>
+                    ))
+                  }
                 </select>
               </div>
               <div class="form-field">
                 <label for="refExisting">On-site behavioral health today?</label>
                 <select id="refExisting" name="existing">
                   <option value="" disabled selected>Select</option>
-                  <option>None — looking for a partner</option>
-                  <option>Limited / occasional</option>
-                  <option>Have a provider, exploring options</option>
-                  <option>Just gathering information</option>
+                  {
+                    existingCareOpts.map((opt) => (
+                      <option value={opt.value || opt.label}>{opt.label}</option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
@@ -1041,12 +1147,11 @@ const {
                 <label for="refRole">Your role <span class="req">*</span></label>
                 <select id="refRole" name="role" required>
                   <option value="" disabled selected>Select role</option>
-                  <option>Wellness Director</option>
-                  <option>Executive Director</option>
-                  <option>Social Worker / Case Manager</option>
-                  <option>Director of Nursing</option>
-                  <option>Administrator</option>
-                  <option>Other</option>
+                  {
+                    facilityRoleOpts.map((opt) => (
+                      <option value={opt.value || opt.label}>{opt.label}</option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
@@ -1082,36 +1187,16 @@ const {
             <div class="form-field">
               <label>What sparked your interest?</label>
               <div class="chip-group" style="margin-top:.25rem">
-                <label class="chip"
-                  ><input type="checkbox" name="interest" value="resident-need" /><span
-                    >A resident needs care now</span
-                  ></label
-                >
-                <label class="chip"
-                  ><input type="checkbox" name="interest" value="team-support" /><span
-                    >Support our care team</span
-                  ></label
-                >
-                <label class="chip"
-                  ><input type="checkbox" name="interest" value="family-asks" /><span
-                    >Families keep asking</span
-                  ></label
-                >
-                <label class="chip"
-                  ><input type="checkbox" name="interest" value="compliance" /><span
-                    >Survey / compliance</span
-                  ></label
-                >
-                <label class="chip"
-                  ><input type="checkbox" name="interest" value="replacing" /><span
-                    >Replacing a provider</span
-                  ></label
-                >
-                <label class="chip"
-                  ><input type="checkbox" name="interest" value="exploring" /><span
-                    >Just exploring</span
-                  ></label
-                >
+                {
+                  interestReasonOpts.map((opt) => (
+                    <label class="chip">
+                      <>
+                        <input type="checkbox" name="interest" value={opt.value || opt.label} />
+                        <span>{opt.label}</span>
+                      </>
+                    </label>
+                  ))
+                }
               </div>
             </div>
 

@@ -34,6 +34,7 @@ import { blogCategory } from './documents/blogCategory';
 import { author } from './documents/author';
 import { jobPosting } from './documents/jobPosting';
 import { redirect } from './documents/redirect';
+import { formOption } from './documents/formOption';
 
 export const schemaTypes = [
   // Objects
@@ -64,4 +65,5 @@ export const schemaTypes = [
   author,
   jobPosting,
   redirect,
+  formOption,
 ];

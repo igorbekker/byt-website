@@ -53,4 +53,6 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('blogCategory').title('Blog Categories'),
       S.documentTypeListItem('author').title('Authors'),
       S.documentTypeListItem('jobPosting').title('Job Postings'),
+      S.divider(),
+      S.documentTypeListItem('formOption').title('Form Options'),
     ]);

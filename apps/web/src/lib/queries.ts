@@ -1,5 +1,7 @@
 // GROQ queries — import and run via useSanityClient() from @sanity/astro
 
+export const FORM_OPTIONS_QUERY = `*[_type == "formOption" && isActive == true] | order(optionGroup asc, order asc) { optionGroup, label, value, order }`;
+
 export const FORM_SETTINGS_QUERY = `*[_type == "formSettings"][0]{
   bookEyebrow,
   bookHeading,
