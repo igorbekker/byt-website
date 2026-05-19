@@ -204,6 +204,21 @@ Before writing any "✓ fixed" or marking a checklist item complete, run `grep -
 
 **How to apply:** After every Edit tool call, run the verification grep immediately. Show the raw grep output. Do not write the word "fixed" or mark [x] until grep confirms the change is present in the file.
 
+### 24. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
+
+Every session must start with `cd /home/personal/projects/byt-website`. Every file read, write, build, grep, and deploy must use that absolute path or a path relative to it. Subagents receive no cwd inheritance — always pass the absolute path explicitly (e.g. `/home/personal/projects/byt-website/apps/web/src/pages/contact.astro`).
+
+**Why:** Diagnostic session 2026-05-19 confirmed: main cwd was `/home/personal`, not inside any project. Explore subagents received relative paths with no anchor. CLAUDE.md had no working directory rule. This caused at least 4 production failures: false audit results, missing schema fields after deploy, missing CMS-SKIP comments. RULE 0 added to CLAUDE.md.
+
+**How to apply:** Session opens → run `cd /home/personal/projects/byt-website`. Before spawning any Explore or general-purpose agent, construct the file path as an absolute string starting with `/home/personal/projects/byt-website/`. Never pass a path like `apps/web/src/pages/contact.astro` to an agent — always the full path.
+
+**Stale clones — NEVER use:**
+
+- /home/personal/projects/byt-website-work/
+- /home/personal/projects/byt-website-edit/
+- /home/personal/projects/byt-website-repo/
+- /home/personal/projects/better-you-therapy/
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
@@ -221,3 +236,4 @@ Before writing any "✓ fixed" or marking a checklist item complete, run `grep -
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
 - 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 19 existed and was ignored. Repeat violation.
+- 2026-05-19: Operated from /home/personal (not project clone) with no cwd anchor in CLAUDE.md. Explore subagents received relative paths. Caused false audits, missing schema fields, missing CMS-SKIP comments. Fixed by adding RULE 0 to CLAUDE.md. (OBS-015)

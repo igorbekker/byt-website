@@ -1,5 +1,28 @@
 # SESSION START PROTOCOL — EXECUTE THIS BEFORE ANYTHING ELSE
 
+---
+
+## RULE 0 — WORKING DIRECTORY (READ THIS FIRST)
+
+Every session starts with: cd /home/personal/projects/byt-website
+
+Every command, every file read, every file write, every deploy, every grep, every build operates from this directory. No exceptions.
+
+When spawning Explore agents or sub-agents, pass the absolute path: /home/personal/projects/byt-website/apps/web/src/pages/[file].astro — never a relative path.
+
+NEVER read, write, build, deploy, or operate from:
+
+- /home/personal/projects/byt-website-work/
+- /home/personal/projects/byt-website-edit/
+- /home/personal/projects/byt-website-repo/
+- /home/personal/projects/better-you-therapy/
+
+These are stale clones. Using them has caused at least 4 production failures including false audit results, missing schema fields after deploy, and missing CMS-SKIP comments.
+
+If your working directory is not /home/personal/projects/byt-website, stop and cd there before doing anything else.
+
+---
+
 1. Read this entire file top to bottom
 2. Read `tasks/todo.md` — show current open/pending tasks
 3. Read `tasks/lessons.md` — review all past lessons

@@ -1604,6 +1604,33 @@ Re-apply 7 items that were claimed fixed in a prior commit but were never actual
 
 ---
 
+### Add RULE 0 working directory to CLAUDE.md — 2026-05-19 [x] COMPLETE 2026-05-19 (today)
+
+Add RULE 0 as the first section of CLAUDE.md to anchor every session to /home/personal/projects/byt-website and prevent operations from stale clones.
+
+- [x] cd /home/personal/projects/byt-website && git pull origin main — fast-forwarded to 39c2d8a
+- [x] Read CLAUDE.md top — confirmed no working directory anchor existed
+- [x] Inserted RULE 0 section as the very first content block after the title
+- [x] Confirmed all 4 stale clone paths listed: byt-website-work, byt-website-edit, byt-website-repo, better-you-therapy
+- [x] Verified RULE 0 at line 5 (first section after title) via Read
+- [x] Build not applicable — docs-only change
+
+### Session Review — 2026-05-19 (RULE 0 CLAUDE.md)
+
+**What was done:** Added RULE 0 as the first section of `CLAUDE.md` to enforce working directory discipline. The rule requires every session to start with `cd /home/personal/projects/byt-website`, prohibits operating from 4 named stale clones, and mandates absolute paths when spawning subagents.
+
+**Root cause addressed:** Prior session diagnostics confirmed that the main context's cwd was `/home/personal` (not in any project), Explore subagents received relative paths with no directory anchor, and no CLAUDE.md rule enforced the correct clone. This caused at least 4 production failures including false audit results and missing schema fields.
+
+**Files changed:**
+
+- `CLAUDE.md` — RULE 0 section inserted before all other rules (22 lines added)
+
+**Verification:** RULE 0 confirmed at line 5 via Read. All 4 stale paths present. Docs-only change — no build required ✓.
+
+**Issues:** None
+
+---
+
 ### Fix CMS-SKIP comment text on Phone/Email/Fax channel labels in contact.astro — 2026-05-19 [x] COMPLETE 2026-05-19
 
 Update 3 existing CMS-SKIP comment labels from `contact info label` → `UI channel label` on the Phone, Email, and Fax channel divs in contact.astro.
