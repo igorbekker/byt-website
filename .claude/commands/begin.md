@@ -1,6 +1,6 @@
 Read CLAUDE.md, tasks/todo.md, and tasks/lessons.md in full.
 Then confirm all steps of the session start protocol:
-1. CLAUDE.md read top to bottom
+1. CLAUDE.md read top to bottom — confirm all sections: Build Method, Four-Step Triad, imageWithAlt, Commit Protocol, Studio Deploy, Audit Protocol, Proof-of-Work, Deviation Patterns (8 patterns), Verification Hooks (8 hooks)
 2. tasks/todo.md reviewed — summarize open/pending tasks
 3. tasks/lessons.md reviewed — summarize key rules and violation counts
 4. State out loud: "CLAUDE.md loaded. todo.md and lessons.md reviewed. Ready."
