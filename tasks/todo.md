@@ -1731,3 +1731,37 @@ Create `/resident-referral/` page with HIPAAtizer embedded form, HIPAA badge, si
 **Verification:** `pnpm --filter web build` PASS — 20 routes, 0 errors. `resident-referral/index.html` = 33,313 bytes (non-zero). grep confirmed: `new Hipaatizer`, `hipaatizer-form-renderer`, `fc0f96d5` all present as raw HTML. siteSettings phone `754-999-0011`, email `hello@getbetteryou.com`, fax `754-328-4344` all confirmed in built output. Footer link confirmed in index.html.
 
 **Issues:** None
+
+---
+
+### Revert Refer a Resident modal to pre-formSettings state — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Revert ModalForms.astro and BaseLayout.astro to `e645371` — removing formSettings/formOption Sanity wiring and restoring hardcoded Refer form fields.
+
+- [x] A. Identified target commit `e645371` — state after book-CTA fix, before formSettings (d1f032b) and formOption (1cd444e) changes
+- [x] B. Confirmed `e645371` has all expected Refer fields: Facility type, Approximate bed count, County, Your role, A few more details, Request an intro call
+- [x] C. Confirmed design-source/pages/CTA Forms.html unchanged between e645371 and HEAD — no revert needed
+- [x] D. `git checkout e645371 -- apps/web/src/components/ui/ModalForms.astro apps/web/src/layouts/BaseLayout.astro`
+- [x] E. Verified FORM_SETTINGS_QUERY/FORM_OPTIONS_QUERY/FormSettings/FormOption/optionsByGroup purged from BaseLayout
+- [x] F. Verified Book a Session modal present and intact
+- [x] G. Verified /resident-referral/ page still exists
+- [x] H. `pnpm --filter web build` — PASSED (0 errors); resident-referral/index.html = 30,873 bytes; all 5 Refer modal fields confirmed in built HTML
+
+### Session Review — 2026-05-19 (Revert Refer modal)
+
+**What was done:** Reverted ModalForms.astro and BaseLayout.astro to commit `e645371`, removing the formSettings singleton wiring (d1f032b) and formOption document wiring (1cd444e) introduced in prior sessions. Restores the hardcoded Refer a Resident form with original fields.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro` — reverted to e645371 (removed formSettings props, formOption .map() loops; hardcoded options restored; net: 733 deletions, 457 insertions)
+- `apps/web/src/layouts/BaseLayout.astro` — reverted to e645371 (removed FORM_SETTINGS_QUERY, FORM_OPTIONS_QUERY imports, FormOption/FormSettings interfaces, parallel fetches, 19 prop pass-throughs)
+
+**Not reverted:**
+
+- `design-source/pages/CTA Forms.html` — identical at e645371 and HEAD; no action needed
+- `apps/web/src/lib/queries.ts` — FORM_SETTINGS_QUERY and FORM_OPTIONS_QUERY remain as unused exports; no build impact
+- Sanity schemas for formSettings/formOption remain; no frontend impact
+
+**Verification:** Build PASS — 0 errors. All 5 Refer modal fields confirmed in dist output: Facility type, Approximate bed count, Your role, A few more details, Request an intro call. Book a Session modal intact. /resident-referral/ page = 30,873 bytes.
+
+**Issues:** None

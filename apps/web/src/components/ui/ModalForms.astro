@@ -2,15 +2,8 @@
 /**
  * Purpose: Site-wide modal forms — Book a Session and Refer a Resident
  * Context: Rendered in BaseLayout just before </body>; opened via openModal('book') / openModal('refer')
- * Source: design-source/pages/CTA Forms.html lines 153–472 (CSS), 560–997 (HTML + JS)
+ * Source: design-source/pages/CTA Forms.html lines 153–469 (CSS), 584–897 (HTML)
  */
-
-interface FormOption {
-  optionGroup: string;
-  label: string;
-  value?: string;
-  order?: number;
-}
 
 interface Props {
   bookId: string;
@@ -18,87 +11,14 @@ interface Props {
   phone?: string;
   email?: string;
   hours?: string;
-  bookEyebrow?: string;
-  bookHeading?: string;
-  bookValueProps?: { text: string }[];
-  bookConsentText?: string;
-  bookSubmitLabel?: string;
-  bookFinePrint?: string;
-  bookSuccessHeading?: string;
-  bookSuccessBody?: string;
-  referEyebrow?: string;
-  referHeading?: string;
-  referSubhead?: string;
-  referSubmitLabel?: string;
-  referSuccessHeading?: string;
-  referSuccessBody?: string;
-  referFaxNumber?: string;
-  // Kept for BaseLayout compat — aside layout removed in new design
-  referConsentText?: string;
-  referAsideEyebrow?: string;
-  referAsideSteps?: { stepNumber: string; text: string }[];
-  referAsideContactEyebrow?: string;
-  optionsByGroup?: Record<string, FormOption[]>;
 }
 const {
   bookId,
   referralId,
+  phone = '754-999-0011',
   email = 'hello@getbetteryou.com',
-  bookEyebrow,
-  bookHeading,
-  bookValueProps,
-  bookConsentText,
-  bookSubmitLabel,
-  bookFinePrint,
-  bookSuccessHeading,
-  bookSuccessBody,
-  referEyebrow,
-  referHeading,
-  referSubhead,
-  referSubmitLabel,
-  referSuccessHeading,
-  referSuccessBody,
-  referFaxNumber,
-  optionsByGroup = {},
+  hours = 'Mon–Fri, 9am–6pm ET',
 } = Astro.props;
-
-const defaultBookFor: FormOption[] = [
-  { optionGroup: 'bookFor', label: 'For myself', value: 'self' },
-  { optionGroup: 'bookFor', label: 'For a loved one', value: 'loved-one' },
-  { optionGroup: 'bookFor', label: 'Couples / family', value: 'couple' },
-];
-const defaultConditionReasons: FormOption[] = [
-  { optionGroup: 'conditionReasons', label: 'Depression or anxiety' },
-  { optionGroup: 'conditionReasons', label: 'Grief, loss, or life transition' },
-  { optionGroup: 'conditionReasons', label: 'Trauma / PTSD' },
-  { optionGroup: 'conditionReasons', label: 'Relationships, couples, or family' },
-  { optionGroup: 'conditionReasons', label: 'Caregiver stress or burnout' },
-  { optionGroup: 'conditionReasons', label: 'Something else' },
-  { optionGroup: 'conditionReasons', label: 'Not sure yet' },
-];
-const defaultPaymentMethods: FormOption[] = [
-  { optionGroup: 'paymentMethods', label: 'Medicare' },
-  { optionGroup: 'paymentMethods', label: 'Private insurance' },
-  { optionGroup: 'paymentMethods', label: 'Cash-pay / out-of-pocket' },
-  { optionGroup: 'paymentMethods', label: 'Not sure — please advise' },
-];
-const defaultAvailabilitySlots: FormOption[] = [
-  { optionGroup: 'availabilitySlots', label: 'Weekday mornings', value: 'weekday-am' },
-  { optionGroup: 'availabilitySlots', label: 'Weekday afternoons', value: 'weekday-pm' },
-  { optionGroup: 'availabilitySlots', label: 'Evenings', value: 'evenings' },
-  { optionGroup: 'availabilitySlots', label: 'Weekends', value: 'weekends' },
-];
-
-const bookForOpts = optionsByGroup?.bookFor?.length ? optionsByGroup.bookFor : defaultBookFor;
-const conditionReasonOpts = optionsByGroup?.conditionReasons?.length
-  ? optionsByGroup.conditionReasons
-  : defaultConditionReasons;
-const paymentMethodOpts = optionsByGroup?.paymentMethods?.length
-  ? optionsByGroup.paymentMethods
-  : defaultPaymentMethods;
-const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
-  ? optionsByGroup.availabilitySlots
-  : defaultAvailabilitySlots;
 ---
 
 <style is:global>
@@ -482,6 +402,131 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
     background: #fff;
   }
 
+  /* Step indicator */
+  .steps {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+  .step-dot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+  .step-dot .num {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--r-pill);
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--mist);
+  }
+  .step-dot.is-active {
+    color: var(--navy-deep);
+  }
+  .step-dot.is-active .num {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: #fff;
+  }
+  .step-dot.is-done .num {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: #fff;
+  }
+  .step-dot.is-done {
+    color: var(--slate);
+  }
+  .step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 0.25rem;
+  }
+
+  .step-pane {
+    display: none;
+  }
+  .step-pane.is-active {
+    display: block;
+  }
+
+  /* Refer-a-resident: split layout */
+  .refer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 0;
+  }
+  .refer-aside {
+    background: var(--navy-deep);
+    color: rgba(255, 255, 255, 0.78);
+    padding: 2.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .refer-aside h4 {
+    color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+  }
+  .refer-aside .eyebrow {
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 0.85rem;
+  }
+  .refer-aside ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .refer-aside li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .refer-aside li svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--sage);
+  }
+  .refer-aside .check-num {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .refer-main {
+    padding: 2rem 2.25rem 2.25rem;
+  }
+
   /* Section divider in form */
   .form-section-label {
     font-family: 'Montserrat', sans-serif;
@@ -549,177 +594,23 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
     margin-top: 1rem;
   }
 
-  /* ─────────────── Refer modal: tab UI ─────────────── */
-  .refer-tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border);
-    margin-bottom: 1.75rem;
-  }
-  .refer-tab {
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: 0.7rem 1.25rem;
-    margin-bottom: -2px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--slate);
-    cursor: pointer;
-    white-space: nowrap;
-    transition:
-      color var(--t-hover),
-      border-color var(--t-hover);
-  }
-  .refer-tab:hover {
-    color: var(--navy-deep);
-  }
-  .refer-tab.is-active {
-    color: var(--navy-deep);
-    border-bottom-color: var(--navy);
-  }
-  .refer-tab-pane {
-    display: none;
-  }
-  .refer-tab-pane.is-active {
-    display: block;
-  }
-
-  /* ─────────────── Upload zone (Tab 2) ─────────────── */
-  .upload-intro {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .upload-intro h4 {
-    font-family: 'Manrope', sans-serif;
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: var(--navy-deep);
-    letter-spacing: -0.01em;
-    margin-bottom: 0.4rem;
-  }
-  .upload-intro p {
-    color: var(--slate);
-    font-size: 14px;
-    line-height: 1.55;
-  }
-  .upload-email-link {
-    display: block;
-    font-family: 'Manrope', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--navy-deep);
-    text-decoration: none;
-    text-align: center;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-    transition: color var(--t-hover);
-  }
-  .upload-email-link:hover {
-    color: var(--coral);
-  }
-  .upload-divider {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 1.25rem 0;
-    font-size: 13px;
-    color: var(--mist);
-    font-weight: 500;
-  }
-  .upload-divider::before,
-  .upload-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: var(--r-card);
-    padding: 2rem 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition:
-      border-color var(--t-hover),
-      background-color var(--t-hover);
-    position: relative;
-    margin-bottom: 1rem;
-  }
-  .upload-zone:hover,
-  .upload-zone.drag-over {
-    border-color: var(--navy);
-    background: var(--off-white);
-  }
-  .upload-zone input[type='file'] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-  .upload-zone-icon {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 0.75rem;
-    color: var(--mist);
-  }
-  .upload-zone .upload-main {
-    font-weight: 600;
-    color: var(--navy-deep);
-    font-size: 15px;
-    margin: 0;
-  }
-  .upload-zone .upload-sub {
-    font-size: 12px;
-    color: var(--mist);
-    margin: 0.25rem 0 0;
-  }
-  .upload-file-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 1rem;
-  }
-  .upload-file-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--off-white);
-    border: 1px solid var(--border);
-    border-radius: var(--r-btn);
-    padding: 0.5rem 0.75rem;
-    font-size: 13px;
-    color: var(--navy-deep);
-  }
-  .upload-file-remove {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--mist);
-    padding: 0 0.25rem;
-    font-size: 18px;
-    line-height: 1;
-    transition: color var(--t-hover);
-  }
-  .upload-file-remove:hover {
-    color: var(--coral);
-  }
-  .upload-fax-note {
-    font-size: 12px;
-    color: var(--mist);
-    text-align: center;
-    margin-top: 0.75rem;
-  }
-
   /* ─────────────── Responsive ─────────────── */
+  @media (max-width: 1024px) {
+    .refer-grid {
+      grid-template-columns: 1fr;
+    }
+    .refer-aside {
+      order: 2;
+    }
+  }
   @media (max-width: 768px) {
     .modal-overlay {
       padding: 1rem;
     }
     .modal-header,
-    .modal-body {
+    .modal-body,
+    .refer-main,
+    .refer-aside {
       padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
@@ -737,7 +628,6 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
   }
 </style>
 
-{/* CMS-SKIP: form field labels and structure */}
 <!-- ═════════════════════════════════════════════════
      MODAL 1 — BOOK A SESSION
 ═════════════════════════════════════════════════ -->
@@ -762,10 +652,8 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
     </button>
 
     <div class="modal-header">
-      <p class="eyebrow">{bookEyebrow ?? 'Book a Virtual Session'}</p>
-      <h3 id="bookTitle">
-        {bookHeading ?? 'Get matched with a licensed therapist this week — by video.'}
-      </h3>
+      <p class="eyebrow">Book a Virtual Session</p>
+      <h3 id="bookTitle">Get matched with a licensed therapist this week — by video.</h3>
       <p class="modal-sub">
         <strong>Virtual sessions only.</strong> All Better You Therapy bookings are secure online video
         visits with a Florida-licensed therapist. Our intake team confirms within one business day — usually
@@ -779,8 +667,7 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
-          >
-          {bookValueProps?.[0]?.text ?? 'Florida-licensed therapists'}</span
+          > Florida-licensed therapists</span
         >
         <span
           ><svg
@@ -789,8 +676,7 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
-          >
-          {bookValueProps?.[1]?.text ?? 'Most insurance accepted'}</span
+          > Most insurance accepted</span
         >
         <span
           ><svg
@@ -799,8 +685,7 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg
-          >
-          {bookValueProps?.[2]?.text ?? 'No waitlist'}</span
+          > No waitlist</span
         >
       </div>
     </div>
@@ -811,21 +696,18 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
         <div class="form-section-label">Who's this session for?</div>
         <div class="form-field" style="margin-bottom:1.25rem">
           <div class="seg" role="radiogroup" aria-label="Who's this session for">
-            {
-              bookForOpts.map((opt, i) => (
-                <label>
-                  <>
-                    <input
-                      type="radio"
-                      name="bookFor"
-                      value={opt.value || opt.label}
-                      checked={i === 0}
-                    />
-                    <span>{opt.label}</span>
-                  </>
-                </label>
-              ))
-            }
+            <label
+              ><input type="radio" name="bookFor" value="self" checked /><span>For myself</span
+              ></label
+            >
+            <label
+              ><input type="radio" name="bookFor" value="loved-one" /><span>For a loved one</span
+              ></label
+            >
+            <label
+              ><input type="radio" name="bookFor" value="couple" /><span>Couples / family</span
+              ></label
+            >
           </div>
         </div>
 
@@ -884,22 +766,23 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
             <label for="bookReason">What brings you in? <span class="req">*</span></label>
             <select id="bookReason" name="reason" required>
               <option value="" disabled selected>Select what fits best</option>
-              {
-                conditionReasonOpts.map((opt) => (
-                  <option value={opt.value || opt.label}>{opt.label}</option>
-                ))
-              }
+              <option>Depression or anxiety</option>
+              <option>Grief, loss, or life transition</option>
+              <option>Trauma / PTSD</option>
+              <option>Relationships, couples, or family</option>
+              <option>Caregiver stress or burnout</option>
+              <option>Something else</option>
+              <option>Not sure yet</option>
             </select>
           </div>
           <div class="form-field">
             <label for="bookPayment">How will you pay? <span class="req">*</span></label>
             <select id="bookPayment" name="payment" required>
               <option value="" disabled selected>Select an option</option>
-              {
-                paymentMethodOpts.map((opt) => (
-                  <option value={opt.value || opt.label}>{opt.label}</option>
-                ))
-              }
+              <option>Medicare</option>
+              <option>Private insurance</option>
+              <option>Cash-pay / out-of-pocket</option>
+              <option>Not sure — please advise</option>
             </select>
           </div>
         </div>
@@ -908,16 +791,21 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
         <div class="form-field">
           <label>Best times to reach you</label>
           <div class="chip-group">
-            {
-              availabilitySlotOpts.map((opt) => (
-                <label class="chip">
-                  <>
-                    <input type="checkbox" name="avail" value={opt.value || opt.label} />
-                    <span>{opt.label}</span>
-                  </>
-                </label>
-              ))
-            }
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="weekday-am" /><span>Weekday mornings</span
+              ></label
+            >
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="weekday-pm" /><span
+                >Weekday afternoons</span
+              ></label
+            >
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="evenings" /><span>Evenings</span></label
+            >
+            <label class="chip"
+              ><input type="checkbox" name="avail" value="weekends" /><span>Weekends</span></label
+            >
           </div>
         </div>
 
@@ -938,22 +826,18 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
         <label class="form-consent">
           <input type="checkbox" required />
           <span
-            >{
-              bookConsentText ??
-                'I understand this form is not for emergencies and agree to be contacted by Better You Therapy by phone, email, or text.'
-            }
-            <a href="/privacy/" style="color:var(--coral); text-decoration:underline"
-              >Privacy Policy</a
+            >I understand this form is not for emergencies and agree to be contacted by Better You
+            Therapy by phone, email, or text. <a
+              href="/privacy/"
+              style="color:var(--coral); text-decoration:underline">Privacy Policy</a
             ></span
           >
         </label>
 
         <div class="form-actions">
-          <span class="form-fineprint"
-            >{bookFinePrint ?? 'We respond within one business day.'}</span
-          >
+          <span class="form-fineprint">We respond within one business day.</span>
           <button type="submit" class="btn btn-coral">
-            {bookSubmitLabel ?? 'Request my session'}
+            Request my session
             <svg
               width="14"
               height="14"
@@ -978,12 +862,10 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
             stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
           >
         </div>
-        <h4>{bookSuccessHeading ?? "You're in good hands."}</h4>
+        <h4>You're in good hands.</h4>
         <p>
-          {
-            bookSuccessBody ??
-              "Thanks — we'll reach out within one business day to match you with a licensed therapist and confirm your first session."
-          }
+          Thanks — we'll reach out within one business day to match you with a licensed therapist
+          and confirm your first session.
         </p>
         <div class="next-row">
           <button class="btn btn-ghost-ink" onclick="closeModal('book')">Close</button>
@@ -993,7 +875,6 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
   </div>
 </div>
 
-{/* CMS-SKIP: form field labels and structure */}
 <!-- ═════════════════════════════════════════════════
      MODAL 2 — REFER A RESIDENT
 ═════════════════════════════════════════════════ -->
@@ -1006,7 +887,7 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
   aria-modal="true"
   aria-labelledby="referTitle"
 >
-  <div class="modal-panel">
+  <div class="modal-panel" style="max-width:880px">
     <button class="modal-close" aria-label="Close" onclick="closeModal('refer')">
       <svg
         viewBox="0 0 24 24"
@@ -1018,156 +899,207 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
     </button>
 
     <div class="modal-header">
-      <p class="eyebrow">{referEyebrow ?? 'Refer a Resident'}</p>
-      <h3 id="referTitle">
-        {referHeading ?? 'Send us a referral — we handle the rest.'}
-      </h3>
+      <p class="eyebrow">Partner with Better You</p>
+      <h3 id="referTitle">Bring on-site mental health care to your facility.</h3>
       <p class="modal-sub">
-        {
-          referSubhead ??
-            'Fill out the form or email us your documents directly. We handle scheduling, Medicare credentialing, and all documentation — at zero cost to your facility.'
-        }
+        Tell us about your facility and we'll set up a 20-minute intro call. We'll walk through how
+        on-site care works at your community, answer questions, and — when the time is right — build
+        a referral relationship that fits your team's workflow. <strong
+          >Zero cost to your facility or to residents.</strong
+        >
       </p>
     </div>
 
-    <div class="modal-body">
-      <!-- Tab bar -->
-      <div class="refer-tabs" role="tablist">
-        <button
-          class="refer-tab is-active"
-          role="tab"
-          aria-selected="true"
-          aria-controls="refTab1"
-          onclick="switchReferTab(1)">Fill Out Form</button
-        >
-        <button
-          class="refer-tab"
-          role="tab"
-          aria-selected="false"
-          aria-controls="refTab2"
-          onclick="switchReferTab(2)">Upload Referral Documents</button
-        >
-      </div>
-
-      <!-- TAB 1 — FILL OUT FORM -->
-      <div class="refer-tab-pane is-active" id="refTab1" role="tabpanel">
+    <div class="refer-grid">
+      <div class="refer-main">
         <form id="referForm" onsubmit="handleSubmit(event,'refer')" novalidate>
-          <div class="form-field">
-            <label for="refFacility">Facility Name <span class="req">*</span></label>
-            <input
-              id="refFacility"
-              name="facilityName"
-              type="text"
-              required
-              placeholder="Sunrise Senior Living of Boca Raton"
-            />
-          </div>
-          <div class="form-field">
-            <label for="refFacPhone">Facility Telephone Number <span class="req">*</span></label>
-            <input
-              id="refFacPhone"
-              name="facilityPhone"
-              type="tel"
-              required
-              placeholder="(555) 555-5555"
-            />
-          </div>
-          <div class="form-row">
+          <div class="step-pane is-active" data-step="1">
+            <div class="form-section-label">Your facility</div>
             <div class="form-field">
-              <label for="refRefName">Referring Person's Name <span class="req">*</span></label>
+              <label for="refFacility">Facility name <span class="req">*</span></label>
               <input
-                id="refRefName"
-                name="referringName"
+                id="refFacility"
+                name="facility"
                 type="text"
                 required
-                placeholder="Maria Hernandez"
+                placeholder="Sunrise Senior Living of Boca Raton"
               />
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refFacType">Facility type <span class="req">*</span></label>
+                <select id="refFacType" name="facType" required>
+                  <option value="" disabled selected>Select type</option>
+                  <option>Assisted Living (ALF)</option>
+                  <option>Skilled Nursing (SNF)</option>
+                  <option>Memory Care</option>
+                  <option>Continuing Care (CCRC)</option>
+                  <option>Independent Living</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="refCounty">County <span class="req">*</span></label>
+                <select id="refCounty" name="county" required>
+                  <option value="" disabled selected>Select county</option>
+                  <option>Palm Beach</option>
+                  <option>Broward</option>
+                  <option>Miami-Dade</option>
+                  <option>Martin</option>
+                  <option>St. Lucie</option>
+                  <option>Okeechobee</option>
+                  <option>Other Florida county</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refBeds">Approximate bed count</label>
+                <select id="refBeds" name="beds">
+                  <option value="" disabled selected>Select size</option>
+                  <option>Under 50</option>
+                  <option>50–100</option>
+                  <option>100–200</option>
+                  <option>200+</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="refExisting">On-site behavioral health today?</label>
+                <select id="refExisting" name="existing">
+                  <option value="" disabled selected>Select</option>
+                  <option>None — looking for a partner</option>
+                  <option>Limited / occasional</option>
+                  <option>Have a provider, exploring options</option>
+                  <option>Just gathering information</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-section-label">About you</div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refName">Your name <span class="req">*</span></label>
+                <input
+                  id="refName"
+                  name="name"
+                  type="text"
+                  required
+                  placeholder="Maria Hernandez"
+                />
+              </div>
+              <div class="form-field">
+                <label for="refRole">Your role <span class="req">*</span></label>
+                <select id="refRole" name="role" required>
+                  <option value="" disabled selected>Select role</option>
+                  <option>Wellness Director</option>
+                  <option>Executive Director</option>
+                  <option>Social Worker / Case Manager</option>
+                  <option>Director of Nursing</option>
+                  <option>Administrator</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="refEmail">Work email <span class="req">*</span></label>
+                <input
+                  id="refEmail"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="maria@facility.com"
+                />
+              </div>
+              <div class="form-field">
+                <label for="refPhone">Direct phone <span class="req">*</span></label>
+                <input
+                  id="refPhone"
+                  name="phone"
+                  type="tel"
+                  required
+                  placeholder="(555) 555-5555"
+                />
+              </div>
+            </div>
+
+            <div class="form-section-label">
+              A few more details <span
+                style="color:var(--mist); font-weight:500; letter-spacing:0; text-transform:none"
+                >(optional)</span
+              >
             </div>
             <div class="form-field">
-              <label for="refRefEmail">Referring Person's Email <span class="req">*</span></label>
-              <input
-                id="refRefEmail"
-                name="referringEmail"
-                type="email"
-                required
-                placeholder="maria@facility.com"
-              />
+              <label>What sparked your interest?</label>
+              <div class="chip-group" style="margin-top:.25rem">
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="resident-need" /><span
+                    >A resident needs care now</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="team-support" /><span
+                    >Support our care team</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="family-asks" /><span
+                    >Families keep asking</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="compliance" /><span
+                    >Survey / compliance</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="replacing" /><span
+                    >Replacing a provider</span
+                  ></label
+                >
+                <label class="chip"
+                  ><input type="checkbox" name="interest" value="exploring" /><span
+                    >Just exploring</span
+                  ></label
+                >
+              </div>
             </div>
-          </div>
-          <div class="form-field">
-            <label for="refPatientName">Patient's Name <span class="req">*</span></label>
-            <input
-              id="refPatientName"
-              name="patientName"
-              type="text"
-              required
-              placeholder="First and last name"
-            />
-          </div>
-          <div class="form-field">
-            <label for="refPOA"
-              >POA, Guardian or Healthcare Surrogate &mdash; Name &amp; Phone</label
-            >
-            <input id="refPOA" name="poaContact" type="text" placeholder="Name and phone number" />
-            <span class="hint">If applicable</span>
-          </div>
-          <div class="form-field">
-            <label for="refReason">Reason for Referral <span class="req">*</span></label>
-            <textarea
-              id="refReason"
-              name="referralReason"
-              rows="3"
-              style="min-height:90px"
-              required
-              placeholder="Describe the patient's presenting concerns and reason for referral…"
-            ></textarea>
-          </div>
-          <div class="form-field">
-            <label>Currently on Skilled Nursing? <span class="req">*</span></label>
-            <div class="seg" role="radiogroup" aria-label="Currently on Skilled Nursing">
-              <label
-                ><input type="radio" name="skilledNursing" value="yes" required /><span>Yes</span
-                ></label
-              >
-              <label
-                ><input type="radio" name="skilledNursing" value="no" required /><span>No</span
-                ></label
-              >
+
+            <div class="form-field">
+              <label for="refNotes">Anything else we should know?</label>
+              <textarea
+                id="refNotes"
+                name="refNotes"
+                placeholder="Best times to reach you, who else should be on the intro call, specific questions about how we work — anything that would make our first conversation more useful."
+              ></textarea>
             </div>
-          </div>
 
-          {/* CMS-SKIP: regulatory consent text */}
-          <label class="form-consent">
-            <input type="checkbox" required />
-            <span
-              >I consent to receive SMS communications from Better You Therapy regarding this
-              referral.</span
-            >
-          </label>
-          {/* CMS-SKIP: regulatory consent text */}
-          <label class="form-consent">
-            <input type="checkbox" required />
-            <span
-              >I confirm I am authorized to submit this referral and that sharing this patient's
-              information complies with applicable HIPAA requirements.</span
-            >
-          </label>
-
-          <div class="form-actions" style="justify-content:flex-end">
-            <button type="submit" class="btn btn-coral">
-              {referSubmitLabel ?? 'Send Referral'}
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
+            <label class="form-consent">
+              <input type="checkbox" required />
+              <span
+                >I'd like Better You Therapy to contact me about an intro call. We'll never share
+                your information.</span
               >
-            </button>
+            </label>
+
+            <div class="form-actions" style="justify-content:flex-end">
+              <button type="submit" class="btn btn-coral">
+                Request an intro call
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
+                >
+              </button>
+            </div>
           </div>
         </form>
 
+        <!-- Success -->
         <div class="form-success" id="referSuccess" style="display:none">
           <div class="form-success-icon">
             <svg
@@ -1179,12 +1111,10 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
               stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
             >
           </div>
-          <h4>{referSuccessHeading ?? 'Referral received.'}</h4>
+          <h4>Thanks — we'll be in touch.</h4>
           <p>
-            {
-              referSuccessBody ??
-                "We'll reach out to you within one business day to confirm receipt and next steps."
-            }
+            A member of our partnerships team will reach out within one business day to schedule a
+            20-minute intro call at a time that works for you.
           </p>
           <div class="next-row">
             <button class="btn btn-ghost-ink" onclick="closeModal('refer')">Close</button>
@@ -1192,112 +1122,47 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
         </div>
       </div>
 
-      <!-- TAB 2 — UPLOAD REFERRAL DOCUMENTS -->
-      <div class="refer-tab-pane" id="refTab2" role="tabpanel">
-        <form id="referUploadForm" onsubmit="handleUploadSubmit(event)" novalidate>
-          <div class="upload-intro">
-            <h4>Send Us Your Referral Documents</h4>
-            <p>
-              Email your completed referral form, face sheet, and insurance cards directly to us.
-            </p>
-          </div>
-
-          <a href={`mailto:${email}`} class="upload-email-link">{email}</a>
-
-          <div class="upload-divider">or</div>
-
-          <div class="upload-zone" id="uploadZone">
-            <input
-              type="file"
-              id="refFiles"
-              name="referralDocuments"
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              multiple
-            />
-            <div class="upload-zone-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.75"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                ><polyline points="16 16 12 12 8 16"></polyline><line
-                  x1="12"
-                  y1="12"
-                  x2="12"
-                  y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"
-                ></path></svg
-              >
-            </div>
-            <p class="upload-main">Drag files here or click to browse</p>
-            <p class="upload-sub">PDF, Word, JPG, PNG — up to 10MB per file</p>
-          </div>
-
-          <div class="upload-file-list" id="uploadFileList"></div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label for="upRefName">Referring Person's Name <span class="req">*</span></label>
-              <input
-                id="upRefName"
-                name="referringName"
-                type="text"
-                required
-                placeholder="Maria Hernandez"
-              />
-            </div>
-            <div class="form-field">
-              <label for="upRefEmail">Referring Person's Email <span class="req">*</span></label>
-              <input
-                id="upRefEmail"
-                name="referringEmail"
-                type="email"
-                required
-                placeholder="maria@facility.com"
-              />
-            </div>
-          </div>
-
-          <div class="form-actions" style="justify-content:flex-end">
-            <button type="submit" class="btn btn-coral">
-              Send Documents
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-              >
-            </button>
-          </div>
-        </form>
-
-        <p class="upload-fax-note">
-          You can also fax referral documents to <strong>{referFaxNumber ?? '754-328-4344'}</strong>
-        </p>
-
-        <div class="form-success" id="referUploadSuccess" style="display:none">
-          <div class="form-success-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg
+      <aside class="refer-aside">
+        <div>
+          <p class="eyebrow">What to expect</p>
+          <ul>
+            <li>
+              <span class="check-num">1</span><div>
+                Intro call. 10 minutes. We learn about your community, your residents, your team —
+                and you learn how we work.
+              </div>
+            </li>
+            <li>
+              <span class="check-num">2</span><div>
+                <strong style="color:#fff">On-site visit.</strong> We come meet your team in person. No
+                pressure, no contract — just a relationship.
+              </div>
+            </li>
+            <li>
+              <span class="check-num">3</span><div>
+                <strong style="color:#fff">Referrals when ready.</strong> When a resident needs care,
+                your team sends a referral. We credential, schedule, see the resident, document, and bill
+                Medicare. Zero cost to you.
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:1.25rem">
+          <p class="eyebrow" style="margin-bottom:.6rem">Prefer to talk first?</p>
+          <div style="font-size:13px; line-height:1.7">
+            <a
+              href={`tel:${phone.replace(/\D/g, '')}`}
+              style="color:#fff; display:block; font-weight:600">{phone}</a
+            >
+            <a href={`mailto:${email}`} style="color:rgba(255,255,255,.78); display:block"
+              >{email}</a
+            >
+            <span style="color:rgba(255,255,255,.55); display:block; margin-top:.25rem"
+              >{hours}</span
             >
           </div>
-          <h4>Documents received.</h4>
-          <p>
-            We'll reach out to the email you provided within one business day to confirm receipt.
-          </p>
-          <div class="next-row">
-            <button class="btn btn-ghost-ink" onclick="closeModal('refer')">Close</button>
-          </div>
         </div>
-      </div>
+      </aside>
     </div>
   </div>
 </div>
@@ -1309,7 +1174,8 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
     if (!m) return;
     m.classList.add('open');
     document.body.style.overflow = 'hidden';
-    setTimeout(function () {
+    // focus first input
+    setTimeout(() => {
       const f = m.querySelector(
         'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), select',
       );
@@ -1322,26 +1188,46 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
     m.classList.remove('open');
     document.body.style.overflow = '';
   }
-  document.addEventListener('keydown', function (e) {
+  document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay.open').forEach(function (m) {
+      document.querySelectorAll('.modal-overlay.open').forEach((m) => {
         m.classList.remove('open');
       });
       document.body.style.overflow = '';
     }
   });
 
-  function switchReferTab(n) {
-    const modal = document.getElementById('modal-refer');
-    if (!modal) return;
-    modal.querySelectorAll('.refer-tab').forEach(function (t, i) {
-      const active = i + 1 === n;
-      t.classList.toggle('is-active', active);
-      t.setAttribute('aria-selected', String(active));
+  // Multi-step (refer modal)
+  function goStep(which, n) {
+    const root = document.getElementById('modal-' + which);
+    if (!root) return;
+    // Validate visible step's required fields before advancing
+    const current = root.querySelector('.step-pane.is-active');
+    if (current) {
+      const goingForward = n > Number(current.dataset.step);
+      if (goingForward) {
+        const required = current.querySelectorAll('[required]');
+        let ok = true;
+        required.forEach((el) => {
+          if (!el.checkValidity()) {
+            el.reportValidity();
+            ok = false;
+          }
+        });
+        if (!ok) return;
+      }
+    }
+    root.querySelectorAll('.step-pane').forEach((p) => {
+      p.classList.toggle('is-active', Number(p.dataset.step) === n);
     });
-    modal.querySelectorAll('.refer-tab-pane').forEach(function (p, i) {
-      p.classList.toggle('is-active', i + 1 === n);
+    root.querySelectorAll('.step-dot').forEach((d) => {
+      const dn = Number(d.dataset.step);
+      d.classList.toggle('is-active', dn === n);
+      d.classList.toggle('is-done', dn < n);
     });
+    // scroll modal back to top
+    const panel = root.querySelector('.modal-panel');
+    if (panel) panel.scrollTop = 0;
   }
 
   async function handleSubmit(e, which) {
@@ -1365,42 +1251,9 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
       });
       if (res.ok) {
         form.style.display = 'none';
+        const steps = document.getElementById('referSteps');
+        if (which === 'refer' && steps) steps.style.display = 'none';
         document.getElementById(which + 'Success').style.display = 'flex';
-      } else {
-        btn.disabled = false;
-        btn.innerHTML = orig;
-        alert('Something went wrong. Please try again or call us directly.');
-      }
-    } catch (err) {
-      void err;
-      btn.disabled = false;
-      btn.innerHTML = orig;
-      alert('Unable to submit. Please check your connection and try again.');
-    }
-  }
-
-  async function handleUploadSubmit(e) {
-    e.preventDefault();
-    const form = e.target;
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-    const overlay = document.getElementById('modal-refer');
-    const formId = overlay ? overlay.dataset.formId : '';
-    const btn = form.querySelector('[type="submit"]');
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-    try {
-      const res = await fetch('https://formspree.io/f/' + formId, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { Accept: 'application/json' },
-      });
-      if (res.ok) {
-        form.style.display = 'none';
-        document.getElementById('referUploadSuccess').style.display = 'flex';
       } else {
         btn.disabled = false;
         btn.innerHTML = orig;
@@ -1416,83 +1269,11 @@ const availabilitySlotOpts = optionsByGroup?.availabilitySlots?.length
 
   function resetReferForm() {
     const form = document.getElementById('referForm');
-    const upForm = document.getElementById('referUploadForm');
-    if (form) {
-      form.reset();
-      form.style.display = 'block';
-    }
-    if (upForm) {
-      upForm.reset();
-      upForm.style.display = 'block';
-    }
-    const fl = document.getElementById('uploadFileList');
-    if (fl) fl.innerHTML = '';
-    const s1 = document.getElementById('referSuccess');
-    const s2 = document.getElementById('referUploadSuccess');
-    if (s1) s1.style.display = 'none';
-    if (s2) s2.style.display = 'none';
-    switchReferTab(1);
+    form.reset();
+    form.style.display = 'block';
+    document.getElementById('referSuccess').style.display = 'none';
+    const steps = document.getElementById('referSteps');
+    if (steps) steps.style.display = 'flex';
+    goStep('refer', 1);
   }
-
-  // File upload UI
-  (function () {
-    const fileInput = document.getElementById('refFiles');
-    const uploadZone = document.getElementById('uploadZone');
-    if (!fileInput || !uploadZone) return;
-
-    fileInput.addEventListener('change', renderFileList);
-
-    uploadZone.addEventListener('dragover', function (e) {
-      e.preventDefault();
-      uploadZone.classList.add('drag-over');
-    });
-    uploadZone.addEventListener('dragleave', function () {
-      uploadZone.classList.remove('drag-over');
-    });
-    uploadZone.addEventListener('drop', function (e) {
-      e.preventDefault();
-      uploadZone.classList.remove('drag-over');
-      const dt = new DataTransfer();
-      Array.from(fileInput.files).forEach(function (f) {
-        dt.items.add(f);
-      });
-      Array.from(e.dataTransfer.files).forEach(function (f) {
-        dt.items.add(f);
-      });
-      fileInput.files = dt.files;
-      renderFileList();
-    });
-
-    function renderFileList() {
-      const list = document.getElementById('uploadFileList');
-      if (!list) return;
-      list.innerHTML = '';
-      Array.from(fileInput.files).forEach(function (file, idx) {
-        const item = document.createElement('div');
-        item.className = 'upload-file-item';
-        const name = document.createElement('span');
-        name.textContent = file.name;
-        const rm = document.createElement('button');
-        rm.type = 'button';
-        rm.className = 'upload-file-remove';
-        rm.setAttribute('aria-label', 'Remove ' + file.name);
-        rm.textContent = '\xD7';
-        rm.addEventListener('click', function () {
-          removeFile(idx);
-        });
-        item.appendChild(name);
-        item.appendChild(rm);
-        list.appendChild(item);
-      });
-    }
-
-    function removeFile(idx) {
-      const dt = new DataTransfer();
-      Array.from(fileInput.files).forEach(function (f, i) {
-        if (i !== idx) dt.items.add(f);
-      });
-      fileInput.files = dt.files;
-      renderFileList();
-    }
-  })();
 </script>
