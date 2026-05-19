@@ -110,11 +110,105 @@ The sequence is: `/pre` → `git commit` → `/post`
 
 ---
 
+## REQUIRED: Four-Step Triad (Five for Images)
+
+Every CMS field change must complete ALL steps. If any step is missing, the site may render correctly (fallbacks hide the gap) but the CMS is broken.
+
+1. SCHEMA — Field defined in apps/studio/schemas/[type].ts
+2. QUERY — Field fetched in apps/web/src/lib/queries.ts
+3. TEMPLATE — Field wired in apps/web/src/pages/[page].astro with ?? fallback
+4. SEED — Field populated in published Sanity document with real content
+5. IMAGE — (if image field) Asset uploaded with _type: 'imageWithAlt', reference stored
+
+After any CMS change, verify all steps are complete before committing.
+
+---
+
+## REQUIRED: Image Type — imageWithAlt
+
+Every image field in every schema uses `type: 'imageWithAlt'`. Never use raw `type: 'image'`.
+
+Correct mutation format:
+
+```javascript
+{
+  _type: 'imageWithAlt',
+  alt: 'descriptive text',
+  asset: { _type: 'reference', _ref: 'image-[hash]-[WxH]-[ext]' }
+}
+```
+
+If stored with `_type: 'image'`, Studio shows empty image wells.
+
+---
+
+## REQUIRED: Sanity Studio Deploy
+
+Every Studio deploy follows this exact sequence. No shortcuts.
+
+```bash
+cd /home/personal/projects/byt-website
+git pull origin main
+cd apps/studio
+rm -rf node_modules/.cache dist
+SANITY_AUTH_TOKEN=$SANITY_DEPLOY_TOKEN npx sanity deploy
+```
+
+After deploy: remind Igor to hard-refresh Studio (Cmd+Shift+R).
+
+---
+
+## REQUIRED: Content Seeding
+
+- Mutations target published documents ONLY — no "drafts." prefix on _id
+- Use patch().set() — not setIfMissing()
+- Images use _type: 'imageWithAlt' (NOT 'image')
+- Fetch document after mutation — confirm values
+- Hard-refresh Studio — fields show content, not empty
+
+---
+
+## REQUIRED: Rebuild Trigger
+
+Sanity content changes do NOT trigger Cloudflare deploys. After seeding:
+
+```bash
+git commit --allow-empty -m "chore: trigger rebuild for Sanity content change" && git push origin main
+```
+
+---
+
+## REQUIRED: Audit Protocol — Site-First, Never Schema-First
+
+Wrong: "For each Sanity field, is it populated?" — misses everything with no schema field.
+Right: "For every visible element on the rendered page, does a Sanity field exist?"
+
+1. Is it visible on the site? → If yes, continue
+2. Does a Sanity variable exist for it in the template? → CMS status
+3. If no variable: Is it marked `<!-- CMS-SKIP: reason -->`? → Documented exception
+4. If neither: HARDCODED — needs a schema field or CMS-SKIP documentation
+
+---
+
+## REQUIRED: Proof-of-Work — grep Output for Every Change
+
+"I added X" is NOT acceptable. "Here is the grep showing X at line N" IS required.
+
+For batch fixes (3+ items): show grep output for EVERY item. No summary. Raw file content only.
+
+For any commit claiming N fixes, also show:
+- `git diff --stat` showing actual file changes
+- If lines changed = 0 and items claimed > 0, the report is fabricated
+
+---
+
 ## REQUIRED: Agent Chain
 
 You operate through AGENT_pm. You do NOT write code directly.
 When you receive a task, invoke @AGENT_pm. AGENT_pm delegates to @AGENT_builder, @AGENT_qa, and @AGENT_docs.
 If you find yourself writing code without AGENT_pm having issued a task brief — STOP. That is a violation.
+
+Verification hooks live in `docs/hooks/`. Read and execute them when instructed.
 
 ---
 
@@ -280,3 +374,48 @@ Never resolve a conflict between sources unilaterally. Log an obstacle and wait.
 2. Document the diff (file paths, line numbers)
 3. Stop work on that page
 4. Report to Igor
+
+---
+
+## CC Deviation Patterns — Known Failures
+
+Eight documented patterns. When you detect yourself doing any of these, stop and correct.
+
+| # | Pattern | Detection |
+|---|---------|-----------|
+| 1 | Claims "no changes" while describing changes | Contradiction between checkboxes and explanatory text |
+| 2 | Labels bugs as "pre-existing" without proof | Demand git log evidence |
+| 3 | Deploys Studio from wrong directory | Check pwd matches canonical clone |
+| 4 | Uploads images with wrong _type | Studio shows empty image wells |
+| 5 | Fills verification checkboxes without reading | Ask for raw file content at specific line |
+| 6 | Seeds content into draft documents | Check for "drafts." prefix on _id |
+| 7 | Skips /pre and commits directly | CC outputs "committed" without Igor typing /pre |
+| 8 | Phantom execution — fabricates entire reports | grep shows zero changes were made to any file |
+
+Pattern 8 is the most severe. CC reported 15 fixes as complete with specific status markers. A re-audit showed zero changes were made. Defense: proof-of-work grep after every change.
+
+---
+
+## Verification Hooks
+
+Hooks live in `docs/hooks/`. Each is a prompt template for a specific verification task.
+
+| Hook | Trigger | File |
+|------|---------|------|
+| HOOK_01 CMS Parity | After every deploy | docs/hooks/HOOK_01_CMS_Parity.md |
+| HOOK_02 Schema-Data | After schema changes | docs/hooks/HOOK_02_Schema_Data.md |
+| HOOK_03 SEO | After page changes | docs/hooks/HOOK_03_SEO.md |
+| HOOK_04 LLM/GEO | After content changes | docs/hooks/HOOK_04_LLM_GEO.md |
+| HOOK_05 Visual | After template changes | docs/hooks/HOOK_05_Visual.md |
+| HOOK_06 Studio Sync | After Studio deploy | docs/hooks/HOOK_06_Studio_Sync.md |
+| HOOK_07 Image | After image uploads | docs/hooks/HOOK_07_Image.md |
+| HOOK_08 Post-Fix | After any fix commit (3+ items) | docs/hooks/HOOK_08_Post_Fix.md |
+
+| Event | Run these hooks |
+|-------|----------------|
+| After code deploy | HOOK_05 |
+| After schema + Studio deploy | HOOK_02 + HOOK_06 |
+| After image uploads | HOOK_07 |
+| After template wiring | HOOK_01 + HOOK_05 |
+| After commit claiming 3+ fixes | HOOK_08 |
+| Before launch / end of sprint | ALL |
