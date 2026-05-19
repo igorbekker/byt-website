@@ -12,6 +12,7 @@ interface CareersPage {
   openPositionsIntro?: string;
   noFitHeading?: string;
   noFitBody?: string;
+  sections?: Array<{ sectionId: string; enabled?: boolean }>;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
@@ -62,6 +63,13 @@ const JOBS = (rawJobs ?? []).map((job) => ({
         : '',
   body: buildBodyHtml(job),
 }));
+
+function sectionEnabled(id: string): boolean {
+  const arr = page?.sections;
+  if (!arr?.length) return true;
+  const entry = arr.find((s) => s.sectionId === id);
+  return entry ? entry.enabled !== false : true;
+}
 ---
 
 <BaseLayout
@@ -2072,135 +2080,151 @@ const JOBS = (rawJobs ?? []).map((job) => ({
   </style>
 
   <!-- ── HERO ── -->
-  <section class="about-hero careers-hero">
-    <div class="about-hero-content">
-      <p class="eyebrow" style="font-size: 14px">
-        {page?.heroEyebrow ?? 'Careers at Better You Therapy'}
-      </p>
-      <h1
-        style="font-size: 53.2px"
-        set:html={page?.heroHeading ??
-          "Do the clinical work you trained for. <em>We'll handle the rest.</em>"}
-      />
-      <p>
-        {
-          page?.heroSubhead ??
-            "We're hiring licensed therapists across Florida who want sustainable caseloads, transparent revenue splits, and the freedom to focus on therapy."
-        }
-      </p>
-    </div>
-  </section>
+  {
+    sectionEnabled('hero') && (
+      <section class="about-hero careers-hero">
+        <div class="about-hero-content">
+          <p class="eyebrow" style="font-size: 14px">
+            {page?.heroEyebrow ?? 'Careers at Better You Therapy'}
+          </p>
+          <h1
+            style="font-size: 53.2px"
+            set:html={
+              page?.heroHeading ??
+              "Do the clinical work you trained for. <em>We'll handle the rest.</em>"
+            }
+          />
+          <p>
+            {page?.heroSubhead ??
+              "We're hiring licensed therapists across Florida who want sustainable caseloads, transparent revenue splits, and the freedom to focus on therapy."}
+          </p>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── OPEN POSITIONS ── -->
-  <section class="jobs">
-    <div class="jobs-inner">
-      <div class="jobs-header fade-up">
-        <p class="eyebrow">{page?.openPositionsEyebrow ?? 'Open Positions'}</p>
-        <h2>{page?.openPositionsHeading ?? "Roles we're hiring for right now."}</h2>
-        <p>
-          {
-            page?.openPositionsIntro ??
-              'All positions are open to licensed clinicians in Florida. Click "Learn More" to read the full description and apply.'
-          }
-        </p>
-      </div>
-      <div class="jobs-list fade-up" id="jobsList">
-        <!-- Job rows are rendered here by JS so the descriptions stay in one place -->
-      </div>
-    </div>
-  </section>
+  {
+    sectionEnabled('open_positions') && (
+      <section class="jobs">
+        <div class="jobs-inner">
+          <div class="jobs-header fade-up">
+            <p class="eyebrow">{page?.openPositionsEyebrow ?? 'Open Positions'}</p>
+            <h2>{page?.openPositionsHeading ?? "Roles we're hiring for right now."}</h2>
+            <p>
+              {page?.openPositionsIntro ??
+                'All positions are open to licensed clinicians in Florida. Click "Learn More" to read the full description and apply.'}
+            </p>
+          </div>
+          <div class="jobs-list fade-up" id="jobsList">
+            {/* Job rows are rendered here by JS so the descriptions stay in one place */}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── GENERAL APPLICATION ── -->
-  <section class="general-app">
-    <div class="general-app-inner fade-up">
-      <p class="eyebrow">Don't See a Fit?</p>
-      <h2>{page?.noFitHeading ?? "Don't see what you're looking for? Send us your resume."}</h2>
-      <p>
-        {
-          page?.noFitBody ??
-            "We're always interested in hearing from licensed clinicians who share our approach."
-        }
-      </p>
-      <form class="general-form" id="generalForm" onsubmit="submitGeneral(event)">
-        <input type="hidden" name="position" value="General Application" />
-        <div class="form-row">
-          <div class="form-field">
-            <!-- CMS-SKIP: form structure -->
-            <label for="g-name">Full Name</label>
-            <!-- CMS-SKIP: form structure -->
-            <input type="text" id="g-name" name="name" required placeholder="Jane Doe" />
-          </div>
-          <div class="form-field">
-            <!-- CMS-SKIP: form structure -->
-            <label for="g-email">Email</label>
-            <!-- CMS-SKIP: form structure -->
-            <input type="email" id="g-email" name="email" required placeholder="you@example.com" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <!-- CMS-SKIP: form structure -->
-            <label for="g-phone">Phone</label>
-            <!-- CMS-SKIP: form structure -->
-            <input type="tel" id="g-phone" name="phone" placeholder="(555) 123-4567" />
-          </div>
-          <div class="form-field">
-            <!-- CMS-SKIP: form structure -->
-            <label for="g-license">License Type</label>
-            <select id="g-license" name="license">
-              <!-- CMS-SKIP: form structure -->
-              <option value="">Select one…</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>Licensed Psychologist</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>LCSW</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>LMHC</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>LMFT</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>LPC</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>Registered Intern</option>
-              <!-- CMS-SKIP: form structure -->
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-field">
-          <!-- CMS-SKIP: form structure -->
-          <label for="g-message">Tell us about yourself</label>
-          <!-- CMS-SKIP: form structure -->
-          <textarea
-            id="g-message"
-            name="message"
-            placeholder="What kind of work are you looking for? What's your clinical focus?"
-          ></textarea>
-        </div>
-        <div class="form-field">
-          <!-- CMS-SKIP: form structure -->
-          <label>Resume</label>
-          <label class="file-drop" for="g-resume">
-            <input
-              type="file"
-              id="g-resume"
-              name="resume"
-              accept=".pdf,.doc,.docx"
-              onchange="updateFileLabel(this)"
-            />
-            <!-- CMS-SKIP: form structure -->
-            <div class="file-drop-text" id="g-resume-label">
-              <strong>Choose a file</strong> or drag &amp; drop · PDF, DOC, DOCX
+  {
+    sectionEnabled('general_application') && (
+      <section class="general-app">
+        <div class="general-app-inner fade-up">
+          <p class="eyebrow">Don't See a Fit?</p>
+          <h2>{page?.noFitHeading ?? "Don't see what you're looking for? Send us your resume."}</h2>
+          <p>
+            {page?.noFitBody ??
+              "We're always interested in hearing from licensed clinicians who share our approach."}
+          </p>
+          <form class="general-form" id="generalForm" onsubmit="submitGeneral(event)">
+            <input type="hidden" name="position" value="General Application" />
+            <div class="form-row">
+              <div class="form-field">
+                {/* CMS-SKIP: form structure */}
+                <label for="g-name">Full Name</label>
+                {/* CMS-SKIP: form structure */}
+                <input type="text" id="g-name" name="name" required placeholder="Jane Doe" />
+              </div>
+              <div class="form-field">
+                {/* CMS-SKIP: form structure */}
+                <label for="g-email">Email</label>
+                {/* CMS-SKIP: form structure */}
+                <input
+                  type="email"
+                  id="g-email"
+                  name="email"
+                  required
+                  placeholder="you@example.com"
+                />
+              </div>
             </div>
-          </label>
+            <div class="form-row">
+              <div class="form-field">
+                {/* CMS-SKIP: form structure */}
+                <label for="g-phone">Phone</label>
+                {/* CMS-SKIP: form structure */}
+                <input type="tel" id="g-phone" name="phone" placeholder="(555) 123-4567" />
+              </div>
+              <div class="form-field">
+                {/* CMS-SKIP: form structure */}
+                <label for="g-license">License Type</label>
+                <select id="g-license" name="license">
+                  {/* CMS-SKIP: form structure */}
+                  <option value="">Select one…</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>Licensed Psychologist</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>LCSW</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>LMHC</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>LMFT</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>LPC</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>Registered Intern</option>
+                  {/* CMS-SKIP: form structure */}
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              {/* CMS-SKIP: form structure */}
+              <label for="g-message">Tell us about yourself</label>
+              {/* CMS-SKIP: form structure */}
+              <textarea
+                id="g-message"
+                name="message"
+                placeholder="What kind of work are you looking for? What's your clinical focus?"
+              />
+            </div>
+            <div class="form-field">
+              {/* CMS-SKIP: form structure */}
+              <label>Resume</label>
+              <label class="file-drop" for="g-resume">
+                <input
+                  type="file"
+                  id="g-resume"
+                  name="resume"
+                  accept=".pdf,.doc,.docx"
+                  onchange="updateFileLabel(this)"
+                />
+                {/* CMS-SKIP: form structure */}
+                <div class="file-drop-text" id="g-resume-label">
+                  <strong>Choose a file</strong> or drag &amp; drop · PDF, DOC, DOCX
+                </div>
+              </label>
+            </div>
+            <div class="form-submit">
+              {/* CMS-SKIP: form structure */}
+              <button type="submit" class="btn btn-coral">
+                Submit Resume &rarr;
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="form-submit">
-          <!-- CMS-SKIP: form structure -->
-          <button type="submit" class="btn btn-coral">Submit Resume &rarr;</button>
-        </div>
-      </form>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── MODAL ── -->
   <div class="modal-overlay" id="jobModal" onclick="if(event.target===this)closeJobModal()">

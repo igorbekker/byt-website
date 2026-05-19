@@ -1425,3 +1425,82 @@ Fallback resolution: `optionsByGroup?.conditionReasons?.length ? optionsByGroup.
 - `tasks/todo.md` — this review section
 
 **Verification:** No code changes — docs only. Lesson count: 20 ✓.
+
+---
+
+### Add section visibility toggles to all 7 page singletons — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Add a `pageSection` object type and `sections[]` field to all 7 singletons so editors can show/hide individual page sections from Sanity Studio.
+
+**Section IDs per page:**
+
+- homePage (8): hero, router, belief, two_ways, conditions, how_it_works, testimonials, provider_teaser
+- aboutPage (6): hero, mission, story, values, approach, cta
+- communitiesPage (7): hero, process, why_us, no_cost, conditions, testimonial_feature, cta
+- patientsPage (6): hero, audience_selector, delivery, belief, conditions, cta
+- providersPage (6): hero, tracks, why_us, qualifications, testimonials, cta
+- careersPage (3): hero, open_positions, general_application
+- contactPage (2): hero, contact_form
+
+**Studio schema:**
+
+- [x] Created `apps/studio/schemas/objects/pageSection.ts` — object type with `sectionId` (string, required) and `enabled` (boolean, initialValue true); preview shows id + Visible/Hidden label
+- [x] Registered `pageSection` in `apps/studio/schemas/index.ts`
+- [x] Added `sections[]{ sectionId, enabled }` field to all 7 singleton schemas (homePage, aboutPage, communitiesPage, patientsPage, providersPage, careersPage, contactPage)
+
+**GROQ queries:**
+
+- [x] Added `sections[]{ sectionId, enabled },` to all 7 page queries in `apps/web/src/lib/queries.ts`
+
+**Page templates:**
+
+- [x] Added `sections?: Array<{ sectionId: string; enabled?: boolean }>;` to TypeScript interface in all 7 page templates
+- [x] Added `sectionEnabled(id)` helper to all 7 page templates
+- [x] Wrapped all sections in `index.astro` (8 sections)
+- [x] Wrapped all sections in `about.astro` (6 sections)
+- [x] Wrapped all sections in `communities.astro` (7 sections)
+- [x] Wrapped all sections in `providers.astro` (6 sections — 2 had duplicate `id="relume"` disambiguated via preceding HTML comments)
+- [x] Wrapped all sections in `careers.astro` (3 sections)
+- [x] Wrapped all sections in `contact.astro` (2 sections)
+- [x] Wrapped all sections in `patients.astro` (6 sections — required build error fix, see Implementation Notes)
+- [x] Build verified: `pnpm --filter web build` — PASSED (19 routes, 0 errors)
+
+### Session Review — 2026-05-19 (section visibility toggles)
+
+**What was built:** A CMS-driven section visibility system for all 7 marketing pages. Editors can add entries to the `sections` array in each page singleton to show/hide specific sections. Empty array = all sections visible (safe fallback).
+
+**`sectionEnabled` helper behavior:**
+
+- `arr` is empty or undefined → `true` (all sections show)
+- Entry found with `enabled: false` → `false` (section hidden)
+- Entry found with `enabled: true` or `enabled: undefined` → `true`
+- No entry for this ID → `true` (unknown sections default to visible)
+
+**Files changed:**
+
+- `apps/studio/schemas/objects/pageSection.ts` (new)
+- `apps/studio/schemas/index.ts` — pageSection import + registration
+- `apps/studio/schemas/singletons/homePage.ts` — sections field added
+- `apps/studio/schemas/singletons/aboutPage.ts` — sections field added
+- `apps/studio/schemas/singletons/communitiesPage.ts` — sections field added
+- `apps/studio/schemas/singletons/patientsPage.ts` — sections field added
+- `apps/studio/schemas/singletons/providersPage.ts` — sections field added
+- `apps/studio/schemas/singletons/careersPage.ts` — sections field added
+- `apps/studio/schemas/singletons/contactPage.ts` — sections field added
+- `apps/web/src/lib/queries.ts` — sections projection added to all 7 queries
+- `apps/web/src/pages/index.astro` — interface, helper, 8 section wrappers
+- `apps/web/src/pages/about.astro` — interface, helper, 6 section wrappers
+- `apps/web/src/pages/communities.astro` — interface, helper, 7 section wrappers
+- `apps/web/src/pages/providers.astro` — interface, helper, 6 section wrappers
+- `apps/web/src/pages/careers.astro` — interface, helper, 3 section wrappers
+- `apps/web/src/pages/contact.astro` — interface, helper, 2 section wrappers
+- `apps/web/src/pages/patients.astro` — interface, helper, 6 section wrappers
+
+**Implementation notes:**
+
+- `providers.astro` had two `<section id="relume" class="section">` elements with no unique identifiers. Disambiguated using preceding HTML comments (`<!-- Layout422 -->` before tracks, `<!-- Layout506 -->` before qualifications) rather than modifying existing attributes.
+- `patients.astro` belief section contained two fallback strings (`beliefQuote`, `beliefBody`) that used U+2018/U+2019 (curly single quotes) as JavaScript string delimiters — valid in Astro's standalone template pass but rejected by esbuild when compiled into a `{condition && jsx}` conditional. Fixed by replacing the outer U+2018/U+2019 delimiters with ASCII double quotes, preserving all string content including internal U+201C/U+201D curly double quotes and U+2019 apostrophes.
+- `patients.astro` `sectionEnabled` function uses `sec` as the parameter name (instead of `s`) to avoid shadowing the outer `const s` routing card variable.
+- The JSX pattern `{sectionEnabled('id') && ( <section>...</section> )}` was used consistently across all pages — no HTML inside sections was modified.
+
+**Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors ✓. Build time ~41s ✓.

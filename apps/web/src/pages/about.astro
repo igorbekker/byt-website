@@ -65,6 +65,7 @@ interface AboutPage {
   ctaSecondary?: CtaLink;
   ctaTertiary?: { label?: string; href?: string };
   ctaBackgroundImage?: ImageWithAlt;
+  sections?: Array<{ sectionId: string; enabled?: boolean }>;
   seo?: { metaTitle?: string; metaDescription?: string };
 }
 
@@ -73,6 +74,13 @@ const page = await sanityClient.fetch<AboutPage>(ABOUT_PAGE_QUERY);
 const pr = page?.principles ?? [];
 const pp = page?.practicePillars ?? [];
 const sb = page?.storyBody ?? [];
+
+function sectionEnabled(id: string): boolean {
+  const arr = page?.sections;
+  if (!arr?.length) return true;
+  const entry = arr.find((s) => s.sectionId === id);
+  return entry ? entry.enabled !== false : true;
+}
 ---
 
 <BaseLayout
@@ -2128,235 +2136,236 @@ const sb = page?.storyBody ?? [];
   </style>
 
   <!-- ── HERO ── -->
-  <section class="about-hero">
-    <div class="about-hero-content">
-      <p class="eyebrow">About Better You Therapy</p>
-      <h1
-        set:html={page?.heroHeading ??
-          'Mental health care should reach <em>everyone</em> — not just the people who can navigate the system.'}
-      />
-      <p>
-        {
-          page?.heroSubhead ??
-            "We're a Florida-based mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it. We bring therapists on-site to senior living facilities, and online to adults and families across the state."
-        }
-      </p>
-    </div>
-    <div class="about-hero-image">
-      <img
-        src={page?.heroTeamImage?.asset?.url ?? '/images/about/about-hero-team.png'}
-        alt={page?.heroTeamImage?.alt ?? 'Better You Therapy clinical team in South Florida'}
-        onerror="this.style.display='none'"
-      />
-    </div>
-  </section>
+  {
+    sectionEnabled('hero') && (
+      <section class="about-hero">
+        <div class="about-hero-content">
+          <p class="eyebrow">About Better You Therapy</p>
+          <h1
+            set:html={
+              page?.heroHeading ??
+              'Mental health care should reach <em>everyone</em> — not just the people who can navigate the system.'
+            }
+          />
+          <p>
+            {page?.heroSubhead ??
+              "We're a Florida-based mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it. We bring therapists on-site to senior living facilities, and online to adults and families across the state."}
+          </p>
+        </div>
+        <div class="about-hero-image">
+          <img
+            src={page?.heroTeamImage?.asset?.url ?? '/images/about/about-hero-team.png'}
+            alt={page?.heroTeamImage?.alt ?? 'Better You Therapy clinical team in South Florida'}
+            onerror="this.style.display='none'"
+          />
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── MISSION RULE ── -->
-  <section class="mission-band">
-    <div class="mission-inner fade-up">
-      <p class="eyebrow">{page?.missionEyebrow ?? 'Our Mission'}</p>
-      <div class="mission-rule"></div>
-      <h2>{page?.missionQuote ?? '“Mental health care belongs to everyone.”'}</h2>
-      <p>
-        {
-          page?.missionBody ??
-            "Mental health care shouldn't depend on where you live, how much you earn, or how well you can navigate the system. We built Better You Therapy to close that gap — for residents in long-term care who fall through the cracks, for adults who can't get on a waitlist, and for therapists who want to do real clinical work without administrative drag."
-        }
-      </p>
-    </div>
-  </section>
+  {
+    sectionEnabled('mission') && (
+      <section class="mission-band">
+        <div class="mission-inner fade-up">
+          <p class="eyebrow">{page?.missionEyebrow ?? 'Our Mission'}</p>
+          <div class="mission-rule" />
+          <h2>{page?.missionQuote ?? '“Mental health care belongs to everyone.”'}</h2>
+          <p>
+            {page?.missionBody ??
+              "Mental health care shouldn't depend on where you live, how much you earn, or how well you can navigate the system. We built Better You Therapy to close that gap — for residents in long-term care who fall through the cracks, for adults who can't get on a waitlist, and for therapists who want to do real clinical work without administrative drag."}
+          </p>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── STORY ── -->
-  <section class="story">
-    <div class="story-inner fade-up">
-      <div class="story-image">
-        <img
-          src={page?.storyHandsImage?.asset?.url ?? '/images/about/about-story-hands.png'}
-          alt={page?.storyHandsImage?.alt ?? 'Team hands stacked together in unity'}
-          onerror="this.parentElement.style.background='linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 100%)'"
-        />
-      </div>
-      <div class="story-content">
-        <p class="eyebrow">{page?.storyEyebrow ?? 'Our Story'}</p>
-        <h2>{page?.storyHeading ?? 'We started where the gap was widest.'}</h2>
-        <p>
-          {
-            sb[0]?.children?.[0]?.text ??
-              "Better You Therapy started in 2018 with a single observation: residents in assisted living and skilled nursing facilities were going years without ever speaking to a mental health professional — not because they didn't qualify, but because no one was bringing care to them."
-          }
-        </p>
-        <p>
-          {
-            sb[1]?.children?.[0]?.text ??
-              'Medicare covered it. Therapists wanted to provide it. Facilities wanted residents to have it. But the logistics — credentialing, scheduling, billing, documentation — were standing in the way.'
-          }
-        </p>
-        <p>
-          {
-            sb[2]?.children?.[0]?.text ??
-              'So we built the operating layer. Today, our licensed therapists provide weekly on-site care to residents across Southeast Florida and connect with adults and families statewide through teletherapy. Same clinical standard. Two paths to access.'
-          }
-        </p>
-        <div class="story-signature">
-          <div class="story-signature-avatar">
-            {
-              page?.founderPhoto?.asset?.url ? (
-                <img src={page?.founderPhoto?.asset?.url} alt={page?.founderPhoto?.alt ?? ''} />
-              ) : (
-                'AN'
-              )
-            }
+  {
+    sectionEnabled('story') && (
+      <section class="story">
+        <div class="story-inner fade-up">
+          <div class="story-image">
+            <img
+              src={page?.storyHandsImage?.asset?.url ?? '/images/about/about-story-hands.png'}
+              alt={page?.storyHandsImage?.alt ?? 'Team hands stacked together in unity'}
+              onerror="this.parentElement.style.background='linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 100%)'"
+            />
           </div>
-          <div class="story-signature-text">
-            <div class="name">{page?.founderName ?? 'Alisa Nemets'}</div>
-            <div class="role">{page?.founderCredential ?? 'Founder'}</div>
+          <div class="story-content">
+            <p class="eyebrow">{page?.storyEyebrow ?? 'Our Story'}</p>
+            <h2>{page?.storyHeading ?? 'We started where the gap was widest.'}</h2>
+            <p>
+              {sb[0]?.children?.[0]?.text ??
+                "Better You Therapy started in 2018 with a single observation: residents in assisted living and skilled nursing facilities were going years without ever speaking to a mental health professional — not because they didn't qualify, but because no one was bringing care to them."}
+            </p>
+            <p>
+              {sb[1]?.children?.[0]?.text ??
+                'Medicare covered it. Therapists wanted to provide it. Facilities wanted residents to have it. But the logistics — credentialing, scheduling, billing, documentation — were standing in the way.'}
+            </p>
+            <p>
+              {sb[2]?.children?.[0]?.text ??
+                'So we built the operating layer. Today, our licensed therapists provide weekly on-site care to residents across Southeast Florida and connect with adults and families statewide through teletherapy. Same clinical standard. Two paths to access.'}
+            </p>
+            <div class="story-signature">
+              <div class="story-signature-avatar">
+                {page?.founderPhoto?.asset?.url ? (
+                  <img src={page?.founderPhoto?.asset?.url} alt={page?.founderPhoto?.alt ?? ''} />
+                ) : (
+                  'AN'
+                )}
+              </div>
+              <div class="story-signature-text">
+                <div class="name">{page?.founderName ?? 'Alisa Nemets'}</div>
+                <div class="role">{page?.founderCredential ?? 'Founder'}</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── VALUES ── -->
-  <section class="values">
-    <div class="values-inner">
-      <div class="values-header fade-up">
-        <p class="eyebrow">{page?.principlesEyebrow ?? 'What We Believe'}</p>
-        <h2>{page?.principlesHeading ?? 'Three principles that shape how we work.'}</h2>
-        <p>
-          {
-            page?.principlesSubhead ??
-              "They're not aspirational. They're operational — they shape who we hire, how we bill, and how we show up for the people in our care."
-          }
-        </p>
-      </div>
-      <div class="values-grid fade-up">
-        <article class="value-card">
-          <span class="value-num">{pr[0]?.number ?? '01'}</span>
-          <h3>{pr[0]?.heading ?? 'Care belongs in the room.'}</h3>
-          <p>
-            {
-              pr[0]?.body ??
-                "Logistics shouldn't decide who gets help. We handle credentialing, billing, scheduling, and documentation so therapists can focus on therapy and patients can focus on getting better."
-            }
-          </p>
-        </article>
-        <article class="value-card">
-          <span class="value-num">{pr[1]?.number ?? '02'}</span>
-          <h3>{pr[1]?.heading ?? 'Clinical work over throughput.'}</h3>
-          <p>
-            {
-              pr[1]?.body ??
-                "Our therapists carry sustainable caseloads. We don't optimize for session volume — we optimize for outcomes, continuity, and real therapeutic relationships that last."
-            }
-          </p>
-        </article>
-        <article class="value-card">
-          <span class="value-num">{pr[2]?.number ?? '03'}</span>
-          <h3>{pr[2]?.heading ?? 'Transparent, every step.'}</h3>
-          <p>
-            {
-              pr[2]?.body ??
-                'Clear revenue splits with our therapists. Clear billing with insurers. Clear progress reporting back to families and care teams. Trust is built on what we tell you up front, not what you find out later.'
-            }
-          </p>
-        </article>
-      </div>
-    </div>
-  </section>
+  {
+    sectionEnabled('values') && (
+      <section class="values">
+        <div class="values-inner">
+          <div class="values-header fade-up">
+            <p class="eyebrow">{page?.principlesEyebrow ?? 'What We Believe'}</p>
+            <h2>{page?.principlesHeading ?? 'Three principles that shape how we work.'}</h2>
+            <p>
+              {page?.principlesSubhead ??
+                "They're not aspirational. They're operational — they shape who we hire, how we bill, and how we show up for the people in our care."}
+            </p>
+          </div>
+          <div class="values-grid fade-up">
+            <article class="value-card">
+              <span class="value-num">{pr[0]?.number ?? '01'}</span>
+              <h3>{pr[0]?.heading ?? 'Care belongs in the room.'}</h3>
+              <p>
+                {pr[0]?.body ??
+                  "Logistics shouldn't decide who gets help. We handle credentialing, billing, scheduling, and documentation so therapists can focus on therapy and patients can focus on getting better."}
+              </p>
+            </article>
+            <article class="value-card">
+              <span class="value-num">{pr[1]?.number ?? '02'}</span>
+              <h3>{pr[1]?.heading ?? 'Clinical work over throughput.'}</h3>
+              <p>
+                {pr[1]?.body ??
+                  "Our therapists carry sustainable caseloads. We don't optimize for session volume — we optimize for outcomes, continuity, and real therapeutic relationships that last."}
+              </p>
+            </article>
+            <article class="value-card">
+              <span class="value-num">{pr[2]?.number ?? '03'}</span>
+              <h3>{pr[2]?.heading ?? 'Transparent, every step.'}</h3>
+              <p>
+                {pr[2]?.body ??
+                  'Clear revenue splits with our therapists. Clear billing with insurers. Clear progress reporting back to families and care teams. Trust is built on what we tell you up front, not what you find out later.'}
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── APPROACH STRIP ── -->
-  <section class="approach">
-    <div class="approach-inner">
-      <div class="approach-header fade-up">
-        <p class="eyebrow">{page?.practiceEyebrow ?? 'How We Practice'}</p>
-        <h2>{page?.practiceHeading ?? 'Evidence-based, age-aware, integrated.'}</h2>
-      </div>
-      <div class="approach-list fade-up">
-        <div class="approach-row">
-          <div class="approach-num">{pp[0]?.number ?? '01'} — {pp[0]?.label ?? 'METHOD'}</div>
-          <div class="approach-title">
-            {pp[0]?.heading ?? 'Evidence-based modalities, calibrated to the person.'}
+  {
+    sectionEnabled('approach') && (
+      <section class="approach">
+        <div class="approach-inner">
+          <div class="approach-header fade-up">
+            <p class="eyebrow">{page?.practiceEyebrow ?? 'How We Practice'}</p>
+            <h2>{page?.practiceHeading ?? 'Evidence-based, age-aware, integrated.'}</h2>
           </div>
-          <div class="approach-body">
-            {
-              pp[0]?.body ??
-                "CBT, ACT, trauma-informed care, and supportive therapy — selected based on the individual's needs, cognitive profile, and goals. Not a single method applied to everyone."
-            }
+          <div class="approach-list fade-up">
+            <div class="approach-row">
+              <div class="approach-num">
+                {pp[0]?.number ?? '01'} — {pp[0]?.label ?? 'METHOD'}
+              </div>
+              <div class="approach-title">
+                {pp[0]?.heading ?? 'Evidence-based modalities, calibrated to the person.'}
+              </div>
+              <div class="approach-body">
+                {pp[0]?.body ??
+                  "CBT, ACT, trauma-informed care, and supportive therapy — selected based on the individual's needs, cognitive profile, and goals. Not a single method applied to everyone."}
+              </div>
+            </div>
+            <div class="approach-row">
+              <div class="approach-num">
+                {pp[1]?.number ?? '02'} — {pp[1]?.label ?? 'TEAM'}
+              </div>
+              <div class="approach-title">
+                {pp[1]?.heading ??
+                  'Licensed clinicians only — Psychologists, LCSWs, LMHCs, LPCs, LMFTs.'}
+              </div>
+              <div class="approach-body">
+                {pp[1]?.body ??
+                  'Every therapist on our team is fully licensed in the state of Florida. We credential, we verify, and we maintain ongoing clinical supervision and peer consultation.'}
+              </div>
+            </div>
+            <div class="approach-row">
+              <div class="approach-num">
+                {pp[2]?.number ?? '03'} — {pp[2]?.label ?? 'COORDINATION'}
+              </div>
+              <div class="approach-title">
+                {pp[2]?.heading ?? 'Integrated with the rest of the care team.'}
+              </div>
+              <div class="approach-body">
+                {pp[2]?.body ??
+                  'For facility patients, we coordinate with nursing and wellness staff, share progress reporting, and align with treatment plans. For teletherapy clients, we communicate with primary care and psychiatry on request.'}
+              </div>
+            </div>
+            <div class="approach-row">
+              <div class="approach-num">
+                {pp[3]?.number ?? '04'} — {pp[3]?.label ?? 'ACCESS'}
+              </div>
+              <div class="approach-title">
+                {pp[3]?.heading ?? 'No waitlist. First session this week.'}
+              </div>
+              <div class="approach-body">
+                {pp[3]?.body ??
+                  "Whether you're an adult booking online or a wellness director making a referral, we operate on real-world timelines — most people are matched and seen within five business days."}
+              </div>
+            </div>
           </div>
         </div>
-        <div class="approach-row">
-          <div class="approach-num">{pp[1]?.number ?? '02'} — {pp[1]?.label ?? 'TEAM'}</div>
-          <div class="approach-title">
-            {
-              pp[1]?.heading ??
-                'Licensed clinicians only — Psychologists, LCSWs, LMHCs, LPCs, LMFTs.'
-            }
-          </div>
-          <div class="approach-body">
-            {
-              pp[1]?.body ??
-                'Every therapist on our team is fully licensed in the state of Florida. We credential, we verify, and we maintain ongoing clinical supervision and peer consultation.'
-            }
-          </div>
-        </div>
-        <div class="approach-row">
-          <div class="approach-num">{pp[2]?.number ?? '03'} — {pp[2]?.label ?? 'COORDINATION'}</div>
-          <div class="approach-title">
-            {pp[2]?.heading ?? 'Integrated with the rest of the care team.'}
-          </div>
-          <div class="approach-body">
-            {
-              pp[2]?.body ??
-                'For facility patients, we coordinate with nursing and wellness staff, share progress reporting, and align with treatment plans. For teletherapy clients, we communicate with primary care and psychiatry on request.'
-            }
-          </div>
-        </div>
-        <div class="approach-row">
-          <div class="approach-num">{pp[3]?.number ?? '04'} — {pp[3]?.label ?? 'ACCESS'}</div>
-          <div class="approach-title">
-            {pp[3]?.heading ?? 'No waitlist. First session this week.'}
-          </div>
-          <div class="approach-body">
-            {
-              pp[3]?.body ??
-                "Whether you're an adult booking online or a wellness director making a referral, we operate on real-world timelines — most people are matched and seen within five business days."
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── CLOSING CTA ── -->
-  <section class="about-cta">
-    <div
-      class="about-cta-bg"
-      style={`background-image:url('${page?.ctaBackgroundImage?.asset?.url ?? '/images/about/about-cta-bg.png'}')`}
-    >
-    </div>
-    <div class="about-cta-overlay"></div>
-    <div class="about-cta-inner fade-up">
-      <p class="eyebrow">{page?.ctaEyebrow ?? 'Work With Us'}</p>
-      <h2>{page?.ctaHeading ?? "However you found us, we're glad you're here."}</h2>
-      <p>
-        {
-          page?.ctaSubhead ??
-            "Whether you're looking for care, looking to refer, or looking to join our team — we'll meet you where you are."
-        }
-      </p>
-      <div class="about-cta-actions">
-        <button class="btn btn-coral" onclick="openModal('book')"
-          >{page?.ctaPrimary?.label ?? 'Book a Session'} &rarr;</button
-        >
-        <button class="btn btn-outline-white" onclick="openModal('refer')"
-          >{page?.ctaSecondary?.label ?? 'Refer a Resident'} &rarr;</button
-        >
-        <a href={page?.ctaTertiary?.href ?? '/careers/'} class="btn btn-outline-white"
-          >{page?.ctaTertiary?.label ?? 'Join Our Team'} &rarr;</a
-        >
-      </div>
-    </div>
-  </section>
+  {
+    sectionEnabled('cta') && (
+      <section class="about-cta">
+        <div
+          class="about-cta-bg"
+          style={`background-image:url('${page?.ctaBackgroundImage?.asset?.url ?? '/images/about/about-cta-bg.png'}')`}
+        ></div>
+        <div class="about-cta-overlay" />
+        <div class="about-cta-inner fade-up">
+          <p class="eyebrow">{page?.ctaEyebrow ?? 'Work With Us'}</p>
+          <h2>{page?.ctaHeading ?? "However you found us, we're glad you're here."}</h2>
+          <p>
+            {page?.ctaSubhead ??
+              "Whether you're looking for care, looking to refer, or looking to join our team — we'll meet you where you are."}
+          </p>
+          <div class="about-cta-actions">
+            <button class="btn btn-coral" onclick="openModal('book')">
+              {page?.ctaPrimary?.label ?? 'Book a Session'} &rarr;
+            </button>
+            <button class="btn btn-outline-white" onclick="openModal('refer')">
+              {page?.ctaSecondary?.label ?? 'Refer a Resident'} &rarr;
+            </button>
+            <a href={page?.ctaTertiary?.href ?? '/careers/'} class="btn btn-outline-white">
+              {page?.ctaTertiary?.label ?? 'Join Our Team'} &rarr;
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   <script is:inline>
     // ── BLOCK 2: Router accordion

@@ -93,6 +93,7 @@ export const HOME_PAGE_QUERY = `*[_type == "homePage"][0]{
   providerTeaserImage{ asset->{ url }, alt },
   providerTeaserPrimaryCta{ label, href, variant },
   providerTeaserSecondaryCta{ label, href, variant },
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 
@@ -129,6 +130,7 @@ export const COMMUNITIES_PAGE_QUERY = `*[_type == "communitiesPage"][0]{
   serviceAreaHeading, serviceAreaLede,
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 
@@ -156,6 +158,7 @@ export const PATIENTS_PAGE_QUERY = `*[_type == "patientsPage"][0]{
   conditionsEyebrow, conditionsHeading, conditionsSubhead,
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 
@@ -180,6 +183,7 @@ export const PROVIDERS_PAGE_QUERY = `*[_type == "providersPage"][0]{
   testimonialsHeading, testimonialsSubhead,
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 
@@ -191,6 +195,7 @@ export const CAREERS_PAGE_QUERY = `*[_type == "careersPage"][0]{
   heroEyebrow, heroHeading, heroSubhead,
   openPositionsEyebrow, openPositionsHeading, openPositionsIntro,
   noFitHeading, noFitBody,
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 
@@ -203,6 +208,7 @@ export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{
   heroEyebrow, heroHeading, heroSubhead,
   heroImage{ asset->{ url }, alt },
   hoursDescription, disclaimerCopy, responseCopy, infoEyebrow, infoHeading, formHeading,
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 
@@ -233,6 +239,7 @@ export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   ctaSecondary{ label, href, variant },
   ctaTertiary{ label, href },
   ctaBackgroundImage{ asset->{ url }, alt },
+  sections[]{ sectionId, enabled },
   seo{ metaTitle, metaDescription }
 }`;
 

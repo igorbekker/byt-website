@@ -23,6 +23,14 @@ export const careersPage = defineType({
     defineField({ name: 'openPositionsIntro', title: 'Open Positions Intro', type: 'text' }),
     defineField({ name: 'noFitHeading', title: 'No Fit Heading', type: 'string' }),
     defineField({ name: 'noFitBody', title: 'No Fit Body', type: 'text' }),
+    defineField({
+      name: 'sections',
+      title: 'Section Visibility',
+      type: 'array',
+      of: [{ type: 'pageSection' }],
+      description:
+        'Leave empty to show all sections. Add entries to control individual section visibility.',
+    }),
     defineField({ name: 'seo', title: 'SEO', type: 'seoFields' }),
   ],
   preview: {

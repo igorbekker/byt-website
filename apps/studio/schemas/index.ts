@@ -11,6 +11,7 @@ import { ctaLink } from './objects/ctaLink';
 import { audienceCard } from './objects/audienceCard';
 import { serviceTrack } from './objects/serviceTrack';
 import { processStep } from './objects/processStep';
+import { pageSection } from './objects/pageSection';
 
 // Singletons
 import { siteSettings } from './singletons/siteSettings';
@@ -44,6 +45,7 @@ export const schemaTypes = [
   audienceCard,
   serviceTrack,
   processStep,
+  pageSection,
   // Singletons
   siteSettings,
   formSettings,

@@ -103,12 +103,20 @@ interface HomePage {
   providerTeaserImage?: ImageWithAlt;
   providerTeaserPrimaryCta?: CtaLink;
   providerTeaserSecondaryCta?: CtaLink;
+  sections?: Array<{ sectionId: string; enabled?: boolean }>;
   seo?: SeoFields;
 }
 
 const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
 const conditions = await sanityClient.fetch<Condition[]>(CONDITIONS_HOME_QUERY);
 const homeTestimonials = await sanityClient.fetch<Testimonial[]>(TESTIMONIALS_HOME_QUERY);
+
+function sectionEnabled(id: string): boolean {
+  const arr = page?.sections;
+  if (!arr?.length) return true;
+  const entry = arr.find((s) => s.sectionId === id);
+  return entry ? entry.enabled !== false : true;
+}
 ---
 
 <style is:global>
@@ -1566,401 +1574,390 @@ const homeTestimonials = await sanityClient.fetch<Testimonial[]>(TESTIMONIALS_HO
     'Better You Therapy | Licensed Mental Health Care in Southeast Florida'}
 >
   <!-- ── BLOCK 1: HERO ── -->
-  <section class="hero">
-    <div class="hero-image">
-      <img
-        src={page?.heroImage?.asset?.url ?? '/images/home-hero.jpg'}
-        alt={page?.heroImage?.alt ??
-          'Licensed therapist in warm conversation with a senior patient'}
-        onerror="this.style.display='none'"
-      />
-    </div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">
-        {page?.heroEyebrow ?? 'Licensed Mental Health Care · Southeast Florida & Statewide'}
-      </div>
-      <h1>
-        {
-          page?.heroHeadline ??
-            'Mental health care should reach people where they are — not just the ones whose families can navigate the system.'
-        }
-      </h1>
-      <p class="hero-subhead">
-        {
-          page?.heroSubhead ??
-            'We bring licensed therapists on-site to assisted living and skilled nursing facilities across Southeast Florida, and connect adults and families with therapists online — anywhere in Florida. We handle everything.'
-        }
-      </p>
-      <div class="hero-actions">
-        <button class="btn btn-coral" onclick="openModal('book')"
-          >{page?.heroPrimaryCta?.label ?? 'Book a Session'} &rarr;</button
-        >
-        <button class="btn btn-outline-ink" onclick="openModal('refer')"
-          >{page?.heroSecondaryCta?.label ?? 'Refer a Resident'} &rarr;</button
-        >
-      </div>
-    </div>
-  </section>
+  {
+    sectionEnabled('hero') && (
+      <section class="hero">
+        <div class="hero-image">
+          <img
+            src={page?.heroImage?.asset?.url ?? '/images/home-hero.jpg'}
+            alt={
+              page?.heroImage?.alt ??
+              'Licensed therapist in warm conversation with a senior patient'
+            }
+            onerror="this.style.display='none'"
+          />
+        </div>
+        <div class="hero-content">
+          <div class="hero-eyebrow">
+            {page?.heroEyebrow ?? 'Licensed Mental Health Care · Southeast Florida & Statewide'}
+          </div>
+          <h1>
+            {page?.heroHeadline ??
+              'Mental health care should reach people where they are — not just the ones whose families can navigate the system.'}
+          </h1>
+          <p class="hero-subhead">
+            {page?.heroSubhead ??
+              'We bring licensed therapists on-site to assisted living and skilled nursing facilities across Southeast Florida, and connect adults and families with therapists online — anywhere in Florida. We handle everything.'}
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-coral" onclick="openModal('book')">
+              {page?.heroPrimaryCta?.label ?? 'Book a Session'} &rarr;
+            </button>
+            <button class="btn btn-outline-ink" onclick="openModal('refer')">
+              {page?.heroSecondaryCta?.label ?? 'Refer a Resident'} &rarr;
+            </button>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 2: AUDIENCE ROUTER ── -->
-  <section class="router-section">
-    <div class="router-header fade-up">
-      <p class="eyebrow">{page?.routerEyebrow ?? 'Your path starts here'}</p>
-      <h2>{page?.routerHeading ?? 'Who are you here to help?'}</h2>
-      <p>{page?.routerSubhead ?? 'Everyone deserves care that meets them where they are.'}</p>
-    </div>
-    <div class="router-row" id="routerRow">
-      <div class="r-card r-card-wide r-active" data-idx="0" onclick="activateRouterCard(0)">
-        <div class="r-wide-content">
-          <div>
-            <p class="r-tagline">{page?.routerCards?.[0]?.tagline ?? 'Facilities'}</p>
-            <h3 class="r-heading">
-              {page?.routerCards?.[0]?.heading ?? 'For Wellness Directors & Facility Admins'}
-            </h3>
-            <p class="r-body">
-              {
-                page?.routerCards?.[0]?.bodyExpanded ??
-                  'Your residents deserve mental health care. We make sure nothing stands in the way. Zero cost. We handle billing, scheduling, and documentation.'
-              }
-            </p>
-          </div>
-          <a
-            href={page?.routerCards?.[0]?.cta?.href ?? '/communities/'}
-            class="r-cta"
-            onclick="event.stopPropagation()"
-          >
-            {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
+  {
+    sectionEnabled('router') && (
+      <section class="router-section">
+        <div class="router-header fade-up">
+          <p class="eyebrow">{page?.routerEyebrow ?? 'Your path starts here'}</p>
+          <h2>{page?.routerHeading ?? 'Who are you here to help?'}</h2>
+          <p>{page?.routerSubhead ?? 'Everyone deserves care that meets them where they are.'}</p>
         </div>
-        <div
-          class="r-wide-image"
-          style={`background-image:url('${page?.routerCards?.[0]?.image?.asset?.url ?? '/images/home-router-communities.jpg'}');background-size:cover;background-position:center;`}
-        >
-        </div>
-        <div class="r-narrow-content" style="display:none">
-          <div class="r-icon">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#E17B5D"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <>
-                <path d="M3 21h18"></path>
-                <path d="M5 21V7l7-4 7 4v14"></path>
-                <path d="M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"></path>
-              </>
-            </svg>
+        <div class="router-row" id="routerRow">
+          <div class="r-card r-card-wide r-active" data-idx="0" onclick="activateRouterCard(0)">
+            <div class="r-wide-content">
+              <div>
+                <p class="r-tagline">{page?.routerCards?.[0]?.tagline ?? 'Facilities'}</p>
+                <h3 class="r-heading">
+                  {page?.routerCards?.[0]?.heading ?? 'For Wellness Directors & Facility Admins'}
+                </h3>
+                <p class="r-body">
+                  {page?.routerCards?.[0]?.bodyExpanded ??
+                    'Your residents deserve mental health care. We make sure nothing stands in the way. Zero cost. We handle billing, scheduling, and documentation.'}
+                </p>
+              </div>
+              <a
+                href={page?.routerCards?.[0]?.cta?.href ?? '/communities/'}
+                class="r-cta"
+                onclick="event.stopPropagation()"
+              >
+                {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+            <div
+              class="r-wide-image"
+              style={`background-image:url('${page?.routerCards?.[0]?.image?.asset?.url ?? '/images/home-router-communities.jpg'}');background-size:cover;background-position:center;`}
+            ></div>
+            <div class="r-narrow-content" style="display:none">
+              <div class="r-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#E17B5D"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <>
+                    <path d="M3 21h18" />
+                    <path d="M5 21V7l7-4 7 4v14" />
+                    <path d="M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1" />
+                  </>
+                </svg>
+              </div>
+              <div>
+                <p class="r-tagline">{page?.routerCards?.[0]?.tagline ?? 'Facilities'}</p>
+                <h3 class="r-heading">
+                  {page?.routerCards?.[0]?.heading ?? 'For Wellness Directors & Facility Admins'}
+                </h3>
+                <p class="r-body">
+                  {page?.routerCards?.[0]?.bodyCollapsed ??
+                    'Zero cost to your facility. We handle billing, scheduling, and documentation.'}
+                </p>
+              </div>
+              <a
+                href={page?.routerCards?.[0]?.cta?.href ?? '/communities/'}
+                class="r-cta"
+                onclick="event.stopPropagation()"
+              >
+                {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
-          <div>
-            <p class="r-tagline">{page?.routerCards?.[0]?.tagline ?? 'Facilities'}</p>
-            <h3 class="r-heading">
-              {page?.routerCards?.[0]?.heading ?? 'For Wellness Directors & Facility Admins'}
-            </h3>
-            <p class="r-body">
-              {
-                page?.routerCards?.[0]?.bodyCollapsed ??
-                  'Zero cost to your facility. We handle billing, scheduling, and documentation.'
-              }
-            </p>
-          </div>
-          <a
-            href={page?.routerCards?.[0]?.cta?.href ?? '/communities/'}
-            class="r-cta"
-            onclick="event.stopPropagation()"
-          >
-            {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
 
-      <div class="r-card r-card-narrow r-inactive" data-idx="1" onclick="activateRouterCard(1)">
-        <div class="r-wide-content" style="display:none">
-          <div>
-            <p class="r-tagline">{page?.routerCards?.[1]?.tagline ?? 'Patients & Families'}</p>
-            <h3 class="r-heading">
-              {page?.routerCards?.[1]?.heading ?? 'For Adults, Families & Caregivers'}
-            </h3>
-            <p class="r-body">
-              {
-                page?.routerCards?.[1]?.bodyExpanded ??
-                  "You've decided it's time to get help — or someone you love has. Let's make that happen this week. No waitlist. No runaround."
-              }
-            </p>
+          <div class="r-card r-card-narrow r-inactive" data-idx="1" onclick="activateRouterCard(1)">
+            <div class="r-wide-content" style="display:none">
+              <div>
+                <p class="r-tagline">{page?.routerCards?.[1]?.tagline ?? 'Patients & Families'}</p>
+                <h3 class="r-heading">
+                  {page?.routerCards?.[1]?.heading ?? 'For Adults, Families & Caregivers'}
+                </h3>
+                <p class="r-body">
+                  {page?.routerCards?.[1]?.bodyExpanded ??
+                    "You've decided it's time to get help — or someone you love has. Let's make that happen this week. No waitlist. No runaround."}
+                </p>
+              </div>
+              <a
+                href={page?.routerCards?.[1]?.cta?.href ?? '/patients/'}
+                class="r-cta"
+                onclick="event.stopPropagation()"
+              >
+                {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+            <div
+              class="r-wide-image"
+              style={`display:none;background-image:url('${page?.routerCards?.[1]?.image?.asset?.url ?? '/images/home-router-patients.jpg'}');background-size:cover;background-position:center;`}
+            ></div>
+            <div class="r-narrow-content">
+              <div class="r-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9CAF88"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                >
+                  <>
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </>
+                </svg>
+              </div>
+              <div>
+                <p class="r-tagline">{page?.routerCards?.[1]?.tagline ?? 'Patients & Families'}</p>
+                <h3 class="r-heading">
+                  {page?.routerCards?.[1]?.heading ?? 'For Adults, Families & Caregivers'}
+                </h3>
+                <p class="r-body">
+                  {page?.routerCards?.[1]?.bodyCollapsed ??
+                    "You've decided it's time to get help — or someone you love has. Let's make that happen this week."}
+                </p>
+              </div>
+              <a
+                href={page?.routerCards?.[1]?.cta?.href ?? '/patients/'}
+                class="r-cta"
+                onclick="event.stopPropagation()"
+              >
+                {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
-          <a
-            href={page?.routerCards?.[1]?.cta?.href ?? '/patients/'}
-            class="r-cta"
-            onclick="event.stopPropagation()"
-          >
-            {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
-        </div>
-        <div
-          class="r-wide-image"
-          style={`display:none;background-image:url('${page?.routerCards?.[1]?.image?.asset?.url ?? '/images/home-router-patients.jpg'}');background-size:cover;background-position:center;`}
-        >
-        </div>
-        <div class="r-narrow-content">
-          <div class="r-icon">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#9CAF88"
-              stroke-width="2"
-              stroke-linecap="round"
-            >
-              <>
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </>
-            </svg>
-          </div>
-          <div>
-            <p class="r-tagline">{page?.routerCards?.[1]?.tagline ?? 'Patients & Families'}</p>
-            <h3 class="r-heading">
-              {page?.routerCards?.[1]?.heading ?? 'For Adults, Families & Caregivers'}
-            </h3>
-            <p class="r-body">
-              {
-                page?.routerCards?.[1]?.bodyCollapsed ??
-                  "You've decided it's time to get help — or someone you love has. Let's make that happen this week."
-              }
-            </p>
-          </div>
-          <a
-            href={page?.routerCards?.[1]?.cta?.href ?? '/patients/'}
-            class="r-cta"
-            onclick="event.stopPropagation()"
-          >
-            {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
 
-      <div class="r-card r-card-narrow r-inactive" data-idx="2" onclick="activateRouterCard(2)">
-        <div class="r-wide-content" style="display:none">
-          <div>
-            <p class="r-tagline">{page?.routerCards?.[2]?.tagline ?? 'Therapists'}</p>
-            <h3 class="r-heading">
-              {page?.routerCards?.[2]?.heading ?? 'For Licensed Therapists in Florida'}
-            </h3>
-            <p class="r-body">
-              {
-                page?.routerCards?.[2]?.bodyExpanded ??
-                  'You became a therapist to do therapy. We built the model that makes that possible. Transparent revenue split from day one.'
-              }
-            </p>
+          <div class="r-card r-card-narrow r-inactive" data-idx="2" onclick="activateRouterCard(2)">
+            <div class="r-wide-content" style="display:none">
+              <div>
+                <p class="r-tagline">{page?.routerCards?.[2]?.tagline ?? 'Therapists'}</p>
+                <h3 class="r-heading">
+                  {page?.routerCards?.[2]?.heading ?? 'For Licensed Therapists in Florida'}
+                </h3>
+                <p class="r-body">
+                  {page?.routerCards?.[2]?.bodyExpanded ??
+                    'You became a therapist to do therapy. We built the model that makes that possible. Transparent revenue split from day one.'}
+                </p>
+              </div>
+              <a
+                href={page?.routerCards?.[2]?.cta?.href ?? '/providers/'}
+                class="r-cta"
+                onclick="event.stopPropagation()"
+              >
+                {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+            <div
+              class="r-wide-image"
+              style={`display:none;background-image:url('${page?.routerCards?.[2]?.image?.asset?.url ?? '/images/home-router-providers.jpg'}');background-size:cover;background-position:center;`}
+            ></div>
+            <div class="r-narrow-content">
+              <div class="r-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#9CAF88"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <>
+                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </>
+                </svg>
+              </div>
+              <div>
+                <p class="r-tagline">{page?.routerCards?.[2]?.tagline ?? 'Therapists'}</p>
+                <h3 class="r-heading">
+                  {page?.routerCards?.[2]?.heading ?? 'For Licensed Therapists in Florida'}
+                </h3>
+                <p class="r-body">
+                  {page?.routerCards?.[2]?.bodyCollapsed ??
+                    'You became a therapist to do therapy. We built the model that makes that possible. Transparent revenue split from day one.'}
+                </p>
+              </div>
+              <a
+                href={page?.routerCards?.[2]?.cta?.href ?? '/providers/'}
+                class="r-cta"
+                onclick="event.stopPropagation()"
+              >
+                {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
-          <a
-            href={page?.routerCards?.[2]?.cta?.href ?? '/providers/'}
-            class="r-cta"
-            onclick="event.stopPropagation()"
-          >
-            {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
         </div>
-        <div
-          class="r-wide-image"
-          style={`display:none;background-image:url('${page?.routerCards?.[2]?.image?.asset?.url ?? '/images/home-router-providers.jpg'}');background-size:cover;background-position:center;`}
-        >
-        </div>
-        <div class="r-narrow-content">
-          <div class="r-icon">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#9CAF88"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <>
-                <rect x="2" y="7" width="20" height="14" rx="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </>
-            </svg>
-          </div>
-          <div>
-            <p class="r-tagline">{page?.routerCards?.[2]?.tagline ?? 'Therapists'}</p>
-            <h3 class="r-heading">
-              {page?.routerCards?.[2]?.heading ?? 'For Licensed Therapists in Florida'}
-            </h3>
-            <p class="r-body">
-              {
-                page?.routerCards?.[2]?.bodyCollapsed ??
-                  'You became a therapist to do therapy. We built the model that makes that possible. Transparent revenue split from day one.'
-              }
-            </p>
-          </div>
-          <a
-            href={page?.routerCards?.[2]?.cta?.href ?? '/providers/'}
-            class="r-cta"
-            onclick="event.stopPropagation()"
-          >
-            {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 3: BELIEF BAND ── -->
-  <section class="belief">
-    <div class="belief-inner fade-up">
-      <div class="belief-rule"></div>
-      <h2>"{page?.beliefQuote ?? 'Mental health care belongs to everyone.'}"</h2>
-      <p>
-        {
-          page?.beliefBody ??
-            "Mental health care shouldn't depend on where you live, how much you earn, or how well you can navigate the system. We built Better You Therapy to close that gap."
-        }
-      </p>
-    </div>
-  </section>
+  {
+    sectionEnabled('belief') && (
+      <section class="belief">
+        <div class="belief-inner fade-up">
+          <div class="belief-rule" />
+          <h2>"{page?.beliefQuote ?? 'Mental health care belongs to everyone.'}"</h2>
+          <p>
+            {page?.beliefBody ??
+              "Mental health care shouldn't depend on where you live, how much you earn, or how well you can navigate the system. We built Better You Therapy to close that gap."}
+          </p>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 4: TWO WAYS ── -->
-  <section class="twoways">
-    <div style="max-width:var(--max-w);margin:0 auto;">
-      <div class="twoways-header fade-up">
-        <p class="eyebrow" style="margin-bottom:.75rem">
-          {page?.twoWaysEyebrow ?? 'Two Ways We Work'}
-        </p>
-        <h2>
-          {page?.twoWaysHeading ?? 'Two Ways to Get Mental Health Care Through Better You Therapy'}
-        </h2>
-        <p>
-          {
-            page?.twoWaysSubhead ??
-              'Whether you need a therapist to come to you, or want to connect from wherever you are — we have a path for you.'
-          }
-        </p>
-      </div>
-      <div class="twoways-cards fade-up">
-        <div class="twoways-card twoways-card-lead">
-          <div
-            class="twoways-card-bg"
-            style={`background-image:url('${page?.twoWaysTracks?.[0]?.image?.asset?.url ?? '/images/home-twoways-tele.jpg'}');background-color:#0A2D52;`}
-          >
-          </div>
-          <div class="twoways-card-overlay"></div>
-          <div class="twoways-card-content">
-            <div class="twoways-card-label">
-              {page?.twoWaysTracks?.[0]?.label ?? 'Teletherapy — Anywhere in Florida'}
-            </div>
-            <h3>
-              {
-                page?.twoWaysTracks?.[0]?.heading ??
-                  'Therapy available this week, from wherever you are'
-              }
-            </h3>
-            <p>
-              {
-                page?.twoWaysTracks?.[0]?.body ??
-                  'Licensed therapists available via secure video. Adults, couples, and families. Cash-pay or insurance. No waitlist.'
-              }
+  {
+    sectionEnabled('two_ways') && (
+      <section class="twoways">
+        <div style="max-width:var(--max-w);margin:0 auto;">
+          <div class="twoways-header fade-up">
+            <p class="eyebrow" style="margin-bottom:.75rem">
+              {page?.twoWaysEyebrow ?? 'Two Ways We Work'}
             </p>
-            <button class="btn btn-white" onclick="openModal('book')">
-              {page?.twoWaysTracks?.[0]?.cta?.label ?? 'Book a Session'} &rarr;
-            </button>
+            <h2>
+              {page?.twoWaysHeading ??
+                'Two Ways to Get Mental Health Care Through Better You Therapy'}
+            </h2>
+            <p>
+              {page?.twoWaysSubhead ??
+                'Whether you need a therapist to come to you, or want to connect from wherever you are — we have a path for you.'}
+            </p>
+          </div>
+          <div class="twoways-cards fade-up">
+            <div class="twoways-card twoways-card-lead">
+              <div
+                class="twoways-card-bg"
+                style={`background-image:url('${page?.twoWaysTracks?.[0]?.image?.asset?.url ?? '/images/home-twoways-tele.jpg'}');background-color:#0A2D52;`}
+              ></div>
+              <div class="twoways-card-overlay" />
+              <div class="twoways-card-content">
+                <div class="twoways-card-label">
+                  {page?.twoWaysTracks?.[0]?.label ?? 'Teletherapy — Anywhere in Florida'}
+                </div>
+                <h3>
+                  {page?.twoWaysTracks?.[0]?.heading ??
+                    'Therapy available this week, from wherever you are'}
+                </h3>
+                <p>
+                  {page?.twoWaysTracks?.[0]?.body ??
+                    'Licensed therapists available via secure video. Adults, couples, and families. Cash-pay or insurance. No waitlist.'}
+                </p>
+                <button class="btn btn-white" onclick="openModal('book')">
+                  {page?.twoWaysTracks?.[0]?.cta?.label ?? 'Book a Session'} &rarr;
+                </button>
+              </div>
+            </div>
+            <div class="twoways-card">
+              <div
+                class="twoways-card-bg"
+                style={`background-image:url('${page?.twoWaysTracks?.[1]?.image?.asset?.url ?? '/images/home-twoways-facility.jpg'}');background-color:#0A2D52;`}
+              ></div>
+              <div class="twoways-card-overlay" />
+              <div class="twoways-card-content">
+                <div class="twoways-card-label">
+                  {page?.twoWaysTracks?.[1]?.label ?? 'In-Facility — Southeast Florida'}
+                </div>
+                <h3>
+                  {page?.twoWaysTracks?.[1]?.heading ??
+                    'On-site mental health care at your facility'}
+                </h3>
+                <p>
+                  {page?.twoWaysTracks?.[1]?.body ??
+                    'Licensed therapists placed inside assisted living, skilled nursing, and continuing care facilities. Medicare-billed. Zero cost to the facility or resident.'}
+                </p>
+                <button class="btn btn-white-outline" onclick="openModal('refer')">
+                  {page?.twoWaysTracks?.[1]?.cta?.label ?? 'Refer a Resident'} &rarr;
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="twoways-card">
-          <div
-            class="twoways-card-bg"
-            style={`background-image:url('${page?.twoWaysTracks?.[1]?.image?.asset?.url ?? '/images/home-twoways-facility.jpg'}');background-color:#0A2D52;`}
-          >
-          </div>
-          <div class="twoways-card-overlay"></div>
-          <div class="twoways-card-content">
-            <div class="twoways-card-label">
-              {page?.twoWaysTracks?.[1]?.label ?? 'In-Facility — Southeast Florida'}
-            </div>
-            <h3>
-              {page?.twoWaysTracks?.[1]?.heading ?? 'On-site mental health care at your facility'}
-            </h3>
-            <p>
-              {
-                page?.twoWaysTracks?.[1]?.body ??
-                  'Licensed therapists placed inside assisted living, skilled nursing, and continuing care facilities. Medicare-billed. Zero cost to the facility or resident.'
-              }
-            </p>
-            <button class="btn btn-white-outline" onclick="openModal('refer')">
-              {page?.twoWaysTracks?.[1]?.cta?.label ?? 'Refer a Resident'} &rarr;
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 5: CONDITIONS ── -->
   <div class="l349-section-header fade-up">
@@ -1973,379 +1970,385 @@ const homeTestimonials = await sanityClient.fetch<Testimonial[]>(TESTIMONIALS_HO
       }
     </p>
   </div>
-  <section class="l349" id="l349">
-    <div class="l349-left">
-      <div class="l349-section" data-section="0">
-        <p class="l349-tagline">{conditions?.[0]?.tagline ?? 'Depression'}</p>
-        <h2 class="l349-h2">{conditions?.[0]?.heading ?? 'Depression & Anxiety'}</h2>
-        <p class="l349-body">
-          {
-            conditions?.[0]?.body ??
-              'Persistent sadness, worry, and overwhelm are treatable. Our licensed therapists provide evidence-based care that meets you or your loved one where they are.'
-          }
-        </p>
-        <div class="l349-actions">
-          <a
-            href={conditions?.[0]?.primaryCta?.href ?? '/individual-therapy/'}
-            class="l349-btn-outline">{conditions?.[0]?.primaryCta?.label ?? 'Book a session'}</a
-          >
-          <a href={conditions?.[0]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
-            >{conditions?.[0]?.secondaryCta?.label ?? 'Refer a resident'}
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-            ></a
-          >
+  {
+    sectionEnabled('conditions') && (
+      <section class="l349" id="l349">
+        <div class="l349-left">
+          <div class="l349-section" data-section="0">
+            <p class="l349-tagline">{conditions?.[0]?.tagline ?? 'Depression'}</p>
+            <h2 class="l349-h2">{conditions?.[0]?.heading ?? 'Depression & Anxiety'}</h2>
+            <p class="l349-body">
+              {conditions?.[0]?.body ??
+                'Persistent sadness, worry, and overwhelm are treatable. Our licensed therapists provide evidence-based care that meets you or your loved one where they are.'}
+            </p>
+            <div class="l349-actions">
+              <a
+                href={conditions?.[0]?.primaryCta?.href ?? '/individual-therapy/'}
+                class="l349-btn-outline"
+              >
+                {conditions?.[0]?.primaryCta?.label ?? 'Book a session'}
+              </a>
+              <a href={conditions?.[0]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost">
+                {conditions?.[0]?.secondaryCta?.label ?? 'Refer a resident'}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="l349-section" data-section="1">
+            <p class="l349-tagline">{conditions?.[1]?.tagline ?? 'Grief & Loss'}</p>
+            <h2 class="l349-h2">{conditions?.[1]?.heading ?? 'Grief, Loss & Life Transitions'}</h2>
+            <p class="l349-body">
+              {conditions?.[1]?.body ??
+                'Loss of a loved one, a role, or a way of life — grief takes many forms. We provide a safe space to process and move forward.'}
+            </p>
+            <div class="l349-actions">
+              <a
+                href={conditions?.[1]?.primaryCta?.href ?? '/individual-therapy/'}
+                class="l349-btn-outline"
+              >
+                {conditions?.[1]?.primaryCta?.label ?? 'Book a session'}
+              </a>
+              <a href={conditions?.[1]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost">
+                {conditions?.[1]?.secondaryCta?.label ?? 'Refer a resident'}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="l349-section" data-section="2">
+            <p class="l349-tagline">{conditions?.[2]?.tagline ?? 'Trauma'}</p>
+            <h2 class="l349-h2">{conditions?.[2]?.heading ?? 'PTSD & Trauma'}</h2>
+            <p class="l349-body">
+              {conditions?.[2]?.body ??
+                'Trauma-informed care from licensed therapists who understand how past experiences shape present wellbeing.'}
+            </p>
+            <div class="l349-actions">
+              <a
+                href={conditions?.[2]?.primaryCta?.href ?? '/individual-therapy/'}
+                class="l349-btn-outline"
+              >
+                {conditions?.[2]?.primaryCta?.label ?? 'Book a session'}
+              </a>
+              <a href={conditions?.[2]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost">
+                {conditions?.[2]?.secondaryCta?.label ?? 'Refer a resident'}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="l349-section" data-section="3">
+            <p class="l349-tagline">{conditions?.[3]?.tagline ?? 'Relationships'}</p>
+            <h2 class="l349-h2">{conditions?.[3]?.heading ?? 'Relationships, Couples & Family'}</h2>
+            <p class="l349-body">
+              {conditions?.[3]?.body ??
+                'Communication, conflict, and connection — for couples, families, and caregivers navigating change together.'}
+            </p>
+            <div class="l349-actions">
+              <a
+                href={conditions?.[3]?.primaryCta?.href ?? '/individual-therapy/'}
+                class="l349-btn-outline"
+              >
+                {conditions?.[3]?.primaryCta?.label ?? 'Book a session'}
+              </a>
+              <a href={conditions?.[3]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost">
+                {conditions?.[3]?.secondaryCta?.label ?? 'Refer a resident'}
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="l349-section" data-section="1">
-        <p class="l349-tagline">{conditions?.[1]?.tagline ?? 'Grief & Loss'}</p>
-        <h2 class="l349-h2">{conditions?.[1]?.heading ?? 'Grief, Loss & Life Transitions'}</h2>
-        <p class="l349-body">
-          {
-            conditions?.[1]?.body ??
-              'Loss of a loved one, a role, or a way of life — grief takes many forms. We provide a safe space to process and move forward.'
-          }
-        </p>
-        <div class="l349-actions">
-          <a
-            href={conditions?.[1]?.primaryCta?.href ?? '/individual-therapy/'}
-            class="l349-btn-outline">{conditions?.[1]?.primaryCta?.label ?? 'Book a session'}</a
-          >
-          <a href={conditions?.[1]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
-            >{conditions?.[1]?.secondaryCta?.label ?? 'Refer a resident'}
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-            ></a
-          >
+        <div class="l349-right">
+          <div class="l349-img-wrap" id="l349Images">
+            <div
+              class="l349-img active"
+              data-img="0"
+              style={`background:url('${conditions?.[0]?.image?.asset?.url ?? '/images/home-cond-depression.jpg'}') center/cover;`}
+            ></div>
+            <div
+              class="l349-img"
+              data-img="1"
+              style={`background:url('${conditions?.[1]?.image?.asset?.url ?? '/images/home-cond-grief.jpg'}') center/cover;`}
+            ></div>
+            <div
+              class="l349-img"
+              data-img="2"
+              style={`background:url('${conditions?.[2]?.image?.asset?.url ?? '/images/home-cond-ptsd.jpg'}') center/cover;`}
+            ></div>
+            <div
+              class="l349-img"
+              data-img="3"
+              style={`background:url('${conditions?.[3]?.image?.asset?.url ?? '/images/home-cond-relationships.jpg'}') center/cover;`}
+            ></div>
+          </div>
         </div>
-      </div>
-      <div class="l349-section" data-section="2">
-        <p class="l349-tagline">{conditions?.[2]?.tagline ?? 'Trauma'}</p>
-        <h2 class="l349-h2">{conditions?.[2]?.heading ?? 'PTSD & Trauma'}</h2>
-        <p class="l349-body">
-          {
-            conditions?.[2]?.body ??
-              'Trauma-informed care from licensed therapists who understand how past experiences shape present wellbeing.'
-          }
-        </p>
-        <div class="l349-actions">
-          <a
-            href={conditions?.[2]?.primaryCta?.href ?? '/individual-therapy/'}
-            class="l349-btn-outline">{conditions?.[2]?.primaryCta?.label ?? 'Book a session'}</a
-          >
-          <a href={conditions?.[2]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
-            >{conditions?.[2]?.secondaryCta?.label ?? 'Refer a resident'}
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-            ></a
-          >
-        </div>
-      </div>
-      <div class="l349-section" data-section="3">
-        <p class="l349-tagline">{conditions?.[3]?.tagline ?? 'Relationships'}</p>
-        <h2 class="l349-h2">{conditions?.[3]?.heading ?? 'Relationships, Couples & Family'}</h2>
-        <p class="l349-body">
-          {
-            conditions?.[3]?.body ??
-              'Communication, conflict, and connection — for couples, families, and caregivers navigating change together.'
-          }
-        </p>
-        <div class="l349-actions">
-          <a
-            href={conditions?.[3]?.primaryCta?.href ?? '/individual-therapy/'}
-            class="l349-btn-outline">{conditions?.[3]?.primaryCta?.label ?? 'Book a session'}</a
-          >
-          <a href={conditions?.[3]?.secondaryCta?.href ?? '/referral/'} class="l349-btn-ghost"
-            >{conditions?.[3]?.secondaryCta?.label ?? 'Refer a resident'}
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-            ></a
-          >
-        </div>
-      </div>
-    </div>
-    <div class="l349-right">
-      <div class="l349-img-wrap" id="l349Images">
-        <div
-          class="l349-img active"
-          data-img="0"
-          style={`background:url('${conditions?.[0]?.image?.asset?.url ?? '/images/home-cond-depression.jpg'}') center/cover;`}
-        >
-        </div>
-        <div
-          class="l349-img"
-          data-img="1"
-          style={`background:url('${conditions?.[1]?.image?.asset?.url ?? '/images/home-cond-grief.jpg'}') center/cover;`}
-        >
-        </div>
-        <div
-          class="l349-img"
-          data-img="2"
-          style={`background:url('${conditions?.[2]?.image?.asset?.url ?? '/images/home-cond-ptsd.jpg'}') center/cover;`}
-        >
-        </div>
-        <div
-          class="l349-img"
-          data-img="3"
-          style={`background:url('${conditions?.[3]?.image?.asset?.url ?? '/images/home-cond-relationships.jpg'}') center/cover;`}
-        >
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 6: HOW IT WORKS ── -->
-  <section class="howitworks">
-    <div style="max-width:var(--max-w);margin:0 auto;">
-      <div class="howitworks-header fade-up">
-        <p class="eyebrow" style="margin-bottom:.75rem">
-          {page?.howItWorksEyebrow ?? 'The Process'}
-        </p>
-        <h2>{page?.howItWorksHeading ?? 'Getting Started Is Simple — Either Way'}</h2>
-      </div>
-      <div class="howitworks-grid fade-up">
-        <div class="howitworks-track howitworks-track-tele">
-          <div class="howitworks-track-label">
-            {page?.teletherapyTrackLabel ?? 'Online Therapy Track'}
+  {
+    sectionEnabled('how_it_works') && (
+      <section class="howitworks">
+        <div style="max-width:var(--max-w);margin:0 auto;">
+          <div class="howitworks-header fade-up">
+            <p class="eyebrow" style="margin-bottom:.75rem">
+              {page?.howItWorksEyebrow ?? 'The Process'}
+            </p>
+            <h2>{page?.howItWorksHeading ?? 'Getting Started Is Simple — Either Way'}</h2>
           </div>
-          <div class="steps-wrap">
-            <div class="step">
-              <div class="step-num tele-num">1</div>
-              <div class="step-text">
-                <h4>{page?.teletherapySteps?.[0]?.heading ?? "Tell Us What You're Looking For"}</h4>
-                <p>
-                  {
-                    page?.teletherapySteps?.[0]?.body ??
-                      'A short intake — your needs, availability, and preferences. Under 5 minutes.'
-                  }
-                </p>
+          <div class="howitworks-grid fade-up">
+            <div class="howitworks-track howitworks-track-tele">
+              <div class="howitworks-track-label">
+                {page?.teletherapyTrackLabel ?? 'Online Therapy Track'}
+              </div>
+              <div class="steps-wrap">
+                <div class="step">
+                  <div class="step-num tele-num">1</div>
+                  <div class="step-text">
+                    <h4>
+                      {page?.teletherapySteps?.[0]?.heading ?? "Tell Us What You're Looking For"}
+                    </h4>
+                    <p>
+                      {page?.teletherapySteps?.[0]?.body ??
+                        'A short intake — your needs, availability, and preferences. Under 5 minutes.'}
+                    </p>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-num tele-num">2</div>
+                  <div class="step-text">
+                    <h4>
+                      {page?.teletherapySteps?.[1]?.heading ??
+                        'We Match You With a Licensed Therapist'}
+                    </h4>
+                    <p>
+                      {page?.teletherapySteps?.[1]?.body ??
+                        'We handle the matching. You get a therapist suited to your specific needs.'}
+                    </p>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-num tele-num">3</div>
+                  <div class="step-text">
+                    <h4>
+                      {page?.teletherapySteps?.[2]?.heading ??
+                        'Your First Session Is Available This Week'}
+                    </h4>
+                    <p>
+                      {page?.teletherapySteps?.[2]?.body ??
+                        'No waitlist. Secure video sessions on your schedule.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="track-cta">
+                <button class="btn btn-sage" onclick="openModal('book')">
+                  {page?.teletherapyCta?.label ?? 'Book a Session'} &rarr;
+                </button>
               </div>
             </div>
-            <div class="step">
-              <div class="step-num tele-num">2</div>
-              <div class="step-text">
-                <h4>
-                  {page?.teletherapySteps?.[1]?.heading ?? 'We Match You With a Licensed Therapist'}
-                </h4>
-                <p>
-                  {
-                    page?.teletherapySteps?.[1]?.body ??
-                      'We handle the matching. You get a therapist suited to your specific needs.'
-                  }
-                </p>
+            <div class="howitworks-track howitworks-track-facility">
+              <div class="howitworks-track-label">
+                {page?.facilityTrackLabel ?? 'In-Facility Track'}
+              </div>
+              <div class="steps-wrap">
+                <div class="step">
+                  <div class="step-num facility-num">1</div>
+                  <div class="step-text">
+                    <h4>{page?.facilitySteps?.[0]?.heading ?? 'You Refer a Resident'}</h4>
+                    <p>
+                      {page?.facilitySteps?.[0]?.body ??
+                        'A simple referral form. We take it from there — no paperwork burden for your team.'}
+                    </p>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-num facility-num">2</div>
+                  <div class="step-text">
+                    <h4>
+                      {page?.facilitySteps?.[1]?.heading ??
+                        'We Handle Scheduling and Medicare Billing'}
+                    </h4>
+                    <p>
+                      {page?.facilitySteps?.[1]?.body ??
+                        'Consent, credentialing, billing to Medicare Part B. All handled by BYT.'}
+                    </p>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-num facility-num">3</div>
+                  <div class="step-text">
+                    <h4>
+                      {page?.facilitySteps?.[2]?.heading ??
+                        'Your Therapist Arrives On-Site, Weekly'}
+                    </h4>
+                    <p>
+                      {page?.facilitySteps?.[2]?.body ??
+                        'Your residents receive care in their own room. Weekly visits. Zero cost to the facility.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="track-cta">
+                <button class="btn btn-coral" onclick="openModal('refer')">
+                  {page?.facilityCta?.label ?? 'Refer a Resident'} &rarr;
+                </button>
               </div>
             </div>
-            <div class="step">
-              <div class="step-num tele-num">3</div>
-              <div class="step-text">
-                <h4>
-                  {
-                    page?.teletherapySteps?.[2]?.heading ??
-                      'Your First Session Is Available This Week'
-                  }
-                </h4>
-                <p>
-                  {
-                    page?.teletherapySteps?.[2]?.body ??
-                      'No waitlist. Secure video sessions on your schedule.'
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="track-cta">
-            <button class="btn btn-sage" onclick="openModal('book')"
-              >{page?.teletherapyCta?.label ?? 'Book a Session'} &rarr;</button
-            >
-          </div>
-        </div>
-        <div class="howitworks-track howitworks-track-facility">
-          <div class="howitworks-track-label">
-            {page?.facilityTrackLabel ?? 'In-Facility Track'}
-          </div>
-          <div class="steps-wrap">
-            <div class="step">
-              <div class="step-num facility-num">1</div>
-              <div class="step-text">
-                <h4>{page?.facilitySteps?.[0]?.heading ?? 'You Refer a Resident'}</h4>
-                <p>
-                  {
-                    page?.facilitySteps?.[0]?.body ??
-                      'A simple referral form. We take it from there — no paperwork burden for your team.'
-                  }
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num facility-num">2</div>
-              <div class="step-text">
-                <h4>
-                  {page?.facilitySteps?.[1]?.heading ?? 'We Handle Scheduling and Medicare Billing'}
-                </h4>
-                <p>
-                  {
-                    page?.facilitySteps?.[1]?.body ??
-                      'Consent, credentialing, billing to Medicare Part B. All handled by BYT.'
-                  }
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-num facility-num">3</div>
-              <div class="step-text">
-                <h4>
-                  {page?.facilitySteps?.[2]?.heading ?? 'Your Therapist Arrives On-Site, Weekly'}
-                </h4>
-                <p>
-                  {
-                    page?.facilitySteps?.[2]?.body ??
-                      'Your residents receive care in their own room. Weekly visits. Zero cost to the facility.'
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="track-cta">
-            <button class="btn btn-coral" onclick="openModal('refer')"
-              >{page?.facilityCta?.label ?? 'Refer a Resident'} &rarr;</button
-            >
           </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 7: TESTIMONIALS ── -->
-  <section class="testimonials">
-    <div style="max-width:var(--max-w);margin:0 auto;">
-      <div class="testimonials-header fade-up">
-        <p class="eyebrow" style="margin-bottom:.75rem">
-          {page?.testimonialsEyebrow ?? 'Real Voices'}
-        </p>
-        <h2>{page?.testimonialsHeading ?? 'What Our Clients and Partners Are Saying'}</h2>
-        <p>
-          {
-            page?.testimonialsSubhead ??
-              'From the families and facilities we serve — in their own words.'
-          }
-        </p>
-      </div>
-      <div class="testimonials-grid fade-up">
-        <div class="testimonial-card">
-          <div class="testimonial-quote-mark">"</div>
-          <p class="testimonial-text">
-            {
-              homeTestimonials?.[0]?.quote ??
-                "Better You placed a licensed clinician on-site within two weeks. No billing burden on our team, and our residents have weekly continuity of care they didn't have before."
-            }
-          </p>
-          <div class="testimonial-attribution">
-            <div
-              class="testimonial-avatar"
-              style={`background:url('${homeTestimonials?.[0]?.authorPhoto?.asset?.url ?? '/images/home-testimonial-director.jpg'}') center/cover;color:transparent;`}
-            >
+  {
+    sectionEnabled('testimonials') && (
+      <section class="testimonials">
+        <div style="max-width:var(--max-w);margin:0 auto;">
+          <div class="testimonials-header fade-up">
+            <p class="eyebrow" style="margin-bottom:.75rem">
+              {page?.testimonialsEyebrow ?? 'Real Voices'}
+            </p>
+            <h2>{page?.testimonialsHeading ?? 'What Our Clients and Partners Are Saying'}</h2>
+            <p>
+              {page?.testimonialsSubhead ??
+                'From the families and facilities we serve — in their own words.'}
+            </p>
+          </div>
+          <div class="testimonials-grid fade-up">
+            <div class="testimonial-card">
+              <div class="testimonial-quote-mark">"</div>
+              <p class="testimonial-text">
+                {homeTestimonials?.[0]?.quote ??
+                  "Better You placed a licensed clinician on-site within two weeks. No billing burden on our team, and our residents have weekly continuity of care they didn't have before."}
+              </p>
+              <div class="testimonial-attribution">
+                <div
+                  class="testimonial-avatar"
+                  style={`background:url('${homeTestimonials?.[0]?.authorPhoto?.asset?.url ?? '/images/home-testimonial-director.jpg'}') center/cover;color:transparent;`}
+                ></div>
+                <div>
+                  <div class="testimonial-name">
+                    {homeTestimonials?.[0]?.authorRole ?? 'Director of Wellness'}
+                  </div>
+                  <div class="testimonial-role">
+                    {homeTestimonials?.[0]?.authorOrg ?? 'Assisted Living · Palm Beach County'}
+                  </div>
+                </div>
+              </div>
+              <p style="font-size:11px;color:#9CA3AF;margin:0.375rem 0 0 0;line-height:1.4;">
+                Image for illustration
+              </p>
             </div>
-            <div>
-              <div class="testimonial-name">
-                {homeTestimonials?.[0]?.authorRole ?? 'Director of Wellness'}
+            <div class="testimonial-card">
+              <div class="testimonial-quote-mark">"</div>
+              <p class="testimonial-text">
+                {homeTestimonials?.[1]?.quote ??
+                  'My mom had been on a waitlist for months. One call to Better You and she had her first session that same week — right from her apartment.'}
+              </p>
+              <div class="testimonial-attribution">
+                <div
+                  class="testimonial-avatar"
+                  style={`background:url('${homeTestimonials?.[1]?.authorPhoto?.asset?.url ?? '/images/home-testimonial-daughter.jpg'}') center/cover;color:transparent;`}
+                ></div>
+                <div>
+                  <div class="testimonial-name">
+                    {homeTestimonials?.[1]?.authorRole ?? 'Adult Daughter'}
+                  </div>
+                  <div class="testimonial-role">
+                    {homeTestimonials?.[1]?.authorOrg ?? 'Family member · Southeast Florida'}
+                  </div>
+                </div>
               </div>
-              <div class="testimonial-role">
-                {homeTestimonials?.[0]?.authorOrg ?? 'Assisted Living · Palm Beach County'}
-              </div>
+              <p style="font-size:11px;color:#9CA3AF;margin:0.375rem 0 0 0;line-height:1.4;">
+                Image for illustration
+              </p>
             </div>
           </div>
-          <p style="font-size:11px;color:#9CA3AF;margin:0.375rem 0 0 0;line-height:1.4;">
-            Image for illustration
-          </p>
         </div>
-        <div class="testimonial-card">
-          <div class="testimonial-quote-mark">"</div>
-          <p class="testimonial-text">
-            {
-              homeTestimonials?.[1]?.quote ??
-                'My mom had been on a waitlist for months. One call to Better You and she had her first session that same week — right from her apartment.'
-            }
-          </p>
-          <div class="testimonial-attribution">
-            <div
-              class="testimonial-avatar"
-              style={`background:url('${homeTestimonials?.[1]?.authorPhoto?.asset?.url ?? '/images/home-testimonial-daughter.jpg'}') center/cover;color:transparent;`}
-            >
-            </div>
-            <div>
-              <div class="testimonial-name">
-                {homeTestimonials?.[1]?.authorRole ?? 'Adult Daughter'}
-              </div>
-              <div class="testimonial-role">
-                {homeTestimonials?.[1]?.authorOrg ?? 'Family member · Southeast Florida'}
-              </div>
-            </div>
-          </div>
-          <p style="font-size:11px;color:#9CA3AF;margin:0.375rem 0 0 0;line-height:1.4;">
-            Image for illustration
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
   <!-- ── BLOCK 8: PROVIDER TEASER ── -->
-  <section class="provider">
-    <div
-      class="provider-bg"
-      style={`background-image:url('${page?.providerTeaserImage?.asset?.url ?? '/images/home-provider-bg.jpg'}');`}
-    >
-    </div>
-    <div class="provider-overlay"></div>
-    <div class="provider-inner fade-up">
-      <p class="eyebrow" style="margin-bottom:1rem;color:rgba(255,255,255,.75)">
-        {page?.providerTeaserEyebrow ?? 'Join the Team'}
-      </p>
-      <h2>{page?.providerTeaserHeading ?? 'Are You a Licensed Therapist in Florida?'}</h2>
-      <p>
-        {
-          page?.providerTeaserBody ??
-            'Facility-based positions in Southeast Florida and teletherapy positions statewide. Transparent revenue split from day one. We source the patients — you deliver the clinical care.'
-        }
-      </p>
-      <div class="provider-tags">
-        <span class="provider-tag">Psychologists</span><span class="provider-tag">LCSWs</span><span
-          class="provider-tag">LMHCs</span
-        ><span class="provider-tag">LPCs</span><span class="provider-tag">LMFTs</span><span
-          class="provider-tag">Facility-based</span
-        ><span class="provider-tag">Teletherapy</span>
-      </div>
-      <div class="provider-actions">
-        <a href={page?.providerTeaserPrimaryCta?.href ?? '/careers/'} class="btn btn-coral"
-          >{page?.providerTeaserPrimaryCta?.label ?? 'See Open Positions'} &rarr;</a
-        >
-        <a
-          href={page?.providerTeaserSecondaryCta?.href ?? '/providers/'}
-          class="btn btn-outline-white">{page?.providerTeaserSecondaryCta?.label ?? 'Learn More'}</a
-        >
-      </div>
-    </div>
-  </section>
+  {
+    sectionEnabled('provider_teaser') && (
+      <section class="provider">
+        <div
+          class="provider-bg"
+          style={`background-image:url('${page?.providerTeaserImage?.asset?.url ?? '/images/home-provider-bg.jpg'}');`}
+        ></div>
+        <div class="provider-overlay" />
+        <div class="provider-inner fade-up">
+          <p class="eyebrow" style="margin-bottom:1rem;color:rgba(255,255,255,.75)">
+            {page?.providerTeaserEyebrow ?? 'Join the Team'}
+          </p>
+          <h2>{page?.providerTeaserHeading ?? 'Are You a Licensed Therapist in Florida?'}</h2>
+          <p>
+            {page?.providerTeaserBody ??
+              'Facility-based positions in Southeast Florida and teletherapy positions statewide. Transparent revenue split from day one. We source the patients — you deliver the clinical care.'}
+          </p>
+          <div class="provider-tags">
+            <>
+              <span class="provider-tag">Psychologists</span>
+              <span class="provider-tag">LCSWs</span>
+              <span class="provider-tag">LMHCs</span>
+              <span class="provider-tag">LPCs</span>
+              <span class="provider-tag">LMFTs</span>
+              <span class="provider-tag">Facility-based</span>
+              <span class="provider-tag">Teletherapy</span>
+            </>
+          </div>
+          <div class="provider-actions">
+            <a href={page?.providerTeaserPrimaryCta?.href ?? '/careers/'} class="btn btn-coral">
+              {page?.providerTeaserPrimaryCta?.label ?? 'See Open Positions'} &rarr;
+            </a>
+            <a
+              href={page?.providerTeaserSecondaryCta?.href ?? '/providers/'}
+              class="btn btn-outline-white"
+            >
+              {page?.providerTeaserSecondaryCta?.label ?? 'Learn More'}
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   <script is:inline>
     // ── BLOCK 2: Router accordion

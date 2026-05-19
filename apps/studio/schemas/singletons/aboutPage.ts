@@ -140,6 +140,16 @@ export const aboutPage = defineType({
       type: 'imageWithAlt',
     }),
 
+    // ── Section Visibility ────────────────────────────────────────────────
+    defineField({
+      name: 'sections',
+      title: 'Section Visibility',
+      type: 'array',
+      of: [{ type: 'pageSection' }],
+      description:
+        'Leave empty to show all sections. Add entries to control individual section visibility.',
+    }),
+
     // ── SEO ───────────────────────────────────────────────────────────────
     defineField({ name: 'seo', title: 'SEO', type: 'seoFields' }),
   ],

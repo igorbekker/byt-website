@@ -107,6 +107,16 @@ export const communitiesPage = defineType({
     defineField({ name: 'ctaSubhead', title: 'CTA Subhead', type: 'text' }),
     defineField({ name: 'ctaCta', title: 'CTA Button', type: 'ctaLink' }),
 
+    // ── Section Visibility ────────────────────────────────────────────────
+    defineField({
+      name: 'sections',
+      title: 'Section Visibility',
+      type: 'array',
+      of: [{ type: 'pageSection' }],
+      description:
+        'Leave empty to show all sections. Add entries to control individual section visibility.',
+    }),
+
     // ── SEO ───────────────────────────────────────────────────────────────
     defineField({ name: 'seo', title: 'SEO', type: 'seoFields' }),
   ],

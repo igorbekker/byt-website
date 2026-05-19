@@ -25,6 +25,14 @@ export const contactPage = defineType({
     defineField({ name: 'formHeading', title: 'Form Section Heading', type: 'string' }),
     defineField({ name: 'disclaimerCopy', title: 'Disclaimer Copy', type: 'text' }),
     defineField({ name: 'responseCopy', title: 'Response Copy', type: 'text' }),
+    defineField({
+      name: 'sections',
+      title: 'Section Visibility',
+      type: 'array',
+      of: [{ type: 'pageSection' }],
+      description:
+        'Leave empty to show all sections. Add entries to control individual section visibility.',
+    }),
     defineField({ name: 'seo', title: 'SEO', type: 'seoFields' }),
   ],
   preview: {

@@ -168,6 +168,22 @@ Every user-facing text string and image must have a Sanity variable with a `??` 
 
 **How to apply:** Audits start from the rendered site (what the user sees), not from the schema file. For every hardcoded string on a page: trace it back through template → query → schema → seeded data. A field that fails any of the four steps is incomplete.
 
+### 21. Unicode curly quotes (U+2018/U+2019) as JS string delimiters fail inside JSX conditionals
+
+Design-source HTML files sometimes contain strings where the outer JS string delimiter is a Unicode curly quote — U+2018 (LEFT SINGLE QUOTATION MARK) or U+2019 (RIGHT SINGLE QUOTATION MARK) — rather than an ASCII single quote (U+0027). These strings exist in template `??` fallbacks.
+
+Astro's template compiler is lenient about these characters when the expression is a bare `{expression}` in the template body. But when the same expression is nested inside a `{sectionEnabled('id') && ( <section>...</section> )}` conditional, esbuild processes the compiled JS more strictly and rejects U+2018 as an invalid string delimiter, producing `Unexpected "'"` at a misleading compiled-output line number.
+
+**Why:** The Astro compiler's top-level template-body JSX pass is permissive. Once the section is wrapped in an outer `{}` conditional, the inner `{}` expressions are compiled as standard JavaScript by the TypeScript/esbuild pipeline, which enforces the ECMAScript spec: only ASCII `'`, `"`, and `` ` `` are valid string delimiters.
+
+**How to apply:** Before wrapping any `<section>` in a `{condition && (...)}` conditional, scan it for U+2018/U+2019 delimiter pairs in `??` fallback strings:
+
+```bash
+grep -n $'\xe2\x80\x98' apps/web/src/pages/<page>.astro
+```
+
+Any hit that uses U+2018 as the OPENING delimiter must be converted to ASCII `"`. U+2019 apostrophes INSIDE ASCII-quoted strings are fine and must be preserved — only replace the outermost delimiter characters. Internal U+201C/U+201D curly double quotes are also fine inside ASCII `"` delimiters.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
