@@ -1601,3 +1601,26 @@ Re-apply 7 items that were claimed fixed in a prior commit but were never actual
 **Total files changed:** 5
 
 **Verification:** Build PASS — 0 errors ✓. All 7 grep outputs confirmed present.
+
+---
+
+### Fix CMS-SKIP comment text on Phone/Email/Fax channel labels in contact.astro — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Update 3 existing CMS-SKIP comment labels from `contact info label` → `UI channel label` on the Phone, Email, and Fax channel divs in contact.astro.
+
+- [x] Updated `{/* CMS-SKIP: contact info label */}` → `{/* CMS-SKIP: UI channel label */}` above Phone label (line 857)
+- [x] Updated `{/* CMS-SKIP: contact info label */}` → `{/* CMS-SKIP: UI channel label */}` above Email label (line 881)
+- [x] Updated `{/* CMS-SKIP: contact info label */}` → `{/* CMS-SKIP: UI channel label */}` above Fax label (line 906)
+- [x] Verified: `grep -n "CMS-SKIP.*channel" contact.astro` → 3 lines at 857, 881, 906 ✓
+
+### Session Review — 2026-05-19 (CMS-SKIP channel label fix)
+
+**What was done:** Corrected the CMS-SKIP comment text on the three channel label divs (Phone, Email, Fax) in `contact.astro`. The comments did not exist from the prior session — re-applied with correct `UI channel label` classification.
+
+**Files changed:**
+
+- `apps/web/src/pages/contact.astro` — 3 comment insertions only; no element text, HTML structure, or Sanity wiring changed
+
+**Verification:** `grep -n "CMS-SKIP.*channel"` → 3 hits at lines 857, 881, 906 ✓. Build PASS — 19 routes, 0 errors ✓.
+
+**Total files changed:** 1
