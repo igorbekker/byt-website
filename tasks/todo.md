@@ -1697,3 +1697,37 @@ Add `docs/hooks/` directory to the repo for upcoming hook documentation.
 - `docs/hooks/.gitkeep` (new)
 
 **Verification:** Docs-only change — no build impact. `git status` confirms only `docs/hooks/.gitkeep` staged. Build failure is pre-existing (Miniflare/Workers runtime, unrelated to this change).
+
+---
+
+### Resident Referral Form standalone page — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Create `/resident-referral/` page with HIPAAtizer embedded form, HIPAA badge, siteSettings contact info, and footer link.
+
+- [x] A. Created `apps/web/src/pages/resident-referral.astro` — hero header, HIPAA badge, HIPAAtizer scripts (is:inline), alternative submission section
+- [x] B. Added siteSettings fetch (phone, email, fax) with ?? fallbacks matching contact.astro pattern
+- [x] C. Added footer link to /resident-referral/ in Company column of Footer.astro
+- [x] D. CSP check — no \_headers file exists; no CSP present; no action needed (external scripts allowed by default)
+- [x] E. `pnpm --filter web build` — PASSED (20 routes, 0 errors); resident-referral/index.html = 33,313 bytes; HIPAAtizer scripts confirmed as raw tags (not bundled); siteSettings phone/email/fax confirmed in output; footer link confirmed in index.html
+
+### Session Review — 2026-05-19 (Resident Referral Form page)
+
+**What was done:** Created a standalone `/resident-referral/` page with an embedded HIPAAtizer HIPAA-compliant form, an interior-style page hero header, a HIPAA badge, siteSettings-driven contact info for alternative submission methods, and a footer link.
+
+**Files changed:**
+
+- `apps/web/src/pages/resident-referral.astro` (new) — full page with siteSettings fetch, hero, HIPAA badge, HIPAAtizer embed, alternative submission section, page-scoped CSS
+- `apps/web/src/components/ui/Footer.astro` — added `<li><a href="/resident-referral/">Resident Referral Form</a></li>` to Company column
+
+**Implementation notes:**
+
+- Both HIPAAtizer `<script>` tags use `is:inline` so Astro passes them verbatim to the browser without bundling or transformation. Confirmed present in built HTML via grep.
+- The external script loader (`src="https://app.hipaatizer.com/..."`) and the inline `new Hipaatizer(...).render()` call are placed inside `.rr-form-container` — HIPAAtizer will inject the form at the script's DOM position.
+- No CSP action needed: no `_headers` file exists and no `<meta http-equiv="Content-Security-Policy">` tag is present in the project. Without a CSP, all external scripts are allowed by default.
+- siteSettings fetch pattern follows contact.astro exactly: `Promise.all` with `SiteSettings` interface, `??` fallbacks for phone/email/fax.
+- No Sanity page singleton created — page copy is hardcoded (standalone utility page, no CMS editing needed).
+- Footer link placed in "Company" column (task referred to it as "Quick Links" — Company is the correct column per current footer structure).
+
+**Verification:** `pnpm --filter web build` PASS — 20 routes, 0 errors. `resident-referral/index.html` = 33,313 bytes (non-zero). grep confirmed: `new Hipaatizer`, `hipaatizer-form-renderer`, `fc0f96d5` all present as raw HTML. siteSettings phone `754-999-0011`, email `hello@getbetteryou.com`, fax `754-328-4344` all confirmed in built output. Footer link confirmed in index.html.
+
+**Issues:** None
