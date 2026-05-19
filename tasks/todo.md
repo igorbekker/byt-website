@@ -1542,3 +1542,31 @@ Add `order` field to `pageSection` object and wire `renderOrder` + map-based ren
 - All `sectionOrder` find callbacks typed explicitly (`s: { sectionId: string; enabled?: boolean; order?: number }`) to avoid introducing new `ts(7006)` errors beyond the pre-existing ones.
 
 **Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors ✓. Build time ~41s ✓.
+
+---
+
+### Resolve final 10 HARDCODED violations — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Resolve all remaining HARDCODED violations across 4 pages via CMS-SKIP comments and one wiring fix.
+
+- [x] A. index.astro — added `{/* CMS-SKIP: typographic decoration */}` before beliefQuote curly-quote h2
+- [x] B–D. index.astro — added `{/* CMS-SKIP: step ordinal */}` before tele step-num 1/2/3
+- [x] E–G. index.astro — added `{/* CMS-SKIP: step ordinal */}` before facility step-num 1/2/3
+- [x] H. about.astro — added `// CMS-SKIP: photo fallback initials` before `'AN'` in founder photo fallback
+- [x] I. communities.astro — added `{/* CMS-SKIP: CTA verb */}` inline before "Call" in tel CTA
+- [x] J. contact.astro — wired heroImage alt: `alt={page?.heroImage?.alt ?? 'Two people in conversation across a desk'}`
+
+### Session Review — 2026-05-19 (Final HARDCODED violations)
+
+**What was done:** Added CMS-SKIP suppression comments to 8 legitimately-static values (typographic decoration, step ordinals, photo fallback initials, CTA verb). Wired contact.astro heroImage alt from Sanity with fallback.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — 7 CMS-SKIP comments (1 beliefQuote + 3 tele steps + 3 facility steps)
+- `apps/web/src/pages/about.astro` — 1 CMS-SKIP comment (AN initials)
+- `apps/web/src/pages/communities.astro` — 1 CMS-SKIP comment (Call verb)
+- `apps/web/src/pages/contact.astro` — heroImage alt wired with Sanity + fallback
+
+**No HTML structure changed:** YES — comments and one attr value only.
+
+**Verification:** `pnpm --filter web build` PASS — 0 errors, 40.36s ✓
