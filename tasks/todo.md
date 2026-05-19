@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-19 — Add section visibility toggles to all 7 page singletons
+- **Last work:** 2026-05-19 — Create docs/hooks/ directory
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1676,3 +1676,24 @@ Update 3 existing CMS-SKIP comment labels from `contact info label` → `UI chan
 **Marketing copy NOT touched:** YES — only structural form label comments added
 **Total files changed:** 3
 **Verification:** grep confirmed all additions present. Build PASS — 0 errors ✓.
+
+---
+
+### Create docs/hooks/ directory — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Add `docs/hooks/` directory to the repo for upcoming hook documentation.
+
+- [x] Created `docs/hooks/` via `mkdir -p`
+- [x] Added `.gitkeep` placeholder (git does not track empty directories)
+- [x] Created branch `docs/add-hooks-dir`
+- [x] Staged `docs/hooks/.gitkeep`
+
+### Session Review — 2026-05-19 (docs/hooks directory)
+
+**What was done:** Created `docs/hooks/` directory with a `.gitkeep` placeholder file so git can track the otherwise-empty directory. Feature branch `docs/add-hooks-dir` created per CLAUDE.md branching rules.
+
+**Files changed:**
+
+- `docs/hooks/.gitkeep` (new)
+
+**Verification:** Docs-only change — no build impact. `git status` confirms only `docs/hooks/.gitkeep` staged. Build failure is pre-existing (Miniflare/Workers runtime, unrelated to this change).
