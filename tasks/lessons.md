@@ -152,21 +152,21 @@ When writing a MANDATORY VERIFICATION checklist at the end of a task, every "YES
 
 **How to apply:** After any build that touches middleware, routing, or page-level data fetching — run `wc -c dist/client/<key-routes>/index.html` to verify file sizes are non-zero. A healthy page is typically 30–100KB. A 0-byte or sub-1KB file is a blank-page signal. Add this check to /pre for any commit touching middleware.ts.
 
-### 19. Commit protocol — stop and invoke /pre immediately when work is ready, don't wait to be reminded
+### 19. Invoke /pre the moment work is verified — no exceptions
 
-When a task is complete and verified, the very next action is to invoke the `/pre` skill. Do not summarize output, do not suggest next steps, do not describe what was done — stop and call `/pre`.
+The commit protocol applies to every commit regardless of size. Invoke `/pre` the moment work is verified — no narrating the commit step, no treating the task brief's `git commit` line as a license to skip it.
 
-**Why:** After seeding Sanity documents and reporting results, the commit step was described/implied without invoking `/pre` first. Igor had to explicitly remind: "dont forget rules like /pre." The rule is in CLAUDE.md under HARD STOP: "When work is ready to commit, stop completely and say: 'Ready for /pre — please run /pre before I commit.'" The `/pre` skill IS that stop — invoke it, don't narrate it.
+**Why:** Violated twice in one session (patients + about page wiring): task brief included the commit command literally and it was executed without stopping. Igor had to remind both times. Also violated once more when commit step was described/implied without invoking `/pre` after seeding Sanity documents.
 
-**How to apply:** The moment verification passes and work is ready, the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Just: `/pre`.
+**How to apply:** The moment verification passes → the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Task briefs listing a `git commit` command describe the desired end state, not a bypass. The size of the change is irrelevant.
 
-### 20. /pre is not optional even for "simple" tasks — the size of the change is irrelevant
+### 20. Every user-facing field needs the full four-step triad — audits start from the rendered site
 
-The commit protocol applies to every commit, no exceptions. This was violated twice in one session (patients and about page wiring) despite Lesson 19 existing. The pre-task briefing explicitly listed commit steps, but `/pre` was skipped and replaced with direct `git commit` calls.
+Every user-facing text string and image must have a Sanity variable with a `??` fallback. The four-step triad must be complete for every field: (1) schema field declared, (2) field in GROQ query, (3) field wired in template, (4) document seeded in Sanity. For images, a fifth step: upload the asset to Sanity CDN with `_type: 'imageWithAlt'`. Studio must be redeployed after every schema change, from the canonical clone with `git pull` first.
 
-**Why:** The task brief included the commit command literally, and it was executed without stopping for `/pre`. The brevity of the change ("just a few field additions") does not override the protocol.
+**Why:** Parity audits repeatedly found fields present in schema but missing from the query, or in the query but not wired in the template, or wired but never seeded. Each broken link in the triad silently falls back to the hardcoded value — the page appears correct in dev but CMS changes have no effect in production.
 
-**How to apply:** When the task brief itself contains `git commit` instructions, treat them as the desired end state, not as a license to skip `/pre`. The moment edits pass verification, stop and wait for Igor to type `/pre` before touching git.
+**How to apply:** Audits start from the rendered site (what the user sees), not from the schema file. For every hardcoded string on a page: trace it back through template → query → schema → seeded data. A field that fails any of the four steps is incomplete.
 
 ## Incident Log
 

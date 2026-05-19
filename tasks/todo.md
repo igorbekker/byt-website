@@ -1403,3 +1403,25 @@ Fallback resolution: `optionsByGroup?.conditionReasons?.length ? optionsByGroup.
 **Verification:** Build PASS — 19 routes, 0 errors. Key routes non-zero bytes ✓. Sanity query confirmed 52 active documents ✓. All 10 hardcoded blocks replaced ✓.
 
 **Issues:** Seed script initially had wrong project ID (`avsm6e9m` instead of `bpjtbps6`). Caught immediately on first run, corrected before any data was written.
+
+---
+
+### Update project documentation after CMS parity fix — 2026-05-19 [x] COMPLETE 2026-05-19
+
+- [x] PRE-FLIGHT: `docs/sanity-schema-registry.md` confirmed to exist; 20 lessons in lessons.md
+- [x] Rewrote `docs/sanity-schema-registry.md` — comprehensive per-field tables for all 12 singletons and 8 document types; columns: Schema ✅, GROQ ✅, Template ✅, Seeded ✅, Image ✅, CMS-SKIP; document counts updated (singletons 12, documents 8, formOption ×52)
+- [x] Added Lesson 20 to lessons.md — four-step triad rule (schema → query → template → seed → image upload); audits start from rendered site
+- [x] Merged Lessons 19+20 into single Lesson 19 — /pre is mandatory, invoke the moment work is verified, no exceptions
+- [x] Final lesson count: 20
+
+### Session Review — 2026-05-19 (schema registry + lessons)
+
+**What was done:** Rewrote sanity-schema-registry.md with per-field triad status for every schema type. Merged lessons 19+20 into one rule and added the four-step triad as a new Lesson 20.
+
+**Files changed:**
+
+- `docs/sanity-schema-registry.md` — full rewrite; 12 singletons, 8 document types, 6 objects documented
+- `tasks/lessons.md` — Lessons 19+20 merged into Lesson 19; new Lesson 20 (triad) added
+- `tasks/todo.md` — this review section
+
+**Verification:** No code changes — docs only. Lesson count: 20 ✓.
