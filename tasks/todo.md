@@ -1624,3 +1624,28 @@ Update 3 existing CMS-SKIP comment labels from `contact info label` → `UI chan
 **Verification:** `grep -n "CMS-SKIP.*channel"` → 3 hits at lines 857, 881, 906 ✓. Build PASS — 19 routes, 0 errors ✓.
 
 **Total files changed:** 1
+
+---
+
+### Task — Add CMS-SKIP to shared components (Nav, Footer, ModalForms) — 2026-05-19 [COMPLETE 2026-05-19]
+
+- [x] PART 1: Verify contact.astro CMS-SKIP present — 19 comments confirmed
+- [x] PART 1: Verify careers.astro CMS-SKIP present — 30 comments confirmed
+- [x] PART 2: Nav.astro — added `{/* CMS-SKIP: navigation link labels */}` above `.nav-links` block (line 23)
+- [x] PART 2: Footer.astro — added `{/* CMS-SKIP: footer navigation labels */}` above first footer-col links (line 30)
+- [x] PART 2: ModalForms.astro — added `{/* CMS-SKIP: form field labels and structure */}` above book form section (line 742) and refer form section (line 998)
+- [x] PART 3: grep proofs confirmed — all 3 files show CMS-SKIP present
+
+### Session Review — 2026-05-19 (Shared component CMS-SKIP)
+
+**What was done:** Verified contact.astro (19) and careers.astro (30) CMS-SKIP comments present. Added CMS-SKIP markers to 3 shared components.
+
+**Files changed:**
+
+- `apps/web/src/components/nav/Nav.astro` — 1 CMS-SKIP (navigation link labels)
+- `apps/web/src/components/ui/Footer.astro` — 1 CMS-SKIP (footer navigation labels)
+- `apps/web/src/components/ui/ModalForms.astro` — 2 CMS-SKIP (book form + refer form field labels)
+
+**Marketing copy NOT touched:** YES — only structural form label comments added
+**Total files changed:** 3
+**Verification:** grep confirmed all additions present. Build PASS — 0 errors ✓.
