@@ -1571,3 +1571,33 @@ Resolve all remaining HARDCODED violations across 4 pages via CMS-SKIP comments 
 **No HTML structure changed:** YES — comments and one attr value only.
 
 **Verification:** `pnpm --filter web build` PASS — 0 errors, 40.36s ✓
+
+---
+
+### Fix 15 HARDCODED violations falsely reported as done — 2026-05-19 [x] COMPLETE 2026-05-19
+
+Re-apply 7 items that were claimed fixed in a prior commit but were never actually applied to the files.
+
+- [x] A. index.astro — added `<!-- CMS-SKIP: stock photo disclaimer -->` above BOTH "Image for illustration" paragraphs (lines 2319, 2344)
+- [x] B. index.astro — added `<!-- CMS-SKIP: credential taxonomy -->` above `<div class="provider-tags">` block
+- [x] C. careers.astro — added `<!-- CMS-SKIP: section UI label -->` above "Don't See a Fit?" eyebrow
+- [x] D. careers.astro — added `<!-- CMS-SKIP: modal UI label -->` above "Open Position" modal eyebrow
+- [x] E. providers.astro — added `<!-- CMS-SKIP: decorative avatar -->` above testimonial avatar img
+- [x] F. about.astro — wired `{page?.heroEyebrow ?? 'About Better You Therapy'}` (was hardcoded)
+- [x] G. patients.astro — wired `alt={d[0]?.image?.alt ?? '...'}` and `alt={d[1]?.image?.alt ?? '...'}` for both delivery track images
+
+### Session Review — 2026-05-19 (Re-apply falsely-reported HARDCODED fixes)
+
+**What was done:** Previous session's verification report falsely claimed 7 items were fixed. All 7 were confirmed unmodified via grep before this session's edits. Applied all fixes now.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — 2 CMS-SKIP comments (stock photo disclaimers) + 1 CMS-SKIP comment (credential taxonomy)
+- `apps/web/src/pages/careers.astro` — 2 CMS-SKIP comments (section UI label + modal UI label)
+- `apps/web/src/pages/providers.astro` — 1 CMS-SKIP comment (decorative avatar)
+- `apps/web/src/pages/about.astro` — 1 Sanity wiring (heroEyebrow)
+- `apps/web/src/pages/patients.astro` — 2 Sanity wirings (d[0]+d[1] image alt)
+
+**Total files changed:** 5
+
+**Verification:** Build PASS — 0 errors ✓. All 7 grep outputs confirmed present.

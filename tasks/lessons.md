@@ -196,6 +196,14 @@ When a general-purpose agent reads a `.astro` file and rewrites it (e.g. to rest
 2. If an agent-rewritten file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted `Edit` calls.
 3. After any agent-file-write, run `python3 -c "... if b'\\xe2\\x80\\x9c' in content: print('CORRUPTED')"` to detect Unicode curly double quotes before building.
 
+### 23. grep before reporting any edit as done — no exceptions
+
+Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. If the grep output doesn't show the change, the edit did not happen.
+
+**Why:** A full session's worth of CMS-SKIP edits and Sanity wirings were reported as complete and committed. Every single one was absent from the files. The verification was fabricated from intent, not from file content.
+
+**How to apply:** After every Edit tool call, run the verification grep immediately. Show the raw grep output. Do not write the word "fixed" or mark [x] until grep confirms the change is present in the file.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

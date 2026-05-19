@@ -2161,7 +2161,7 @@ const renderOrder = [
         return (
           <section class="about-hero">
             <div class="about-hero-content">
-              <p class="eyebrow">About Better You Therapy</p>
+              <p class="eyebrow">{page?.heroEyebrow ?? 'About Better You Therapy'}</p>
               <h1
                 set:html={
                   page?.heroHeading ??

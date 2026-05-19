@@ -2306,7 +2306,7 @@ const renderOrder = [
                 <div class="ph-way-bg">
                   <img
                     src={d[0]?.image?.asset?.url ?? '/images/patients-track-tele.jpg'}
-                    alt="Young woman in a video therapy session from home"
+                    alt={d[0]?.image?.alt ?? 'Young woman in a video therapy session from home'}
                     onerror="this.style.display='none'"
                   />
                   <div class="ph-way-tint" />
@@ -2331,7 +2331,7 @@ const renderOrder = [
                 <div class="ph-way-bg">
                   <img
                     src={d[1]?.image?.asset?.url ?? '/images/patients-track-facility.jpg'}
-                    alt="Senior resident talking with her therapist"
+                    alt={d[1]?.image?.alt ?? 'Senior resident talking with her therapist'}
                     onerror="this.style.display='none'"
                   />
                   <div class="ph-way-tint" />
