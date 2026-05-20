@@ -255,6 +255,47 @@ Cleanup: archive 1823 lines of completed tasks from todo.md to todo-archive.md; 
 
 ---
 
+### Phase 7A Step 3.6 — Create schema.ts JSON-LD builder — 2026-05-20 [x] COMPLETE 2026-05-20 19:51
+
+Create `apps/web/src/lib/schema.ts`: pure functions returning JSON-LD objects. No Sanity imports. Pages will import these functions and `JSON.stringify()` them into `<script type="application/ld+json">` tags.
+
+- [x] A. Created `apps/web/src/lib/schema.ts` — `SITE_URL` and `ORG_ID` constants at top
+- [x] B. `organizationSchema()` — MedicalOrganization with areaServed array, medicalSpecialty, availableService
+- [x] C. `localBusinessSchema()` — LocalBusiness with priceRange
+- [x] D. `websiteSchema()` — WebSite with potentialAction SearchAction
+- [x] E. `homepageGraphSchema()` — `@context` + `@graph` wrapping all three above
+- [x] F. `blogPostingSchema(post: BlogPostingInput)` — BlogPosting with mainEntityOfPage, optional image object, dateModified fallback
+- [x] G. `jobPostingSchema(job: JobPostingInput)` — JobPosting with hiringOrganization ref, FL jobLocation, CONTRACTOR default
+- [x] H. `faqPageSchema(items: FaqItem[])` — FAQPage with Question/Answer mainEntity array
+- [x] I. TypeScript interfaces for all input types; `@context` on top-level objects only; undefined on optional fields
+- [x] J. Build verified — 19 routes, 0 errors; all 7 grep checks passed
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.6 — schema.ts JSON-LD builder)
+
+**What was built:** `apps/web/src/lib/schema.ts` — 7 pure exported functions returning plain JSON-LD objects. No Sanity imports, no side effects. All constants (`SITE_URL`, `ORG_ID`) defined at module level. TypeScript interfaces (`BlogPostingInput`, `JobPostingInput`, `FaqItem`) for all parameterized functions.
+
+**Files changed:**
+
+- `apps/web/src/lib/schema.ts` (new, 122 lines)
+
+**Function inventory:**
+
+| Function                  | Schema type         | `@context`            |
+| ------------------------- | ------------------- | --------------------- |
+| `organizationSchema()`    | MedicalOrganization | no (nested in @graph) |
+| `localBusinessSchema()`   | LocalBusiness       | no (nested in @graph) |
+| `websiteSchema()`         | WebSite             | no (nested in @graph) |
+| `homepageGraphSchema()`   | @graph wrapper      | yes                   |
+| `blogPostingSchema(post)` | BlogPosting         | yes                   |
+| `jobPostingSchema(job)`   | JobPosting          | yes                   |
+| `faqPageSchema(items)`    | FAQPage             | yes                   |
+
+**Verification:** 7 exported functions confirmed (`grep -c "export function"` → 7). `MedicalOrganization`, `dateModified`, `mainEntityOfPage`, `FAQPage` all present. `pnpm --filter web build` PASS — 19 routes, 0 errors.
+
+**Issues:** None. No user corrections this session.
+
+---
+
 ### Phase 7A Step 3.4 — Add @astrojs/sitemap — 2026-05-20 [x] COMPLETE 2026-05-20
 
 Install `@astrojs/sitemap` and configure it in `astro.config.mjs` with per-page priority overrides.
