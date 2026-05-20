@@ -1,6 +1,5 @@
-interface Env {
-  HUBSPOT_SERVICE_KEY: string;
-}
+import { env } from 'cloudflare:workers';
+import type { APIRoute } from 'astro';
 
 interface ReferralBody {
   facilityName: string;
@@ -17,6 +16,8 @@ interface ReferralBody {
   referralReason: string;
   skilledNursing: string;
 }
+
+export const prerender = false;
 
 const HUBSPOT_BASE = 'https://api.hubapi.com';
 
@@ -134,9 +135,7 @@ async function createContact(
   console.log(`[${step} create] ${url} → ${res.status}`);
 
   if (res.status === 409) {
-    // Contact already exists — extract id from error and return it
     const err = (await res.json()) as { message?: string; id?: string };
-    // HubSpot 409 message contains "Contact already exists. Existing ID: <id>"
     const match = err.message?.match(/Existing ID:\s*(\d+)/i);
     if (match) return match[1];
     throw new Error(`Contact 409 but could not extract ID: ${JSON.stringify(err)}`);
@@ -192,8 +191,7 @@ async function associate(
   }
 }
 
-export async function onRequestPost(context: { request: Request; env: Env }): Promise<Response> {
-  const { request, env } = context;
+export const POST: APIRoute = async ({ request }) => {
   const key = env.HUBSPOT_SERVICE_KEY;
 
   if (!key) {
@@ -329,7 +327,6 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
 
   // ── STEP 5: Associations ──────────────────────────────────────────────────
   try {
-    // 5a — Referrer → Company
     await associate(
       'contacts',
       referrerContactId,
@@ -340,8 +337,6 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
       'Step 5a',
       key,
     );
-
-    // 5b — Patient → Company
     await associate(
       'contacts',
       patientContactId,
@@ -354,7 +349,6 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     );
 
     if (guardianContactId) {
-      // 5c — Guardian → Company (HubSpot default contact-to-company)
       await associate(
         'contacts',
         guardianContactId,
@@ -365,8 +359,6 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         'Step 5c guardian→company',
         key,
       );
-
-      // 5c — Guardian → Patient
       await associate(
         'contacts',
         guardianContactId,
@@ -377,8 +369,6 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         'Step 5c guardian→patient',
         key,
       );
-
-      // 5c — Patient → Guardian
       await associate(
         'contacts',
         patientContactId,
@@ -394,14 +384,12 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     return jsonResponse({ success: false, error: 'Step 5 failed', details: String(err) }, 500);
   }
 
-  // ── STEP 6: Success ───────────────────────────────────────────────────────
   return jsonResponse(
     { success: true, companyId, referrerContactId, patientContactId, guardianContactId },
     200,
   );
-}
+};
 
-// Handle CORS preflight
-export async function onRequestOptions(): Promise<Response> {
+export const OPTIONS: APIRoute = async () => {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
-}
+};

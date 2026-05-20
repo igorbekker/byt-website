@@ -757,6 +757,9 @@ const phoneDigits = phone.replace(/\D/g, '');
       const fileInput = document.getElementById('docUpload');
       const fileList = document.getElementById('fileList');
       const selectedFiles = [];
+      const DRAFT_KEY = 'byt_referral_draft';
+      const DRAFT_TTL = 60 * 60 * 1000;
+      let debounceTimer;
 
       // ── File upload UI ──────────────────────────────────────────────────
       function renderFileList() {
@@ -810,6 +813,86 @@ const phoneDigits = phone.replace(/\D/g, '');
           fileInput.click();
         }
       });
+
+      // ── Draft persistence ───────────────────────────────────────────────
+      const PERSIST_IDS = [
+        'facilityName',
+        'facilityPhone',
+        'referrerFirstName',
+        'referrerLastName',
+        'referrerEmail',
+        'referrerPhone',
+        'patientFirstName',
+        'patientLastName',
+        'guardianFirstName',
+        'guardianLastName',
+        'guardianPhone',
+        'referralReason',
+      ];
+
+      function saveDraft() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+          const fields = {};
+          PERSIST_IDS.forEach(function (id) {
+            const el = document.getElementById(id);
+            fields[id] = el ? el.value : '';
+          });
+          const checked = document.querySelector('input[name="skilledNursing"]:checked');
+          fields.skilledNursing = checked ? checked.value : '';
+          try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({ ts: Date.now(), fields: fields }));
+          } catch {
+            /* ignore storage errors */
+          }
+        }, 500);
+      }
+
+      function clearDraft() {
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch {
+          /* ignore storage errors */
+        }
+      }
+
+      function restoreDraft() {
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          if (!raw) return;
+          const draft = JSON.parse(raw);
+          if (!draft || !draft.ts || !draft.fields) return;
+          if (Date.now() - draft.ts > DRAFT_TTL) {
+            clearDraft();
+            return;
+          }
+          const f = draft.fields;
+          PERSIST_IDS.forEach(function (id) {
+            if (f[id]) {
+              const el = document.getElementById(id);
+              if (el) el.value = f[id];
+            }
+          });
+          if (f.skilledNursing) {
+            const radio = document.querySelector(
+              'input[name="skilledNursing"][value="' + f.skilledNursing + '"]',
+            );
+            if (radio) radio.checked = true;
+          }
+        } catch {
+          /* ignore storage errors */
+        }
+      }
+
+      PERSIST_IDS.forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', saveDraft);
+      });
+      document.querySelectorAll('input[name="skilledNursing"]').forEach(function (r) {
+        r.addEventListener('change', saveDraft);
+      });
+
+      restoreDraft();
 
       // ── Validation ──────────────────────────────────────────────────────
       function showError(msg) {
@@ -918,6 +1001,7 @@ const phoneDigits = phone.replace(/\D/g, '');
           })
           .then(function (result) {
             if (result.ok) {
+              clearDraft();
               form.hidden = true;
               formSuccess.hidden = false;
             } else {
