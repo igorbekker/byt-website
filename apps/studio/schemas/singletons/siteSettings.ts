@@ -85,5 +85,26 @@ export const siteSettings = defineType({
       type: 'seoFields',
       description: 'Fallback SEO fields used when a page has no override.',
     }),
+    defineField({
+      name: 'gtmContainerId',
+      title: 'GTM Container ID',
+      type: 'string',
+      description:
+        'Google Tag Manager container ID (e.g. GTM-XXXXXXX). Leave empty to disable GTM on the site.',
+      validation: (rule) =>
+        rule
+          .regex(/^(GTM-[A-Z0-9]+)?$/, { name: 'gtm-format' })
+          .error('Must match format GTM-XXXXXXX or leave empty'),
+    }),
+    defineField({
+      name: 'robotsTxt',
+      title: 'robots.txt',
+      type: 'text',
+      rows: 15,
+      description:
+        'Full robots.txt content. The Sitemap: line is appended automatically at build time. Changes take effect on next site build.',
+      initialValue:
+        'User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nAllow: /\nUser-agent: ClaudeBot\nAllow: /\nUser-agent: PerplexityBot\nAllow: /\nUser-agent: Google-Extended\nAllow: /\nUser-agent: Applebot-Extended\nAllow: /\nUser-agent: CCBot\nDisallow: /',
+    }),
   ],
 });
