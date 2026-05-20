@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-20 — Phase 7A Step 3.5: CMS-driven robots.txt Astro endpoint
+- **Last work:** 2026-05-20 — Phase 7A Step 3.8: SanityImage.astro with srcset, WebP, CLS prevention
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -385,6 +385,43 @@ Create `apps/web/src/components/ui/Breadcrumb.astro`: reusable breadcrumb compon
 | `ListItem`        | `itemtype="https://schema.org/ListItem"` ✓       |
 | `aria-label`      | `<nav aria-label="Breadcrumb">` ✓                |
 | Build             | 19 routes, 0 errors ✓                            |
+
+**Issues:** None. No user corrections this session.
+
+---
+
+### Phase 7A Step 3.8 — Create SanityImage.astro component — 2026-05-20 [x] COMPLETE 2026-05-20 20:26
+
+Create `apps/web/src/components/ui/SanityImage.astro`: reusable image component with srcset, WebP via Sanity URL params, CLS prevention, and hero/lazy loading modes.
+
+- [x] A. Created `apps/web/src/components/ui/SanityImage.astro`
+- [x] B. Props: `src` (string | `{ url }` | `{ asset: { url } }`), `alt` (required), `width`, `height`, `loading`, `fetchpriority`, `decoding`, `sizes`, `class`
+- [x] C. Generates srcset at 400w, 800w, 1200w using `?w=X&fm=webp&fit=crop`
+- [x] D. `width` and `height` always output as attributes (CLS prevention)
+- [x] E. Hero mode: `fetchpriority="high"` forces `loading="eager"` automatically
+- [x] F. Default mode: `loading="lazy"`, `decoding="async"`
+- [x] G. Outputs bare `<img>` tag — no `<picture>` wrapper
+- [x] H. All 5 acceptance criteria greps passed; `pnpm --filter web build` PASS — 19 routes, 0 errors
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.8 — SanityImage.astro)
+
+**What was built:** `apps/web/src/components/ui/SanityImage.astro` — 52 lines. Reusable image component that accepts a Sanity URL string or asset object, generates a 3-stop srcset at 400w/800w/1200w using Sanity URL transform params (`?w=X&fm=webp&fit=crop`), and always emits `width`/`height` attributes for CLS prevention. Hero images are detected by `fetchpriority="high"` and automatically switch to `loading="eager"`.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/SanityImage.astro` (new, 52 lines)
+
+**Acceptance criteria results:**
+
+| Check                                | Result                |
+| ------------------------------------ | --------------------- |
+| `srcset` present                     | ✓                     |
+| `fm=webp` in srcset entries          | ✓                     |
+| `fetchpriority` prop + attribute     | ✓                     |
+| `loading` prop + hero override logic | ✓                     |
+| `decoding` prop + attribute          | ✓                     |
+| `width`/`height` as attributes       | ✓                     |
+| Build                                | 19 routes, 0 errors ✓ |
 
 **Issues:** None. No user corrections this session.
 

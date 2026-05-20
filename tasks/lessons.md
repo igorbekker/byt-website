@@ -101,11 +101,15 @@ If a bug persists after a verified rebuild+redeploy, and the user-reported warni
 
 **How to apply:** Before diagnosing a "fix didn't work" report, compare the exact warning/error text from the user against what the current code would produce. If they don't match, the browser has old code — instruct a hard-refresh (Cmd+Shift+R). Do not write additional code fixes.
 
-### 13. During investigation — state only what the code proves, never speculate about what the user sees
+### 13. Evidence-first rule — never claim, state, or mark complete without proof
 
-When investigating a visual bug without being able to render the page, stick to provable facts: what the CSS says, what the HTML says, what the git diff shows. Do not write sentences like "the user might see X" or "this probably looks wrong because Y" unless Y is directly readable from the code.
+During investigation: only state what the code, diff, or grep output directly proves. Do not write sentences like "the user might see X" or "this probably looks wrong because Y" unless Y is directly readable from the code.
 
-**How to apply:** Every claim in an investigation report must be traceable to a specific file, line, or git output. If a visual difference cannot be proven from the code, say "cannot determine from static analysis" and stop there.
+During verification: run `grep -n` for the exact string that changed before writing "✓ fixed" or marking `[x]`. Show raw output. Checklist items must match the diff — do not mark "No HTML structure changed: YES" while the explanation describes a structural change.
+
+**Why:** Two distinct failure modes, same root cause — (1) investigation reports speculated about visual state without evidence; (2) a full session's worth of fixes reported complete with zero actual file changes; (3) explicit checklist contradictions slipped through. All waste review time and erode trust.
+
+**How to apply:** Before any claim, ask: what file and line proves this? If you can't answer that, don't write the claim. After every Edit, run the verification grep immediately. If a visual difference cannot be proven from static analysis, say so and stop there. Honest disclosures are not failures; false "YES" claims are.
 
 ### 14. Only change what the instruction explicitly names — do not scale adjacent/container dimensions
 
@@ -182,17 +186,7 @@ When a general-purpose agent reads a `.astro` file and rewrites it (e.g. to rest
 2. If an agent-rewritten file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted `Edit` calls.
 3. After any agent-file-write, run `python3 -c "... if b'\\xe2\\x80\\x9c' in content: print('CORRUPTED')"` to detect Unicode curly double quotes before building.
 
-### 21. All verification claims require evidence — grep before reporting, no contradictions
-
-Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. Show the raw grep output. Do not write "fixed" or mark [x] until grep confirms the change is in the file.
-
-Checklist items must also match what the diff actually shows — do not mark "No HTML structure changed: YES" while the same message describes a structural move or new element added.
-
-**Why:** Two distinct failure modes with the same root cause: (1) a full session's worth of CMS-SKIP and Sanity wirings were reported as complete and committed — every single one was absent from the files; (2) Igor caught an explicit checklist contradiction where "YES, no structure changed" appeared alongside an explanation of the structural changes made. Both waste review time and erode trust.
-
-**How to apply:** After every Edit tool call, run the verification grep immediately. Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say so honestly. Honest disclosures are not failures; false "YES" claims are.
-
-### 22. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
+### 21. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
 
 Every session must start with `cd /home/personal/projects/byt-website`. Every file read, write, build, grep, and deploy must use that absolute path or a path relative to it. Subagents receive no cwd inheritance — always pass the absolute path explicitly (e.g. `/home/personal/projects/byt-website/apps/web/src/pages/contact.astro`).
 
@@ -209,7 +203,7 @@ The `tasks/` directory that counts is the one in this git repo. Never write to `
 - /home/personal/projects/byt-website-repo/
 - /home/personal/projects/better-you-therapy/
 
-### 23. Before changing any font-family, verify --font-body and --font-heading in global.css
+### 22. Before changing any font-family, verify --font-body and --font-heading in global.css
 
 When a user says "use Manrope" or asks to change a font, do not apply the change until you have grepped global.css for `--font-body` and `--font-heading` and checked what font existing form components use.
 
@@ -224,7 +218,7 @@ Every form on the site (ModalForms.astro `.form-field label`, `.form-field input
 
 **How to apply:** When any font instruction is given: grep global.css first → show `--font-body` and `--font-heading` values → confirm the user's intent knowing both values → then change. Never make a font change on instruction alone without showing the current token definitions.
 
-### 24. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
+### 23. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
 
 This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsIgnorePattern` or `caughtErrorsIgnorePattern` configured. As a result:
 
@@ -236,7 +230,7 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** Whenever writing a try/catch that intentionally ignores the error (e.g. localStorage access guards), use `catch { /* reason */ }` — no variable at all. Never use `catch (e)` or `catch (_e)` without a `caughtErrorsIgnorePattern` rule in place.
 
-### 25. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
+### 24. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
 
 **The core rule:** `@astrojs/cloudflare` adapter generates `dist/server/entry.mjs` → Cloudflare Pages sees it as a `_worker.js` → ALL `functions/` directory Pages Functions are bypassed. The two routing systems are mutually exclusive.
 
