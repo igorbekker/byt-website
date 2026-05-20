@@ -132,6 +132,26 @@ Context: Previous session added the Cloudflare adapter to route `/api/referral` 
 
 ---
 
+### Add refer_source + website_form to all HubSpot contact creation calls — 2026-05-20 [x] COMPLETE 2026-05-20 (pre)
+
+Add `refer_source: 'Website Form'` and `website_form: 'Refer Resident'` to every HubSpot contact property object in `functions/api/referral.ts`.
+
+- [x] A. Added both properties to `referrerProps` (Step 2, line ~260)
+- [x] B. Added both properties to `patientProps` (Step 3, line ~289)
+- [x] C. Added both properties to `guardianProps` (Step 4, line ~313)
+
+### Session Review — 2026-05-20 (refer_source + website_form)
+
+**What was built:** Two new HubSpot contact properties added to all 3 contact creation points in `functions/api/referral.ts`. Every contact created by the referral form (referrer, patient, guardian) now sends `refer_source: "Website Form"` and `website_form: "Refer Resident"`.
+
+**Files changed:**
+
+- `functions/api/referral.ts` — 3 targeted edits to `referrerProps`, `patientProps`, `guardianProps`; no logic, no structure changed
+
+**Verification:** Build check below. No user corrections this session.
+
+---
+
 ### Archive todo.md + consolidate lessons.md — 2026-05-20 [x] COMPLETE 2026-05-20
 
 Cleanup: archive 1823 lines of completed tasks from todo.md to todo-archive.md; reduce lessons.md from 25 to 23 lessons by removing Lesson 15 and merging Lessons 17+23.

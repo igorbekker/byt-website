@@ -264,6 +264,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       phone: referrerPhone,
       company: facilityName,
       contact_type: 'Facility Employee',
+      refer_source: 'Website Form',
+      website_form: 'Refer Resident',
     };
     if (existingId) {
       await updateContact(existingId, referrerProps, 'Step 2', key);
@@ -293,6 +295,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       contact_type: 'Patient',
       reason_for_referral: referralReason,
       skilled_nursing: skilledNursing,
+      refer_source: 'Website Form',
+      website_form: 'Refer Resident',
     };
     if (existingId) {
       await updateContact(existingId, patientProps, 'Step 3', key);
@@ -315,6 +319,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
         lastname: guardianLastName ?? '',
         company: facilityName,
         contact_type: 'Guardian/Family',
+        refer_source: 'Website Form',
+        website_form: 'Refer Resident',
       };
       if (guardianPhone) guardianProps.phone = guardianPhone;
       guardianContactId = await createContact(guardianProps, 'Step 4', key);
