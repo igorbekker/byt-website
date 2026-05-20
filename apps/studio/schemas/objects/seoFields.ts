@@ -29,5 +29,34 @@ export const seoFields = defineType({
       title: 'Social Share Image',
       type: 'imageWithAlt',
     }),
+    defineField({
+      name: 'canonicalUrl',
+      title: 'Canonical URL',
+      type: 'string',
+      description:
+        'Override the auto-generated canonical URL. Leave empty to use the default (site URL + page path). Must be an absolute URL starting with https://.',
+      validation: (r) =>
+        r.custom((value: string | undefined) => {
+          if (!value) return true;
+          try {
+            const url = new URL(value);
+            if (url.protocol !== 'https:') return 'Must be a full URL starting with https://';
+            return true;
+          } catch {
+            return 'Must be a full URL starting with https://';
+          }
+        }),
+    }),
+    defineField({
+      name: 'robotsDirective',
+      title: 'Robots Directive',
+      type: 'string',
+      description: 'Controls search engine indexing for this page. Default: index, follow.',
+      options: {
+        list: ['index, follow', 'noindex, follow', 'noindex, nofollow'],
+        layout: 'radio',
+      },
+      initialValue: 'index, follow',
+    }),
   ],
 });
