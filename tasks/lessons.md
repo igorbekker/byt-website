@@ -115,13 +115,7 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 
 **How to apply:** Read the instruction literally. If it says "the logo," change the logo img dimensions only. If the container also needs to change, that is a separate decision that requires explicit confirmation.
 
-### 15. The tasks/ directory that counts is in the git repo — not the home directory
-
-The project has a `tasks/todo.md` and `tasks/lessons.md` in the git repo. There is also a separate `/home/personal/projects/byt-website/tasks/` directory that is NOT in the repo. Always write task reviews and lessons to the **repo's** `tasks/` directory — the one that git tracks.
-
-**How to apply:** When starting a session with a fresh clone, the correct todo.md is at `<clone>/tasks/todo.md`. Never write to `/home/personal/projects/byt-website/tasks/`. If both exist, the repo version is authoritative.
-
-### 16. Middleware token roles: read token fetches, write token tracks — never gate redirects on the write token
+### 15. Middleware token roles: read token fetches, write token tracks — never gate redirects on the write token
 
 When building middleware that (a) fetches data from a read API and (b) optionally writes analytics back:
 
@@ -136,15 +130,7 @@ When building middleware that (a) fetches data from a read API and (b) optionall
 2. Only wrap hit-tracking in `if (writeToken)` — if absent, fire the redirect anyway and skip the counter.
    Never use the write token as a gate for read operations.
 
-### 17. Verification checklist items must match what the code actually does — no contradictions allowed
-
-When writing a MANDATORY VERIFICATION checklist at the end of a task, every "YES/NO" and every claimed value must be provably true based on the `git diff`. Do not mark "No HTML structure changed: YES" while simultaneously describing in the same message that the h1 was repositioned and a new element was added.
-
-**Why:** Igor caught an explicit contradiction: the verification said "YES, no structure changed" but the explanation in the same message described the structural moves. This wastes review time and erodes trust in verification outputs.
-
-**How to apply:** Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say "HTML structure changed: YES — [describe what changed and why]." Honest disclosures in the checklist are not failures; false "YES" claims are.
-
-### 18. "Build Complete!" does not mean every page built correctly — always check file size for key routes
+### 16. "Build Complete!" does not mean every page built correctly — always check file size for key routes
 
 `pnpm --filter web build` reports "Complete!" even if individual routes fail during prerendering. A failed route produces a 0-byte HTML file and silently ships a blank white page to production.
 
@@ -152,7 +138,7 @@ When writing a MANDATORY VERIFICATION checklist at the end of a task, every "YES
 
 **How to apply:** After any build that touches middleware, routing, or page-level data fetching — run `wc -c dist/client/<key-routes>/index.html` to verify file sizes are non-zero. A healthy page is typically 30–100KB. A 0-byte or sub-1KB file is a blank-page signal. Add this check to /pre for any commit touching middleware.ts.
 
-### 19. Invoke /pre the moment work is verified — no exceptions
+### 17. Invoke /pre the moment work is verified — no exceptions
 
 The commit protocol applies to every commit regardless of size. Invoke `/pre` the moment work is verified — no narrating the commit step, no treating the task brief's `git commit` line as a license to skip it.
 
@@ -160,7 +146,7 @@ The commit protocol applies to every commit regardless of size. Invoke `/pre` th
 
 **How to apply:** The moment verification passes → the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Task briefs listing a `git commit` command describe the desired end state, not a bypass. The size of the change is irrelevant.
 
-### 20. Every user-facing field needs the full four-step triad — audits start from the rendered site
+### 18. Every user-facing field needs the full four-step triad — audits start from the rendered site
 
 Every user-facing text string and image must have a Sanity variable with a `??` fallback. The four-step triad must be complete for every field: (1) schema field declared, (2) field in GROQ query, (3) field wired in template, (4) document seeded in Sanity. For images, a fifth step: upload the asset to Sanity CDN with `_type: 'imageWithAlt'`. Studio must be redeployed after every schema change, from the canonical clone with `git pull` first.
 
@@ -168,7 +154,7 @@ Every user-facing text string and image must have a Sanity variable with a `??` 
 
 **How to apply:** Audits start from the rendered site (what the user sees), not from the schema file. For every hardcoded string on a page: trace it back through template → query → schema → seeded data. A field that fails any of the four steps is incomplete.
 
-### 21. Unicode curly quotes (U+2018/U+2019) as JS string delimiters fail inside JSX conditionals
+### 19. Unicode curly quotes (U+2018/U+2019) as JS string delimiters fail inside JSX conditionals
 
 Design-source HTML files sometimes contain strings where the outer JS string delimiter is a Unicode curly quote — U+2018 (LEFT SINGLE QUOTATION MARK) or U+2019 (RIGHT SINGLE QUOTATION MARK) — rather than an ASCII single quote (U+0027). These strings exist in template `??` fallbacks.
 
@@ -184,7 +170,7 @@ grep -n $'\xe2\x80\x98' apps/web/src/pages/<page>.astro
 
 Any hit that uses U+2018 as the OPENING delimiter must be converted to ASCII `"`. U+2019 apostrophes INSIDE ASCII-quoted strings are fine and must be preserved — only replace the outermost delimiter characters. Internal U+201C/U+201D curly double quotes are also fine inside ASCII `"` delimiters.
 
-### 22. General-purpose agents rewriting large .astro files corrupt HTML attribute quotes
+### 20. General-purpose agents rewriting large .astro files corrupt HTML attribute quotes
 
 When a general-purpose agent reads a `.astro` file and rewrites it (e.g. to restructure section guards into a `.map()`), it may replace ASCII double quotes in HTML attributes (`class="..."`, `onerror="..."`) with Unicode curly double quotes U+201C/U+201D. This produces identical-looking output in the terminal but breaks esbuild with `Unexpected """`.
 
@@ -196,17 +182,21 @@ When a general-purpose agent reads a `.astro` file and rewrites it (e.g. to rest
 2. If an agent-rewritten file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted `Edit` calls.
 3. After any agent-file-write, run `python3 -c "... if b'\\xe2\\x80\\x9c' in content: print('CORRUPTED')"` to detect Unicode curly double quotes before building.
 
-### 23. grep before reporting any edit as done — no exceptions
+### 21. All verification claims require evidence — grep before reporting, no contradictions
 
-Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. If the grep output doesn't show the change, the edit did not happen.
+Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. Show the raw grep output. Do not write "fixed" or mark [x] until grep confirms the change is in the file.
 
-**Why:** A full session's worth of CMS-SKIP edits and Sanity wirings were reported as complete and committed. Every single one was absent from the files. The verification was fabricated from intent, not from file content.
+Checklist items must also match what the diff actually shows — do not mark "No HTML structure changed: YES" while the same message describes a structural move or new element added.
 
-**How to apply:** After every Edit tool call, run the verification grep immediately. Show the raw grep output. Do not write the word "fixed" or mark [x] until grep confirms the change is present in the file.
+**Why:** Two distinct failure modes with the same root cause: (1) a full session's worth of CMS-SKIP and Sanity wirings were reported as complete and committed — every single one was absent from the files; (2) Igor caught an explicit checklist contradiction where "YES, no structure changed" appeared alongside an explanation of the structural changes made. Both waste review time and erode trust.
 
-### 24. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
+**How to apply:** After every Edit tool call, run the verification grep immediately. Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say so honestly. Honest disclosures are not failures; false "YES" claims are.
+
+### 22. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
 
 Every session must start with `cd /home/personal/projects/byt-website`. Every file read, write, build, grep, and deploy must use that absolute path or a path relative to it. Subagents receive no cwd inheritance — always pass the absolute path explicitly (e.g. `/home/personal/projects/byt-website/apps/web/src/pages/contact.astro`).
+
+The `tasks/` directory that counts is the one in this git repo. Never write to `/home/personal/projects/byt-website/tasks/` from a stale clone; the repo version is always authoritative.
 
 **Why:** Diagnostic session 2026-05-19 confirmed: main cwd was `/home/personal`, not inside any project. Explore subagents received relative paths with no anchor. CLAUDE.md had no working directory rule. This caused at least 4 production failures: false audit results, missing schema fields after deploy, missing CMS-SKIP comments. RULE 0 added to CLAUDE.md.
 
@@ -219,7 +209,7 @@ Every session must start with `cd /home/personal/projects/byt-website`. Every fi
 - /home/personal/projects/byt-website-repo/
 - /home/personal/projects/better-you-therapy/
 
-### 25. Before changing any font-family, verify --font-body and --font-heading in global.css
+### 23. Before changing any font-family, verify --font-body and --font-heading in global.css
 
 When a user says "use Manrope" or asks to change a font, do not apply the change until you have grepped global.css for `--font-body` and `--font-heading` and checked what font existing form components use.
 
@@ -233,6 +223,18 @@ Every form on the site (ModalForms.astro `.form-field label`, `.form-field input
 **Why:** Igor asked to change form labels from Montserrat to Manrope. The change was made without verifying global.css first. After investigation, the original Montserrat was correct and the change was reverted. Two unnecessary edits made, two back-and-forth rounds with Igor.
 
 **How to apply:** When any font instruction is given: grep global.css first → show `--font-body` and `--font-heading` values → confirm the user's intent knowing both values → then change. Never make a font change on instruction alone without showing the current token definitions.
+
+### 24. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
+
+This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsIgnorePattern` or `caughtErrorsIgnorePattern` configured. As a result:
+
+- `catch (e) {}` → `@typescript-eslint/no-unused-vars` error (`'e' is defined but never used`)
+- `catch (_e) { /* comment */ }` → same error (`'_e' is defined but never used` — `_`-prefix is NOT an automatic ignore here)
+- `catch { /* comment */ }` → **correct** — ES2019 optional catch binding; no variable, no unused-var error; comment inside satisfies `no-empty`
+
+**Why:** `tseslint.configs.strict` enforces unused variables including caught errors. The `_`-prefix convention for "intentionally unused" is only active when `argsIgnorePattern: '^_'` is configured — which it is not in this project.
+
+**How to apply:** Whenever writing a try/catch that intentionally ignores the error (e.g. localStorage access guards), use `catch { /* reason */ }` — no variable at all. Never use `catch (e)` or `catch (_e)` without a `caughtErrorsIgnorePattern` rule in place.
 
 ## Incident Log
 
@@ -250,5 +252,5 @@ Every form on the site (ModalForms.astro `.form-field label`, `.form-field input
 - 2026-05-04: Entire HTML sections replaced with Sanity .map() loops on Patients page. Sections empty when Sanity unpopulated. (OBS-012)
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
-- 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 19 existed and was ignored. Repeat violation.
+- 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 17 existed and was ignored. Repeat violation.
 - 2026-05-19: Operated from /home/personal (not project clone) with no cwd anchor in CLAUDE.md. Explore subagents received relative paths. Caused false audits, missing schema fields, missing CMS-SKIP comments. Fixed by adding RULE 0 to CLAUDE.md. (OBS-015)
