@@ -354,6 +354,42 @@ Sitemap: https://getbetteryou.com/sitemap-index.xml
 
 ---
 
+### Phase 7A Step 3.7 — Create Breadcrumb.astro with Microdata — 2026-05-20 [x] COMPLETE 2026-05-20 19:58
+
+Create `apps/web/src/components/ui/Breadcrumb.astro`: reusable breadcrumb component using HTML Microdata (not JSON-LD), wired to `<nav aria-label="Breadcrumb">`.
+
+- [x] A. Created `apps/web/src/components/ui/Breadcrumb.astro`
+- [x] B. Accepts `items: { label: string; href?: string }[]` prop
+- [x] C. Renders `<ol itemscope itemtype="https://schema.org/BreadcrumbList">`
+- [x] D. Each `<li>` has `itemprop="itemListElement"` + `itemtype="https://schema.org/ListItem"`
+- [x] E. `<meta itemprop="position" content={String(position)}>` — 1-indexed
+- [x] F. Last item renders as `<span>` with `aria-current="page"`, not a link
+- [x] G. Scoped styles using existing CSS vars (`--navy`, `--slate`, `--mist`, `--color-teal`)
+- [x] H. All 5 acceptance criteria greps passed; `pnpm --filter web build` PASS — 19 routes, 0 errors
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.7 — Breadcrumb.astro)
+
+**What was built:** `apps/web/src/components/ui/Breadcrumb.astro` — 87 lines. Reusable breadcrumb component using Google-recommended HTML Microdata (not JSON-LD). Wraps in `<nav aria-label="Breadcrumb">`, renders `BreadcrumbList`/`ListItem` schema.org Microdata, 1-indexed position `<meta>` tags. Last item is non-linked `<span aria-current="page">`. Separator injected via CSS `::before` pseudo-element — no extra DOM nodes.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Breadcrumb.astro` (new, 87 lines)
+
+**Acceptance criteria results:**
+
+| Check             | Result                                           |
+| ----------------- | ------------------------------------------------ |
+| `itemscope` count | 2                                                |
+| `itemprop` count  | 5                                                |
+| `BreadcrumbList`  | `itemtype="https://schema.org/BreadcrumbList"` ✓ |
+| `ListItem`        | `itemtype="https://schema.org/ListItem"` ✓       |
+| `aria-label`      | `<nav aria-label="Breadcrumb">` ✓                |
+| Build             | 19 routes, 0 errors ✓                            |
+
+**Issues:** None. No user corrections this session.
+
+---
+
 ### Session Review — 2026-05-20 (Phase 7A Step 3.4 — Sitemap integration)
 
 **What was built:** `@astrojs/sitemap` v3.7.2 installed and wired into `astro.config.mjs`. The `serialize()` callback applies priority overrides by path suffix. Named constants used for all priority values (`PRIORITY_HIGH`, `PRIORITY_NORMAL`, `PRIORITY_LOW`, `PRIORITY_LEGAL`) and path arrays (`HIGH_PRIORITY_PATHS`, `NORMAL_PRIORITY_PATHS`).
