@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-20 — Wire all 5 frontend forms to HubSpot Pages Function endpoints (replace Formspree)
+- **Last work:** 2026-05-20 — Phase 7A Step 3.4: Add @astrojs/sitemap with priority config
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -252,3 +252,41 @@ Cleanup: archive 1823 lines of completed tasks from todo.md to todo-archive.md; 
 - Lessons 17+23 merged: both addressed the same failure mode (claiming a change is done without actual file evidence). Lesson 17 covered checklist contradictions; Lesson 23 covered grep-before-reporting. The merged Lesson 21 covers both angles: no contradictions AND grep proof required.
 
 **Verification:** `wc -l` confirmed file sizes. `grep -c "^### [0-9]"` → 23 lessons exactly.
+
+---
+
+### Phase 7A Step 3.4 — Add @astrojs/sitemap — 2026-05-20 [x] COMPLETE 2026-05-20
+
+Install `@astrojs/sitemap` and configure it in `astro.config.mjs` with per-page priority overrides.
+
+- [x] A. Ran `pnpm add @astrojs/sitemap` in `apps/web` — installed v3.7.2
+- [x] B. Rewrote `apps/web/astro.config.mjs`: added `import sitemap from '@astrojs/sitemap'`; added `site` property using `import.meta.env?.PUBLIC_SITE_URL ?? 'https://getbetteryou.com'`; added sitemap integration with `serialize()` callback
+- [x] C. Priority rules implemented: `/` → 1.0 weekly; `/communities/` `/patients/` `/providers/` → 0.9 weekly; `/about/` `/careers/` `/blog/` → 0.7 weekly; `/contact/` → 0.6 monthly; `/privacy/` `/terms/` → 0.5 monthly; blog posts default → 0.6 monthly
+- [x] D. All existing config preserved: `output: 'static'`, `@sanity/astro` integration, `projectId`, `dataset`, `useCdn`
+- [x] E. Build passed — 19 routes, 0 errors; `[@astrojs/sitemap] sitemap-index.xml created at dist`
+- [x] F. Verified `sitemap-index.xml` points to `https://getbetteryou.com/sitemap-0.xml`
+- [x] G. Verified `sitemap-0.xml` — all 19 URLs present with correct priorities and changefreq values
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.4 — Sitemap integration)
+
+**What was built:** `@astrojs/sitemap` v3.7.2 installed and wired into `astro.config.mjs`. The `serialize()` callback applies priority overrides by path suffix. Named constants used for all priority values (`PRIORITY_HIGH`, `PRIORITY_NORMAL`, `PRIORITY_LOW`, `PRIORITY_LEGAL`) and path arrays (`HIGH_PRIORITY_PATHS`, `NORMAL_PRIORITY_PATHS`).
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — added sitemap import + `site` property + sitemap integration (file grew from 13 → 52 lines)
+- `apps/web/package.json` — `@astrojs/sitemap ^3.7.2` added to dependencies
+- `apps/web/pnpm-lock.yaml` — lockfile updated
+
+**Sitemap output verified:**
+
+| URL                                    | priority | changefreq |
+| -------------------------------------- | -------- | ---------- |
+| /                                      | 1.0      | weekly     |
+| /communities/, /patients/, /providers/ | 0.9      | weekly     |
+| /about/, /careers/, /blog/             | 0.7      | weekly     |
+| /contact/, blog posts                  | 0.6      | monthly    |
+| /privacy/, /terms/                     | 0.5      | monthly    |
+
+**Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors. `dist/sitemap-index.xml` confirmed. `dist/sitemap-0.xml` confirmed with all 19 URLs + correct priority/changefreq per spec.
+
+**Issues:** None. No user corrections this session.
