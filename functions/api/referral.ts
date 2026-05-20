@@ -1,5 +1,6 @@
-import { env } from 'cloudflare:workers';
-import type { APIRoute } from 'astro';
+interface Env {
+  HUBSPOT_SERVICE_KEY?: string;
+}
 
 interface ReferralBody {
   facilityName: string;
@@ -16,8 +17,6 @@ interface ReferralBody {
   referralReason: string;
   skilledNursing: string;
 }
-
-export const prerender = false;
 
 const HUBSPOT_BASE = 'https://api.hubapi.com';
 
@@ -191,8 +190,8 @@ async function associate(
   }
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const key = env.HUBSPOT_SERVICE_KEY;
+export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
+  const key = context.env.HUBSPOT_SERVICE_KEY;
 
   if (!key) {
     return jsonResponse({ success: false, error: 'HUBSPOT_SERVICE_KEY not configured' }, 500);
@@ -200,7 +199,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   let body: ReferralBody;
   try {
-    body = (await request.json()) as ReferralBody;
+    body = (await context.request.json()) as ReferralBody;
   } catch {
     return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
   }
@@ -390,6 +389,9 @@ export const POST: APIRoute = async ({ request }) => {
   );
 };
 
-export const OPTIONS: APIRoute = async () => {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
+export const onRequestOptions = async (): Promise<Response> => {
+  return new Response(null, {
+    status: 204,
+    headers: CORS_HEADERS,
+  });
 };

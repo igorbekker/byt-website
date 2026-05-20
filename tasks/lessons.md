@@ -236,6 +236,22 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** Whenever writing a try/catch that intentionally ignores the error (e.g. localStorage access guards), use `catch { /* reason */ }` — no variable at all. Never use `catch (e)` or `catch (_e)` without a `caughtErrorsIgnorePattern` rule in place.
 
+### 25. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
+
+**The core rule:** `@astrojs/cloudflare` adapter generates `dist/server/entry.mjs` → Cloudflare Pages sees it as a `_worker.js` → ALL `functions/` directory Pages Functions are bypassed. The two routing systems are mutually exclusive.
+
+- **With adapter:** use Astro server endpoints (`src/pages/api/*.ts` with `prerender = false`) — they compile into the Worker bundle.
+- **Without adapter:** use Cloudflare Pages Functions (`functions/api/*.ts` at repo root with `onRequestPost`/`onRequestOptions`) — the Pages router handles them.
+
+**The Studio route gotcha:** `@sanity/astro` with `studioBasePath` injects a route with `prerender = false` (SSR). Removing the adapter makes this unbuildable. Two fixes:
+
+1. `studioRouterHistory: 'hash'` → `prerender: true`, BUT requires `@astrojs/react` to compile the `client:only="react"` component.
+2. Remove `studioBasePath` entirely → Studio is separately deployed; `/admin` disappears from the Astro site (route count drops by 1).
+
+**Signal for option 2:** if the plan says "N routes" and current build has N+1 (including `/admin`), removing `studioBasePath` is intended.
+
+**How to apply:** When toggling adapter on/off, check: (a) does `src/pages/api/` exist? Delete it if removing adapter. (b) does `functions/` exist? Create it if adding Pages Functions. (c) does `studioBasePath` cause a build error? Remove it or install `@astrojs/react`.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

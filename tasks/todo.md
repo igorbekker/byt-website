@@ -99,6 +99,39 @@ Persist all form field values to localStorage so a page refresh before submissio
 
 ---
 
+### Remove Cloudflare adapter → static output + Pages Function referral — 2026-05-20 [x] COMPLETE 2026-05-20 14:10
+
+Context: Previous session added the Cloudflare adapter to route `/api/referral` via a Worker. New plan (Option D): remove the adapter entirely, run pure static output, and put the referral handler in `functions/api/referral.ts` (Cloudflare Pages Function). With no `_worker.js` present, Cloudflare Pages will serve Pages Functions from `functions/`.
+
+- [x] A. STEP 1 — Edit `apps/web/astro.config.mjs`: remove adapter import + config, keep `output: 'static'`; also removed `studioBasePath`/`studioRouterHistory` (Sanity Studio embedded route requires `@astrojs/react` or SSR adapter — removed since Studio is separately deployed)
+- [x] B. STEP 1 — Run `pnpm remove @astrojs/cloudflare --filter web`
+- [x] C. STEP 2 — Edit `apps/web/src/middleware.ts`: remove `import { env } from 'cloudflare:workers'`; simplified to one-line passthrough
+- [x] D. STEP 3 — Delete `apps/web/src/pages/api/referral.ts` and empty `api/` directory
+- [x] E. STEP 4 — Create `functions/api/referral.ts` at repo root with Pages Function format + full HubSpot logic
+- [x] F. STEP 5 — `resident-referral.astro` line 992 confirmed: `fetch('/api/referral', ...)` — no change needed
+- [x] G. STEP 6 — `pnpm --filter web build` PASS — 19 routes, 0 errors, no `_worker.js`/`entry.mjs`/`server/` in dist/
+- [x] H. Reported build results to Igor; Igor approved and said "Push"
+
+### Session Review — 2026-05-20 (Remove adapter + Pages Function referral)
+
+**What was built:** Removed `@astrojs/cloudflare` adapter entirely. Site now builds as pure static output. Referral handler moved from Astro server endpoint (`src/pages/api/referral.ts`) to Cloudflare Pages Function (`functions/api/referral.ts` at repo root). With no `_worker.js` in dist/, Cloudflare Pages will route `/api/referral` to the Pages Function.
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — removed `import cloudflare` + `adapter: cloudflare()`; removed `studioBasePath` (Studio route requires `@astrojs/react` or SSR adapter; Studio is separately deployed)
+- `apps/web/package.json` — `@astrojs/cloudflare` removed from dependencies
+- `apps/web/src/middleware.ts` — removed `import { env } from 'cloudflare:workers'`; replaced 109-line Sanity redirect logic with a one-line passthrough (redirect logic required Cloudflare runtime; static output has no runtime)
+- `apps/web/src/pages/api/referral.ts` — deleted (Astro server endpoint format; invalid without adapter)
+- `functions/api/referral.ts` — created at repo root; `onRequestPost` + `onRequestOptions` in Pages Function format; full HubSpot 6-step logic preserved verbatim; `env.HUBSPOT_SERVICE_KEY` from `context.env`
+
+**Side effect — `/admin` removed:** The embedded Sanity Studio at `/admin` is no longer served by the Astro site. Igor must use the external Sanity Studio URL. Route count: 20 → 19.
+
+**Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors. `find dist/ -name "_worker.js" -o -name "entry.mjs"` → empty. `dist/server/` → does not exist. All 19 HTML files confirmed in `dist/`.
+
+**Issues:** None. No user corrections this session.
+
+---
+
 ### Archive todo.md + consolidate lessons.md — 2026-05-20 [x] COMPLETE 2026-05-20
 
 Cleanup: archive 1823 lines of completed tasks from todo.md to todo-archive.md; reduce lessons.md from 25 to 23 lessons by removing Lesson 15 and merging Lessons 17+23.
