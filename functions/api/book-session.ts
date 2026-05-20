@@ -61,7 +61,10 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     phone,
     what_brings_you_in: whatBringsYouIn,
     how_will_you_pay: howWillYouPay,
-    best_times_to_reach_you: bestTimesToReachYou,
+    best_times_to_reach_you: bestTimesToReachYou
+      .split(',')
+      .map((s) => s.trim())
+      .join(';'),
     anything_else_we_should_know: anythingElse ?? '',
     contact_type: 'Patient',
     refer_source: 'Website Form',
