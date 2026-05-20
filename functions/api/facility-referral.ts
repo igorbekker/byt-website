@@ -104,7 +104,10 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       phone,
       company: facilityName,
       hs_role: role,
-      what_sparked_your_interest: whatSparkedInterest,
+      what_sparked_your_interest: whatSparkedInterest
+        .split(',')
+        .map((s) => s.trim())
+        .join(';'),
       anything_else_we_should_know: anythingElse ?? '',
       contact_type: 'Facility Employee',
       refer_source: 'Website Form',
