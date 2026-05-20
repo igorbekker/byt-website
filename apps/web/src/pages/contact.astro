@@ -32,8 +32,6 @@ const email = siteSettings?.email ?? 'hello@getbetteryou.com';
 const fax = siteSettings?.fax || '(754) 328-4344';
 const phoneDigits = phone.replace(/\D/g, '');
 const faxDigits = fax.replace(/\D/g, '');
-const contactId = import.meta.env.PUBLIC_FORMSPREE_CONTACT_ID ?? '';
-
 function sectionEnabled(id: string): boolean {
   const arr = page?.sections;
   if (!arr?.length) return true;
@@ -913,11 +911,7 @@ const renderOrder = [
                 </ul>
               </div>
 
-              <form
-                class="contact-form"
-                data-formspree-id={contactId}
-                onsubmit="handleContactSubmit(event)"
-              >
+              <form class="contact-form" onsubmit="handleContactSubmit(event)">
                 <h2>{page?.formHeading ?? 'Send us a message'}</h2>
                 {/* CMS-SKIP: form structure */}
                 <p class="form-sub">
@@ -1044,20 +1038,21 @@ const renderOrder = [
     async function handleContactSubmit(e) {
       e.preventDefault();
       const form = e.target;
-      const formId = form.dataset.formspreeId;
-      if (!formId) {
-        alert('Form not configured. Please email us directly.');
-        return;
-      }
       const btn = form.querySelector('button[type="submit"]');
       const origHTML = btn.innerHTML;
       btn.disabled = true;
       btn.textContent = 'Sending…';
       try {
-        const res = await fetch('https://formspree.io/f/' + formId, {
+        const res = await fetch('/api/contact', {
           method: 'POST',
-          body: new FormData(form),
-          headers: { Accept: 'application/json' },
+          body: JSON.stringify({
+            firstName: form.firstName.value,
+            lastName: form.lastName.value,
+            email: form.email.value,
+            phone: form.phone.value,
+            message: form.message.value,
+          }),
+          headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error('error');
         const div = document.createElement('div');

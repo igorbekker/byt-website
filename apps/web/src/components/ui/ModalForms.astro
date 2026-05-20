@@ -6,15 +6,11 @@
  */
 
 interface Props {
-  bookId: string;
-  referralId: string;
   phone?: string;
   email?: string;
   hours?: string;
 }
 const {
-  bookId,
-  referralId,
   phone = '754-999-0011',
   email = 'hello@getbetteryou.com',
   hours = 'Mon–Fri, 9am–6pm ET',
@@ -634,7 +630,6 @@ const {
 <div
   class="modal-overlay"
   id="modal-book"
-  data-form-id={bookId}
   onclick="if(event.target===this) closeModal('book')"
   role="dialog"
   aria-modal="true"
@@ -881,7 +876,6 @@ const {
 <div
   class="modal-overlay"
   id="modal-refer"
-  data-form-id={referralId}
   onclick="if(event.target===this) closeModal('refer')"
   role="dialog"
   aria-modal="true"
@@ -1237,17 +1231,57 @@ const {
       form.reportValidity();
       return;
     }
-    const overlay = document.getElementById('modal-' + which);
-    const formId = overlay ? overlay.dataset.formId : '';
     const btn = form.querySelector('[type="submit"]');
     const orig = btn.innerHTML;
     btn.disabled = true;
     btn.textContent = 'Sending…';
+
+    let endpoint, payload;
+    if (which === 'book') {
+      const avail = [...form.querySelectorAll('[name="avail"]:checked')]
+        .map((el) => el.value)
+        .join(',');
+      endpoint = '/api/book-session';
+      payload = {
+        firstName: form.firstName.value,
+        lastName: form.lastName.value,
+        email: form.email.value,
+        phone: form.phone.value,
+        whatBringsYouIn: form.reason.value,
+        howWillYouPay: form.payment.value,
+        bestTimesToReachYou: avail,
+        anythingElse: form.notes.value,
+      };
+    } else {
+      const interest = [...form.querySelectorAll('[name="interest"]:checked')]
+        .map((el) => el.value)
+        .join(',');
+      const fullName = form.elements['name'].value.trim();
+      const spaceIdx = fullName.indexOf(' ');
+      const firstName = spaceIdx === -1 ? fullName : fullName.slice(0, spaceIdx);
+      const lastName = spaceIdx === -1 ? '' : fullName.slice(spaceIdx + 1);
+      endpoint = '/api/facility-referral';
+      payload = {
+        facilityName: form.facility.value,
+        facilityPhone: '',
+        facilityType: form.facType.value,
+        county: form.county.value,
+        bedCount: form.beds.value,
+        firstName,
+        lastName,
+        email: form.email.value,
+        phone: form.phone.value,
+        role: form.role.value,
+        whatSparkedInterest: interest,
+        anythingElse: form.refNotes.value,
+      };
+    }
+
     try {
-      const res = await fetch('https://formspree.io/f/' + formId, {
+      const res = await fetch(endpoint, {
         method: 'POST',
-        body: new FormData(form),
-        headers: { Accept: 'application/json' },
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
       });
       if (res.ok) {
         form.style.display = 'none';
