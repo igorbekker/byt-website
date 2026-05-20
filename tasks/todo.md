@@ -19,9 +19,37 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-20 — Draft persistence for resident referral form; /api/referral 405 fix
+- **Last work:** 2026-05-20 — Phase 7A Step 3.1: add gtmContainerId + robotsTxt to siteSettings schema
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Step 3.1 — Add gtmContainerId + robotsTxt to siteSettings — 2026-05-20 [x] COMPLETE 2026-05-20 17:23
+
+Add two new schema fields to `apps/studio/schemas/singletons/siteSettings.ts` for GTM integration and robots.txt management.
+
+- [x] A. Added `gtmContainerId` field — type: string, description, regex validation `/^(GTM-[A-Z0-9]+)?$/` with error message
+- [x] B. Added `robotsTxt` field — type: text, rows: 15, description noting Sitemap line is appended at build time, initialValue with full bot allow/disallow list including CCBot Disallow
+- [x] C. Verified: `grep -n "gtmContainerId"` → line 89; `grep -n "robotsTxt"` → line 95; `grep -n "regex"` → line 93; `grep -n "rows"` → line 99; `grep -n "CCBot"` → line 101
+- [x] D. Field count: 22 → 24 (delta +2 confirmed via git show HEAD)
+- [x] E. `pnpm --filter web build` — PASSED (19 routes, 0 errors)
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.1 — siteSettings schema)
+
+**What was built:** Two new fields added to `siteSettings` singleton schema. Full file rewrite each time (per task brief). No existing fields touched.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/siteSettings.ts` — added `gtmContainerId` (string + regex validation) and `robotsTxt` (text, rows:15, initialValue with 7-bot robots.txt block)
+
+**gtmContainerId:** Optional string. Regex `/^(GTM-[A-Z0-9]+)?$/` allows empty (disables GTM) or valid GTM-XXXXXXX format. Error message: "Must match format GTM-XXXXXXX or leave empty."
+
+**robotsTxt:** Text area, 15 rows. `initialValue` allows all crawlers except CCBot (`Disallow: /`). Description notes Sitemap line is appended automatically at build time.
+
+**Verification:** All 4 mandatory greps confirmed at exact line numbers. Field count delta +2 confirmed against `git show HEAD`. Web build PASS — 19 routes, 0 errors.
+
+**Issues:** None. No user corrections this session.
 
 ---
 
@@ -220,3 +248,38 @@ Update all hardcoded label instances across the site. Do not touch /resident-ref
 | Communities Page → CTA Button → label (`ctaCta.label`) | Communities bottom CTA |
 
 **Verification:** Build PASS. Zero "Refer a Resident"/"Refer a resident"/"Request an intro call" in source. ✓
+
+---
+
+### Add 5 new Cloudflare Pages Functions + shared HubSpot helper — 2026-05-20 [x] COMPLETE 2026-05-20 17:45
+
+Create `functions/api/_hubspot.ts` (shared helpers) and 5 route functions alongside the existing `functions/api/referral.ts`.
+
+- [x] A. Created `functions/api/_hubspot.ts` — exports `Env`, `HUBSPOT_BASE`, `CORS_HEADERS`, `hubspotHeaders`, `jsonResponse`, `searchContactByEmail`, `createContact`, `updateContact`, `searchCompanyByName`, `createCompany`
+- [x] B. Created `functions/api/newsletter.ts` — upsert contact; `website_form: "Newsletter"`
+- [x] C. Created `functions/api/contact.ts` — upsert contact; `website_form: "Contact Us"`
+- [x] D. Created `functions/api/book-session.ts` — upsert contact with `contact_type: "Patient"`; `website_form: "Book Session"`
+- [x] E. Created `functions/api/apply.ts` — upsert contact with `contact_type: "Provider"`; `website_form: "Apply Job"`; TODO comment for file upload
+- [x] F. Created `functions/api/facility-referral.ts` — 3-step: search/create company → search/create contact → PUT association; `website_form: "Refer Facility"`
+- [x] G. `pnpm --filter web build` — PASSED (19 routes, 0 errors); `apps/web typecheck: Done` (no errors in new files)
+
+### Session Review — 2026-05-20 (5 new Pages Functions + shared helper)
+
+**What was built:** Six new files in `functions/api/`. All five route functions import from `_hubspot.ts`; no logic is duplicated across them.
+
+**Files created:**
+
+- `functions/api/_hubspot.ts` — shared helpers and types; 0 route exposure (underscore prefix)
+- `functions/api/newsletter.ts` — POST /api/newsletter; expects `{ email, firstName }`
+- `functions/api/contact.ts` — POST /api/contact; expects `{ firstName, lastName, email, phone, message }`
+- `functions/api/book-session.ts` — POST /api/book-session; expects 7 fields + optional `anythingElse`; sets `contact_type: "Patient"`
+- `functions/api/apply.ts` — POST /api/apply; expects `{ firstName, lastName, email, phone, resumeCoverNote }`; sets `contact_type: "Provider"`; TODO comment for HubSpot Files API resume upload
+- `functions/api/facility-referral.ts` — POST /api/facility-referral; expects 12 fields; Step 1 company upsert, Step 2 contact upsert, Step 3 PUT association with `associationTypeId: 5`
+
+**Pattern:** All functions follow identical structure to `referral.ts` — `onRequestPost` + `onRequestOptions`, `Env` interface, `CORS_HEADERS`, per-step try/catch, `jsonResponse` helper.
+
+**TypeScript notes:** All type assertions use `// safe:` comments per CLAUDE.md. No `any` used. No `console.log` in committed code. Studio typecheck errors (`formOption.ts`, `redirect.ts`) are pre-existing and unrelated.
+
+**Verification:** `pnpm --filter web build` → 19 routes, 0 errors. `apps/web typecheck: Done` — no errors in any new file.
+
+**Issues:** None. No user corrections this session.
