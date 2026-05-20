@@ -450,3 +450,40 @@ Create `apps/web/src/components/ui/SanityImage.astro`: reusable image component 
 **Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors. `dist/sitemap-index.xml` confirmed. `dist/sitemap-0.xml` confirmed with all 19 URLs + correct priority/changefreq per spec.
 
 **Issues:** None. No user corrections this session.
+
+---
+
+### Phase 7A Step 3.9 — \_redirects build step from Sanity redirect docs — 2026-05-20 [x] COMPLETE 2026-05-20 20:42
+
+Generate a Cloudflare `_redirects` file in `dist/` at build time by querying all active redirect documents from Sanity.
+
+- [x] A. Pre-flight: confirmed redirect schema shape (`sourcePath`, `destinationPath`, `statusCode`, `isActive`)
+- [x] B. Pre-flight: queried Sanity — 31 active redirects found (all 301 status codes)
+- [x] C. Pre-flight: confirmed no `_redirects` file or references in `apps/web/src/`
+- [x] D. Attempted Astro page endpoint (`src/pages/_redirects.ts`) — Astro silently ignores `_`-prefixed pages; discarded
+- [x] E. Added `redirectsIntegration()` inline integration to `apps/web/astro.config.mjs` using `astro:build:done` hook
+- [x] F. Integration uses `@sanity/client` directly (not `sanity:client` virtual module, which is unavailable in build hooks)
+- [x] G. 410 status codes map to `/dev/null` destination per Cloudflare spec; 301/302 pass destination through
+- [x] H. `pnpm --filter web build` PASS — 19 routes, 0 errors; `[byt-redirects] wrote 31 redirect(s) to _redirects`
+- [x] I. `dist/_redirects` confirmed — header comment + 31 correctly formatted lines
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.9 — \_redirects build step)
+
+**What was built:** Inline Astro integration `redirectsIntegration()` in `apps/web/astro.config.mjs`. Hooks into `astro:build:done`, queries `*[_type == "redirect" && isActive == true]` from Sanity production, writes Cloudflare-format `_redirects` to `dist/` after every build.
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — added `createClient`/`writeFileSync`/`join` imports + `redirectsIntegration()` function (35 lines) + registered as first integration
+
+**Implementation notes:**
+
+| Concern      | Detail                                                                  |
+| ------------ | ----------------------------------------------------------------------- |
+| 410 handling | `r.statusCode === 410 ? '/dev/null' : r.destinationPath`                |
+| Sort order   | `order(sourcePath asc)` — deterministic output                          |
+| Empty state  | Header comment only — no blank-file edge case                           |
+| Client setup | Direct `@sanity/client` (project `bpjtbps6`, dataset `production`, CDN) |
+
+**Verification:** Build PASS — `[byt-redirects] wrote 31 redirect(s) to _redirects`. `cat dist/_redirects` confirmed 31 lines, format `/source /dest 301`, header comment present.
+
+**Issues:** None. No user corrections this session.
