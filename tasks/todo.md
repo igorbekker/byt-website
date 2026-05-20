@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-20 — Phase 7A Step 3.4: Add @astrojs/sitemap with priority config
+- **Last work:** 2026-05-20 — Phase 7A Step 3.5: CMS-driven robots.txt Astro endpoint
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -266,6 +266,52 @@ Install `@astrojs/sitemap` and configure it in `astro.config.mjs` with per-page 
 - [x] E. Build passed — 19 routes, 0 errors; `[@astrojs/sitemap] sitemap-index.xml created at dist`
 - [x] F. Verified `sitemap-index.xml` points to `https://getbetteryou.com/sitemap-0.xml`
 - [x] G. Verified `sitemap-0.xml` — all 19 URLs present with correct priorities and changefreq values
+
+### Phase 7A Step 3.5 — CMS-driven robots.txt Astro endpoint — 2026-05-20 [x] COMPLETE 2026-05-20
+
+Create an Astro static endpoint (`src/pages/robots.txt.ts`) that fetches `siteSettings.robotsTxt` from Sanity and serves it as `/robots.txt` with a Sitemap line auto-appended.
+
+- [x] A. Pre-flight: confirmed no `apps/web/public/robots.txt` exists — no deletion needed
+- [x] B. Pre-flight: confirmed Sanity client import pattern is `import { sanityClient } from 'sanity:client'`
+- [x] C. Created `apps/web/src/pages/robots.txt.ts` — `GET: APIRoute` fetches `siteSettings.robotsTxt`, appends `Sitemap: {siteUrl}/sitemap-index.xml`, returns `text/plain`
+- [x] D. `pnpm --filter web build` PASSED — 19 routes, `/robots.txt` generated in 3.20s
+- [x] E. Verified `dist/robots.txt` — all AI crawler rules present + Sitemap line correct
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.5 — CMS-driven robots.txt)
+
+**What was built:** One new file — `apps/web/src/pages/robots.txt.ts`. Astro static endpoint that reads `siteSettings.robotsTxt` from Sanity at build time and emits `dist/robots.txt`. Appends `\n\nSitemap: {PUBLIC_SITE_URL}/sitemap-index.xml` automatically. No static `public/robots.txt` existed, so no deletion was needed.
+
+**Files changed:**
+
+- `apps/web/src/pages/robots.txt.ts` (new, 10 lines)
+
+**dist/robots.txt content verified:**
+
+```
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: CCBot
+Disallow: /
+
+Sitemap: https://getbetteryou.com/sitemap-index.xml
+```
+
+**Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors. `dist/robots.txt` confirmed with all AI crawler rules and correct Sitemap line.
+
+**Issues:** None. No user corrections this session.
+
+---
 
 ### Session Review — 2026-05-20 (Phase 7A Step 3.4 — Sitemap integration)
 
