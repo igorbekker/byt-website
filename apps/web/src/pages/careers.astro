@@ -2492,11 +2492,22 @@ const renderOrder = [
       const origText = btn.textContent;
       btn.disabled = true;
       btn.textContent = 'Sending…';
+      const fullName = form.querySelector('[name="name"]').value.trim();
+      const spaceIdx = fullName.indexOf(' ');
+      const firstName = spaceIdx === -1 ? fullName : fullName.slice(0, spaceIdx);
+      const lastName = spaceIdx === -1 ? '' : fullName.slice(spaceIdx + 1);
+      // TODO: Upload resume via HubSpot Files API, then update contact with therapist_resume URL
       try {
-        const res = await fetch('https://formspree.io/f/mzdoapyq', {
+        const res = await fetch('/api/apply', {
           method: 'POST',
-          body: new FormData(form),
-          headers: { Accept: 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email: form.email.value,
+            phone: form.phone.value,
+            resumeCoverNote: form.cover.value,
+          }),
+          headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error('error');
         const wrap = form.parentElement;
@@ -2523,11 +2534,22 @@ const renderOrder = [
       const origText = btn.textContent;
       btn.disabled = true;
       btn.textContent = 'Sending…';
+      const fullName = form.querySelector('[name="name"]').value.trim();
+      const spaceIdx = fullName.indexOf(' ');
+      const firstName = spaceIdx === -1 ? fullName : fullName.slice(0, spaceIdx);
+      const lastName = spaceIdx === -1 ? '' : fullName.slice(spaceIdx + 1);
+      // TODO: Upload resume via HubSpot Files API, then update contact with therapist_resume URL
       try {
-        const res = await fetch('https://formspree.io/f/mzdoapyq', {
+        const res = await fetch('/api/apply', {
           method: 'POST',
-          body: new FormData(form),
-          headers: { Accept: 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email: form.email.value,
+            phone: form.phone.value,
+            resumeCoverNote: form.message.value,
+          }),
+          headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error('error');
         const wrap = form.parentElement;

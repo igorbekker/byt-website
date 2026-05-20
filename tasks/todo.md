@@ -19,9 +19,84 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-20 — Draft persistence for resident referral form; /api/referral 405 fix
+- **Last work:** 2026-05-20 — Wire all 5 frontend forms to HubSpot Pages Function endpoints (replace Formspree)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Step 3.3b — global.css hardening + combined commit — 2026-05-20 [x] COMPLETE 2026-05-20
+
+Harden global.css as part of Phase 7A production readiness: remove Google Fonts @import (moved to `<link>` in BaseLayout.astro), add z-index token scale, color-scheme, text-size-adjust, safe-area insets, :focus-visible, reduced-motion media query, skip-link, .sr-only, typography fixes, scroll-margin :target, print stylesheet, aspect-ratio utilities.
+
+- [x] A. Removed `@import url('https://fonts.googleapis.com/css2?...')` from line 1
+- [x] B. Added `text-size-adjust: 100%` to `html` rule (alongside existing -webkit-text-size-adjust)
+- [x] C. Added `color-scheme: light` and z-index token scale (--z-base through --z-skip-link) to existing `:root`
+- [x] D. Added safe-area `padding-left/right: env(safe-area-inset-*)` to existing `body` rule
+- [x] E. Added `:focus-visible` with `--navy` outline
+- [x] F. Added `@media (prefers-reduced-motion: reduce)` with animation/transition kill switches
+- [x] G. Added `.skip-link` + `.skip-link:focus` rules using `--z-skip-link`
+- [x] H. Added global `.sr-only` definition
+- [x] I. Added `h1–h6 { overflow-wrap: break-word }`
+- [x] J. Added `input, button, textarea, select { font: inherit; color: inherit }`
+- [x] K. Added `article a, .content a { text-decoration: underline; text-underline-offset: 2px }`
+- [x] L. Added `:target { scroll-margin-top: calc(84px + 1rem) }`
+- [x] M. Added `.mobile-cta-bar, .mobile-cta { padding-bottom: env(safe-area-inset-bottom, 0px) }`
+- [x] N. Added `.aspect-ratio-16-9 / -4-3 / -1-1` utilities
+- [x] O. Added `@media print` stylesheet (hides nav/header/footer/CTAs, appends hrefs, 12pt body)
+- [x] P. Verified: all 5 pre-flight greps passed — @import gone, color-scheme L44, z-tokens L47–53, text-size-adjust L15, safe-area L127–128
+
+### Session Review — 2026-05-20 (Phase 7A Step 3.3b — global.css hardening)
+
+**What was built:** 15 targeted additions to `apps/web/src/styles/global.css`. The Google Fonts `@import` was removed (font loading moved to `<link>` in BaseLayout.astro per Step 3.3a). All new rules were inserted into existing `:root`, `html`, and `body` blocks where applicable; new standalone rule groups placed in logical sections. No existing CSS was modified or reordered.
+
+**Files changed:**
+
+- `apps/web/src/styles/global.css` — 360 → 465 lines (+105); 7 surgical Edit tool calls
+
+**Verification:** 5-grep pre-flight all passed: (1) no @import match, (2) color-scheme at L44, (3) all 7 z-index tokens at L47–53, (4) text-size-adjust at L15, (5) safe-area-inset-left/right at L127–128.
+
+**Issues:** None. No user corrections this session.
+
+---
+
+### Wire all 5 frontend forms to HubSpot Pages Function endpoints — 2026-05-20 [x] COMPLETE 2026-05-20 18:05
+
+Replace all Formspree form submissions with fetch() POST calls to the new `/api/*` HubSpot endpoints. No form field HTML changed — only submission handlers.
+
+- [x] A. Newsletter (Footer.astro + NewsletterBlock.astro) — added `name="email"` to both inputs; replaced Formspree fetch with POST `/api/newsletter` JSON `{ email, firstName: '' }`
+- [x] B. Book a Session modal (ModalForms.astro bookForm) — replaced `handleSubmit` 'book' branch with POST `/api/book-session`; maps firstName, lastName, email, phone, reason→whatBringsYouIn, payment→howWillYouPay, avail checkboxes joined→bestTimesToReachYou, notes→anythingElse
+- [x] C. Facility Referral modal (ModalForms.astro referForm) — replaced `handleSubmit` 'refer' branch with POST `/api/facility-referral`; splits single `name` field on first space into firstName/lastName; maps facility, facType, county, beds, role, interest checkboxes joined, refNotes; sends `facilityPhone: ''`
+- [x] D. Contact Us (contact.astro) — removed `contactId` env var + `data-formspree-id` attribute; replaced `handleContactSubmit` with POST `/api/contact` JSON { firstName, lastName, email, phone, message }
+- [x] E. Careers generalForm + jobForm (careers.astro) — replaced `submitGeneral` and `submitJob` with POST `/api/apply`; splits `name` field on first space; maps email, phone, message/cover→resumeCoverNote; added TODO comment for resume file upload; skipped file in payload
+- [x] F. Removed `bookId`/`referralId` from ModalForms.astro Props interface and BaseLayout.astro prop passthrough
+- [x] G. Removed all Formspree env vars from `.env.example` (root + apps/web)
+- [x] H. Build passed — 19 routes, 0 errors; `grep -ri "formspree" dist/` → zero results; `grep -ri "formspree" src/` → zero results
+
+### Session Review — 2026-05-20 (Wire forms to HubSpot endpoints)
+
+**What was built:** All 5 form submission handlers replaced. Every form now sends `Content-Type: application/json` POST to a `/api/*` endpoint. All existing validation, loading states, success/error UI preserved verbatim.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Footer.astro` — added `name="email"` to input; new fetch to `/api/newsletter`
+- `apps/web/src/components/blog/NewsletterBlock.astro` — same as Footer
+- `apps/web/src/components/ui/ModalForms.astro` — removed `bookId`/`referralId` props + `data-form-id` attrs; rewrote `handleSubmit` to build JSON payloads for both book and refer branches
+- `apps/web/src/layouts/BaseLayout.astro` — removed `bookId`/`referralId` prop passthrough to ModalForms
+- `apps/web/src/pages/contact.astro` — removed `contactId` var; removed `data-formspree-id` attribute; replaced `handleContactSubmit`
+- `apps/web/src/pages/careers.astro` — replaced `submitJob` and `submitGeneral` with `/api/apply` JSON handlers
+- `.env.example` (root) — removed `PUBLIC_FORMSPREE_CONTACT_ID`
+- `apps/web/.env.example` — removed all 4 Formspree form ID vars
+
+**Field mapping notes:**
+
+- Newsletter: `firstName: ''` (no first name field exists)
+- Facility Referral: `facilityPhone: ''` (no facility phone in form); single `name` field split on first space into firstName/lastName
+- Careers: same name-split logic; `cover` field (jobForm) and `message` field (generalForm) both map to `resumeCoverNote`; resume file skipped with TODO comment
+
+**Verification:** `pnpm --filter web build` PASS — 19 routes, 0 errors. `grep -ri "formspree"` in both `dist/` and `src/` → zero results.
+
+**Issues:** None. No user corrections this session.
 
 ---
 
