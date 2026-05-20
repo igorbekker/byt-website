@@ -291,7 +291,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       lastname: patientLastName,
       company: facilityName,
       contact_type: 'Patient',
-      referral_reason: referralReason,
+      reason_for_referral: referralReason,
       skilled_nursing: skilledNursing,
     };
     if (existingId) {
