@@ -177,3 +177,46 @@ Cleanup: archive 1823 lines of completed tasks from todo.md to todo-archive.md; 
 - Lessons 17+23 merged: both addressed the same failure mode (claiming a change is done without actual file evidence). Lesson 17 covered checklist contradictions; Lesson 23 covered grep-before-reporting. The merged Lesson 21 covers both angles: no contradictions AND grep proof required.
 
 **Verification:** `wc -l` confirmed file sizes. `grep -c "^### [0-9]"` → 23 lessons exactly.
+
+---
+
+### Rename "Refer a Resident" → "Refer a Facility" and "Request an intro call" → "Submit" — 2026-05-20 [x] COMPLETE 2026-05-20
+
+Update all hardcoded label instances across the site. Do not touch /resident-referral/ (patient referral form). Do not modify Sanity-managed values in code — list them for Igor to update in Studio.
+
+- [x] A. 2026-05-20 Audited all occurrences: 7 files, identified hardcoded + Sanity-fallback instances
+- [x] B. 2026-05-20 Footer.astro — hardcoded link text → "Refer a Facility"
+- [x] C. 2026-05-20 ModalForms.astro — submit button text → "Submit"
+- [x] D. 2026-05-20 BaseLayout.astro — `navCtaSecondaryLabel` fallback → "Refer a Facility"
+- [x] E. 2026-05-20 index.astro — hardcoded + fallback instances updated (including 4× "Refer a resident" in conditions section added by remote commits)
+- [x] F. 2026-05-20 about.astro — fallback updated
+- [x] G. 2026-05-20 communities.astro — fallbacks updated
+- [x] H. 2026-05-20 blog/[slug].astro — mobile sticky CTA bar link text → "Refer a Facility"
+- [x] I. 2026-05-20 Build PASS; zero hardcoded "Refer a Resident"/"Refer a resident"/"Request an intro call" in source
+
+### Session Review — 2026-05-20 (Refer label rename)
+
+**What was done:** Renamed all hardcoded "Refer a Resident" → "Refer a Facility" and "Request an intro call" → "Submit" across source files. Discovered and fixed 4 additional "Refer a resident" (lowercase) instances in index.astro conditions section added by remote commits (not in original audit). Sanity fallback strings updated to match new wording.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Footer.astro` — link text
+- `apps/web/src/components/ui/ModalForms.astro` — submit button text
+- `apps/web/src/layouts/BaseLayout.astro` — navCtaSecondaryLabel fallback (×2)
+- `apps/web/src/pages/index.astro` — hardcoded + fallback instances + 4× conditions section links
+- `apps/web/src/pages/about.astro` — 1 fallback (ctaSecondary)
+- `apps/web/src/pages/communities.astro` — 2 fallbacks (heroCta, ctaCta)
+- `apps/web/src/pages/blog/[slug].astro` — mobile sticky CTA bar
+
+**Remaining in dist (Sanity live values — need Studio update):**
+
+| Studio field | Location |
+|---|---|
+| Site Settings → Nav Secondary CTA Label (`navCtaSecondaryLabel`) | Nav bar + mobile menu + mobile CTA bar |
+| Home Page → Hero Secondary CTA → label (`heroSecondaryCta.label`) | Homepage hero |
+| Home Page → Facility CTA → label (`facilityCta.label`) | Homepage facility track section |
+| About Page → CTA Secondary → label (`ctaSecondary.label`) | About page CTA section |
+| Communities Page → Hero CTA → label (`heroCta.label`) | Communities hero |
+| Communities Page → CTA Button → label (`ctaCta.label`) | Communities bottom CTA |
+
+**Verification:** Build PASS. Zero "Refer a Resident"/"Refer a resident"/"Request an intro call" in source. ✓
