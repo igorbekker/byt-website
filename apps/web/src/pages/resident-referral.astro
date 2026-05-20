@@ -52,14 +52,242 @@ const phoneDigits = phone.replace(/\D/g, '');
       </div>
 
       <div class="rr-form-container">
-        <script
-          is:inline
-          id="fc0f96d5-9a30-44a9-ab91-d028aae74411-script"
-          src="https://app.hipaatizer.com/shared/hipaatizer-form-renderer.js?workflowId=fc0f96d5-9a30-44a9-ab91-d028aae74411"
-        ></script>
-        <script is:inline>
-          new Hipaatizer('fc0f96d5-9a30-44a9-ab91-d028aae74411', false, '', false).render();
-        </script>
+        <form id="referralForm" novalidate>
+          <!-- ── Facility Information ── -->
+          <div class="rr-section">
+            <h2 class="rr-section-heading">Facility Information</h2>
+            <div class="rr-row">
+              <div class="rr-field">
+                <label for="facilityName">Facility Name <span class="rr-req">*</span></label>
+                <input
+                  type="text"
+                  id="facilityName"
+                  name="facilityName"
+                  required
+                  autocomplete="organization"
+                />
+              </div>
+              <div class="rr-field">
+                <label for="facilityPhone">Facility Phone <span class="rr-req">*</span></label>
+                <input
+                  type="tel"
+                  id="facilityPhone"
+                  name="facilityPhone"
+                  required
+                  autocomplete="tel"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Referring Person ── -->
+          <div class="rr-section">
+            <h2 class="rr-section-heading">Referring Person</h2>
+            <div class="rr-row">
+              <div class="rr-field">
+                <label for="referrerFirstName">First Name <span class="rr-req">*</span></label>
+                <input
+                  type="text"
+                  id="referrerFirstName"
+                  name="referrerFirstName"
+                  required
+                  autocomplete="given-name"
+                />
+              </div>
+              <div class="rr-field">
+                <label for="referrerLastName">Last Name <span class="rr-req">*</span></label>
+                <input
+                  type="text"
+                  id="referrerLastName"
+                  name="referrerLastName"
+                  required
+                  autocomplete="family-name"
+                />
+              </div>
+            </div>
+            <div class="rr-row">
+              <div class="rr-field">
+                <label for="referrerEmail">Email <span class="rr-req">*</span></label>
+                <input
+                  type="email"
+                  id="referrerEmail"
+                  name="referrerEmail"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+              <div class="rr-field">
+                <label for="referrerPhone">Phone <span class="rr-req">*</span></label>
+                <input
+                  type="tel"
+                  id="referrerPhone"
+                  name="referrerPhone"
+                  required
+                  autocomplete="tel"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Patient Information ── -->
+          <div class="rr-section">
+            <h2 class="rr-section-heading">Patient Information</h2>
+            <div class="rr-row">
+              <div class="rr-field">
+                <label for="patientFirstName">First Name <span class="rr-req">*</span></label>
+                <input type="text" id="patientFirstName" name="patientFirstName" required />
+              </div>
+              <div class="rr-field">
+                <label for="patientLastName">Last Name <span class="rr-req">*</span></label>
+                <input type="text" id="patientLastName" name="patientLastName" required />
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Guardian / POA (optional) ── -->
+          <div class="rr-section rr-section-optional">
+            <div class="rr-section-heading-row">
+              <h2 class="rr-section-heading">Guardian / POA</h2>
+              <span class="rr-optional-badge">Optional</span>
+            </div>
+            <p class="rr-section-helper">
+              Complete this section only if a Power of Attorney, Guardian, or Healthcare Surrogate
+              is involved.
+            </p>
+            <div class="rr-row">
+              <div class="rr-field">
+                <label for="guardianFirstName">First Name</label>
+                <input
+                  type="text"
+                  id="guardianFirstName"
+                  name="guardianFirstName"
+                  autocomplete="given-name"
+                />
+              </div>
+              <div class="rr-field">
+                <label for="guardianLastName">Last Name</label>
+                <input
+                  type="text"
+                  id="guardianLastName"
+                  name="guardianLastName"
+                  autocomplete="family-name"
+                />
+              </div>
+            </div>
+            <div class="rr-row rr-row-half">
+              <div class="rr-field">
+                <label for="guardianPhone">Phone</label>
+                <input type="tel" id="guardianPhone" name="guardianPhone" autocomplete="tel" />
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Referral Details ── -->
+          <div class="rr-section">
+            <h2 class="rr-section-heading">Referral Details</h2>
+            <div class="rr-field">
+              <label for="referralReason">Reason for Referral <span class="rr-req">*</span></label>
+              <textarea id="referralReason" name="referralReason" rows="3" required></textarea>
+            </div>
+            <div class="rr-field">
+              <label>Currently on Skilled Nursing <span class="rr-req">*</span></label>
+              <div class="rr-radio-group">
+                <label class="rr-radio">
+                  <input type="radio" name="skilledNursing" value="Yes" required />
+                  <span class="rr-radio-mark"></span>
+                  <span>Yes</span>
+                </label>
+                <label class="rr-radio">
+                  <input type="radio" name="skilledNursing" value="No" />
+                  <span class="rr-radio-mark"></span>
+                  <span>No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Documents ── -->
+          <div class="rr-section">
+            <h2 class="rr-section-heading">
+              Documents <span class="rr-section-heading-opt">(optional)</span>
+            </h2>
+            <!-- TODO: File upload handling — HubSpot Files API or email attachment integration -->
+            <div
+              class="rr-drop-zone"
+              id="dropZone"
+              role="button"
+              tabindex="0"
+              aria-label="Upload documents"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                class="rr-drop-icon"
+              >
+                <polyline points="16 16 12 12 8 16"></polyline>
+                <line x1="12" y1="12" x2="12" y2="21"></line>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+              </svg>
+              <p class="rr-drop-label">Drag files here or click to browse</p>
+              <p class="rr-drop-hint">PDF, Word, JPG, PNG — up to 10MB per file</p>
+              <input
+                type="file"
+                id="docUpload"
+                name="docUpload"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                multiple
+                class="rr-file-input"
+                tabindex="-1"
+                aria-hidden="true"
+              />
+            </div>
+            <ul id="fileList" class="rr-file-list" aria-live="polite"></ul>
+          </div>
+
+          <!-- ── Footer: consent + submit ── -->
+          <div class="rr-form-footer">
+            <label class="rr-consent">
+              <input type="checkbox" id="hipaaConsent" name="hipaaConsent" required />
+              <span
+                >I consent to Better You Therapy contacting the resident or their legal
+                representative regarding this referral. All information is transmitted securely and
+                stored in HIPAA compliance.</span
+              >
+            </label>
+            <div id="formError" class="rr-form-error" role="alert" aria-live="assertive"></div>
+            <button type="submit" class="btn btn-coral rr-submit-btn" id="submitBtn">
+              Submit Referral
+            </button>
+          </div>
+        </form>
+
+        <div id="formSuccess" class="rr-success" hidden>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <h2>Referral received.</h2>
+          <p>We'll confirm receipt within one business day.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -89,6 +317,7 @@ const phoneDigits = phone.replace(/\D/g, '');
   </section>
 
   <style>
+    /* ── Hero ── */
     .rr-hero {
       background: var(--cream);
       padding: 5rem var(--pad-x);
@@ -114,6 +343,7 @@ const phoneDigits = phone.replace(/\D/g, '');
       line-height: 1.6;
     }
 
+    /* ── Form section wrapper ── */
     .rr-form-section {
       background: var(--white);
       padding: var(--pad-s) var(--pad-x);
@@ -136,6 +366,314 @@ const phoneDigits = phone.replace(/\D/g, '');
       flex-shrink: 0;
     }
 
+    /* ── Form sections ── */
+    .rr-section {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.25rem;
+      background: #fff;
+    }
+    .rr-section-optional {
+      background: var(--cream);
+    }
+    .rr-section-heading {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy-deep);
+      letter-spacing: -0.01em;
+      margin: 0 0 1.25rem;
+    }
+    .rr-section-heading-opt {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--mist);
+      letter-spacing: 0;
+    }
+    .rr-section-heading-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .rr-section-heading-row .rr-section-heading {
+      margin: 0;
+    }
+    .rr-optional-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slate);
+      background: var(--border);
+      border-radius: 20px;
+      padding: 2px 9px;
+    }
+    .rr-section-helper {
+      font-size: 13px;
+      color: var(--slate);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Field layout ── */
+    .rr-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .rr-row:last-child {
+      margin-bottom: 0;
+    }
+    .rr-row-half {
+      grid-template-columns: 1fr;
+      max-width: 50%;
+    }
+    .rr-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .rr-field label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy-deep);
+    }
+    .rr-req {
+      color: var(--coral);
+      margin-left: 2px;
+    }
+    .rr-field input[type='text'],
+    .rr-field input[type='tel'],
+    .rr-field input[type='email'],
+    .rr-field textarea {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      background: #fff;
+      color: var(--navy-deep);
+      transition:
+        border-color var(--t-hover),
+        box-shadow var(--t-hover);
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .rr-field input::placeholder,
+    .rr-field textarea::placeholder {
+      color: var(--mist);
+    }
+    .rr-field input:focus,
+    .rr-field textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(66, 153, 150, 0.12);
+    }
+    .rr-field input.rr-invalid,
+    .rr-field textarea.rr-invalid {
+      border-color: var(--coral);
+    }
+    .rr-field textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+
+    /* ── Radio buttons ── */
+    .rr-radio-group {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0.25rem;
+    }
+    .rr-radio {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      color: var(--navy-deep);
+    }
+    .rr-radio input[type='radio'] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .rr-radio-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+      flex-shrink: 0;
+      transition: border-color var(--t-hover);
+      position: relative;
+    }
+    .rr-radio-mark::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      transition: transform var(--t-hover);
+    }
+    .rr-radio input:checked ~ .rr-radio-mark {
+      border-color: var(--teal);
+    }
+    .rr-radio input:checked ~ .rr-radio-mark::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .rr-radio-group.rr-invalid .rr-radio-mark {
+      border-color: var(--coral);
+    }
+
+    /* ── Drag-and-drop zone ── */
+    .rr-drop-zone {
+      border: 2px dashed var(--teal);
+      border-radius: 10px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition:
+        background var(--t-hover),
+        border-color var(--t-hover);
+      position: relative;
+    }
+    .rr-drop-zone:hover,
+    .rr-drop-zone.drag-over {
+      background: rgba(66, 153, 150, 0.05);
+      border-color: var(--teal);
+    }
+    .rr-drop-icon {
+      color: var(--teal);
+      margin: 0 auto 0.75rem;
+    }
+    .rr-drop-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy-deep);
+      margin-bottom: 0.35rem;
+    }
+    .rr-drop-hint {
+      font-size: 12px;
+      color: var(--mist);
+    }
+    .rr-file-input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .rr-file-list {
+      list-style: none;
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .rr-file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 13px;
+      color: var(--slate);
+      font-family: 'Montserrat', sans-serif;
+    }
+    .rr-file-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--mist);
+      font-size: 16px;
+      line-height: 1;
+      padding: 0 2px;
+      transition: color var(--t-hover);
+    }
+    .rr-file-remove:hover {
+      color: var(--coral);
+    }
+
+    /* ── Form footer: consent + submit ── */
+    .rr-form-footer {
+      margin-top: 1.5rem;
+    }
+    .rr-consent {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--slate);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+      cursor: pointer;
+    }
+    .rr-consent input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      margin-top: 3px;
+      accent-color: var(--teal);
+      flex-shrink: 0;
+      -webkit-appearance: auto;
+      appearance: auto;
+    }
+    .rr-form-error {
+      font-size: 13px;
+      color: var(--coral);
+      margin-bottom: 0.75rem;
+      min-height: 0;
+    }
+    .rr-submit-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 15px;
+    }
+    .rr-submit-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* ── Success state ── */
+    .rr-success {
+      text-align: center;
+      padding: 3rem 1.5rem;
+    }
+    .rr-success svg {
+      color: var(--teal);
+      margin: 0 auto 1.25rem;
+      display: block;
+    }
+    .rr-success h2 {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 0.5rem;
+    }
+    .rr-success p {
+      font-size: 15px;
+      color: var(--slate);
+    }
+
+    /* ── Alt / contact section ── */
     .rr-alt-section {
       background: var(--cream);
       padding: var(--pad-s) var(--pad-x);
@@ -187,6 +725,7 @@ const phoneDigits = phone.replace(/\D/g, '');
       border-top: 1px solid var(--border);
     }
 
+    /* ── Responsive ── */
     @media (max-width: 768px) {
       .rr-hero {
         padding: 3.5rem var(--pad-x);
@@ -196,6 +735,206 @@ const phoneDigits = phone.replace(/\D/g, '');
         padding-left: var(--pad-x);
         padding-right: var(--pad-x);
       }
+      .rr-section {
+        padding: 1.25rem 1.25rem;
+      }
+      .rr-row {
+        grid-template-columns: 1fr;
+      }
+      .rr-row-half {
+        max-width: 100%;
+      }
     }
   </style>
+
+  <script is:inline>
+    (function () {
+      const form = document.getElementById('referralForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const formError = document.getElementById('formError');
+      const formSuccess = document.getElementById('formSuccess');
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('docUpload');
+      const fileList = document.getElementById('fileList');
+      const selectedFiles = [];
+
+      // ── File upload UI ──────────────────────────────────────────────────
+      function renderFileList() {
+        fileList.innerHTML = '';
+        selectedFiles.forEach(function (file, idx) {
+          const li = document.createElement('li');
+          li.className = 'rr-file-item';
+          const name = document.createElement('span');
+          name.textContent = file.name;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'rr-file-remove';
+          btn.setAttribute('aria-label', 'Remove ' + file.name);
+          btn.textContent = '×';
+          btn.addEventListener('click', function () {
+            selectedFiles.splice(idx, 1);
+            renderFileList();
+          });
+          li.appendChild(name);
+          li.appendChild(btn);
+          fileList.appendChild(li);
+        });
+      }
+
+      fileInput.addEventListener('change', function () {
+        Array.from(fileInput.files).forEach(function (f) {
+          selectedFiles.push(f);
+        });
+        renderFileList();
+        fileInput.value = '';
+      });
+
+      dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      dropZone.addEventListener('dragleave', function () {
+        dropZone.classList.remove('drag-over');
+      });
+      dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        Array.from(e.dataTransfer.files).forEach(function (f) {
+          selectedFiles.push(f);
+        });
+        renderFileList();
+      });
+      dropZone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      // ── Validation ──────────────────────────────────────────────────────
+      function showError(msg) {
+        formError.textContent = msg;
+      }
+
+      function clearError() {
+        formError.textContent = '';
+      }
+
+      function validateEmail(val) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      }
+
+      function validate(data) {
+        const required = [
+          ['facilityName', 'Facility Name'],
+          ['facilityPhone', 'Facility Phone'],
+          ['referrerFirstName', 'Referring Person First Name'],
+          ['referrerLastName', 'Referring Person Last Name'],
+          ['referrerEmail', 'Referring Person Email'],
+          ['referrerPhone', 'Referring Person Phone'],
+          ['patientFirstName', 'Patient First Name'],
+          ['patientLastName', 'Patient Last Name'],
+          ['referralReason', 'Reason for Referral'],
+        ];
+        for (let i = 0; i < required.length; i++) {
+          const key = required[i][0];
+          const label = required[i][1];
+          if (!data[key] || !data[key].trim()) {
+            return label + ' is required.';
+          }
+        }
+        if (!validateEmail(data.referrerEmail)) {
+          return 'Please enter a valid email address.';
+        }
+        if (!data.skilledNursing) {
+          return 'Please indicate if the patient is currently on Skilled Nursing.';
+        }
+        if (!data.hipaaConsent) {
+          return 'Please accept the HIPAA consent to submit.';
+        }
+        return null;
+      }
+
+      // ── Submit ──────────────────────────────────────────────────────────
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearError();
+
+        const fd = new FormData(form);
+        const data = {
+          facilityName: fd.get('facilityName') || '',
+          facilityPhone: fd.get('facilityPhone') || '',
+          referrerFirstName: fd.get('referrerFirstName') || '',
+          referrerLastName: fd.get('referrerLastName') || '',
+          referrerEmail: fd.get('referrerEmail') || '',
+          referrerPhone: fd.get('referrerPhone') || '',
+          patientFirstName: fd.get('patientFirstName') || '',
+          patientLastName: fd.get('patientLastName') || '',
+          guardianFirstName: fd.get('guardianFirstName') || '',
+          guardianLastName: fd.get('guardianLastName') || '',
+          guardianPhone: fd.get('guardianPhone') || '',
+          referralReason: fd.get('referralReason') || '',
+          skilledNursing: fd.get('skilledNursing') || '',
+          hipaaConsent: fd.get('hipaaConsent') === 'on',
+        };
+
+        const err = validate(data);
+        if (err) {
+          showError(err);
+          return;
+        }
+
+        // Loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting…';
+
+        // Strip non-API fields before sending
+        const payload = {
+          facilityName: data.facilityName,
+          facilityPhone: data.facilityPhone,
+          referrerFirstName: data.referrerFirstName,
+          referrerLastName: data.referrerLastName,
+          referrerEmail: data.referrerEmail,
+          referrerPhone: data.referrerPhone,
+          patientFirstName: data.patientFirstName,
+          patientLastName: data.patientLastName,
+          guardianFirstName: data.guardianFirstName,
+          guardianLastName: data.guardianLastName,
+          guardianPhone: data.guardianPhone,
+          referralReason: data.referralReason,
+          skilledNursing: data.skilledNursing,
+          // TODO: File upload handling — HubSpot Files API or email attachment integration
+        };
+
+        fetch('/api/referral', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+          .then(function (res) {
+            return res.json().then(function (json) {
+              return { ok: res.ok, json: json };
+            });
+          })
+          .then(function (result) {
+            if (result.ok) {
+              form.hidden = true;
+              formSuccess.hidden = false;
+            } else {
+              showError(
+                'Submission failed: ' +
+                  (result.json.error || 'Unknown error. Please try again or contact us directly.'),
+              );
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit Referral';
+            }
+          })
+          .catch(function () {
+            showError('Network error. Please check your connection and try again.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Referral';
+          });
+      });
+    })();
+  </script>
 </BaseLayout>

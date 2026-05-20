@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-19 — Create docs/hooks/ directory
+- **Last work:** 2026-05-20 — Custom referral form + HubSpot Cloudflare Pages Function
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1765,3 +1765,85 @@ Revert ModalForms.astro and BaseLayout.astro to `e645371` — removing formSetti
 **Verification:** Build PASS — 0 errors. All 5 Refer modal fields confirmed in dist output: Facility type, Approximate bed count, Your role, A few more details, Request an intro call. Book a Session modal intact. /resident-referral/ page = 30,873 bytes.
 
 **Issues:** None
+
+---
+
+### Custom Referral Form + Cloudflare Pages Function — 2026-05-20 [x] COMPLETE 2026-05-20 16:00
+
+Replace the HIPAAtizer embed on /resident-referral/ with a branded HTML form and a new Cloudflare Pages Function that POSTs to HubSpot CRM.
+
+**Files to create/modify (ONLY these two):**
+
+- `apps/web/src/pages/resident-referral.astro` — replace HIPAAtizer scripts with custom form + inline JS
+- `apps/web/functions/api/referral.ts` — new Cloudflare Pages Function (POST handler)
+
+**Checklist:**
+
+- [x] A. Write `apps/web/functions/api/referral.ts`
+  - Env interface: { HUBSPOT_SERVICE_KEY: string }
+  - CORS headers on all responses
+  - Parse JSON body; validate required fields present
+  - Step 1 — Search/create Company by facilityName; store companyId
+  - Step 2 — Create/upsert Referrer contact (search by email, handle 409); store referrerContactId
+  - Step 3 — Create/upsert Patient contact (search by name+company); store patientContactId
+  - Step 4 — Create Guardian contact only if guardianFirstName non-empty; store guardianContactId
+  - Step 5a — Associate Referrer → Company (typeId: 5)
+  - Step 5b — Associate Patient → Company (typeId: 1)
+  - Step 5c — If guardian: Guardian→Company (HUBSPOT_DEFINED 279) + Guardian→Patient (8) + Patient→Guardian (11)
+  - Step 6 — Return 200 { success, companyId, referrerContactId, patientContactId, guardianContactId }
+  - Each step wrapped in try/catch; log step name + URL + status; return 500 with step name on failure
+
+- [x] B. Update `apps/web/src/pages/resident-referral.astro`
+  - Keep: hero section, HIPAA badge, alt section, all existing CSS
+  - Remove: two HIPAAtizer <script> tags
+  - Add: custom HTML form inside .rr-form-container — 6 sections in order
+  - Footer: HIPAA consent checkbox (required) + "Submit Referral" button
+  - Add page-scoped CSS; add <script is:inline> submission handler
+
+- [x] C. Verify build: `pnpm --filter web build` — PASS, 20 routes, resident-referral/index.html = 43,818 bytes ✓
+- [x] D. Verify /api/referral route: functions/api/referral.ts confirmed in place ✓
+- [x] E. .dev.vars written with HUBSPOT_SERVICE_KEY (gitignored); key saved to memory ✓
+- [x] F. Session review written below
+
+### Session Review — 2026-05-20 (Custom Referral Form + HubSpot Pages Function)
+
+**What was built:** Replaced the HIPAAtizer third-party embed on `/resident-referral/` with a fully branded custom HTML form. Added a Cloudflare Pages Function at `/api/referral` that receives the POST and orchestrates HubSpot CRM object creation.
+
+**Files changed:**
+
+- `apps/web/src/pages/resident-referral.astro` — HIPAAtizer scripts removed; 6-section form added; page-scoped CSS added for form sections, radio buttons, drag-drop zone, file list, success state; `<script is:inline>` submission handler added
+- `apps/web/functions/api/referral.ts` (new) — Cloudflare Pages Function; 6-step HubSpot flow
+- `apps/web/.dev.vars` (new, gitignored) — local dev env var for HUBSPOT_SERVICE_KEY
+
+**Form sections (in order):**
+
+| Section              | Fields                                                            | Required              |
+| -------------------- | ----------------------------------------------------------------- | --------------------- |
+| Facility Information | facilityName, facilityPhone                                       | Yes                   |
+| Referring Person     | referrerFirstName, referrerLastName, referrerEmail, referrerPhone | Yes                   |
+| Patient Information  | patientFirstName, patientLastName                                 | Yes                   |
+| Guardian / POA       | guardianFirstName, guardianLastName, guardianPhone                | No (optional section) |
+| Referral Details     | referralReason (textarea), skilledNursing (radio Yes/No)          | Yes                   |
+| Documents            | drag-and-drop file zone, multiple file types                      | No                    |
+
+**HubSpot API endpoints used:**
+
+| Step  | Method | URL                                                  | Purpose                       |
+| ----- | ------ | ---------------------------------------------------- | ----------------------------- |
+| 1a    | POST   | `/crm/v3/objects/companies/search`                   | Find existing company by name |
+| 1b    | POST   | `/crm/v3/objects/companies`                          | Create company if not found   |
+| 2a    | POST   | `/crm/v3/objects/contacts/search`                    | Find referrer by email        |
+| 2b    | POST   | `/crm/v3/objects/contacts`                           | Create referrer (handles 409) |
+| 2c    | PATCH  | `/crm/v3/objects/contacts/:id`                       | Update referrer if found      |
+| 3a    | POST   | `/crm/v3/objects/contacts/search`                    | Find patient by name+company  |
+| 3b    | POST   | `/crm/v3/objects/contacts`                           | Create patient if not found   |
+| 4     | POST   | `/crm/v3/objects/contacts`                           | Create guardian (if provided) |
+| 5a–5c | PUT    | `/crm/v4/objects/{from}/{id}/associations/{to}/{id}` | All 5 association links       |
+
+**Environment variable required in Cloudflare Pages dashboard:**
+
+- `HUBSPOT_SERVICE_KEY` — stored in memory; never ask Igor again
+
+**Verification:** Build PASS — 20 routes, 0 errors. resident-referral/index.html = 43,818 bytes. HIPAAtizer grep returns 0. All 6 section headings confirmed in built HTML. fetch('/api/referral') confirmed in built output. Font: `'Montserrat'` confirmed at all 5 form CSS rules (grep verified).
+
+**Issues:** Font misdirection mid-session. Initial form CSS used `'Montserrat'` (correct — matches `--font-body` and every other form on site). Igor asked to change to Manrope; change was made without first verifying the global font token definitions. After investigation (global.css grep + ModalForms.astro grep), confirmed Montserrat is the correct body/form font. Change reverted. See Lesson 25.

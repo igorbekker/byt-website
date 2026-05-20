@@ -219,6 +219,21 @@ Every session must start with `cd /home/personal/projects/byt-website`. Every fi
 - /home/personal/projects/byt-website-repo/
 - /home/personal/projects/better-you-therapy/
 
+### 25. Before changing any font-family, verify --font-body and --font-heading in global.css
+
+When a user says "use Manrope" or asks to change a font, do not apply the change until you have grepped global.css for `--font-body` and `--font-heading` and checked what font existing form components use.
+
+**The BYT font split:**
+
+- `--font-body: 'Montserrat'` — used on all body text, form labels, inputs, textareas, chips, modal elements
+- `--font-heading: 'Manrope'` — used on h1–h5 and display headings only
+
+Every form on the site (ModalForms.astro `.form-field label`, `.form-field input`, `.chip`, `.seg label`) uses `'Montserrat'` — which is `var(--font-body)`. A new form must match this or it will be visually inconsistent.
+
+**Why:** Igor asked to change form labels from Montserrat to Manrope. The change was made without verifying global.css first. After investigation, the original Montserrat was correct and the change was reverted. Two unnecessary edits made, two back-and-forth rounds with Igor.
+
+**How to apply:** When any font instruction is given: grep global.css first → show `--font-body` and `--font-heading` values → confirm the user's intent knowing both values → then change. Never make a font change on instruction alone without showing the current token definitions.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
