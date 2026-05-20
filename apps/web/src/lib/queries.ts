@@ -40,7 +40,14 @@ export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   newsletterBody,
   newsletterEyebrow,
   newsletterDisclaimer,
-  seo
+  gtmContainerId,
+  seo {
+    metaTitle,
+    metaDescription,
+    canonicalUrl,
+    robotsDirective,
+    ogImage { asset->{ url }, alt }
+  }
 }`;
 
 export const HOME_PAGE_QUERY = `*[_type == "homePage"][0]{
