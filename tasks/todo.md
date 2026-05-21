@@ -19,9 +19,45 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix white borders on footer logo (mix-blend-mode: screen)
+- **Last work:** 2026-05-21 — Fix mobile modal clipped when opened mid-scroll (window.scrollTo)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Fix mobile "Book a Session" modal clipped when opened mid-scroll — 2026-05-21 [x] COMPLETE 2026-05-21
+
+Branch: `main`
+
+- [x] DIAGNOSE — `.modal-overlay` is `position: fixed; inset: 0` ✓ — not the bug
+- [x] DIAGNOSE — `document.body.style.overflow = 'hidden'` on open ✓ — already present
+- [x] DIAGNOSE — `document.body.style.overflow = ''` on close/ESC ✓ — already present
+- [x] DIAGNOSE — `window.scrollTo(0, 0)` missing from `openModal` — **root cause**
+- [x] FIX — added `window.scrollTo(0, 0)` before `m.classList.add('open')` in `ModalForms.astro:1230`
+- [x] BUILD — `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+### Session Review — 2026-05-21 (Fix mobile modal clipped mid-scroll)
+
+**What was fixed:** On mobile, opening the "Book a Session" or "Refer a Facility" modal after scrolling down the page caused the modal to appear small/clipped.
+
+**Root cause:** `openModal` never called `window.scrollTo(0, 0)` before showing the overlay. On mobile browsers (especially iOS Safari), when `body.style.overflow = 'hidden'` is applied while the page is mid-scroll, the browser locks the scroll at the current offset. The `position: fixed` overlay appears at viewport top, but the browser's viewport origin is confused by the locked scroll position — the modal panel renders clipped or partially off-screen below the visible area. Scrolling to top first, then applying the overflow lock, ensures the overlay opens with the full viewport available.
+
+**What was already correct (no change needed):**
+
+- `.modal-overlay`: `position: fixed; inset: 0` ✓
+- `document.body.style.overflow = 'hidden'` on open ✓
+- `document.body.style.overflow = ''` on `closeModal` and ESC handler ✓
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro` — added `window.scrollTo(0, 0)` at line 1230 in `openModal`, before `m.classList.add('open')`
+
+**Verification:**
+
+- `grep -n "scrollTo" ModalForms.astro` → line 1230: `window.scrollTo(0, 0);` ✓
+- `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+**Issues:** No user corrections this session.
 
 ---
 

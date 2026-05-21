@@ -1227,6 +1227,7 @@ const {
   function openModal(which) {
     const m = document.getElementById('modal-' + which);
     if (!m) return;
+    window.scrollTo(0, 0);
     m.classList.add('open');
     document.body.style.overflow = 'hidden';
     // focus first input
