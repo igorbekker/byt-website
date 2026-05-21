@@ -14,6 +14,12 @@ interface RedirectDoc {
   lastHitAt?: string;
 }
 
+interface AutoRedirectEntry {
+  oldPath: string;
+  newPath: string;
+  pageType: string;
+}
+
 type SortKey = 'sourcePath' | 'destinationPath' | 'statusCode' | 'hitCount' | 'lastHitAt';
 type SortDir = 'asc' | 'desc';
 
@@ -64,6 +70,23 @@ const badgeBase: React.CSSProperties = {
   fontWeight: 600,
 };
 
+function formatPageType(type: string): string {
+  const map: Record<string, string> = {
+    aboutPage: 'About',
+    blogIndexPage: 'Blog',
+    careersPage: 'Careers',
+    communitiesPage: 'Communities',
+    contactPage: 'Contact',
+    homePage: 'Home',
+    patientsPage: 'Patients',
+    privacyPage: 'Privacy',
+    providersPage: 'Providers',
+    residentReferralPage: 'Resident Referral',
+    termsPage: 'Terms',
+  };
+  return map[type] ?? type;
+}
+
 export function RedirectManager() {
   const client = useClient({ apiVersion: API_VERSION });
   const [docs, setDocs] = useState<RedirectDoc[]>([]);
@@ -74,6 +97,8 @@ export function RedirectManager() {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ msg: string; ok: boolean } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [autoRedirects, setAutoRedirects] = useState<AutoRedirectEntry[]>([]);
+  const [autoLoading, setAutoLoading] = useState(true);
 
   const fetchRedirects = useCallback(async () => {
     setLoading(true);
@@ -90,6 +115,27 @@ export function RedirectManager() {
   useEffect(() => {
     void fetchRedirects();
   }, [fetchRedirects]);
+
+  useEffect(() => {
+    void (async () => {
+      setAutoLoading(true);
+      try {
+        const pages = await client.fetch<
+          Array<{ _type: string; slug?: string; oldSlugs: string[] }>
+        >(`*[defined(oldSlugs) && length(oldSlugs) > 0]{ _type, slug, oldSlugs }`);
+        const entries: AutoRedirectEntry[] = [];
+        for (const page of pages) {
+          const newPath = page.slug ? `/${page.slug}` : '/';
+          for (const old of page.oldSlugs) {
+            entries.push({ oldPath: `/${old}`, newPath, pageType: page._type });
+          }
+        }
+        setAutoRedirects(entries.sort((a, b) => a.oldPath.localeCompare(b.oldPath)));
+      } finally {
+        setAutoLoading(false);
+      }
+    })();
+  }, [client]);
 
   const toggleActive = useCallback(
     async (doc: RedirectDoc) => {
@@ -283,6 +329,53 @@ export function RedirectManager() {
         </div>
       )}
 
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <h3 style={styles.sectionHeading}>Auto Redirects (from slug changes)</h3>
+          <span style={countBadgeStyle('blue')}>{autoRedirects.length}</span>
+        </div>
+        <p style={styles.autoNote}>
+          These redirects are auto-generated from slug changes. To remove one, edit the page&apos;s{' '}
+          <strong>Previous URL Slugs</strong> field.
+        </p>
+        {autoLoading ? (
+          <p style={styles.muted}>Loading…</p>
+        ) : autoRedirects.length === 0 ? (
+          <p style={styles.muted}>
+            No auto-redirects. Slug changes will appear here automatically.
+          </p>
+        ) : (
+          <div style={styles.tableWrap}>
+            <table style={styles.table}>
+              <thead>
+                <tr style={styles.theadRow}>
+                  <th style={styles.th}>Old URL</th>
+                  <th style={styles.th}>Redirects To</th>
+                  <th style={styles.th}>Page</th>
+                  <th style={{ ...styles.th, textAlign: 'center' }}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {autoRedirects.map((entry) => (
+                  <tr key={`${entry.pageType}-${entry.oldPath}`} style={styles.row}>
+                    <td style={styles.td}>
+                      <code style={styles.code}>{entry.oldPath}</code>
+                    </td>
+                    <td style={styles.td}>
+                      <code style={styles.code}>{entry.newPath}</code>
+                    </td>
+                    <td style={styles.td}>{formatPageType(entry.pageType)}</td>
+                    <td style={{ ...styles.td, textAlign: 'center' }}>
+                      <span style={codeBadgeStyle(301)}>301 — Auto</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
       <p style={styles.hint}>
         CSV format:{' '}
         <code style={{ background: '#f3f4f6', padding: '1px 4px', borderRadius: 3 }}>
@@ -411,6 +504,17 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#6b7280',
     fontSize: 14,
     margin: 0,
+  },
+  sectionHeading: {
+    margin: 0,
+    fontSize: 16,
+    fontWeight: 700,
+    color: '#111827',
+  },
+  autoNote: {
+    color: '#6b7280',
+    fontSize: 13,
+    margin: '0 0 12px',
   },
   hint: {
     color: '#9ca3af',

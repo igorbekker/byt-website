@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — oldSlugs → \_redirects build integration
+- **Last work:** 2026-05-21 — oldSlugs editable + auto-redirects in Redirect Manager
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1136,6 +1136,55 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - Build: `pnpm --filter web build` → 19 pages, 7.73s, Complete ✓
 
 **Issues:** None.
+
+---
+
+### Make oldSlugs editable + add auto-redirects to Redirect Manager [x] COMPLETE 2026-05-21
+
+- [x] PRE-FLIGHT — confirmed 11 singletons all have readOnly: true on oldSlugs; read RedirectManager.tsx (420 lines, queries redirect type only, no oldSlugs reference)
+- [x] PART A — removed readOnly: true from all 11 singleton oldSlugs fields (sed across singletons/\*.ts)
+- [x] PART A — updated description to 'Previous URL slugs that auto-redirect to the current slug. Auto-managed on publish — remove an entry to stop that redirect.' across all 11 files
+- [x] PART B — added AutoRedirectEntry interface to RedirectManager.tsx
+- [x] PART B — added formatPageType() helper mapping all 11 \_type strings to readable names
+- [x] PART B — added autoRedirects + autoLoading state
+- [x] PART B — added useEffect querying \*[defined(oldSlugs) && length(oldSlugs) > 0]{ \_type, slug, oldSlugs }
+- [x] PART B — added auto-redirects section (section heading, note, read-only table with Old URL/Redirects To/Page/Status columns, empty state)
+- [x] PART B — added sectionHeading + autoNote styles
+- [x] BUILD — pnpm --filter studio build → 0 errors ✓
+- [x] BUILD — pnpm --filter web build → 0 errors, 19 routes ✓
+
+### Session Review — 2026-05-21 (Make oldSlugs editable + auto-redirects in Redirect Manager)
+
+**What was built:** Two changes to the Studio:
+
+1. **`oldSlugs` editable**: Removed `readOnly: true` from the `oldSlugs` field in all 11 page singleton schemas. Updated description to explain that entries can be removed to stop a redirect. Editors can now manually delete stale entries directly from the page singleton in Studio.
+
+2. **Auto Redirects section in Redirect Manager**: Added a new "Auto Redirects (from slug changes)" section below the manual redirects table. Queries all singletons that have `oldSlugs` entries, flattens them into rows (one per old slug), and displays a read-only table with Old URL, Redirects To, Page, and Status (always "301 — Auto") columns. Includes note explaining how to remove entries. Count badge matches style of existing badges.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/aboutPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/blogIndexPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/careersPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/communitiesPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/contactPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/homePage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/patientsPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/privacyPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/providersPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/residentReferralPage.ts` — removed readOnly, updated description
+- `apps/studio/schemas/singletons/termsPage.ts` — removed readOnly, updated description
+- `apps/studio/tools/RedirectManager.tsx` — added AutoRedirectEntry interface, formatPageType helper, autoRedirects/autoLoading state, fetch useEffect, auto-redirects JSX section, sectionHeading + autoNote styles
+
+**Verification:**
+
+- `grep readOnly on oldSlugs across 11 singletons` → 0 matches ✓
+- `grep -n "oldSlugs" RedirectManager.tsx` → lines 124, 125, 129 (query, type, loop) ✓
+- `grep -n "Auto Redirects" RedirectManager.tsx` → line 334 ✓
+- `pnpm --filter studio build` → 0 errors ✓
+- `pnpm --filter web build` → 0 errors, 19 routes ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

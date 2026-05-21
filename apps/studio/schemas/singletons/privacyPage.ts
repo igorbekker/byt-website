@@ -29,8 +29,8 @@ export const privacyPage = defineType({
       title: 'Previous URL Slugs (auto-managed)',
       type: 'array',
       of: [{ type: 'string' }],
-      description: 'Previous slugs that redirect to the current slug. Do not edit manually.',
-      readOnly: true,
+      description:
+        'Previous URL slugs that auto-redirect to the current slug. Auto-managed on publish — remove an entry to stop that redirect.',
     }),
     defineField({ name: 'title', title: 'Page Title', type: 'string' }),
     defineField({
