@@ -91,8 +91,6 @@ function fmtDate(iso: string | undefined): string {
 }
 
 const categorySlug = post.category?.slug?.current ?? '';
-const subSlug = post.subcategoryLabel ?? '';
-const subLabel = subSlug ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '';
 const pageTitle = post.seo?.metaTitle ?? post.title ?? 'Article';
 const pageDesc = post.seo?.metaDescription ?? post.excerpt ?? '';
 
@@ -1850,27 +1848,6 @@ const articleJsonLd = blogPostingSchema({
   <Breadcrumb items={breadcrumbItems} />
   <Fragment set:html={`<script type="application/ld+json">${articleJsonLd}</script>`} />
   <div class="progress-bar"><span id="readProgress"></span></div>
-
-  <div class="subnav">
-    <div class="subnav-inner">
-      <a
-        href={subSlug ? `/blog/${categorySlug}/${subSlug}/` : `/blog/${categorySlug}/`}
-        class="subnav-back"
-      >
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg
-        >
-        Back to {subLabel || post?.category?.title || 'Blog'}
-      </a>
-    </div>
-  </div>
 
   <section class="article-hero" aria-labelledby="article-heading">
     <div class="article-hero-inner">
