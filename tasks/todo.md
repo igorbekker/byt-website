@@ -19,9 +19,41 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix 2,070ms element render delay on mobile (inline CSS + responsive image sizes)
+- **Last work:** 2026-05-21 — Fix white borders on footer logo (mix-blend-mode: screen)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Fix white borders on footer logo — 2026-05-21 [x] COMPLETE 2026-05-21
+
+Branch: `main`
+
+- [x] DIAGNOSE — confirmed footer uses `/assets/logo-white-trans.png`; both `logo-white.png` and `logo-white-trans.png` are identical files (same MD5: `e62b41fe97bae9a8e3f3c8195cb6b7bd`); no truly transparent white logo exists
+- [x] DIAGNOSE — decoded PNG pixel data (Up-filter reconstruction): top row row-0 has alpha=15 across all 600 columns; entire border zone has semi-transparent white pixels causing visible white rectangle halo on navy background
+- [x] FIX — added `mix-blend-mode: screen` to `.footer-logo img` in `Footer.astro` line 122; screen blend makes semi-transparent white halo invisible on dark navy background
+- [x] BUILD — `pnpm --filter web build` → 19 pages, 0 errors ✓
+- [x] VERIFY — `grep "mix-blend-mode" dist/index.html` → 1 match ✓
+
+### Session Review — 2026-05-21 (Fix white borders on footer logo)
+
+**What was fixed:** Footer logo showed visible white borders/halo on the navy background despite using an RGBA PNG file.
+
+**Root cause:** Both `logo-white.png` and `logo-white-trans.png` are the same file (identical MD5). Despite RGBA color type, the PNG has a semi-transparent white layer (alpha=15) distributed across the entire top row and border zone — not just anti-aliasing at text edges. Pixel breakdown: 148,775 fully transparent (a=0), 13,948 white+fully-opaque (solid logo letterforms), 9,477 semi-transparent white (halo/fringe). The top-row alpha histogram shows every column at a=15, creating a faint white rectangle visible on dark backgrounds.
+
+**Fix:** Added `mix-blend-mode: screen` to `.footer-logo img`. The `screen` blend formula `1 - (1-A)*(1-B)` makes white letterforms render as white (correct) while pixels with a=15 (~6%) blend into near-invisibility against the navy background.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Footer.astro` — added `mix-blend-mode: screen` to `.footer-logo img` rule (line 122)
+
+**Verification:**
+
+- `grep "mix-blend-mode" apps/web/src/components/ui/Footer.astro` → line 122: `mix-blend-mode: screen;` ✓
+- `grep -c "mix-blend-mode:screen\|mix-blend-mode: screen" dist/index.html` → 1 ✓
+- `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+**Issues:** No user corrections this session.
 
 ---
 
