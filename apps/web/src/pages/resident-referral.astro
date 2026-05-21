@@ -211,7 +211,6 @@ const phoneDigits = phone.replace(/\D/g, '');
             <h2 class="rr-section-heading">
               Documents <span class="rr-section-heading-opt">(optional)</span>
             </h2>
-            <!-- TODO: File upload handling — HubSpot Files API or email attachment integration -->
             <div
               class="rr-drop-zone"
               id="dropZone"
@@ -939,7 +938,18 @@ const phoneDigits = phone.replace(/\D/g, '');
       }
 
       // ── Submit ──────────────────────────────────────────────────────────
-      form.addEventListener('submit', function (e) {
+      function fileToBase64(file) {
+        return new Promise(function (resolve, reject) {
+          const reader = new FileReader();
+          reader.onload = function () {
+            resolve(reader.result);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
         clearError();
 
@@ -986,7 +996,11 @@ const phoneDigits = phone.replace(/\D/g, '');
           guardianPhone: data.guardianPhone,
           referralReason: data.referralReason,
           skilledNursing: data.skilledNursing,
-          // TODO: File upload handling — HubSpot Files API or email attachment integration
+          documents: await Promise.all(
+            selectedFiles.map(async function (f) {
+              return { file: await fileToBase64(f), name: f.name };
+            }),
+          ),
         };
 
         fetch('/api/referral', {

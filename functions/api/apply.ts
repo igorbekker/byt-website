@@ -5,6 +5,7 @@ import {
   searchContactByEmail,
   createContact,
   updateContact,
+  uploadFileToHubSpot,
 } from './_hubspot';
 
 interface ApplyBody {
@@ -13,6 +14,8 @@ interface ApplyBody {
   email: string;
   phone: string;
   resumeCoverNote?: string;
+  resumeFile?: string | null;
+  resumeFileName?: string | null;
 }
 
 export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
@@ -27,14 +30,12 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
   }
 
-  const { firstName, lastName, email, phone, resumeCoverNote } = body;
+  const { firstName, lastName, email, phone, resumeCoverNote, resumeFile, resumeFileName } = body;
   const required: Record<string, string> = { firstName, email };
   for (const [field, val] of Object.entries(required)) {
     if (!val || !val.trim())
       return jsonResponse({ success: false, error: `Missing required field: ${field}` }, 400);
   }
-
-  // TODO: File upload — accept resume file, upload via HubSpot Files API (POST /filemanager/api/v3/files/upload), then set therapist_resume property to the file URL
 
   const props: Record<string, string> = {
     firstname: firstName,
@@ -60,7 +61,21 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     return jsonResponse({ success: false, error: 'HubSpot error', details: String(err) }, 500);
   }
 
-  return jsonResponse({ success: true, contactId }, 200);
+  // Step 2 — file upload (non-fatal: contact creation already succeeded)
+  let fileUploaded = false;
+  let fileUrl: string | undefined;
+  let fileError: string | undefined;
+  if (resumeFile && resumeFileName) {
+    try {
+      fileUrl = await uploadFileToHubSpot(resumeFile, resumeFileName, '/resumes', key);
+      await updateContact(contactId, { therapist_resume: fileUrl }, key);
+      fileUploaded = true;
+    } catch (err) {
+      fileError = String(err);
+    }
+  }
+
+  return jsonResponse({ success: true, contactId, fileUploaded, fileUrl, fileError }, 200);
 };
 
 export const onRequestOptions = async (): Promise<Response> => {

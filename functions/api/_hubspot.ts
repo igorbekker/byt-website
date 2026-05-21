@@ -114,3 +114,29 @@ export async function createCompany(
   const data = (await res.json()) as { id: string }; // safe: HubSpot create returns { id }
   return data.id;
 }
+
+export async function uploadFileToHubSpot(
+  base64DataUrl: string,
+  fileName: string,
+  folderPath: string,
+  apiKey: string,
+): Promise<string> {
+  const match = base64DataUrl.match(/^data:([^;]+);base64,(.+)$/s);
+  if (!match) throw new Error('Invalid base64 data URL');
+  const binary = Uint8Array.from(atob(match[2]), (c) => c.charCodeAt(0));
+  const formData = new FormData();
+  formData.append('file', new Blob([binary], { type: match[1] }), fileName);
+  formData.append('options', JSON.stringify({ access: 'PRIVATE', overwrite: false }));
+  formData.append('folderPath', folderPath);
+  // No Content-Type header — fetch sets multipart boundary automatically
+  const res = await fetch(`${HUBSPOT_BASE}/filemanager/api/v3/files/upload`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}` },
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`File upload failed (${res.status}): ${await res.text()}`);
+  const data = (await res.json()) as { url?: string; objects?: Array<{ url: string }> }; // safe: HubSpot Files API returns url or objects[0].url
+  const url = data.url ?? data.objects?.[0]?.url;
+  if (!url) throw new Error('No URL in file upload response');
+  return url;
+}

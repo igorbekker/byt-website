@@ -19,9 +19,37 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A BlogPosting schema refactor on blog/[slug].astro
+- **Last work:** 2026-05-21 — Wire resume/document file uploads to HubSpot (careers + referral forms)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Wire file uploads to HubSpot — 2026-05-21 [x] COMPLETE 2026-05-21 04:10
+
+- [x] A. `_hubspot.ts` — add `uploadFileToHubSpot()` helper
+- [x] B. `apply.ts` — add `resumeFile`/`resumeFileName` to interface + Step 2 file upload
+- [x] C. `careers.astro` — add `fileToBase64()` helper + update both submit handlers
+- [x] D. `referral.ts` — add `documents` to interface + Step 6 file uploads
+- [x] E. `resident-referral.astro` — add `fileToBase64()` helper + update submit handler
+- [x] F. `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] G. Curl test both endpoints after deploy (see Session Review below)
+
+### Session Review — 2026-05-21 (Wire file uploads to HubSpot)
+
+**What was built:** End-to-end file upload pipeline for careers and resident-referral forms. Browser base64-encodes selected file(s) via `FileReader.readAsDataURL()`, sends in JSON payload, Pages Function decodes binary, calls HubSpot Files API (`/filemanager/api/v3/files/upload`) via multipart FormData, extracts URL from response, attaches to contact (`therapist_resume` for careers) or logs in response (referral).
+
+**Files changed:**
+
+- `functions/api/_hubspot.ts` — added `uploadFileToHubSpot(base64DataUrl, fileName, folderPath, apiKey)` helper (~20 lines); decodes base64 data URL, builds FormData with `file` + `options` + `folderPath` fields, POSTs to HubSpot Files API with Bearer-only auth (no Content-Type header — let runtime set multipart boundary automatically); handles both `response.url` and `response.objects[0].url` response shapes
+- `functions/api/apply.ts` — imported `uploadFileToHubSpot`; added `resumeFile?: string | null` and `resumeFileName?: string | null` to `ApplyBody`; added Step 2 (non-fatal) after contact upsert: upload file, PATCH contact with `therapist_resume`; response now includes `fileUploaded`, `fileUrl`, `fileError`; removed TODO comment
+- `functions/api/referral.ts` — imported `uploadFileToHubSpot`; added `documents?: Array<{file: string; name: string}>` to `ReferralBody`; added Step 6 (non-fatal): iterate documents, upload each to `/referral-documents`, no contact property attachment; response now includes `uploadedUrls[]`, `uploadErrors[]`
+- `apps/web/src/pages/careers.astro` — added `fileToBase64()` promisified FileReader helper; updated both `submitJob` and `submitGeneral` to read file input, validate (≤10MB, .pdf/.doc/.docx), encode to base64, add `resumeFile`/`resumeFileName` to JSON payload; removed both TODO comments
+- `apps/web/src/pages/resident-referral.astro` — added `fileToBase64()` helper; changed submit handler to `async`; added `documents: await Promise.all(selectedFiles.map(...))` encoding before fetch; removed both TODO comments (HTML + script)
+
+**Verification:** `pnpm --filter web build` → 19 routes, 0 errors ✓. Curl tests to run after deploy.
+
+**Issues:** None. No user corrections this session.
 
 ---
 

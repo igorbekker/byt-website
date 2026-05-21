@@ -1,3 +1,5 @@
+import { uploadFileToHubSpot } from './_hubspot';
+
 interface Env {
   HUBSPOT_SERVICE_KEY?: string;
 }
@@ -16,6 +18,7 @@ interface ReferralBody {
   guardianPhone?: string;
   referralReason: string;
   skilledNursing: string;
+  documents?: Array<{ file: string; name: string }>;
 }
 
 const HUBSPOT_BASE = 'https://api.hubapi.com';
@@ -218,6 +221,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     guardianPhone,
     referralReason,
     skilledNursing,
+    documents,
   } = body;
 
   const required = {
@@ -389,8 +393,27 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     return jsonResponse({ success: false, error: 'Step 5 failed', details: String(err) }, 500);
   }
 
+  // Step 6 — document uploads (non-fatal)
+  const uploadedUrls: string[] = [];
+  const uploadErrors: string[] = [];
+  for (const doc of documents ?? []) {
+    try {
+      uploadedUrls.push(await uploadFileToHubSpot(doc.file, doc.name, '/referral-documents', key));
+    } catch (err) {
+      uploadErrors.push(String(err));
+    }
+  }
+
   return jsonResponse(
-    { success: true, companyId, referrerContactId, patientContactId, guardianContactId },
+    {
+      success: true,
+      companyId,
+      referrerContactId,
+      patientContactId,
+      guardianContactId,
+      uploadedUrls,
+      uploadErrors,
+    },
     200,
   );
 };
