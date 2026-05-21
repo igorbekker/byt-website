@@ -11,6 +11,9 @@ CSS_DIR="$DIST/_astro"
 ERRORS=0
 WARNINGS=0
 
+# css_has PATTERN: true if pattern exists in _astro/*.css OR inlined in HTML <style> tags
+css_has() { grep -rq "$1" "$CSS_DIR"/ 2>/dev/null || grep -rq "$1" $HTML_PAGES 2>/dev/null; }
+
 pass() { echo "✅ PASS [$1]: $2"; }
 fail() { echo "❌ FAIL [$1]: $2"; ERRORS=$((ERRORS + 1)); }
 warn() { echo "⚠️  WARN [$1]: $2"; WARNINGS=$((WARNINGS + 1)); }
@@ -117,21 +120,21 @@ else
 fi
 
 # CHECK 6: sr-only class defined in CSS
-if grep -rq "\.sr-only" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "\.sr-only"; then
   pass "CHECK_06 .sr-only" ".sr-only class defined in dist CSS"
 else
   fail "CHECK_06 .sr-only" ".sr-only not defined in any dist CSS file"
 fi
 
 # CHECK 7: color-scheme declared
-if grep -q "color-scheme" "$CSS_DIR"/*.css 2>/dev/null; then
+if css_has "color-scheme"; then
   pass "CHECK_07 color-scheme" "color-scheme declared in dist CSS"
 else
   fail "CHECK_07 color-scheme" "color-scheme not declared in dist CSS"
 fi
 
 # CHECK 8: print stylesheet exists
-if grep -rq "@media print" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "@media print"; then
   pass "CHECK_08 print stylesheet" "@media print found in dist CSS"
 else
   fail "CHECK_08 print stylesheet" "@media print not found in any dist CSS file"
@@ -140,7 +143,7 @@ fi
 # CHECK 9: z-index tokens present (--z-base, --z-dropdown, --z-modal)
 Z_MISSING=0
 for token in "z-base" "z-dropdown" "z-modal"; do
-  if ! grep -rq -- "--${token}" "$CSS_DIR"/ 2>/dev/null; then
+  if ! css_has -- "--${token}"; then
     echo "  missing token: --${token}"
     Z_MISSING=$((Z_MISSING + 1))
   fi
@@ -152,7 +155,7 @@ else
 fi
 
 # CHECK 10: safe-area env() present
-if grep -rq "env(safe-area" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "env(safe-area"; then
   pass "CHECK_10 safe-area" "env(safe-area-inset-*) found in dist CSS"
 else
   fail "CHECK_10 safe-area" "env(safe-area-inset-*) not found in dist CSS"

@@ -19,9 +19,48 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Add mandatory Studio deploy rule to CLAUDE.md
+- **Last work:** 2026-05-21 — Fix 2,070ms element render delay on mobile (inline CSS + responsive image sizes)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Fix mobile LCP render delay — 2026-05-21 [x] COMPLETE 2026-05-21
+
+Branch: `main`
+
+- [x] FIX 1 — `astro.config.mjs`: added `build: { inlineStylesheets: 'always' }` — eliminates all render-blocking CSS files; 0 `_astro/*.css` files in dist ✓
+- [x] FIX 2 — `SanityImage.astro`: updated default `sizes` breakpoints to `(max-width: 480px) 400px, (max-width: 900px) 800px, 1200px` ✓
+- [x] FIX 3 — `HomePage.astro` hero: added explicit `sizes="(max-width: 480px) 100vw, (max-width: 900px) 50vw, 720px"` ✓
+- [x] `scripts/perf-check.sh`: updated CSS checks (4, 5, 8, 9) to use `css_has()` helper — searches both `_astro/*.css` and inlined HTML `<style>` tags ✓
+- [x] `scripts/seo-schema-check.sh`: updated CSS checks (16, 17) with same `css_has()` pattern ✓
+- [x] `scripts/a11y-check.sh`: updated CSS checks (6–10) with same `css_has()` pattern ✓
+- [x] BUILD — 19 pages, 0 errors ✓
+- [x] VERIFY — perf-check.sh 9/9 PASS ✓
+
+### Session Review — 2026-05-21 (Fix mobile LCP render delay)
+
+**What was built:** Three targeted performance fixes to eliminate the 2,070ms CSS render-blocking delay on mobile.
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — added `build: { inlineStylesheets: 'always' }` between `output` and `integrations`
+- `apps/web/src/components/ui/SanityImage.astro` — updated default `sizes` from `(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px` to `(max-width: 480px) 400px, (max-width: 900px) 800px, 1200px`
+- `apps/web/src/components/pages/HomePage.astro` — added `sizes="(max-width: 480px) 100vw, (max-width: 900px) 50vw, 720px"` to hero SanityImage (line 1575)
+- `scripts/perf-check.sh` — added `css_has()` helper; updated checks 4, 5, 8, 9 to search both `_astro/*.css` and HTML pages (handles inlined CSS architecture)
+
+**CSS inlining note:** The task estimated 25.6KB total CSS. Actual CSS bundle was ~207KB (`_..lzO_xqVU.css` = 114KB, `Breadcrumb.css` = 25KB, plus page-specific bundles). With `inlineStylesheets: 'always'`, Astro per-page code-splits: the homepage HTML is now 192KB (was ~65KB HTML + CSS loaded separately). This eliminates render-blocking CSS at the cost of larger HTML — browser starts rendering without waiting for a CSS fetch.
+
+**Verification:**
+
+- `grep "inlineStylesheets" astro.config.mjs` → `build: { inlineStylesheets: 'always' }` ✓
+- `ls apps/web/dist/_astro/*.css | wc -l` → 0 ✓
+- hero `sizes` in dist → `sizes="(max-width: 480px) 100vw, (max-width: 900px) 50vw, 720px"` ✓
+- SanityImage default `sizes` → `(max-width: 480px) 400px, (max-width: 900px) 800px, 1200px` ✓
+- Build: 19 pages, 0 errors ✓
+- `bash scripts/perf-check.sh` → 9/9 PASS ✓
+
+**Issues:** `perf-check.sh` checks 5, 8, 9 grep only `_astro/*.css` — with CSS inlined those files no longer exist. Updated the script with `css_has()` fallback. No user corrections.
 
 ---
 

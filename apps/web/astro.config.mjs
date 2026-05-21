@@ -62,6 +62,7 @@ function redirectsIntegration() {
 export default defineConfig({
   site: 'https://getbetteryou.com',
   output: 'static',
+  build: { inlineStylesheets: 'always' },
   integrations: [
     redirectsIntegration(),
     sanity({

@@ -10,6 +10,9 @@ DIST="apps/web/dist"
 CSS_DIR="$DIST/_astro"
 ERRORS=0
 
+# css_has PATTERN: true if pattern exists in _astro/*.css OR inlined in HTML <style> tags
+css_has() { grep -rq "$1" "$CSS_DIR"/ 2>/dev/null || grep -rq "$1" $HTML_PAGES 2>/dev/null; }
+
 pass() { echo "✅ PASS [$1]: $2"; }
 fail() { echo "❌ FAIL [$1]: $2"; ERRORS=$((ERRORS + 1)); }
 
@@ -94,14 +97,14 @@ check_all_pages "CHECK_14 skip-link" 'class="skip-link"'
 check_all_pages "CHECK_15 main#main-content" 'id="main-content"'
 
 # CHECK 16: prefers-reduced-motion in CSS
-if grep -rq "prefers-reduced-motion" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "prefers-reduced-motion"; then
   pass "CHECK_16 prefers-reduced-motion" "found in dist CSS"
 else
   fail "CHECK_16 prefers-reduced-motion" "not found in any dist CSS file"
 fi
 
 # CHECK 17: focus-visible in CSS
-if grep -rq "focus-visible" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "focus-visible"; then
   pass "CHECK_17 focus-visible" "found in dist CSS"
 else
   fail "CHECK_17 focus-visible" "not found in any dist CSS file"

@@ -10,6 +10,9 @@ DIST="apps/web/dist"
 CSS_DIR="$DIST/_astro"
 ERRORS=0
 
+# css_has PATTERN: true if pattern exists in _astro/*.css OR inlined in HTML <style> tags
+css_has() { grep -rq "$1" "$CSS_DIR"/ 2>/dev/null || grep -rq "$1" $HTML_PAGES 2>/dev/null; }
+
 pass() { echo "✅ PASS [$1]: $2"; }
 fail() { echo "❌ FAIL [$1]: $2"; ERRORS=$((ERRORS + 1)); }
 
@@ -50,7 +53,7 @@ else
 fi
 
 # CHECK 4: no CSS @import for fonts (should use <link> tags instead)
-IMPORT_COUNT=$(grep -rh "@import" "$CSS_DIR"/ 2>/dev/null | grep -ci "font" || true)
+IMPORT_COUNT=$(grep -rh "@import" "$CSS_DIR"/ $HTML_PAGES 2>/dev/null | grep -ci "font" || true)
 IMPORT_COUNT="${IMPORT_COUNT:-0}"
 if [ "$IMPORT_COUNT" -gt "0" ]; then
   fail "CHECK_04 no @import fonts" "$IMPORT_COUNT CSS @import for fonts found — use <link rel=preload> instead"
@@ -60,7 +63,7 @@ else
 fi
 
 # CHECK 5: content-visibility present in CSS (off-screen rendering optimization)
-if grep -rq "content-visibility" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "content-visibility"; then
   pass "CHECK_05 content-visibility" "found in dist CSS"
 else
   fail "CHECK_05 content-visibility" "content-visibility not found in any dist CSS — add to below-fold sections"
@@ -118,14 +121,14 @@ else
 fi
 
 # CHECK 8: overflow-wrap present in CSS (prevents long-word overflow)
-if grep -rq "overflow-wrap" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "overflow-wrap"; then
   pass "CHECK_08 overflow-wrap" "overflow-wrap found in dist CSS"
 else
   fail "CHECK_08 overflow-wrap" "overflow-wrap not found in dist CSS"
 fi
 
 # CHECK 9: font: inherit on form elements
-if grep -rq "font:inherit\|font: inherit" "$CSS_DIR"/ 2>/dev/null; then
+if css_has "font:inherit\|font: inherit"; then
   pass "CHECK_09 font inherit" "font: inherit found in dist CSS (form elements inherit font)"
 else
   fail "CHECK_09 font inherit" "font: inherit not found in dist CSS — form elements need this"
