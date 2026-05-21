@@ -101,6 +101,7 @@ const breadcrumbItems = [
   ...(categorySlug
     ? [{ label: post?.category?.title ?? categorySlug, href: `/blog/${categorySlug}/` }]
     : []),
+  ...(subSlug ? [{ label: post.subcategoryLabel, href: `/blog/${categorySlug}/${subSlug}/` }] : []),
   { label: post?.title ?? slug },
 ];
 
@@ -483,118 +484,6 @@ const articleJsonLd = blogPostingSchema({
     justify-content: center;
   }
 
-  /* FOOTER */
-  .footer {
-    background: var(--navy-deep);
-    color: rgba(255, 255, 255, 0.68);
-    padding: 4rem var(--pad-x) 2rem;
-  }
-  .footer-inner {
-    max-width: var(--max-w);
-    margin: 0 auto;
-  }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr;
-    gap: 4rem;
-    margin-bottom: 3rem;
-  }
-  .footer-logo {
-    margin-bottom: 1rem;
-    display: block;
-  }
-  .footer-logo img {
-    height: 100px;
-    width: auto;
-    display: block;
-  }
-  .footer-tagline {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.55);
-    line-height: 1.65;
-    margin-bottom: 1.5rem;
-    max-width: 360px;
-  }
-  .footer-contact {
-    font-size: 14px;
-    line-height: 1.85;
-    color: rgba(255, 255, 255, 0.6);
-  }
-  .footer-contact a {
-    color: rgba(255, 255, 255, 0.6);
-    transition: color var(--t-hover);
-  }
-  .footer-contact a:hover {
-    color: #fff;
-  }
-  .footer-col h4 {
-    color: #fff;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-bottom: 1.25rem;
-  }
-  .footer-links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-  }
-  .footer-links a {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
-    transition: color var(--t-hover);
-  }
-  .footer-links a:hover {
-    color: #fff;
-  }
-  .footer-divider {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin-bottom: 1.5rem;
-  }
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.45);
-  }
-  .footer-legal {
-    display: flex;
-    gap: 1.5rem;
-  }
-  .footer-legal a {
-    color: rgba(255, 255, 255, 0.45);
-    transition: color var(--t-hover);
-  }
-  .footer-legal a:hover {
-    color: #fff;
-  }
-  .social-links {
-    display: flex;
-    gap: 0.6rem;
-    margin-top: 1.25rem;
-  }
-  .social-link {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--r-btn);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--t-hover);
-    color: rgba(255, 255, 255, 0.55);
-  }
-  .social-link:hover {
-    border-color: rgba(255, 255, 255, 0.4);
-    color: #fff;
-    background: rgba(255, 255, 255, 0.06);
-  }
-
   /* Mobile sticky CTA */
   .mobile-cta-bar {
     display: none;
@@ -646,10 +535,6 @@ const articleJsonLd = blogPostingSchema({
       margin-left: auto !important;
       margin-right: -8px !important;
     }
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
-    }
   }
   @media (max-width: 768px) {
     :root {
@@ -672,13 +557,6 @@ const articleJsonLd = blogPostingSchema({
     }
     .mobile-cta-bar {
       display: flex !important;
-    }
-    .footer-grid {
-      grid-template-columns: 1fr;
-    }
-    .footer-bottom {
-      flex-direction: column;
-      gap: 1rem;
     }
   }
 
@@ -1823,23 +1701,6 @@ const articleJsonLd = blogPostingSchema({
   }
   .toc a.is-active::before {
     color: var(--coral);
-  }
-
-  /* Override footer-grid back to 3-col since we use the partial footer */
-  .footer-grid {
-    grid-template-columns: 1.6fr 1fr 1fr !important;
-    gap: 4rem !important;
-  }
-  @media (max-width: 1024px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr !important;
-      gap: 2.5rem !important;
-    }
-  }
-  @media (max-width: 768px) {
-    .footer-grid {
-      grid-template-columns: 1fr !important;
-    }
   }
 
   /* Comments / Discussion section */
