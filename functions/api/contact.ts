@@ -28,7 +28,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   }
 
   const { firstName, lastName, email, phone, message } = body;
-  const required: Record<string, string> = { firstName, lastName, email, phone, message };
+  const required: Record<string, string> = { firstName, lastName, email, message };
   for (const [field, val] of Object.entries(required)) {
     if (!val || !val.trim())
       return jsonResponse({ success: false, error: `Missing required field: ${field}` }, 400);

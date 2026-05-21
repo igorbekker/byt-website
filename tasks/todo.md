@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-20 — Wire all 5 frontend forms to HubSpot Pages Function endpoints (replace Formspree)
+- **Last work:** 2026-05-21 — Fix optional field validation in 4 HubSpot Pages Functions
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -358,3 +358,29 @@ Create `functions/api/_hubspot.ts` (shared helpers) and 5 route functions alongs
 **Verification:** `pnpm --filter web build` → 19 routes, 0 errors. `apps/web typecheck: Done` — no errors in any new file.
 
 **Issues:** None. No user corrections this session.
+
+---
+
+### Fix optional field validation in HubSpot Pages Functions — 2026-05-21 [x] COMPLETE 2026-05-21 01:30
+
+Four Pages Functions were rejecting legitimately empty/optional fields sent by the frontend, producing 400s that showed as "Something went wrong" alerts in the browser.
+
+- [x] A. `newsletter.ts` — removed `firstName` required check; `firstName` made optional; props object only sets `firstname` if non-empty (`if (firstName?.trim()) props.firstname = ...`)
+- [x] B. `facility-referral.ts` — removed `facilityPhone` from required check; interface `facilityPhone?: string`; company create uses `facilityPhone ?? ''`
+- [x] C. `apply.ts` — removed `resumeCoverNote` from required check (label in form UI says "optional"); interface `resumeCoverNote?: string`; props uses `resumeCoverNote ?? ''`
+- [x] D. `contact.ts` — removed `phone` from required check (no `required` attr on HTML input); phone stays in props for HubSpot enrichment when provided
+
+### Session Review — 2026-05-21 (Fix optional field validation)
+
+**Root cause:** All 4 functions used an empty-string falsy check (`!val || !val.trim()`) that treats `''` as a missing required field. The frontend legitimately sends empty strings for optional fields (`firstName: ''` on newsletter, `facilityPhone: ''` hardcoded in ModalForms, optional cover note, optional phone).
+
+**Files changed:**
+
+- `functions/api/newsletter.ts` — removed firstName required check; interface `firstName?: string`; conditional prop set
+- `functions/api/facility-referral.ts` — removed facilityPhone from required obj; interface `facilityPhone?: string`; `facilityPhone ?? ''` in company create
+- `functions/api/apply.ts` — removed resumeCoverNote from required obj; interface `resumeCoverNote?: string`; `resumeCoverNote ?? ''` in props
+- `functions/api/contact.ts` — removed phone from required obj; no other changes needed
+
+**book-session.ts:** Clean — `anythingElse` was already `?: string` and not in the required object. No change needed.
+
+**Verification:** `pnpm --filter web build` → 19 routes, 0 errors. `grep -ri "formspree" apps/web/dist/` → 0 results. All 7 `functions/api/` files confirmed present.

@@ -13,7 +13,7 @@ import {
 
 interface FacilityReferralBody {
   facilityName: string;
-  facilityPhone: string;
+  facilityPhone?: string;
   facilityType: string;
   county: string;
   bedCount: string;
@@ -55,7 +55,6 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
 
   const required: Record<string, string> = {
     facilityName,
-    facilityPhone,
     facilityType,
     county,
     bedCount,
@@ -81,7 +80,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       companyId = await createCompany(
         {
           name: facilityName,
-          phone: facilityPhone,
+          phone: facilityPhone ?? '',
           facility_type: facilityType,
           county,
           approximate_bed_count: bedCount,

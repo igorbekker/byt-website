@@ -9,7 +9,7 @@ import {
 
 interface NewsletterBody {
   email: string;
-  firstName: string;
+  firstName?: string;
 }
 
 export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
@@ -27,15 +27,13 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   const { email, firstName } = body;
   if (!email || !email.trim())
     return jsonResponse({ success: false, error: 'Missing required field: email' }, 400);
-  if (!firstName || !firstName.trim())
-    return jsonResponse({ success: false, error: 'Missing required field: firstName' }, 400);
 
   const props: Record<string, string> = {
     email,
-    firstname: firstName,
     refer_source: 'Website Form',
     website_form: 'Newsletter',
   };
+  if (firstName?.trim()) props.firstname = firstName.trim();
 
   let contactId: string;
   try {

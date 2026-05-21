@@ -12,7 +12,7 @@ interface ApplyBody {
   lastName: string;
   email: string;
   phone: string;
-  resumeCoverNote: string;
+  resumeCoverNote?: string;
 }
 
 export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
@@ -28,7 +28,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   }
 
   const { firstName, lastName, email, phone, resumeCoverNote } = body;
-  const required: Record<string, string> = { firstName, lastName, email, phone, resumeCoverNote };
+  const required: Record<string, string> = { firstName, lastName, email, phone };
   for (const [field, val] of Object.entries(required)) {
     if (!val || !val.trim())
       return jsonResponse({ success: false, error: `Missing required field: ${field}` }, 400);
@@ -41,7 +41,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     lastname: lastName,
     email,
     phone,
-    resume_cover_note: resumeCoverNote,
+    resume_cover_note: resumeCoverNote ?? '',
     contact_type: 'Provider',
     refer_source: 'Website Form',
     website_form: 'Apply Job',

@@ -252,6 +252,14 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** When toggling adapter on/off, check: (a) does `src/pages/api/` exist? Delete it if removing adapter. (b) does `functions/` exist? Create it if adding Pages Functions. (c) does `studioBasePath` cause a build error? Remove it or install `@astrojs/react`.
 
+### 25. Always confirm branch before running any diagnostic or file inspection
+
+Before reading any file, running `ls`, or reporting what exists in the repo, run `git branch --show-current` and confirm it matches the expected branch. A diagnostic run on the wrong branch produces false reports.
+
+**Why:** Ran a diagnostic for a production bug from `feat/phase-7a-production-readiness` instead of `main`. Reported `functions/api/newsletter.ts` as missing. The file existed on `main` and had been deployed. The user had to stop me and point out the branch mismatch. The session then wasted time attempting a cherry-pick that had already been done.
+
+**How to apply:** First command of any diagnostic session: `git branch --show-current`. If it is not `main` (or whichever branch the production bug affects), checkout the correct branch before reading any files. Never issue a diagnostic finding without confirming which branch was inspected.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
