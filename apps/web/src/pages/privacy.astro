@@ -2,6 +2,7 @@
 import { sanityClient } from 'sanity:client';
 import { PortableText } from 'astro-portabletext';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { PRIVACY_PAGE_QUERY } from '../lib/queries';
 
 const page = await sanityClient.fetch<{
@@ -1495,9 +1496,10 @@ const page = await sanityClient.fetch<{
     }
   </style>
 
-  <main class="legal-page">
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Privacy Policy' }]} />
+  <main class="legal-page" aria-labelledby="privacy-heading">
     <div class="legal-inner">
-      <h1>{page?.title ?? 'Privacy Policy'}</h1>
+      <h1 id="privacy-heading">{page?.title ?? 'Privacy Policy'}</h1>
       {page?.lastUpdated && <p>Last updated: {page?.lastUpdated ?? ''}</p>}
       {
         page?.body ? (
