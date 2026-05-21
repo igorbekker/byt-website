@@ -15,7 +15,7 @@ interface Props {
 const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
 ---
 
-<div class="mobile-cta-bar" aria-label="Primary actions">
+<div class="mobile-cta-bar">
   <button class="btn btn-coral" onclick="openModal('book')">{navCtaLabel}</button>
   <button class="btn btn-outline-ink" onclick="openModal('refer')">{navCtaSecondaryLabel}</button>
 </div>

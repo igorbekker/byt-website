@@ -870,3 +870,42 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - `wc -l dist/_redirects` → 32 (1 header + 31 rules + trailing newline) ✓
 
 **Issues:** `/pre` was skipped — committed directly from task brief. Violation of Lesson 17 (fourth time). Logged to lessons.md.
+
+---
+
+## Phase W3C — Fix W3C HTML + Schema.org Errors (2026-05-21)
+
+### Tasks
+
+- [x] 1. FIX 1: Remove `role="button"` from drop-zone div in resident-referral.astro (input inside interactive role)
+- [x] 2. FIX 2: Remove `aria-label="Primary actions"` from MobileCTABar.astro (aria-label on div with no role)
+- [x] 3. FIX 2b: Same fix in blog/[slug].astro hardcoded copy
+- [x] 4. FIX 3: Change h4 → h3 in ModalForms.astro success messages (heading level skip h2→h4)
+- [x] 5. FIX 4: Add default `sizes` in SanityImage.astro (srcset without sizes)
+- [x] 6. FIX 5: Change `medicalSpecialty: 'MentalHealth'` → `'Psychiatric'` in schema.ts
+- [x] 7. Build and verify all checks pass
+- [x] 8. Ready for /pre — 2026-05-21 17:00
+
+### Session Review — 2026-05-21 (W3C validation fixes)
+
+**What was built:** 5 W3C/Schema.org validation fixes across 6 files.
+
+**Files changed:**
+
+- `apps/web/src/pages/resident-referral.astro` — removed `role="button"` from drop-zone div (input inside interactive role)
+- `apps/web/src/components/ui/MobileCTABar.astro` — removed `aria-label="Primary actions"` from div with no role
+- `apps/web/src/pages/blog/[slug].astro` — same aria-label removal from hardcoded copy
+- `apps/web/src/components/ui/ModalForms.astro` — changed both success `<h4>` → `<h3>` (heading level skip)
+- `apps/web/src/components/ui/SanityImage.astro` — added default `sizes` value for srcset compliance
+- `apps/web/src/lib/schema.ts` — changed `medicalSpecialty: 'MentalHealth'` → `'Psychiatric'`
+
+**Verification:**
+
+- FIX 1: `grep role="button" resident-referral.astro` → no output ✓
+- FIX 2: `grep aria-label.*Primary apps/web/src/` → no output ✓
+- FIX 3: `grep "<h3>You're in good hands\|<h3>Thanks" ModalForms.astro` → lines 921, 1169 ✓
+- FIX 4: `grep sizes SanityImage.astro` → default `'(max-width: 400px) 400px...'` at line 21 ✓
+- FIX 5: `grep medicalSpecialty schema.ts` → `'Psychiatric'` ✓
+- Build: `pnpm --filter web build` → 19 pages, 7.73s, Complete ✓
+
+**Issues:** None.

@@ -18,7 +18,7 @@ export function organizationSchema(): Record<string, unknown> {
       '@type': 'AdministrativeArea',
       name: `${county} County, FL`,
     })),
-    medicalSpecialty: 'MentalHealth',
+    medicalSpecialty: 'Psychiatric',
   };
 }
 
