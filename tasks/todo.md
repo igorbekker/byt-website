@@ -19,9 +19,42 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix final 3 W3C validation errors (h4→h3 howitworks steps, role=region on privacy + terms)
+- **Last work:** 2026-05-21 — preserveOldSlug document action
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### preserveOldSlug document action [x] COMPLETE 2026-05-21
+
+Auto-push previous slug into oldSlugs[] on publish when slug changes.
+
+- [x] PRE-FLIGHT — read sanity.config.ts, structure/index.ts, confirmed actions/ dir absent, confirmed 11 singleton types have slug+oldSlugs fields
+- [x] Create apps/studio/actions/preserveOldSlug.ts
+- [x] Register action in apps/studio/sanity.config.ts — SLUG_SINGLETON_TYPES, document.actions resolver
+- [x] pnpm --filter studio build — 0 errors
+- [x] Manual test plan documented below
+
+#### Manual Test Plan
+
+1. Open Studio → Pages → About (or any singleton with a slug field)
+2. Note the current slug value — e.g. `"about"`
+3. Change slug to `"about-us"`
+4. Click **Publish**
+5. Open the `oldSlugs` field (read-only) — should now contain `["about"]`
+6. Change slug back to `"about"`
+7. Click **Publish**
+8. `oldSlugs` should now contain `["about", "about-us"]`
+   - Confirm `"about"` was NOT re-added (it's the current slug now, not a stale one)
+
+#### Session Review — 2026-05-21 (preserveOldSlug action)
+
+Files changed:
+
+- `apps/studio/actions/preserveOldSlug.ts` (created)
+- `apps/studio/sanity.config.ts` (added import, SLUG_SINGLETON_TYPES const, document.actions resolver)
+
+No schema files modified. No .astro files modified. No new npm dependencies.
 
 ---
 
