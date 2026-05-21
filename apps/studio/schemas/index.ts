@@ -26,6 +26,7 @@ import { contactPage } from './singletons/contactPage';
 import { blogIndexPage } from './singletons/blogIndexPage';
 import { privacyPage } from './singletons/privacyPage';
 import { termsPage } from './singletons/termsPage';
+import { residentReferralPage } from './singletons/residentReferralPage';
 
 // Documents
 import { testimonial } from './documents/testimonial';
@@ -59,6 +60,7 @@ export const schemaTypes = [
   blogIndexPage,
   privacyPage,
   termsPage,
+  residentReferralPage,
   // Documents
   testimonial,
   condition,

@@ -19,9 +19,47 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Add "Forms" footer column; move Resident Referral Form link into it
+- **Last work:** 2026-05-21 — Fix blog breadcrumbs to 4 levels (Home > Blog > Category > Post)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### residentReferralPage CMS singleton — four-step triad [x] COMPLETE 2026-05-21 14:58
+
+- [x] STEP 1 SCHEMA — created `apps/studio/schemas/singletons/residentReferralPage.ts` (6 fields: pageTitle, metaDescription, heroHeading, heroDescription, hipaaNotice, sidebarInstructions)
+- [x] STEP 1 INDEX — import + array entry added to `apps/studio/schemas/index.ts`
+- [x] STEP 1 STRUCTURE — `{ id: 'residentReferralPage', title: 'Resident Referral' }` added to SINGLETONS in `apps/studio/structure/index.ts`
+- [x] STEP 2 QUERY — `RESIDENT_REFERRAL_PAGE_QUERY` added to `apps/web/src/lib/queries.ts`
+- [x] STEP 3 TEMPLATE — frontmatter updated (interface + Promise.all fetch); 6 Sanity variables wired with ?? fallbacks; 21 CMS-SKIP comments added throughout form
+- [x] STEP 4 SEED — `scripts/seed-resident-referral-page.mjs` created with all 6 hardcoded values
+- [x] BUILD — `pnpm --filter web build` → 19 routes, 0 errors ✓
+
+### Session Review — 2026-05-21 (residentReferralPage CMS singleton)
+
+**What was built:** Full four-step triad for `residentReferralPage` singleton. Scope reduced from 9 fields to 6 in pre-flight: sidebarFaxNumber, sidebarEmail, sidebarPhone confirmed already CMS-driven via `siteSettings` — removed from spec. Registration target corrected from `sanity.config.ts singletonTypes` (not used in this codebase) to `structure/index.ts` SINGLETONS array (actual pattern).
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/residentReferralPage.ts` (new) — 6 fields: pageTitle (string, required), metaDescription (text, rows:3), heroHeading (string, required), heroDescription (text, rows:3), hipaaNotice (text, rows:2), sidebarInstructions (text, rows:4); preview uses heroHeading
+- `apps/studio/schemas/index.ts` — added import + `residentReferralPage` entry in schemaTypes array
+- `apps/studio/structure/index.ts` — added `{ id: 'residentReferralPage', title: 'Resident Referral' }` to SINGLETONS
+- `apps/web/src/lib/queries.ts` — added `RESIDENT_REFERRAL_PAGE_QUERY` (6 fields, no seo block)
+- `apps/web/src/pages/resident-referral.astro` — added `RESIDENT_REFERRAL_PAGE_QUERY` import; added `ResidentReferralPage` interface; changed single `sanityClient.fetch` to `Promise.all([siteSettings, residentReferralPage])`; 6 `??` fallback replacements (pageTitle, metaDescription, heroHeading, heroDescription, hipaaNotice, sidebarInstructions); 21 `{/* CMS-SKIP */}` comments on all section headings and form field labels
+- `scripts/seed-resident-referral-page.mjs` (new) — `createOrReplace` mutation with `_id: 'residentReferralPage'`, all 6 fields seeded from current hardcoded values
+
+**Verification:**
+
+- `grep -n "residentReferralPage"` schema → name: line 8 ✓
+- `grep -n "residentReferralPage"` schemas/index.ts → import line 29, array line 63 ✓
+- `grep -n "residentReferralPage"` structure/index.ts → SINGLETONS line 20 ✓
+- `grep -n "RESIDENT_REFERRAL_PAGE_QUERY"` queries.ts → line 358 ✓
+- `grep -n "RESIDENT_REFERRAL_PAGE_QUERY\|residentReferralPage"` template → import line 4, fetch lines 23+25, 6 Sanity vars lines 34/35/40/42/65/347 ✓
+- `grep -c "CMS-SKIP"` template → 21 ✓
+- `grep -n "??"` template (excl. siteSettings fallbacks) → exactly 6 lines ✓
+- `pnpm --filter web build` → 19 routes, 0 errors ✓
+
+**Issues:** Pre-flight clarifications only (no mid-execution corrections): spec's 3 sidebar contact fields removed (already in siteSettings); sanity.config.ts registration pattern corrected to structure/index.ts. No user corrections during execution.
 
 ---
 

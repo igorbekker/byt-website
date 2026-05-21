@@ -1,7 +1,7 @@
 ---
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE_SETTINGS_QUERY } from '../lib/queries';
+import { SITE_SETTINGS_QUERY, RESIDENT_REFERRAL_PAGE_QUERY } from '../lib/queries';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { webPageSchema } from '../lib/schema';
 
@@ -11,7 +11,19 @@ interface SiteSettings {
   fax?: string;
 }
 
-const siteSettings = await sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY);
+interface ResidentReferralPage {
+  pageTitle?: string;
+  metaDescription?: string;
+  heroHeading?: string;
+  heroDescription?: string;
+  hipaaNotice?: string;
+  sidebarInstructions?: string;
+}
+
+const [siteSettings, residentReferralPage] = await Promise.all([
+  sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
+  sanityClient.fetch<ResidentReferralPage>(RESIDENT_REFERRAL_PAGE_QUERY),
+]);
 const phone = siteSettings?.phone ?? '754-999-0011';
 const email = siteSettings?.email ?? 'hello@getbetteryou.com';
 const fax = siteSettings?.fax ?? '754-328-4344';
@@ -19,16 +31,19 @@ const phoneDigits = phone.replace(/\D/g, '');
 ---
 
 <BaseLayout
-  title="Resident Referral Form | Better You Therapy"
-  description="Submit a resident or patient referral securely. All information is transmitted and stored in full HIPAA compliance."
+  title={residentReferralPage?.pageTitle ?? 'Resident Referral Form | Better You Therapy'}
+  description={residentReferralPage?.metaDescription ??
+    'Submit a resident or patient referral securely. All information is transmitted and stored in full HIPAA compliance.'}
 >
   <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Refer a Resident' }]} />
   <section class="rr-hero">
     <div class="rr-hero-inner">
-      <h1>Resident Referral Form</h1>
+      <h1>{residentReferralPage?.heroHeading ?? 'Resident Referral Form'}</h1>
       <p>
-        Submit a resident or patient referral securely. All information is transmitted and stored in
-        full HIPAA compliance.
+        {
+          residentReferralPage?.heroDescription ??
+            'Submit a resident or patient referral securely. All information is transmitted and stored in full HIPAA compliance.'
+        }
       </p>
     </div>
   </section>
@@ -51,16 +66,23 @@ const phoneDigits = phone.replace(/\D/g, '');
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
-        <span>This form is HIPAA-compliant. All data is encrypted and transmitted securely.</span>
+        <span
+          >{
+            residentReferralPage?.hipaaNotice ??
+              'This form is HIPAA-compliant. All data is encrypted and transmitted securely.'
+          }</span
+        >
       </div>
 
       <div class="rr-form-container">
         <form id="referralForm" novalidate>
           <!-- ── Facility Information ── -->
           <div class="rr-section">
+            {/* CMS-SKIP */}
             <h2 class="rr-section-heading">Facility Information</h2>
             <div class="rr-row">
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="facilityName">Facility Name <span class="rr-req">*</span></label>
                 <input
                   type="text"
@@ -71,6 +93,7 @@ const phoneDigits = phone.replace(/\D/g, '');
                 />
               </div>
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="facilityPhone">Facility Phone <span class="rr-req">*</span></label>
                 <input
                   type="tel"
@@ -85,9 +108,11 @@ const phoneDigits = phone.replace(/\D/g, '');
 
           <!-- ── Referring Person ── -->
           <div class="rr-section">
+            {/* CMS-SKIP */}
             <h2 class="rr-section-heading">Referring Person</h2>
             <div class="rr-row">
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="referrerFirstName">First Name <span class="rr-req">*</span></label>
                 <input
                   type="text"
@@ -98,6 +123,7 @@ const phoneDigits = phone.replace(/\D/g, '');
                 />
               </div>
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="referrerLastName">Last Name <span class="rr-req">*</span></label>
                 <input
                   type="text"
@@ -110,6 +136,7 @@ const phoneDigits = phone.replace(/\D/g, '');
             </div>
             <div class="rr-row">
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="referrerEmail">Email <span class="rr-req">*</span></label>
                 <input
                   type="email"
@@ -120,6 +147,7 @@ const phoneDigits = phone.replace(/\D/g, '');
                 />
               </div>
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="referrerPhone">Phone <span class="rr-req">*</span></label>
                 <input
                   type="tel"
@@ -134,13 +162,16 @@ const phoneDigits = phone.replace(/\D/g, '');
 
           <!-- ── Patient Information ── -->
           <div class="rr-section">
+            {/* CMS-SKIP */}
             <h2 class="rr-section-heading">Patient Information</h2>
             <div class="rr-row">
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="patientFirstName">First Name <span class="rr-req">*</span></label>
                 <input type="text" id="patientFirstName" name="patientFirstName" required />
               </div>
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="patientLastName">Last Name <span class="rr-req">*</span></label>
                 <input type="text" id="patientLastName" name="patientLastName" required />
               </div>
@@ -150,6 +181,7 @@ const phoneDigits = phone.replace(/\D/g, '');
           <!-- ── Guardian / POA (optional) ── -->
           <div class="rr-section rr-section-optional">
             <div class="rr-section-heading-row">
+              {/* CMS-SKIP */}
               <h2 class="rr-section-heading">Guardian / POA</h2>
               <span class="rr-optional-badge">Optional</span>
             </div>
@@ -159,6 +191,7 @@ const phoneDigits = phone.replace(/\D/g, '');
             </p>
             <div class="rr-row">
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="guardianFirstName">First Name</label>
                 <input
                   type="text"
@@ -168,6 +201,7 @@ const phoneDigits = phone.replace(/\D/g, '');
                 />
               </div>
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="guardianLastName">Last Name</label>
                 <input
                   type="text"
@@ -179,6 +213,7 @@ const phoneDigits = phone.replace(/\D/g, '');
             </div>
             <div class="rr-row rr-row-half">
               <div class="rr-field">
+                {/* CMS-SKIP */}
                 <label for="guardianPhone">Phone</label>
                 <input type="tel" id="guardianPhone" name="guardianPhone" autocomplete="tel" />
               </div>
@@ -187,12 +222,15 @@ const phoneDigits = phone.replace(/\D/g, '');
 
           <!-- ── Referral Details ── -->
           <div class="rr-section">
+            {/* CMS-SKIP */}
             <h2 class="rr-section-heading">Referral Details</h2>
             <div class="rr-field">
+              {/* CMS-SKIP */}
               <label for="referralReason">Reason for Referral <span class="rr-req">*</span></label>
               <textarea id="referralReason" name="referralReason" rows="3" required></textarea>
             </div>
             <div class="rr-field">
+              {/* CMS-SKIP */}
               <label>Currently on Skilled Nursing <span class="rr-req">*</span></label>
               <div class="rr-radio-group">
                 <label class="rr-radio">
@@ -211,6 +249,7 @@ const phoneDigits = phone.replace(/\D/g, '');
 
           <!-- ── Documents ── -->
           <div class="rr-section">
+            {/* CMS-SKIP */}
             <h2 class="rr-section-heading">
               Documents <span class="rr-section-heading-opt">(optional)</span>
             </h2>
@@ -256,6 +295,7 @@ const phoneDigits = phone.replace(/\D/g, '');
 
           <!-- ── Footer: consent + submit ── -->
           <div class="rr-form-footer">
+            {/* CMS-SKIP */}
             <label class="rr-consent">
               <input type="checkbox" id="hipaaConsent" name="hipaaConsent" required />
               <span
@@ -296,6 +336,7 @@ const phoneDigits = phone.replace(/\D/g, '');
 
   <section class="rr-alt-section">
     <div class="rr-alt-inner">
+      {/* CMS-SKIP */}
       <h2>Other Ways to Submit a Referral</h2>
       <ul class="rr-contact-list">
         <li>
@@ -312,8 +353,10 @@ const phoneDigits = phone.replace(/\D/g, '');
         </li>
       </ul>
       <p class="rr-docs">
-        Please include the completed referral form, resident face sheet, copies of insurance cards
-        (front and back), and any pertinent clinical information.
+        {
+          residentReferralPage?.sidebarInstructions ??
+            'Please include the completed referral form, resident face sheet, copies of insurance cards (front and back), and any pertinent clinical information.'
+        }
       </p>
     </div>
   </section>

@@ -325,6 +325,14 @@ A Private App token that successfully creates contacts, companies, and associati
 3. Save and rotate the token if required
 4. No code change needed — the existing upload implementation is correct.
 
+### 30. Task briefs may specify Sanity Studio registration steps that don't match the actual codebase — always read the files first
+
+When a task brief says "register in `sanity.config.ts` singletonTypes and singletonActions," verify against the actual file before following. This project's singleton registration is handled entirely in `apps/studio/structure/index.ts` via the `SINGLETONS` array — not in `sanity.config.ts`. The brief was written from generic Sanity knowledge, not from reading this repo.
+
+**Why:** Following the brief blindly would have added a `singletonTypes` block that doesn't match how this studio is configured, leaving the new singleton absent from the Pages sub-list while a redundant config block sat unused in `sanity.config.ts`.
+
+**How to apply:** For any step that says "register in X" or "follow pattern Y," read the named file before writing. If the actual file uses a different pattern, follow the actual file and note the discrepancy in pre-flight.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

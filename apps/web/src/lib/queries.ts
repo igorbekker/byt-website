@@ -354,3 +354,7 @@ export const TERMS_PAGE_QUERY = `*[_type == "termsPage"][0]{
   },
   seo{ metaTitle, metaDescription, robotsDirective }
 }`;
+
+export const RESIDENT_REFERRAL_PAGE_QUERY = `*[_type == "residentReferralPage"][0]{
+  pageTitle, metaDescription, heroHeading, heroDescription, hipaaNotice, sidebarInstructions
+}`;
