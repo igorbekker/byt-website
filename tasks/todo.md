@@ -19,9 +19,47 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Remove 3 redundant breadcrumb trails from blog post template
+- **Last work:** 2026-05-21 — Add HOOK_09 route-schema parity check
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Add HOOK_09 route-schema parity check [x] COMPLETE 2026-05-21 15:48
+
+- [x] Pre-flight: listed all .astro pages, all SINGLETONS, existing docs/hooks/ contents
+- [x] Created docs/hooks/HOOK_09_route_schema_parity.sh — bash-only, no dependencies
+- [x] chmod +x — confirmed -rwxrwxr-x
+- [x] Script scans apps/web/src/pages/, skips dynamic routes + blog routes, checks each static page against apps/studio/schemas/singletons/
+- [x] Ran script — COVERED 10/10, ORPHAN 0, EXIT 0 ✓
+- [x] Created docs/hooks/README.md — index of all 9 hooks + full HOOK_09 documentation
+
+### Session Review — 2026-05-21 (HOOK_09 route-schema parity)
+
+**What was built:** A bash script that enforces route-schema parity: every static `.astro` page must have a corresponding singleton schema in `apps/studio/schemas/singletons/`. Catch orphan pages before they ship to production.
+
+**Script logic:**
+
+- Finds all `.astro` files under `apps/web/src/pages/` via `find -print0 | sort -z`
+- Skips dynamic routes automatically (any path containing `[` and `]`)
+- Skips known blog exceptions (`blog/index.astro`, `blog/[slug].astro`, `blog/[category]/index.astro`, `blog/[category]/[sub]/index.astro`) via a `SKIP` array — these use document types not singletons
+- Maps each static page basename to its expected singleton name via `page_to_singleton()` case statement
+- Checks `$SINGLETONS_DIR/${singleton}.ts` exists on disk
+- Two failure modes: UNMAPPED (no entry in case statement) and schema-file-missing
+- Exit 0 on PASS, exit 1 on any orphan
+
+**Files created:**
+
+- `docs/hooks/HOOK_09_route_schema_parity.sh` — 84 lines, bash only
+- `docs/hooks/README.md` — hook index table + full HOOK_09 usage docs
+
+**Verification:**
+
+- Script output: COVERED (10), ORPHAN (0), `RESULT: PASS — all static pages have singleton schemas` ✓
+- Exit code: 0 ✓
+- `ls -la docs/hooks/` → `-rwxrwxr-x` confirmed ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
