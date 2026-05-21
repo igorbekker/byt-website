@@ -80,6 +80,19 @@ export const siteSettings = defineType({
     defineField({ name: 'newsletterEyebrow', title: 'Newsletter Eyebrow', type: 'string' }),
     defineField({ name: 'newsletterDisclaimer', title: 'Newsletter Disclaimer', type: 'text' }),
     defineField({
+      name: 'gtmContainerId',
+      title: 'GTM Container ID',
+      type: 'string',
+      description: 'Google Tag Manager container ID, e.g. GTM-XXXXXXX. Leave blank to disable GTM.',
+    }),
+    defineField({
+      name: 'robotsTxt',
+      title: 'robots.txt Custom Rules',
+      type: 'text',
+      description:
+        'Custom robots.txt directives appended before the Sitemap line. One directive per line.',
+    }),
+    defineField({
       name: 'seo',
       title: 'Default SEO',
       type: 'seoFields',

@@ -8,6 +8,7 @@
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { HOME_PAGE_QUERY } from '../lib/queries';
+import { homepageGraphSchema } from '../lib/schema';
 
 interface CtaLink {
   label: string;
@@ -1545,6 +1546,7 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
   title={page?.seo?.metaTitle ??
     'Better You Therapy | Licensed Mental Health Care in Southeast Florida'}
 >
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(homepageGraphSchema())} />
   <!-- ── BLOCK 1: HERO ── -->
   <section class="hero">
     <div class="hero-image">

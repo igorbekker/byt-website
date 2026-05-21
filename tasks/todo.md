@@ -378,3 +378,60 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 **Issues:** None. No prior-session corrections to note.
 
 ---
+
+---
+
+## Phase 7A Recovery — Re-apply Infrastructure Changes (2026-05-21) [x] COMPLETE 2026-05-21 05:10
+
+### Tasks
+
+- [x] 1. queries.ts — add gtmContainerId to SITE_SETTINGS_QUERY
+- [x] 2. BaseLayout.astro — add canonical, OG, Twitter, theme-color, GTM, skip-link, font link, Sanity CDN preconnect
+- [x] 3. global.css — remove @import, add color-scheme, safe-area, focus-visible, reduced-motion, skip-link, sr-only, print, utilities
+- [x] 4. astro.config.mjs — add sitemap integration with priority serialize callback
+- [x] 5. robots.txt.ts — create endpoint reading from Sanity + Sitemap line
+- [x] 6. schema.ts — add organizationSchema, localBusinessSchema, websiteSchema, homepageGraphSchema, jobPostingSchema, faqPageSchema
+- [x] 7. index.astro — wire homepageGraphSchema JSON-LD
+- [x] 8. Build + verify all grep checks
+
+### Session Review — 2026-05-21 (Phase 7A Recovery)
+
+**What was built:** Full infrastructure re-application to current main. All changes from the stale feature branch are now present on main.
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/siteSettings.ts` — added `gtmContainerId` (string) and `robotsTxt` (text) fields
+- `apps/web/astro.config.mjs` — added `site: 'https://getbetteryou.com'`; added `@astrojs/sitemap` integration with serialize callback mapping per-URL priorities (homepage 1.0, communities/patients/providers 0.9, about/careers/blog 0.7, contact 0.6, privacy/terms 0.5)
+- `apps/web/package.json` + `pnpm-lock.yaml` — added `@astrojs/sitemap ^3.7.2`
+- `apps/web/src/layouts/BaseLayout.astro` — updated `SeoFields` interface (ogImage resolved); added `SiteSettings.gtmContainerId`; computed `canonicalUrl`, `robotsDirective`, `gtmId`, `ogTitle/Description/Url/Type/Image`; viewport → `viewport-fit=cover`; `<meta name="theme-color">`; `<link rel="canonical">`; 6 OG tags + conditional OG image block; 3 Twitter tags + conditional Twitter image; font `<link rel="stylesheet">`; Sanity CDN preconnect + dns-prefetch; conditional GTM `<script>`; GTM `<noscript>` iframe at body open; `.skip-link` anchor; `id="main-content"` on `<main>`
+- `apps/web/src/lib/queries.ts` — added `gtmContainerId`, `robotsTxt` to `SITE_SETTINGS_QUERY`; changed `seo` to a projection `seo { metaTitle, metaDescription, robotsDirective, ogImage { asset->{ url }, alt } }`
+- `apps/web/src/lib/schema.ts` — added `SITE_URL`, `ORG_NAME`, `ORG_PHONE`, `ORG_EMAIL`, `ORG_COUNTIES` constants; added `organizationSchema()` (MedicalOrganization), `localBusinessSchema()`, `websiteSchema()` (WebSite + SearchAction), `homepageGraphSchema()` (@graph wrapper); `JobPostingParams` interface + `jobPostingSchema()`; `FaqItem` interface + `faqPageSchema()`
+- `apps/web/src/pages/index.astro` — imported `homepageGraphSchema`; added `<script type="application/ld+json" set:html={...}>` as first child of BaseLayout
+- `apps/web/src/pages/robots.txt.ts` (new) — `GET` endpoint; fetches `robotsTxt` from Sanity via `SITE_SETTINGS_QUERY`; appends `Sitemap:` line; returns `text/plain`
+- `apps/web/src/styles/global.css` — removed `@import url('https://fonts.googleapis.com/...')` from line 1 (moved to BaseLayout `<link>`); added `color-scheme: light` to `:root`; added `text-size-adjust: 100%` (unprefixed) to `html`; added safe-area padding to `body`; appended: `:focus-visible`, `.skip-link`, `.sr-only`, heading `overflow-wrap: break-word`, `input/button/textarea/select { font: inherit }`, `article a` underline, `:target scroll-margin-top`, `prefers-reduced-motion` universal disable, `.mobile-cta-bar` safe-area, aspect-ratio utilities, `@media print` block
+
+**Verification:**
+
+| Check                      | Result                                                 |
+| -------------------------- | ------------------------------------------------------ |
+| theme-color                | 1 ✓                                                    |
+| og: tags                   | 6 ✓                                                    |
+| twitter: tags              | 3 ✓                                                    |
+| canonical                  | 1 ✓                                                    |
+| skip-link                  | 1 ✓                                                    |
+| main-content id            | 1 ✓                                                    |
+| googletagmanager           | 2 (script + noscript, GTM-5CVGT32J live from Sanity) ✓ |
+| viewport-fit               | 1 ✓                                                    |
+| cdn.sanity.io              | 4 ✓                                                    |
+| MedicalOrganization        | 1 ✓                                                    |
+| fonts stylesheet link      | 1 ✓                                                    |
+| CSS color-scheme           | PASS ✓                                                 |
+| CSS prefers-reduced-motion | PASS ✓                                                 |
+| CSS @media print           | PASS ✓                                                 |
+| CSS focus-visible          | PASS ✓                                                 |
+| @import removed            | PASS ✓                                                 |
+| sitemap-index.xml          | PASS ✓                                                 |
+| robots.txt                 | PASS ✓                                                 |
+| build routes               | 19 routes, 0 errors ✓                                  |
+
+**Issues:** None. No user corrections this session.

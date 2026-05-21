@@ -291,6 +291,38 @@ Prior session fixed (1) but left (2) untouched. Forms still failed in the browse
 
 **How to apply:** When fixing form failures, the verification step MUST be: curl production with the EXACT values the browser would send (traced by reading the JS submit handler and HTML option values), not fabricated values. A curl that passes with `"bestTimesToReachYou": "weekday-am"` while the actual error is `INVALID_OPTION` is a false green. Always check HubSpot error bodies for `INVALID_OPTION` and map accordingly.
 
+### 28. HubSpot find-or-create must always update existing objects — not just create
+
+When a HubSpot helper searches for an existing object (company, contact) and finds one, the code must call the PATCH update in addition to reusing the ID. A pattern that only sets properties on `createCompany`/`createContact` will silently leave null values on any record that already existed.
+
+**Why:** `facility-referral.ts` Step 1 searched for an existing company and reused its ID without calling PATCH. Properties added in later code versions (`facility_type`, `county`, `approximate_bed_count`) were never written to existing records — they stayed null indefinitely. The bug was invisible: the form succeeded (200), the company ID was valid, but three properties were empty in HubSpot.
+
+**How to apply:** Any find-or-create block must follow this pattern for both branches:
+
+```typescript
+if (existingId) {
+  await updateCompany(existingId, props, key); // ← always update
+  objectId = existingId;
+} else {
+  objectId = await createCompany(props, key);
+}
+```
+
+Never write `if (existingId) { objectId = existingId; }` without an update call. Apply the same rule to contacts in any endpoint where contact properties may change between submissions.
+
+### 29. HubSpot Private App token — Files API requires explicit `file-manager-access` scope
+
+A Private App token that successfully creates contacts, companies, and associations will return 403 on any Files API call (`/filemanager/api/v3/files/upload`) if the `file-manager-access` scope was not granted when the app was created.
+
+**Why:** The apply endpoint uploaded resumes with `fileUploaded: false` and a 403 error on every submission. Contact creation succeeded; only the file step failed. The scope omission is invisible at the code level — the token itself is valid and works for all CRM endpoints.
+
+**How to apply:** When a file upload returns `403: requires any of [file-manager-access]`, the fix is in HubSpot account settings, not in code:
+
+1. HubSpot → Settings → Integrations → Private Apps → select the app
+2. Scopes → CRM → check **Files** (read + write)
+3. Save and rotate the token if required
+4. No code change needed — the existing upload implementation is correct.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
