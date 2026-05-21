@@ -101,7 +101,7 @@ const sb = page?.storyBody ?? [];
     .nav {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: var(--z-dropdown);
       background: var(--white);
       height: 84px;
       display: flex;
@@ -203,7 +203,7 @@ const sb = page?.storyBody ?? [];
     .mobile-menu {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: var(--z-sticky);
       display: none;
       background: rgba(10, 45, 82, 0.5);
       backdrop-filter: blur(4px);
@@ -1076,7 +1076,7 @@ const sb = page?.storyBody ?? [];
       max-width: 720px;
       margin: 0 auto;
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .provider .eyebrow {
       color: rgba(255, 255, 255, 0.72);
@@ -1722,7 +1722,7 @@ const sb = page?.storyBody ?? [];
       max-width: var(--max-w);
       margin: 0 auto;
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .stats-header {
       text-align: center;
@@ -2030,7 +2030,7 @@ const sb = page?.storyBody ?? [];
       max-width: 720px;
       margin: 0 auto;
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .about-cta .eyebrow {
       color: rgba(255, 255, 255, 0.7);

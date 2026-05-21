@@ -262,7 +262,7 @@ function fmtDate(iso: string | undefined): string {
   .nav {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: var(--z-dropdown);
     background: var(--white);
     height: 84px;
     display: flex;
@@ -355,7 +355,7 @@ function fmtDate(iso: string | undefined): string {
   .mobile-menu {
     position: fixed;
     inset: 0;
-    z-index: 200;
+    z-index: var(--z-sticky);
     display: none;
     background: rgba(10, 45, 82, 0.5);
     backdrop-filter: blur(4px);
@@ -819,7 +819,7 @@ function fmtDate(iso: string | undefined): string {
     max-width: 880px;
     margin: 0 auto;
     position: relative;
-    z-index: 1;
+    z-index: var(--z-base);
   }
   .blog-hero .eyebrow {
     color: var(--coral);

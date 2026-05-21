@@ -128,7 +128,7 @@ const renderOrder = [
     .nav {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: var(--z-dropdown);
       background: var(--white);
       height: 84px;
       display: flex;
@@ -230,7 +230,7 @@ const renderOrder = [
     .mobile-menu {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: var(--z-sticky);
       display: none;
       background: rgba(10, 45, 82, 0.5);
       backdrop-filter: blur(4px);
@@ -1103,7 +1103,7 @@ const renderOrder = [
       max-width: 720px;
       margin: 0 auto;
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .provider .eyebrow {
       color: rgba(255, 255, 255, 0.72);
@@ -1596,7 +1596,7 @@ const renderOrder = [
       height: 36px;
       background: var(--coral);
       opacity: 0.8;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .careers-hero .about-hero-content {
       max-width: 1100px;
@@ -1605,7 +1605,7 @@ const renderOrder = [
       align-items: center;
       text-align: center;
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .careers-hero .about-hero-content .eyebrow {
       margin-bottom: 2rem;
@@ -1679,6 +1679,15 @@ const renderOrder = [
     .jobs {
       background: var(--white);
       padding: var(--pad-s) var(--pad-x);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 500px;
+    }
+    .field-error {
+      display: block;
+      font-size: 12px;
+      color: var(--coral);
+      margin-top: 4px;
+      min-height: 16px;
     }
     .jobs-inner {
       max-width: var(--max-w);
@@ -1782,6 +1791,8 @@ const renderOrder = [
       background: var(--cream);
       padding: var(--pad-s) var(--pad-x);
       border-top: 1px solid var(--border);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 500px;
     }
     .general-app-inner {
       max-width: 720px;
@@ -1932,7 +1943,7 @@ const renderOrder = [
     .modal-overlay {
       position: fixed;
       inset: 0;
-      z-index: 300;
+      z-index: var(--z-overlay);
       background: rgba(10, 45, 82, 0.55);
       backdrop-filter: blur(4px);
       display: none;
@@ -2191,7 +2202,17 @@ const renderOrder = [
                     {/* CMS-SKIP: form structure */}
                     <label for="g-name">Full Name</label>
                     {/* CMS-SKIP: form structure */}
-                    <input type="text" id="g-name" name="name" required placeholder="Jane Doe" />
+                    <input
+                      type="text"
+                      id="g-name"
+                      name="name"
+                      required
+                      aria-required="true"
+                      autocomplete="name"
+                      aria-describedby="gname-error"
+                      placeholder="Jane Doe"
+                    />
+                    <span id="gname-error" role="alert" class="field-error" />
                   </div>
                   <div class="form-field">
                     {/* CMS-SKIP: form structure */}
@@ -2202,8 +2223,12 @@ const renderOrder = [
                       id="g-email"
                       name="email"
                       required
+                      aria-required="true"
+                      autocomplete="email"
+                      aria-describedby="gemail-error"
                       placeholder="you@example.com"
                     />
+                    <span id="gemail-error" role="alert" class="field-error" />
                   </div>
                 </div>
                 <div class="form-row">
@@ -2211,7 +2236,13 @@ const renderOrder = [
                     {/* CMS-SKIP: form structure */}
                     <label for="g-phone">Phone</label>
                     {/* CMS-SKIP: form structure */}
-                    <input type="tel" id="g-phone" name="phone" placeholder="(555) 123-4567" />
+                    <input
+                      type="tel"
+                      id="g-phone"
+                      name="phone"
+                      autocomplete="tel"
+                      placeholder="(555) 123-4567"
+                    />
                   </div>
                   <div class="form-field">
                     {/* CMS-SKIP: form structure */}
@@ -2521,6 +2552,15 @@ const renderOrder = [
       });
     });
 
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
     async function submitJob(e) {
       e.preventDefault();
       const form = e.target;
@@ -2532,7 +2572,29 @@ const renderOrder = [
       const spaceIdx = fullName.indexOf(' ');
       const firstName = spaceIdx === -1 ? fullName : fullName.slice(0, spaceIdx);
       const lastName = spaceIdx === -1 ? '' : fullName.slice(spaceIdx + 1);
-      // TODO: Upload resume via HubSpot Files API, then update contact with therapist_resume URL
+      const resumeInput = form.querySelector('[type="file"]');
+      const resumeFileObj = resumeInput?.files?.[0] ?? null;
+      let resumeFile = null;
+      let resumeFileName = null;
+      if (resumeFileObj) {
+        const MAX_10MB = 10 * 1024 * 1024;
+        const ALLOWED = ['.pdf', '.doc', '.docx'];
+        const ext = '.' + resumeFileObj.name.split('.').pop().toLowerCase();
+        if (resumeFileObj.size > MAX_10MB) {
+          btn.disabled = false;
+          btn.textContent = origText;
+          alert('Resume must be under 10MB.');
+          return;
+        }
+        if (!ALLOWED.includes(ext)) {
+          btn.disabled = false;
+          btn.textContent = origText;
+          alert('Resume must be a PDF, DOC, or DOCX file.');
+          return;
+        }
+        resumeFile = await fileToBase64(resumeFileObj);
+        resumeFileName = resumeFileObj.name;
+      }
       try {
         const res = await fetch('/api/apply', {
           method: 'POST',
@@ -2542,6 +2604,8 @@ const renderOrder = [
             email: form.email.value,
             phone: form.phone.value,
             resumeCoverNote: form.cover.value,
+            resumeFile,
+            resumeFileName,
           }),
           headers: { 'Content-Type': 'application/json' },
         });
@@ -2574,7 +2638,29 @@ const renderOrder = [
       const spaceIdx = fullName.indexOf(' ');
       const firstName = spaceIdx === -1 ? fullName : fullName.slice(0, spaceIdx);
       const lastName = spaceIdx === -1 ? '' : fullName.slice(spaceIdx + 1);
-      // TODO: Upload resume via HubSpot Files API, then update contact with therapist_resume URL
+      const resumeInput = form.querySelector('[type="file"]');
+      const resumeFileObj = resumeInput?.files?.[0] ?? null;
+      let resumeFile = null;
+      let resumeFileName = null;
+      if (resumeFileObj) {
+        const MAX_10MB = 10 * 1024 * 1024;
+        const ALLOWED = ['.pdf', '.doc', '.docx'];
+        const ext = '.' + resumeFileObj.name.split('.').pop().toLowerCase();
+        if (resumeFileObj.size > MAX_10MB) {
+          btn.disabled = false;
+          btn.textContent = origText;
+          alert('Resume must be under 10MB.');
+          return;
+        }
+        if (!ALLOWED.includes(ext)) {
+          btn.disabled = false;
+          btn.textContent = origText;
+          alert('Resume must be a PDF, DOC, or DOCX file.');
+          return;
+        }
+        resumeFile = await fileToBase64(resumeFileObj);
+        resumeFileName = resumeFileObj.name;
+      }
       try {
         const res = await fetch('/api/apply', {
           method: 'POST',
@@ -2584,6 +2670,8 @@ const renderOrder = [
             email: form.email.value,
             phone: form.phone.value,
             resumeCoverNote: form.message.value,
+            resumeFile,
+            resumeFileName,
           }),
           headers: { 'Content-Type': 'application/json' },
         });

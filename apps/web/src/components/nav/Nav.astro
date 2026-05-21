@@ -87,7 +87,7 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
   .nav {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: var(--z-dropdown);
     background: var(--white);
     height: 126px;
     display: flex;
@@ -194,7 +194,7 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
   .mobile-menu {
     position: fixed;
     inset: 0;
-    z-index: 200;
+    z-index: var(--z-sticky);
     display: none;
     background: rgba(10, 45, 82, 0.5);
     backdrop-filter: blur(4px);

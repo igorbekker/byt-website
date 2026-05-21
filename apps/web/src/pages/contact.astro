@@ -83,7 +83,7 @@ const renderOrder = [
     .nav {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: var(--z-dropdown);
       background: var(--white);
       height: 84px;
       display: flex;
@@ -185,7 +185,7 @@ const renderOrder = [
     .mobile-menu {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: var(--z-sticky);
       display: none;
       background: rgba(10, 45, 82, 0.5);
       backdrop-filter: blur(4px);
@@ -584,6 +584,15 @@ const renderOrder = [
     .contact-form-section {
       background: var(--white);
       padding: var(--pad-s) var(--pad-x);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 500px;
+    }
+    .field-error {
+      display: block;
+      font-size: 12px;
+      color: var(--coral);
+      margin-top: 4px;
+      min-height: 16px;
     }
     .contact-form-wrap {
       max-width: 980px;
@@ -945,8 +954,12 @@ const renderOrder = [
                       name="firstName"
                       type="text"
                       required
+                      aria-required="true"
+                      autocomplete="given-name"
+                      aria-describedby="firstName-error"
                       placeholder="Jane"
                     />
+                    <span id="firstName-error" role="alert" class="field-error" />
                   </div>
                   <div class="form-field">
                     {/* CMS-SKIP: form structure */}
@@ -954,7 +967,17 @@ const renderOrder = [
                       Last name <span class="req">*</span>
                     </label>
                     {/* CMS-SKIP: form structure */}
-                    <input id="lastName" name="lastName" type="text" required placeholder="Doe" />
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      required
+                      aria-required="true"
+                      autocomplete="family-name"
+                      aria-describedby="lastName-error"
+                      placeholder="Doe"
+                    />
+                    <span id="lastName-error" role="alert" class="field-error" />
                   </div>
 
                   <div class="form-field">
@@ -968,14 +991,24 @@ const renderOrder = [
                       name="email"
                       type="email"
                       required
+                      aria-required="true"
+                      autocomplete="email"
+                      aria-describedby="email-error"
                       placeholder="jane@email.com"
                     />
+                    <span id="email-error" role="alert" class="field-error" />
                   </div>
                   <div class="form-field">
                     {/* CMS-SKIP: form structure */}
                     <label for="phone">Phone</label>
                     {/* CMS-SKIP: form structure */}
-                    <input id="phone" name="phone" type="tel" placeholder="(555) 555-5555" />
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      autocomplete="tel"
+                      placeholder="(555) 555-5555"
+                    />
                   </div>
 
                   <div class="form-field form-field-full">
@@ -983,7 +1016,13 @@ const renderOrder = [
                     <label for="reason">
                       I'm reaching out as <span class="req">*</span>
                     </label>
-                    <select id="reason" name="reason" required>
+                    <select
+                      id="reason"
+                      name="reason"
+                      required
+                      aria-required="true"
+                      aria-describedby="reason-error"
+                    >
                       {/* CMS-SKIP: form structure */}
                       <option value="" disabled selected>
                         Select an option
@@ -999,6 +1038,7 @@ const renderOrder = [
                       {/* CMS-SKIP: form structure */}
                       <option>Press, partnership, or other</option>
                     </select>
+                    <span id="reason-error" role="alert" class="field-error" />
                   </div>
 
                   <div class="form-field form-field-full">
@@ -1011,13 +1051,16 @@ const renderOrder = [
                       id="message"
                       name="message"
                       required
+                      aria-required="true"
+                      aria-describedby="message-error"
                       placeholder="Tell us a little about what you're looking for. The more context you share, the faster we can route you to the right person."
                     />
+                    <span id="message-error" role="alert" class="field-error" />
                   </div>
                 </div>
 
                 <label class="form-consent">
-                  <input type="checkbox" required />
+                  <input type="checkbox" id="consent" required aria-required="true" />
                   <span>
                     {page?.disclaimerCopy ? (
                       page.disclaimerCopy

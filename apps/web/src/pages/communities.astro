@@ -99,6 +99,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     .section {
       padding: 64px 5%;
     }
+    .section:not(.h84) {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 500px;
+    }
     @media (min-width: 768px) {
       .section {
         padding: 96px 5%;
@@ -152,7 +156,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     .nav {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: var(--z-dropdown);
       background: #fff;
       height: 84px;
       display: flex;
@@ -246,7 +250,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     .mobile-menu {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: var(--z-sticky);
       display: none;
       background: rgba(10, 45, 82, 0.5);
       backdrop-filter: blur(4px);
@@ -645,7 +649,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
     .l521-card-content {
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -663,7 +667,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       position: absolute;
       top: 1.25rem;
       left: 1.5rem;
-      z-index: 1;
+      z-index: var(--z-base);
       font-family: 'Manrope', sans-serif;
       font-weight: 800;
       font-size: 0.875rem;
@@ -980,7 +984,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
     .l526-card > *:not(.l526-card-img) {
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
 
     .l526-tag {
@@ -1409,7 +1413,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
     .cta25-section .container {
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .cta25-inner {
       margin-inline: auto;

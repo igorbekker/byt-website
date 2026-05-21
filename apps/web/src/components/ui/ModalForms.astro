@@ -220,6 +220,13 @@ const {
     font-size: 12px;
     color: var(--mist);
   }
+  .field-error {
+    display: block;
+    font-size: 12px;
+    color: var(--coral);
+    margin-top: 4px;
+    min-height: 16px;
+  }
 
   /* Crisis callout — sits inside form */
   .crisis-note {
@@ -305,7 +312,7 @@ const {
   .modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 300;
+    z-index: var(--z-overlay);
     background: rgba(10, 45, 82, 0.55);
     backdrop-filter: blur(4px);
     display: none;
@@ -709,21 +716,61 @@ const {
         <div class="form-row">
           <div class="form-field">
             <label for="bookFirst">First name <span class="req">*</span></label>
-            <input id="bookFirst" name="firstName" type="text" required placeholder="Jane" />
+            <input
+              id="bookFirst"
+              name="firstName"
+              type="text"
+              required
+              aria-required="true"
+              autocomplete="given-name"
+              aria-describedby="bookFirst-error"
+              placeholder="Jane"
+            />
+            <span id="bookFirst-error" role="alert" class="field-error"></span>
           </div>
           <div class="form-field">
             <label for="bookLast">Last name <span class="req">*</span></label>
-            <input id="bookLast" name="lastName" type="text" required placeholder="Doe" />
+            <input
+              id="bookLast"
+              name="lastName"
+              type="text"
+              required
+              aria-required="true"
+              autocomplete="family-name"
+              aria-describedby="bookLast-error"
+              placeholder="Doe"
+            />
+            <span id="bookLast-error" role="alert" class="field-error"></span>
           </div>
         </div>
         <div class="form-row">
           <div class="form-field">
             <label for="bookEmail">Email <span class="req">*</span></label>
-            <input id="bookEmail" name="email" type="email" required placeholder="jane@email.com" />
+            <input
+              id="bookEmail"
+              name="email"
+              type="email"
+              required
+              aria-required="true"
+              autocomplete="email"
+              aria-describedby="bookEmail-error"
+              placeholder="jane@email.com"
+            />
+            <span id="bookEmail-error" role="alert" class="field-error"></span>
           </div>
           <div class="form-field">
             <label for="bookPhone">Phone <span class="req">*</span></label>
-            <input id="bookPhone" name="phone" type="tel" required placeholder="(555) 555-5555" />
+            <input
+              id="bookPhone"
+              name="phone"
+              type="tel"
+              required
+              aria-required="true"
+              autocomplete="tel"
+              aria-describedby="bookPhone-error"
+              placeholder="(555) 555-5555"
+            />
+            <span id="bookPhone-error" role="alert" class="field-error"></span>
           </div>
         </div>
 
@@ -759,7 +806,13 @@ const {
         <div class="form-row">
           <div class="form-field">
             <label for="bookReason">What brings you in? <span class="req">*</span></label>
-            <select id="bookReason" name="reason" required>
+            <select
+              id="bookReason"
+              name="reason"
+              required
+              aria-required="true"
+              aria-describedby="bookReason-error"
+            >
               <option value="" disabled selected>Select what fits best</option>
               <option>Depression or anxiety</option>
               <option>Grief, loss, or life transition</option>
@@ -769,16 +822,24 @@ const {
               <option>Something else</option>
               <option>Not sure yet</option>
             </select>
+            <span id="bookReason-error" role="alert" class="field-error"></span>
           </div>
           <div class="form-field">
             <label for="bookPayment">How will you pay? <span class="req">*</span></label>
-            <select id="bookPayment" name="payment" required>
+            <select
+              id="bookPayment"
+              name="payment"
+              required
+              aria-required="true"
+              aria-describedby="bookPayment-error"
+            >
               <option value="" disabled selected>Select an option</option>
               <option>Medicare</option>
               <option>Private insurance</option>
               <option>Cash-pay / out-of-pocket</option>
               <option>Not sure — please advise</option>
             </select>
+            <span id="bookPayment-error" role="alert" class="field-error"></span>
           </div>
         </div>
 

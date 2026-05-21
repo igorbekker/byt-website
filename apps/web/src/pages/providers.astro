@@ -174,7 +174,7 @@ const renderOrder = [
     .nav {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: var(--z-dropdown);
       background: #fff;
       height: 84px;
       display: flex;
@@ -269,7 +269,7 @@ const renderOrder = [
     .mobile-menu {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: var(--z-sticky);
       display: none;
       background: rgba(10, 45, 82, 0.5);
       backdrop-filter: blur(4px);
@@ -579,7 +579,7 @@ const renderOrder = [
       content: '';
       position: absolute;
       inset: 0;
-      z-index: 1;
+      z-index: var(--z-base);
       background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
       background-size: 24px 24px;
       opacity: 0.6;
@@ -707,7 +707,7 @@ const renderOrder = [
       content: '';
       position: absolute;
       inset: 0;
-      z-index: 1;
+      z-index: var(--z-base);
       background: linear-gradient(
         180deg,
         rgba(10, 45, 82, 0.25) 0%,
@@ -1058,7 +1058,7 @@ const renderOrder = [
       max-width: 64px;
       height: auto;
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .l374-card.feature .image {
       min-height: 280px;
@@ -1608,7 +1608,7 @@ const renderOrder = [
     }
     .cta36-section .container {
       position: relative;
-      z-index: 1;
+      z-index: var(--z-base);
     }
     .cta36-grid {
       display: grid;
