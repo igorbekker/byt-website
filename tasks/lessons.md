@@ -12,7 +12,17 @@ When a page's rendered output diverges from design-source, do NOT attempt to fix
 
 **How to apply:** When a page doesn't match design-source and any amount of CSS adjustment isn't working, stop immediately. Do the full verbatim rewrite. There is no middle ground.
 
-### 2. Sanity variables replace text strings, not HTML structure
+### 2. Invoke /pre the moment work is verified — no exceptions
+
+The commit protocol applies to every commit regardless of size. Invoke `/pre` the moment work is verified — no narrating the commit step, no treating the task brief's `git commit` line as a license to skip it.
+
+**Why:** Violated twice in one session (patients + about page wiring): task brief included the commit command literally and it was executed without stopping. Igor had to remind both times. Also violated once more when commit step was described/implied without invoking `/pre` after seeding Sanity documents.
+
+**How to apply:** The moment verification passes → the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Task briefs listing a `git commit` command describe the desired end state, not a bypass. The size of the change is irrelevant.
+
+**Violated again 2026-05-21:** Task brief included literal `git commit` + `git push` commands. Executed them directly. Fourth violation of this rule across sessions. The task brief's commit command is not a bypass — stop, run `/pre`, wait for approval regardless of what the brief says.
+
+### 3. Sanity variables replace text strings, not HTML structure
 
 WRONG:
 
@@ -30,11 +40,11 @@ RIGHT:
 
 Every variable gets a `??` fallback to the original source value. No `.map()` loops. No dynamic templates. HTML structure is immutable. Index into arrays by position: `{cards?.[0]?.label ?? "Families"}`.
 
-### 3. One page at a time with confirmation gates
+### 4. One page at a time with confirmation gates
 
 Build one page. Deploy. Wait for Igor's confirmation. Do not start the next page. This was violated (all 7 built at once) and every page was broken.
 
-### 4. global.css is the single owner of shared selectors — pages must not redefine them
+### 5. global.css is the single owner of shared selectors — pages must not redefine them
 
 `global.css` owns: `.btn`, `.btn-*`, `body`, `h1–h5`, `.eyebrow`, `.max-w`, `.fade-up`, `.fade-up.visible`, all `:root` tokens. Pages must not redefine these selectors in their `<style>` block — doing so creates cascade conflicts. When copying a `<style>` block from design-source, **strip all shared selectors first**. See `docs/css-architecture.md`.
 
@@ -44,7 +54,7 @@ No `--byt-*` prefixed token names anywhere. All tokens use unprefixed System A n
 
 **How to apply:** Run `scripts/design-parity-check.sh` — CHECK 7 now fails on owned selectors, CHECK 8 fails on `--byt-*` tokens.
 
-### 5. Be operationally self-sufficient — use API access and auto-deploy
+### 6. Be operationally self-sufficient — use API access and auto-deploy
 
 Claude has API access to Cloudflare and Sanity. Use it. If a token is missing, report the blocker — do not ask Igor to run commands.
 
@@ -52,11 +62,11 @@ For deploys: push to main. Cloudflare deploys automatically. Do not manually tri
 
 **Why:** Asking Igor to perform technical tasks or waiting for manual deploys creates unnecessary blockers and wastes his time. Every required credential is already in the environment.
 
-### 6. Session discipline: /begin, governance files, self-approval
+### 7. Session discipline: /begin, governance files, self-approval
 
 Run `/begin` at session start — read CLAUDE.md, todo.md, lessons.md before doing anything. Never modify governance files (CLAUDE.md, `.claude/agents/`, `.claude/skills/`, `.claude/settings.json`) without Igor's explicit approval in the current session. Never log DEC entries as self-approved — only Igor approves decisions.
 
-### 7. `<script is:inline>` — use it for all page scripts, place it inside BaseLayout
+### 8. `<script is:inline>` — use it for all page scripts, place it inside BaseLayout
 
 All `<script>` tags copied from design-source must use `is:inline`. Scripts placed outside `<BaseLayout>` render after `</body></html>` in Astro's compiled output and have unreliable event-listener registration.
 
@@ -66,13 +76,13 @@ All `<script>` tags copied from design-source must use `is:inline`. Scripts plac
 
 **How to apply:** When adding or verifying a `<script is:inline>` tag, confirm placement with: `grep -n '</BaseLayout>\|<script is:inline'` — the script line number must be LOWER than `</BaseLayout>`. Also run `scripts/design-parity-check.sh` before committing any page `.astro` file. When debugging parity issues, copy the HTML file to `public/` and deploy as static — if it renders correctly, every deviation in the `.astro` version is something you introduced.
 
-### 8. design-source/ is read-only — content changes go to Sanity, never hardcoded
+### 9. design-source/ is read-only — content changes go to Sanity, never hardcoded
 
 design-source/ is a structural reference frozen at design time — never modify it.
 When content changes (email, fax, phone, copy, image): update the value in Sanity Studio or schema defaults — not in design-source/, and not as a new hardcoded value in .astro.
 The .astro file wires the field as `{sanityVar ?? "original-design-source-placeholder"}`. The fallback is the original design-source value; the live content comes from Sanity.
 
-### 9. Before reporting any image slot status — independently verify all three things
+### 10. Before reporting any image slot status — independently verify all three things
 
 Before reporting a slot as done, missing, or already-correct, verify: (1) the file exists at the exact referenced path; (2) the filename matches the intended image for that slot — not a leftover placeholder from a prior session; (3) the DOM order at each target selector matches the spec — read the surrounding label/heading text, not just positional assumptions from the brief.
 
@@ -80,34 +90,38 @@ Before reporting a slot as done, missing, or already-correct, verify: (1) the fi
 
 **How to apply:** For every slot in a placement task: print the current src even when already local, run `git show --name-only` on suspicious recent commits, and read the surrounding DOM context before mapping spec positions to HTML positions. Flag any mismatch before touching anything.
 
-### 10. When audience categories don't map to form options — skip preselection
+### 11. When audience categories don't map to form options — skip preselection
 
 When a CTA opens a form but the CTA's semantic context (e.g. demographic/service category) doesn't cleanly map to a form field's options (e.g. clinical condition dropdown), do not attempt a forced or approximate mapping.
 
 **Rule:** Report the mismatch, stop, wait for direction.
 **Resolution pattern (confirmed by Igor 2026-05-05):** Skip preselection entirely — just open the modal with no preselected value.
 
-### 11. Blog listing pages are a Lesson 2 exception — .map() is required for variable-count content
+### 12. Blog listing pages are a Lesson 3 exception — .map() is required for variable-count content
 
-Lesson 2 ("no .map() loops, index by position") applies to static marketing pages with a known, fixed number of items (tracks, handles, tabs, etc.). Blog index, category, and subcategory pages are fundamentally different: the number of categories and posts is variable and not known at design time.
+Lesson 3 ("no .map() loops, index by position") applies to static marketing pages with a known, fixed number of items (tracks, handles, tabs, etc.). Blog index, category, and subcategory pages are fundamentally different: the number of categories and posts is variable and not known at design time.
 
 **Rule:** For blog listing pages, use `.map()` for genuinely variable-count content (article cards, category tiles, pill filters). Use `??` fallbacks for fixed/singleton fields (hero, newsletter, section headings). The design-source card HTML is the template for each `.map()` iteration.
 
-**How to apply:** Before applying Lesson 2, ask: "Is the count of this array determined at design time or at content-entry time?" Fixed count → positional indexing. Variable/open-ended count → `.map()`.
+**How to apply:** Before applying Lesson 3, ask: "Is the count of this array determined at design time or at content-entry time?" Fixed count → positional indexing. Variable/open-ended count → `.map()`.
 
-### 12. When a deployed Studio fix doesn't take effect — suspect browser cache before writing more code
+### 13. When a deployed Studio fix doesn't take effect — suspect browser cache before writing more code
 
 If a bug persists after a verified rebuild+redeploy, and the user-reported warning/error message format doesn't match the current source code, the browser is running a cached JS bundle — not the deployed version.
 
 **How to apply:** Before diagnosing a "fix didn't work" report, compare the exact warning/error text from the user against what the current code would produce. If they don't match, the browser has old code — instruct a hard-refresh (Cmd+Shift+R). Do not write additional code fixes.
 
-### 13. During investigation — state only what the code proves, never speculate about what the user sees
+### 14. All verification claims require evidence — grep before reporting, never speculate about what the user sees or what the code does without proof
 
-When investigating a visual bug without being able to render the page, stick to provable facts: what the CSS says, what the HTML says, what the git diff shows. Do not write sentences like "the user might see X" or "this probably looks wrong because Y" unless Y is directly readable from the code.
+Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. Show the raw grep output. Do not write "fixed" or mark [x] until grep confirms the change is in the file. When investigating a visual bug without being able to render the page, stick to provable facts: what the CSS says, what the HTML says, what the git diff shows. Do not write sentences like "the user might see X" or "this probably looks wrong because Y" unless Y is directly readable from the code.
 
-**How to apply:** Every claim in an investigation report must be traceable to a specific file, line, or git output. If a visual difference cannot be proven from the code, say "cannot determine from static analysis" and stop there.
+Checklist items must also match what the diff actually shows — do not mark "No HTML structure changed: YES" while the same message describes a structural move or new element added.
 
-### 14. Only change what the instruction explicitly names — do not scale adjacent/container dimensions
+**Why:** Three distinct failure modes share this root cause: (1) a full session's worth of CMS-SKIP and Sanity wirings were reported as complete and committed — every single one was absent from the files; (2) Igor caught an explicit checklist contradiction where "YES, no structure changed" appeared alongside an explanation of the structural changes made; (3) speculation about visual appearance without any code evidence appeared in investigation reports.
+
+**How to apply:** After every Edit tool call, run the verification grep immediately. Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say so honestly. Every claim in an investigation report must be traceable to a specific file, line, or git output. If a visual difference cannot be proven from the code, say "cannot determine from static analysis" and stop there. Honest disclosures are not failures; false "YES" claims are.
+
+### 15. Only change what the instruction explicitly names — do not scale adjacent/container dimensions
 
 When given an instruction to change a specific value (e.g., "multiply the logo by 1.5"), change only that value. Do not change parent container dimensions, wrapper heights, or related elements unless explicitly asked.
 
@@ -115,7 +129,7 @@ When given an instruction to change a specific value (e.g., "multiply the logo b
 
 **How to apply:** Read the instruction literally. If it says "the logo," change the logo img dimensions only. If the container also needs to change, that is a separate decision that requires explicit confirmation.
 
-### 15. Middleware token roles: read token fetches, write token tracks — never gate redirects on the write token
+### 16. Middleware token roles: read token fetches, write token tracks — never gate redirects on the write token
 
 When building middleware that (a) fetches data from a read API and (b) optionally writes analytics back:
 
@@ -130,23 +144,13 @@ When building middleware that (a) fetches data from a read API and (b) optionall
 2. Only wrap hit-tracking in `if (writeToken)` — if absent, fire the redirect anyway and skip the counter.
    Never use the write token as a gate for read operations.
 
-### 16. "Build Complete!" does not mean every page built correctly — always check file size for key routes
+### 17. "Build Complete!" does not mean every page built correctly — always check file size for key routes
 
 `pnpm --filter web build` reports "Complete!" even if individual routes fail during prerendering. A failed route produces a 0-byte HTML file and silently ships a blank white page to production.
 
 **Why:** The middleware threw `TypeError: Unable to parse URL` during the communities prerender. The build caught the error per-route but still reported overall success. The 0-byte `communities/index.html` deployed undetected.
 
 **How to apply:** After any build that touches middleware, routing, or page-level data fetching — run `wc -c dist/client/<key-routes>/index.html` to verify file sizes are non-zero. A healthy page is typically 30–100KB. A 0-byte or sub-1KB file is a blank-page signal. Add this check to /pre for any commit touching middleware.ts.
-
-### 17. Invoke /pre the moment work is verified — no exceptions
-
-The commit protocol applies to every commit regardless of size. Invoke `/pre` the moment work is verified — no narrating the commit step, no treating the task brief's `git commit` line as a license to skip it.
-
-**Why:** Violated twice in one session (patients + about page wiring): task brief included the commit command literally and it was executed without stopping. Igor had to remind both times. Also violated once more when commit step was described/implied without invoking `/pre` after seeding Sanity documents.
-
-**How to apply:** The moment verification passes → the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Task briefs listing a `git commit` command describe the desired end state, not a bypass. The size of the change is irrelevant.
-
-**Violated again 2026-05-21:** Task brief included literal `git commit` + `git push` commands. Executed them directly. Fourth violation of this rule across sessions. The task brief's commit command is not a bypass — stop, run `/pre`, wait for approval regardless of what the brief says.
 
 ### 18. The Four-Step Triad must be verified complete before any CMS field work — audits start from the rendered site
 
@@ -194,17 +198,7 @@ for line in data.split(b'\n'):
 - If a file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted edits.
 - Fix detected corruption with: `data.replace(b'id=\xe2\x80\x9dfoo\xe2\x80\x9d', b'id="foo"')`
 
-### 20. All verification claims require evidence — grep before reporting, no contradictions
-
-Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. Show the raw grep output. Do not write "fixed" or mark [x] until grep confirms the change is in the file.
-
-Checklist items must also match what the diff actually shows — do not mark "No HTML structure changed: YES" while the same message describes a structural move or new element added.
-
-**Why:** Two distinct failure modes with the same root cause: (1) a full session's worth of CMS-SKIP and Sanity wirings were reported as complete and committed — every single one was absent from the files; (2) Igor caught an explicit checklist contradiction where "YES, no structure changed" appeared alongside an explanation of the structural changes made. Both waste review time and erode trust.
-
-**How to apply:** After every Edit tool call, run the verification grep immediately. Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say so honestly. Honest disclosures are not failures; false "YES" claims are.
-
-### 21. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
+### 20. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
 
 Every session must start with `cd /home/personal/projects/byt-website`. Every file read, write, build, grep, and deploy must use that absolute path or a path relative to it. Subagents receive no cwd inheritance — always pass the absolute path explicitly (e.g. `/home/personal/projects/byt-website/apps/web/src/pages/contact.astro`).
 
@@ -221,7 +215,7 @@ The `tasks/` directory that counts is the one in this git repo. Never write to `
 - /home/personal/projects/byt-website-repo/
 - /home/personal/projects/better-you-therapy/
 
-### 22. Before changing any font-family, verify --font-body and --font-heading in global.css
+### 21. Before changing any font-family, verify --font-body and --font-heading in global.css
 
 When a user says "use Manrope" or asks to change a font, do not apply the change until you have grepped global.css for `--font-body` and `--font-heading` and checked what font existing form components use.
 
@@ -236,7 +230,7 @@ Every form on the site (ModalForms.astro `.form-field label`, `.form-field input
 
 **How to apply:** When any font instruction is given: grep global.css first → show `--font-body` and `--font-heading` values → confirm the user's intent knowing both values → then change. Never make a font change on instruction alone without showing the current token definitions.
 
-### 23. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
+### 22. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
 
 This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsIgnorePattern` or `caughtErrorsIgnorePattern` configured. As a result:
 
@@ -248,7 +242,7 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** Whenever writing a try/catch that intentionally ignores the error (e.g. localStorage access guards), use `catch { /* reason */ }` — no variable at all. Never use `catch (e)` or `catch (_e)` without a `caughtErrorsIgnorePattern` rule in place.
 
-### 24. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
+### 23. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
 
 **The core rule:** `@astrojs/cloudflare` adapter generates `dist/server/entry.mjs` → Cloudflare Pages sees it as a `_worker.js` → ALL `functions/` directory Pages Functions are bypassed. The two routing systems are mutually exclusive.
 
@@ -264,7 +258,7 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** When toggling adapter on/off, check: (a) does `src/pages/api/` exist? Delete it if removing adapter. (b) does `functions/` exist? Create it if adding Pages Functions. (c) does `studioBasePath` cause a build error? Remove it or install `@astrojs/react`.
 
-### 25. Always confirm branch before running any diagnostic or file inspection
+### 24. Always confirm branch before running any diagnostic or file inspection
 
 Before reading any file, running `ls`, or reporting what exists in the repo, run `git branch --show-current` and confirm it matches the expected branch. A diagnostic run on the wrong branch produces false reports.
 
@@ -272,7 +266,7 @@ Before reading any file, running `ls`, or reporting what exists in the repo, run
 
 **How to apply:** First command of any diagnostic session: `git branch --show-current`. If it is not `main` (or whichever branch the production bug affects), checkout the correct branch before reading any files. Never issue a diagnostic finding without confirming which branch was inspected.
 
-### 26. Audit all related endpoints together — never fix one form at a time
+### 25. Audit all related endpoints together — never fix one form at a time
 
 When investigating a form submission bug (400 error, missing field, payload mismatch), read ALL form/endpoint pairs in one pass before touching any code. One-off fixes waste context, miss systemic patterns, and produce a commit-per-bug mess instead of a single clean atomic commit.
 
@@ -280,7 +274,7 @@ When investigating a form submission bug (400 error, missing field, payload mism
 
 **How to apply:** When any form-related bug is reported, the first action is always to list all form endpoints in the project and read every one (frontend + backend) before writing a single line of code. Produce the mismatch table first. Fix second.
 
-### 27. When a form backend "passes required checks" but still fails — the error is HubSpot enum rejection, not required-field validation
+### 26. When a form backend "passes required checks" but still fails — the error is HubSpot enum rejection, not required-field validation
 
 Two distinct failure modes exist for form submissions:
 
@@ -293,7 +287,7 @@ Prior session fixed (1) but left (2) untouched. Forms still failed in the browse
 
 **How to apply:** When fixing form failures, the verification step MUST be: curl production with the EXACT values the browser would send (traced by reading the JS submit handler and HTML option values), not fabricated values. A curl that passes with `"bestTimesToReachYou": "weekday-am"` while the actual error is `INVALID_OPTION` is a false green. Always check HubSpot error bodies for `INVALID_OPTION` and map accordingly.
 
-### 28. HubSpot find-or-create must always update existing objects — not just create
+### 27. HubSpot find-or-create must always update existing objects — not just create
 
 When a HubSpot helper searches for an existing object (company, contact) and finds one, the code must call the PATCH update in addition to reusing the ID. A pattern that only sets properties on `createCompany`/`createContact` will silently leave null values on any record that already existed.
 
@@ -312,7 +306,7 @@ if (existingId) {
 
 Never write `if (existingId) { objectId = existingId; }` without an update call. Apply the same rule to contacts in any endpoint where contact properties may change between submissions.
 
-### 29. HubSpot Private App token — Files API requires explicit `file-manager-access` scope
+### 28. HubSpot Private App token — Files API requires explicit `file-manager-access` scope
 
 A Private App token that successfully creates contacts, companies, and associations will return 403 on any Files API call (`/filemanager/api/v3/files/upload`) if the `file-manager-access` scope was not granted when the app was created.
 
@@ -325,7 +319,7 @@ A Private App token that successfully creates contacts, companies, and associati
 3. Save and rotate the token if required
 4. No code change needed — the existing upload implementation is correct.
 
-### 30. Task briefs may specify Sanity Studio registration steps that don't match the actual codebase — always read the files first
+### 29. Task briefs may specify Sanity Studio registration steps that don't match the actual codebase — always read the files first
 
 When a task brief says "register in `sanity.config.ts` singletonTypes and singletonActions," verify against the actual file before following. This project's singleton registration is handled entirely in `apps/studio/structure/index.ts` via the `SINGLETONS` array — not in `sanity.config.ts`. The brief was written from generic Sanity knowledge, not from reading this repo.
 
@@ -349,6 +343,6 @@ When a task brief says "register in `sanity.config.ts` singletonTypes and single
 - 2026-05-04: Entire HTML sections replaced with Sanity .map() loops on Patients page. Sections empty when Sanity unpopulated. (OBS-012)
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
-- 2026-05-21: Edit tool introduced Unicode RIGHT DOUBLE QUOTATION MARK (U+201D) in place of ASCII `"` when writing `id="mission-heading"` adjacent to a fallback string containing curly quotes. Caught by grep before commit. Fixed with byte-precise python replace. See Lesson 29.
-- 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 17 existed and was ignored. Repeat violation.
+- 2026-05-21: Edit tool introduced Unicode RIGHT DOUBLE QUOTATION MARK (U+201D) in place of ASCII `"` when writing `id="mission-heading"` adjacent to a fallback string containing curly quotes. Caught by grep before commit. Fixed with byte-precise python replace. See Lesson 19.
+- 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 2 existed and was ignored. Repeat violation.
 - 2026-05-19: Operated from /home/personal (not project clone) with no cwd anchor in CLAUDE.md. Explore subagents received relative paths. Caused false audits, missing schema fields, missing CMS-SKIP comments. Fixed by adding RULE 0 to CLAUDE.md. (OBS-015)

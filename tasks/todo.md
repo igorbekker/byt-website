@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — residentReferralPage Sanity singleton + four-step triad wiring
+- **Last work:** 2026-05-21 — Fix blog subnav trail raw slug labels (subLabel helper, 4 display locations)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -56,7 +56,7 @@
 ### 4-item cleanup — 2026-05-21 [~] In Progress
 
 - [x] ITEM 1 — Fix Quick Status Summary line in tasks/todo.md (commit chore(tasks): fix Quick Status Summary line)
-- [ ] ITEM 2 — Consolidate lessons.md: merge L13+L20, move L17 to #2, renumber all
+- [x] ITEM 2 — Consolidate lessons.md: merge L13+L20, move L17 to #2, renumber all → 29 lessons
 - [ ] ITEM 3 — Run seed script scripts/seed-resident-referral-page.mjs; verify residentReferralPage in Sanity
 - [ ] ITEM 4 — Deploy Studio (git pull, clear cache, npx sanity deploy)
 
