@@ -7,6 +7,13 @@ import {
   updateContact,
 } from './_hubspot';
 
+const AVAIL_MAP: Record<string, string> = {
+  'weekday-am': 'Weekday mornings',
+  'weekday-pm': 'Weekday afternoons',
+  evenings: 'Evenings',
+  weekends: 'Weekends',
+};
+
 interface BookSessionBody {
   firstName: string;
   lastName: string;
@@ -62,7 +69,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     how_will_you_pay: howWillYouPay,
     best_times_to_reach_you: bestTimesToReachYou
       .split(',')
-      .map((s) => s.trim())
+      .map((s) => AVAIL_MAP[s.trim()] ?? s.trim())
+      .filter(Boolean)
       .join(';'),
     anything_else_we_should_know: anythingElse ?? '',
     contact_type: 'Patient',

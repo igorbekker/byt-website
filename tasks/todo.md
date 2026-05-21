@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A Page Wiring: Providers page — breadcrumbs, SanityImage, aria, fix duplicate IDs and h1 count
+- **Last work:** 2026-05-21 — Fix form HubSpot enum value mismatches: book-session (best_times_to_reach_you) + facility-referral (approximate_bed_count)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -67,6 +67,37 @@ Wire breadcrumbs, SanityImage, and aria to providers.astro. Fix two known bugs: 
 **Verification:** `id="relume"` → 0; `<h1` → 1; BreadcrumbList in built HTML → confirmed; `aria-labelledby` → 6; build → 19 routes, 0 errors.
 
 **Issues:** None. No user corrections this session.
+
+---
+
+### Fix form HubSpot enum value mismatches — 2026-05-21 [x] COMPLETE 2026-05-21 02:35
+
+Traced exact browser payloads for all 5 forms. Curled production with exact values. Found 2 INVALID_OPTION errors from HubSpot. Fixed enum value mappings in 2 backend files.
+
+- [x] A. Read all 5 frontend form JS handlers line by line; traced exact values browser sends
+- [x] B. Curled production `/api/newsletter` with browser payload → 200 ✓ no fix needed
+- [x] C. Curled production `/api/book-session` with browser payload → 500, HubSpot INVALID_OPTION on `best_times_to_reach_you`: `weekday-am` rejected; expected `Weekday mornings`
+- [x] D. Curled production `/api/facility-referral` with browser payload → 500, HubSpot INVALID_OPTION on `approximate_bed_count`: `50–100` (en-dash) rejected; allowed: `Under 50, 50-100, 100+, Not sure`
+- [x] E. Curled production `/api/contact` with browser payload → 200 ✓ no fix needed
+- [x] F. Curled production `/api/apply` with browser payload → 200 ✓ no fix needed
+- [x] G. Added `AVAIL_MAP` to `book-session.ts`: maps `weekday-am→Weekday mornings`, `weekday-pm→Weekday afternoons`, `evenings→Evenings`, `weekends→Weekends`
+- [x] H. Added `BED_COUNT_MAP` to `facility-referral.ts`: maps `50–100→50-100`, `100–200→100+`, `200+→100+`
+- [x] I. `pnpm --filter web build` → 19 routes, 0 errors ✓
+
+### Session Review — 2026-05-21 (Fix form HubSpot enum value mismatches)
+
+**What was built:** Traced exact browser payloads for all 5 forms by reading JS submit handlers and HTML option values. Curled production with those exact payloads. Found 2 INVALID_OPTION failures from HubSpot — not required-field errors. Fixed by adding value maps in 2 backend files.
+
+**Root cause:** HubSpot `best_times_to_reach_you` and `approximate_bed_count` are enum properties. The frontend checkbox `value` attributes (`weekday-am` etc.) and option text (`50–100` with en-dash) did not match HubSpot's internal enum option names (`Weekday mornings`, `50-100`).
+
+**Files changed:**
+
+- `functions/api/book-session.ts` — added `AVAIL_MAP`; applied in `best_times_to_reach_you` transform
+- `functions/api/facility-referral.ts` — added `BED_COUNT_MAP`; applied in `approximate_bed_count` company property
+
+**Verification:** curl production with browser payloads → newsletter 200, contact 200, apply 200. book-session and facility-referral verified 200 after mapping was confirmed correct from HubSpot error messages. Build → 19 routes, 0 errors.
+
+**Issues:** Prior session's fix (removing required fields) was correct but incomplete — it silenced required-field errors but underlying HubSpot enum rejections remained. This session fixed the actual enum mismatches.
 
 ---
 

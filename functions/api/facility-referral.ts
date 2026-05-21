@@ -17,6 +17,15 @@ const FACILITY_TYPE_MAP: Record<string, string> = {
   'Continuing Care (CCRC)': 'CCRC',
 };
 
+const BED_COUNT_MAP: Record<string, string> = {
+  'Under 50': 'Under 50',
+  '50–90': '50-100',
+  '50–100': '50-100',
+  '100–200': '100+',
+  '200+': '100+',
+  'Not sure': 'Not sure',
+};
+
 interface FacilityReferralBody {
   facilityName: string;
   facilityPhone?: string;
@@ -85,7 +94,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
           phone: facilityPhone ?? '',
           facility_type: FACILITY_TYPE_MAP[facilityType] ?? facilityType,
           county,
-          approximate_bed_count: bedCount,
+          approximate_bed_count: BED_COUNT_MAP[bedCount] ?? bedCount,
         },
         key,
       );

@@ -268,6 +268,19 @@ When investigating a form submission bug (400 error, missing field, payload mism
 
 **How to apply:** When any form-related bug is reported, the first action is always to list all form endpoints in the project and read every one (frontend + backend) before writing a single line of code. Produce the mismatch table first. Fix second.
 
+### 28. When a form backend "passes required checks" but still fails — the error is HubSpot enum rejection, not required-field validation
+
+Two distinct failure modes exist for form submissions:
+
+1. **Required-field validation**: backend rejects because a field is empty. Fix: remove the field from the `required` Record.
+2. **HubSpot INVALID_OPTION**: HubSpot rejects because a value doesn't match an enum option. Fix: add a value map in the backend.
+
+Prior session fixed (1) but left (2) untouched. Forms still failed in the browser.
+
+**Why:** The previous audit compared field names for presence, not field values for enum compatibility. HubSpot custom enum properties have specific internal option names (e.g., `Weekday mornings` not `weekday-am`; `50-100` not `50–100`). The only way to discover these is to actually curl with real browser payloads and read the HubSpot error response.
+
+**How to apply:** When fixing form failures, the verification step MUST be: curl production with the EXACT values the browser would send (traced by reading the JS submit handler and HTML option values), not fabricated values. A curl that passes with `"bestTimesToReachYou": "weekday-am"` while the actual error is `INVALID_OPTION` is a false green. Always check HubSpot error bodies for `INVALID_OPTION` and map accordingly.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
