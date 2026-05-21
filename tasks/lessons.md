@@ -306,6 +306,20 @@ data = data.replace(b'id=\xe2\x80\x9dfoo\xe2\x80\x9d', b'id="foo"')
 
 Always run this scan before building when editing pages that have `??` fallbacks with curly-quote strings.
 
+### 30. "Data entry only" task briefs require Four-Step Triad verification before skipping code changes
+
+When a task brief says "All code changes complete — this is data entry only," do NOT accept that claim at face value. Before skipping schema/query/template steps, verify each triad step actually exists in the codebase.
+
+**Why:** Step 3.13 brief said "data entry only" and instructed opening Sanity Studio. The `robotsDirective` field was entirely absent from `seoFields.ts`, all GROQ queries, and `BaseLayout.astro`. The `blogIndexPage` Sanity document didn't exist. Jumping to data entry would have silently failed — Sanity has no `robotsDirective` field in its schema, so Studio couldn't show it; even if data was somehow set via mutation, the template had no `<meta name="robots">` tag.
+
+**How to apply:** Before treating any CMS task as "data entry only," run:
+
+1. `grep -n "fieldName" apps/studio/schemas/**/*.ts` — schema field exists?
+2. `grep -n "fieldName" apps/web/src/lib/queries.ts` — field in query?
+3. `grep -n "fieldName" apps/web/src/layouts/BaseLayout.astro apps/web/src/pages/*.astro` — field wired in template?
+
+If any step fails, the Four-Step Triad is incomplete — do NOT skip to data entry.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

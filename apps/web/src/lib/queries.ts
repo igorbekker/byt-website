@@ -94,7 +94,7 @@ export const HOME_PAGE_QUERY = `*[_type == "homePage"][0]{
   providerTeaserPrimaryCta{ label, href, variant },
   providerTeaserSecondaryCta{ label, href, variant },
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const CONDITIONS_HOME_QUERY = `*[_type == "condition" && showOnHomepage == true] | order(order asc) {
@@ -131,7 +131,7 @@ export const COMMUNITIES_PAGE_QUERY = `*[_type == "communitiesPage"][0]{
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const CONDITIONS_COMMUNITIES_QUERY = `*[_type == "condition" && showOnCommunities == true] | order(order asc) {
@@ -159,7 +159,7 @@ export const PATIENTS_PAGE_QUERY = `*[_type == "patientsPage"][0]{
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const CONDITIONS_PATIENTS_QUERY = `*[_type == "condition" && showOnPatients == true] | order(name asc) {
@@ -184,7 +184,7 @@ export const PROVIDERS_PAGE_QUERY = `*[_type == "providersPage"][0]{
   ctaHeading, ctaSubhead,
   ctaCta{ label, href, variant },
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const TESTIMONIALS_THERAPIST_QUERY = `*[_type == "testimonial" && audienceType == "therapist"] | order(_createdAt desc)[0...4] {
@@ -196,7 +196,7 @@ export const CAREERS_PAGE_QUERY = `*[_type == "careersPage"][0]{
   openPositionsEyebrow, openPositionsHeading, openPositionsIntro,
   noFitHeading, noFitBody,
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const JOB_POSTINGS_QUERY = `*[_type == "jobPosting" && status == "open"] | order(order asc) {
@@ -209,7 +209,7 @@ export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0]{
   heroImage{ asset->{ url }, alt },
   hoursDescription, disclaimerCopy, responseCopy, infoEyebrow, infoHeading, formHeading,
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
@@ -240,7 +240,7 @@ export const ABOUT_PAGE_QUERY = `*[_type == "aboutPage"][0]{
   ctaTertiary{ label, href },
   ctaBackgroundImage{ asset->{ url }, alt },
   sections[]{ sectionId, enabled },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 // ── BLOG ─────────────────────────────────────────────────────────────────────
@@ -251,7 +251,7 @@ export const BLOG_INDEX_PAGE_QUERY = `*[_type == "blogIndexPage"][0]{
   browseByTopicHeading, browseByTopicSubhead,
   recentlyPublishedHeading,
   newsletterHeading, newsletterSubhead,
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const BLOG_CATEGORIES_QUERY = `*[_type == "blogCategory"] | order(order asc) {
@@ -303,7 +303,7 @@ export const BLOG_POST_QUERY = `*[_type == "blogPost" && slug.current == $slug][
     }
   },
   author->{ name, credentials, initials, photo{ asset->{ url }, alt }, bio },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const BLOG_POST_PATHS_QUERY = `*[_type == "blogPost"]{ "slug": slug.current }`;
@@ -332,7 +332,7 @@ export const PRIVACY_PAGE_QUERY = `*[_type == "privacyPage"][0]{
       children[]{ ..., _type == "span" => { ..., text, marks } }
     }
   },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;
 
 export const TERMS_PAGE_QUERY = `*[_type == "termsPage"][0]{
@@ -345,5 +345,5 @@ export const TERMS_PAGE_QUERY = `*[_type == "termsPage"][0]{
       children[]{ ..., _type == "span" => { ..., text, marks } }
     }
   },
-  seo{ metaTitle, metaDescription }
+  seo{ metaTitle, metaDescription, robotsDirective }
 }`;

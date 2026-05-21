@@ -29,5 +29,18 @@ export const seoFields = defineType({
       title: 'Social Share Image',
       type: 'imageWithAlt',
     }),
+    defineField({
+      name: 'robotsDirective',
+      title: 'Robots Directive',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'index, follow (default)', value: 'index, follow' },
+          { title: 'noindex, follow', value: 'noindex, follow' },
+          { title: 'noindex, nofollow', value: 'noindex, nofollow' },
+        ],
+      },
+      description: 'Controls search engine indexing for this page. Defaults to index, follow.',
+    }),
   ],
 });

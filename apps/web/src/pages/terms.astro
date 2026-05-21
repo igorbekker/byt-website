@@ -9,13 +9,14 @@ const page = await sanityClient.fetch<{
   title?: string;
   lastUpdated?: string;
   body: unknown[];
-  seo?: { metaTitle?: string; metaDescription?: string };
+  seo?: { metaTitle?: string; metaDescription?: string; robotsDirective?: string };
 }>(TERMS_PAGE_QUERY);
 ---
 
 <BaseLayout
-  title="Terms and Conditions | Better You Therapy"
+  title={page?.seo?.metaTitle ?? 'Terms & Conditions | Better You Therapy'}
   description="Terms and Conditions for Better You Therapy — the rules and guidelines governing use of our services and website."
+  seo={page?.seo ?? null}
 >
   <style is:global>
     /* Buttons */

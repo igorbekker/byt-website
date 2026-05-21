@@ -9,13 +9,14 @@ const page = await sanityClient.fetch<{
   title?: string;
   lastUpdated?: string;
   body: unknown[];
-  seo?: { metaTitle?: string; metaDescription?: string };
+  seo?: { metaTitle?: string; metaDescription?: string; robotsDirective?: string };
 }>(PRIVACY_PAGE_QUERY);
 ---
 
 <BaseLayout
-  title="Privacy Policy | Better You Therapy"
+  title={page?.seo?.metaTitle ?? 'Privacy Policy | Better You Therapy'}
   description="Privacy Policy for Better You Therapy — how we collect, use, and protect your information."
+  seo={page?.seo ?? null}
 >
   <style is:global>
     /* ════════════════════════════════════════════════

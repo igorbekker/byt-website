@@ -19,9 +19,48 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Wire resume/document file uploads to HubSpot (careers + referral forms)
+- **Last work:** 2026-05-21 — Phase 7A Step 3.13: robotsDirective schema/query/template + seed all 10 pages
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Step 3.13 — SEO defaults: robotsDirective schema + seed all pages — 2026-05-21 [x] COMPLETE 2026-05-21 04:12
+
+**Note:** Task brief said "data entry only" but robotsDirective was missing from schema/queries/template — full Four-Step Triad was required.
+
+- [x] A. `seoFields.ts` — added `robotsDirective` string field with list options (index,follow / noindex,follow / noindex,nofollow)
+- [x] B. `queries.ts` — updated all 11 `seo{ metaTitle, metaDescription }` projections to add `robotsDirective`
+- [x] C. `BaseLayout.astro` — added `robotsDirective?: string` to SeoFields interface; added `<meta name="robots" content={resolvedSeo.robotsDirective ?? 'index, follow'} />`
+- [x] D. Studio deployed: `https://byt-website.sanity.studio/`
+- [x] E. Patched 9 existing page documents with correct `seo.metaTitle` + `seo.robotsDirective` values
+- [x] F. Created `blogIndexPage` document (was missing entirely) with `metaTitle: 'Blog | Better You Therapy'`, `robotsDirective: 'index, follow'`
+- [x] G. `privacy.astro` + `terms.astro` — added `robotsDirective` to interface, added `seo={page?.seo ?? null}` to BaseLayout call
+- [x] H. `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] I. Verified: homepage `<title>` = correct, robots = index,follow; privacy robots = noindex,follow ✓
+
+**siteSettings verified from Step 3.1:** `gtmContainerId = GTM-5CVGT32J` ✓, `robotsTxt` = full AI crawler policy ✓
+
+### Session Review — 2026-05-21 (Phase 7A Step 3.13)
+
+**Files changed:**
+
+- `apps/studio/schemas/objects/seoFields.ts` — +robotsDirective field
+- `apps/web/src/lib/queries.ts` — +robotsDirective in all 11 seo projections
+- `apps/web/src/layouts/BaseLayout.astro` — +robotsDirective interface + meta tag
+- `apps/web/src/pages/privacy.astro` — +robotsDirective interface + seo prop to BaseLayout
+- `apps/web/src/pages/terms.astro` — +robotsDirective interface + seo prop to BaseLayout
+
+**Seeded documents:** homePage, aboutPage, communitiesPage, patientsPage, providersPage, careersPage, contactPage, privacyPage, termsPage (patched), blogIndexPage (created)
+
+**Mandatory verification output:**
+
+- pre-flight query: all 10 pages confirmed with correct metaTitle + robotsDirective values
+- build: 19 routes, 0 errors
+- `grep "<title>"` homepage: `<title>Better You Therapy | Licensed Mental Health in SE Florida</title>` ✓
+- `robots` homepage: `name="robots" content="index, follow"` ✓
+- `robots` privacy: `name="robots" content="noindex, follow"` ✓
+- `robots` terms: `name="robots" content="noindex, follow"` ✓
 
 ---
 

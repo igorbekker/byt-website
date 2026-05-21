@@ -17,6 +17,7 @@ interface SeoFields {
   metaTitle?: string;
   metaDescription?: string;
   ogImage?: unknown;
+  robotsDirective?: string;
 }
 
 interface SiteSettings {
@@ -60,6 +61,7 @@ const resolvedSeo: SeoFields = pageSeo ?? siteSettings?.seo ?? {};
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={resolvedDescription} />
+    <meta name="robots" content={resolvedSeo.robotsDirective ?? 'index, follow'} />
     <title>{resolvedSeo.metaTitle ?? title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
