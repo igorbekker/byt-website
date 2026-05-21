@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Move 11 page singletons to dynamic catch-all router
+- **Last work:** 2026-05-21 — Fix final 3 W3C validation errors (h4→h3 howitworks steps, role=region on privacy + terms)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1034,6 +1034,36 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - Build: `pnpm --filter web build` → 19 pages, 0 errors ✓
 
 **Issues:** None.
+
+---
+
+### Fix final 3 W3C validation errors [x] COMPLETE 2026-05-21 18:03
+
+- [x] FIX 1 — HomePage.astro: h4 → h3 for 6 howitworks step headings (h2→h4 heading skip); CSS selector `.step-text h4` → `.step-text h3`
+- [x] FIX 2 — PrivacyPage.astro: added `role="region"` to `<div class="legal-page" aria-labelledby="privacy-heading">`
+- [x] FIX 3 — TermsPage.astro: added `role="region"` to `<div class="doc" aria-labelledby="terms-heading">`
+- [x] Build verify: `pnpm --filter web build` → 19 pages, 0 errors ✓
+- [x] Proof-of-work: 0× `<h4` in dist/index.html ✓; all 6 steps render as `<h3>` in dist ✓; `role="region"` confirmed in dist/privacy + dist/terms ✓
+
+### Session Review — 2026-05-21 (Fix final 3 W3C validation errors)
+
+**What was fixed:** 3 W3C HTML validation issues across 2 component files (plus CSS selector update).
+
+**Files changed:**
+
+- `apps/web/src/components/pages/HomePage.astro` — changed 6× `<h4>` → `<h3>` in `.howitworks` section (3 online therapy track steps + 3 in-facility track steps); updated CSS selector `.step-text h4` → `.step-text h3` to preserve styling
+- `apps/web/src/components/pages/PrivacyPage.astro` — added `role="region"` to `<div class="legal-page" aria-labelledby="privacy-heading">` (line 1508)
+- `apps/web/src/components/pages/TermsPage.astro` — added `role="region"` to `<div class="doc" aria-labelledby="terms-heading">` (line 512)
+
+**Verification:**
+
+- `grep -c "<h4" apps/web/dist/index.html` → 0 ✓
+- All 6 step headings confirmed as `<h3>` in dist/index.html ✓
+- `grep -o 'role="region" aria-labelledby="privacy-heading"' dist/privacy/index.html` → confirmed ✓
+- `grep -o 'role="region" aria-labelledby="terms-heading"' dist/terms/index.html` → confirmed ✓
+- `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
