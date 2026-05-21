@@ -294,7 +294,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       company: facilityName,
       contact_type: 'Patient',
       reason_for_referral: referralReason,
-      skilled_nursing: skilledNursing,
+      skilled_nursing: skilledNursing.charAt(0).toUpperCase() + skilledNursing.slice(1),
       refer_source: 'Website Form',
       website_form: 'Refer Resident',
     };

@@ -11,6 +11,12 @@ import {
   createCompany,
 } from './_hubspot';
 
+const FACILITY_TYPE_MAP: Record<string, string> = {
+  'Assisted Living (ALF)': 'ALF',
+  'Skilled Nursing (SNF)': 'SNF',
+  'Continuing Care (CCRC)': 'CCRC',
+};
+
 interface FacilityReferralBody {
   facilityName: string;
   facilityPhone?: string;
@@ -77,7 +83,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
         {
           name: facilityName,
           phone: facilityPhone ?? '',
-          facility_type: facilityType,
+          facility_type: FACILITY_TYPE_MAP[facilityType] ?? facilityType,
           county,
           approximate_bed_count: bedCount,
         },
