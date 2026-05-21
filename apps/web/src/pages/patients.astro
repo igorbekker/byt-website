@@ -8,6 +8,8 @@
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { PATIENTS_PAGE_QUERY, CONDITIONS_PATIENTS_QUERY } from '../lib/queries';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import SanityImage from '../components/ui/SanityImage.astro';
 
 interface CtaLink {
   label: string;
@@ -2160,22 +2162,29 @@ const renderOrder = [
     }
   </style>
 
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Patients' }]} />
+
   {
     renderOrder.map(({ id }) => {
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section class="ph-hero">
+          <section class="ph-hero" aria-labelledby="hero-heading">
             <div class="ph-hero-bg">
-              <img
+              <SanityImage
                 src={page?.heroImage?.asset?.url ?? '/images/patients-hero-bg.jpg'}
                 alt={page?.heroImage?.alt ?? 'Warm morning light through sheer curtains'}
-                onerror="this.style.display='none'"
+                width={1440}
+                height={640}
+                fetchpriority="high"
               />
               <div class="ph-hero-tint" />
             </div>
             <div class="ph-hero-content">
-              <h1 set:html={page?.heroHeading ?? 'Care that meets you <em>where you are</em>'} />
+              <h1
+                id="hero-heading"
+                set:html={page?.heroHeading ?? 'Care that meets you <em>where you are</em>'}
+              />
               <p>
                 {page?.heroSubhead ??
                   'Licensed therapists at your facility in Palm Beach, Martin, St. Lucie, and Okeechobee counties, or secure video sessions from anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
@@ -2190,10 +2199,12 @@ const renderOrder = [
         );
       if (id === 'audience_selector')
         return (
-          <section class="ph-router">
+          <section class="ph-router" aria-labelledby="router-heading">
             <div class="ph-router-head">
               <p class="eyebrow">{page?.audienceSelectorEyebrow ?? 'Choose'}</p>
-              <h2>{page?.audienceSelectorHeading ?? 'What brings you here?'}</h2>
+              <h2 id="router-heading">
+                {page?.audienceSelectorHeading ?? 'What brings you here?'}
+              </h2>
             </div>
             <p class="ph-router-sub">
               {page?.audienceSelectorSubhead ?? 'Find the right path to care.'}
@@ -2214,10 +2225,11 @@ const renderOrder = [
                   </span>
                 </div>
                 <div class="ph-card-img">
-                  <img
+                  <SanityImage
                     src={s[0]?.image?.asset?.url ?? '/images/patients-card-families.jpg'}
                     alt={s[0]?.image?.alt ?? 'Adult daughter visiting her elderly mother'}
-                    onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
+                    width={600}
+                    height={450}
                   />
                 </div>
               </a>
@@ -2236,10 +2248,11 @@ const renderOrder = [
                   </span>
                 </div>
                 <div class="ph-card-img">
-                  <img
+                  <SanityImage
                     src={s[1]?.image?.asset?.url ?? '/images/patients-card-adults.jpg'}
                     alt={s[1]?.image?.alt ?? 'Man walking on a sunny Florida sidewalk'}
-                    onerror="this.parentElement.classList.add('img-ph','img-ph-coral')"
+                    width={600}
+                    height={450}
                   />
                 </div>
               </a>
@@ -2258,10 +2271,11 @@ const renderOrder = [
                   </span>
                 </div>
                 <div class="ph-card-img">
-                  <img
+                  <SanityImage
                     src={s[2]?.image?.asset?.url ?? '/images/patients-card-caregivers.jpg'}
                     alt={s[2]?.image?.alt ?? 'Woman having a quiet moment on her porch'}
-                    onerror="this.parentElement.classList.add('img-ph','img-ph-navy')"
+                    width={600}
+                    height={450}
                   />
                 </div>
               </a>
@@ -2280,10 +2294,11 @@ const renderOrder = [
                   </span>
                 </div>
                 <div class="ph-card-img">
-                  <img
+                  <SanityImage
                     src={s[3]?.image?.asset?.url ?? '/images/patients-card-espanol.jpg'}
                     alt={s[3]?.image?.alt ?? 'Mujer en su cocina con una taza de café'}
-                    onerror="this.parentElement.classList.add('img-ph','img-ph-cream')"
+                    width={600}
+                    height={450}
                   />
                 </div>
               </a>
@@ -2292,10 +2307,10 @@ const renderOrder = [
         );
       if (id === 'delivery')
         return (
-          <section class="ph-twoways">
+          <section class="ph-twoways" aria-labelledby="twoways-heading">
             <div class="ph-twoways-head">
               <p class="eyebrow">{page?.deliveryEyebrow ?? 'Delivery'}</p>
-              <h2>{page?.deliveryHeading ?? 'Two ways to get started'}</h2>
+              <h2 id="twoways-heading">{page?.deliveryHeading ?? 'Two ways to get started'}</h2>
               <p class="ph-twoways-sub">
                 {page?.deliverySubhead ?? 'Pick the model that works for your life right now.'}
               </p>
@@ -2304,10 +2319,11 @@ const renderOrder = [
             <div class="ph-twoways-grid">
               <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
                 <div class="ph-way-bg">
-                  <img
+                  <SanityImage
                     src={d[0]?.image?.asset?.url ?? '/images/patients-track-tele.jpg'}
                     alt={d[0]?.image?.alt ?? 'Young woman in a video therapy session from home'}
-                    onerror="this.style.display='none'"
+                    width={760}
+                    height={520}
                   />
                   <div class="ph-way-tint" />
                 </div>
@@ -2329,10 +2345,11 @@ const renderOrder = [
 
               <a href="#" onclick="event.preventDefault();openModal('book')" class="ph-way">
                 <div class="ph-way-bg">
-                  <img
+                  <SanityImage
                     src={d[1]?.image?.asset?.url ?? '/images/patients-track-facility.jpg'}
                     alt={d[1]?.image?.alt ?? 'Senior resident talking with her therapist'}
-                    onerror="this.style.display='none'"
+                    width={760}
+                    height={520}
                   />
                   <div class="ph-way-tint" />
                 </div>
@@ -2356,10 +2373,12 @@ const renderOrder = [
         );
       if (id === 'belief')
         return (
-          <section class="belief">
+          <section class="belief" aria-labelledby="belief-heading">
             <div class="belief-inner">
               <div class="belief-rule" aria-hidden="true" />
-              <h2>{page?.beliefQuote ?? '“Mental health care belongs to everyone.”'}</h2>
+              <h2 id="belief-heading">
+                {page?.beliefQuote ?? '”Mental health care belongs to everyone.”'}
+              </h2>
               <p>
                 {page?.beliefBody ??
                   'Mental health care is not a luxury. It’s not reserved for people in crisis, or people with the right insurance, or people who can take a Tuesday afternoon off work to drive across town. It belongs to seniors aging in place, adults navigating the messy middle, caregivers running on empty, and Spanish-speaking families who deserve to be understood in their own language. We’re here to make that real.'}
@@ -2369,10 +2388,12 @@ const renderOrder = [
         );
       if (id === 'conditions')
         return (
-          <section class="ph-l505">
+          <section class="ph-l505" aria-labelledby="l505-heading">
             <div class="l505-head">
               <p class="eyebrow">{page?.conditionsEyebrow ?? 'Conditions we treat'}</p>
-              <h2>{page?.conditionsHeading ?? 'Care for what’s actually going on'}</h2>
+              <h2 id="l505-heading">
+                {page?.conditionsHeading ?? 'Care for what’s actually going on'}
+              </h2>
               <p>
                 {page?.conditionsSubhead ??
                   'Evidence-based therapy for the most common reasons people reach out — across life stages, languages, and care settings.'}
@@ -2411,6 +2432,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2438,6 +2461,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2462,6 +2487,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2486,6 +2513,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2510,6 +2539,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2534,6 +2565,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2558,6 +2591,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2587,6 +2622,8 @@ const renderOrder = [
                 <div class="l505-panel-inner">
                   <div class="l505-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -2611,11 +2648,17 @@ const renderOrder = [
         );
       if (id === 'cta')
         return (
-          <section class="ph-cta35">
+          <section class="ph-cta35" aria-labelledby="cta35-heading">
             <div class="ph-cta35-grid">
               <div class="ph-cta35-col">
                 <div class="ph-cta35-mark" aria-hidden="true">
-                  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    viewBox="0 0 48 48"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" />
                     <path
                       d="M16 24l6 6 12-14"
@@ -2626,7 +2669,7 @@ const renderOrder = [
                     />
                   </svg>
                 </div>
-                <h2>{page?.ctaHeading ?? 'Access care that works'}</h2>
+                <h2 id="cta35-heading">{page?.ctaHeading ?? 'Access care that works'}</h2>
                 <p>
                   {page?.ctaSubhead ??
                     'On-site at your facility or from anywhere in Florida. Licensed therapists. Insurance accepted. Available this week.'}
