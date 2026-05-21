@@ -7,6 +7,7 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SanityImage from '../ui/SanityImage.astro';
 import { HOME_PAGE_QUERY } from '../../lib/queries';
 import { homepageGraphSchema } from '../../lib/schema';
 
@@ -1564,11 +1565,13 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
   <!-- ── BLOCK 1: HERO ── -->
   <section class="hero">
     <div class="hero-image">
-      <img
+      <SanityImage
         src={page?.heroImage?.asset?.url ?? '/images/home-hero.jpg'}
         alt={page?.heroImage?.alt ??
           'Licensed therapist in warm conversation with a senior patient'}
-        onerror="this.style.display='none'"
+        width={720}
+        height={900}
+        fetchpriority="high"
       />
     </div>
     <div class="hero-content">

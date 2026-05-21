@@ -19,9 +19,59 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — oldSlugs editable + auto-redirects in Redirect Manager
+- **Last work:** 2026-05-21 — Mobile performance optimization (LCP fixes)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Mobile LCP Performance Optimization — 2026-05-21 [x] COMPLETE
+
+Branch: `fix/mobile-perf-lcp`
+
+Target: Mobile LCP 6.0s → <2.5s (Lighthouse)
+
+### Fixes
+
+- [x] FIX 1 — Hero image: replaced raw `<img>` in `HomePage.astro` with `SanityImage` (fetchpriority="high", width=720, height=900, srcset 400w/800w/1200w WebP)
+- [x] FIX 2 — Font loading: Google Fonts CSS now non-render-blocking (preload + media="print" + onload + noscript fallback)
+- [x] FIX 3 — Nav desktop logo: added width="200" height="96" to `Nav.astro` line 22
+- [x] FIX 4 — Nav mobile logo: added width="113" to `Nav.astro` line 63 (already had height="54")
+- [x] FIX 5 — Footer logo: added width="201" height="96" to `Footer.astro` line 25
+- [x] BUILD — `pnpm --filter web build` → 19 pages, 0 errors ✓
+- [x] VERIFY — perf-check.sh 9/9 PASS ✓
+
+### Session Review — 2026-05-21 (Mobile LCP Performance Optimization)
+
+**What was built:** 5 targeted performance fixes to address Lighthouse mobile LCP of 6.0s.
+
+**Files changed:**
+
+- `apps/web/src/components/pages/HomePage.astro` — added `SanityImage` import; replaced hero raw `<img>` with `<SanityImage fetchpriority="high" width={720} height={900}>` — now serves srcset at 400w/800w/1200w in WebP via Sanity CDN image pipeline
+- `apps/web/src/layouts/BaseLayout.astro` — Google Fonts `<link rel="stylesheet">` changed to non-render-blocking pattern: `rel="preload" as="style"` + `media="print" onload="this.media='all'"` + `<noscript>` fallback; `display=swap` was already present in FONT_URL
+- `apps/web/src/components/nav/Nav.astro` — desktop logo: added `width="200" height="96"`; mobile logo: added `width="113"` (height="54" was already present)
+- `apps/web/src/components/ui/Footer.astro` — added `width="201" height="96"` to footer logo
+
+**Logo dimensions rationale:**
+
+- `logo.png` natural size 2530×1212 → aspect 2.088:1 → at CSS height 96px: width=200; at CSS height 54px: width=113
+- `logo-white-trans.png` natural size 600×287 → aspect 2.090:1 → at CSS height 96px: width=201
+
+**FIX 2 note:** woff2 preload with `as="font"` requires static Google Fonts woff2 URLs which are UA-dynamic. Implemented the non-blocking font CSS pattern instead — equivalent LCP benefit (eliminates render-blocking CSS) without fragile hardcoded URLs.
+
+**Verification:**
+
+- FIX 1 grep: `SanityImage` at line 10 (import) + line 1568; `fetchpriority` at line 1574 ✓
+- FIX 1 dist: `fetchpriority="high" decoding="async" sizes=...` + `fm=webp&fit=crop` srcset at 400w/800w/1200w ✓
+- FIX 2 grep: `rel="preload" as="style"` at line 117; `media="print" onload` at line 118 ✓
+- FIX 2 dist: preload + non-blocking stylesheet + noscript fallback all present ✓
+- FIX 3: `width="200" height="96"` at Nav.astro line 22 ✓
+- FIX 4: `width="113" height="54"` at Nav.astro line 63 ✓
+- FIX 5: `width="201" height="96"` at Footer.astro line 25 ✓
+- Build: 19 pages, 0 errors ✓
+- `bash scripts/perf-check.sh` → 9/9 PASS ✓
+
+**Issues:** None.
 
 ---
 

@@ -111,10 +111,12 @@ const FONT_URL =
     <meta name="twitter:description" content={ogDescription} />
     {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
 
-    <!-- Fonts -->
+    <!-- Fonts — non-render-blocking; display=swap in URL prevents FOUT -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href={FONT_URL} />
+    <link rel="preload" as="style" href={FONT_URL} />
+    <link rel="stylesheet" href={FONT_URL} media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href={FONT_URL} /></noscript>
 
     <!-- Sanity CDN -->
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
