@@ -1,10 +1,10 @@
 ---
 import { sanityClient } from 'sanity:client';
 import { PortableText } from 'astro-portabletext';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Breadcrumb from '../components/ui/Breadcrumb.astro';
-import { TERMS_PAGE_QUERY } from '../lib/queries';
-import { webPageSchema } from '../lib/schema';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { TERMS_PAGE_QUERY } from '../../lib/queries';
+import { webPageSchema } from '../../lib/schema';
 
 const page = await sanityClient.fetch<{
   title?: string;
@@ -509,7 +509,7 @@ const pageSchema = webPageSchema({
   </style>
 
   <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Terms & Conditions' }]} />
-  <div class="doc" aria-labelledby="terms-heading">
+  <div class="doc" role="region" aria-labelledby="terms-heading">
     <h1 id="terms-heading">{page?.title ?? 'Terms of Service'}</h1>
     {page?.lastUpdated && <p class="updated">Last updated: {page?.lastUpdated}</p>}
     {

@@ -19,9 +19,72 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix remaining W3C HTML validation errors (5 patterns)
+- **Last work:** 2026-05-21 — Move 11 page singletons to dynamic catch-all router
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Move 11 page singletons to dynamic catch-all router [x] COMPLETE 2026-05-21 17:58
+
+- [x] PRE-FLIGHT — documented all 11 pages: line counts, imports, BaseLayout prop patterns, import path depths
+- [x] PHASE A — created `src/components/pages/` with 11 `*Page.astro` component files (sed path-adjusted for 10 root pages; verbatim cp for BlogIndexPage)
+- [x] PHASE A — created `src/pages/[...slug].astro` catch-all router with `getStaticPaths()` + `SINGLETON_TYPES` inside function
+- [x] PHASE A BUILD — `pnpm --filter web build` → 19 pages, 0 errors, 11 expected conflict warnings (old files win) ✓
+- [x] PHASE B — renamed all 11 old `.astro` files to `.bak`
+- [x] PHASE B BUILD — `pnpm --filter web build` → 19 pages, 0 errors, 0 warnings ✓
+- [x] PHASE B — deleted all `.bak` files
+
+### Session Review — 2026-05-21 (Move 11 page singletons to dynamic catch-all router)
+
+**What was built:** All 11 singleton page files moved from `src/pages/*.astro` to `src/components/pages/*Page.astro` components. A single `src/pages/[...slug].astro` catch-all router replaced all 11 files, calling `getStaticPaths()` to generate static routes by fetching each singleton's `slug` from Sanity. Falls back to the `component` default slug if Sanity returns no slug.
+
+**Key decisions:**
+
+- `component: ''` (empty string) for `homePage` so `'' || undefined` = `undefined` → route `/` (not `/home/`)
+- `SINGLETON_TYPES` array placed inside `getStaticPaths()` — Astro code-splits `getStaticPaths` at build time; module-level constants are not in scope
+- Import paths adjusted via `sed "s|from '\.\./|from '../../|g"` for 10 pages at root level; `BlogIndexPage.astro` verbatim `cp` (already used `../../` prefix from `src/pages/blog/`)
+- BaseLayout prop patterns preserved exactly: `index.astro` passes `seo=` prop; all others pass `title=` + `description=`
+- `blog/[slug].astro` and `blog/[category]/` routes untouched
+
+**Files created:**
+
+- `apps/web/src/components/pages/HomePage.astro` (65883 bytes)
+- `apps/web/src/components/pages/AboutPage.astro` (68311 bytes)
+- `apps/web/src/components/pages/PatientsPage.astro` (84071 bytes)
+- `apps/web/src/components/pages/CommunitiesPage.astro` (88564 bytes)
+- `apps/web/src/components/pages/ProvidersPage.astro` (87341 bytes)
+- `apps/web/src/components/pages/CareersPage.astro` (78752 bytes)
+- `apps/web/src/components/pages/ContactPage.astro` (36262 bytes)
+- `apps/web/src/components/pages/PrivacyPage.astro` (49746 bytes)
+- `apps/web/src/components/pages/TermsPage.astro` (24456 bytes)
+- `apps/web/src/components/pages/ResidentReferralPage.astro` (34156 bytes)
+- `apps/web/src/components/pages/BlogIndexPage.astro` (37420 bytes)
+- `apps/web/src/pages/[...slug].astro` (new catch-all router)
+
+**Files deleted:**
+
+- `apps/web/src/pages/index.astro`
+- `apps/web/src/pages/about.astro`
+- `apps/web/src/pages/patients.astro`
+- `apps/web/src/pages/communities.astro`
+- `apps/web/src/pages/providers.astro`
+- `apps/web/src/pages/careers.astro`
+- `apps/web/src/pages/contact.astro`
+- `apps/web/src/pages/privacy.astro`
+- `apps/web/src/pages/terms.astro`
+- `apps/web/src/pages/resident-referral.astro`
+- `apps/web/src/pages/blog/index.astro`
+
+**Verification:**
+
+- Phase A build: 19 pages, 0 errors, 11 expected conflict warnings (static routes > catch-all) ✓
+- Phase B build: 19 pages, 0 errors, 0 warnings ✓
+- `ls apps/web/src/pages/` → only `[...slug].astro`, `blog/`, `robots.txt.ts` ✓
+- `ls apps/web/src/components/pages/` → 11 component files ✓
+- BaseLayout prop patterns: `grep -A 3 "<BaseLayout" HomePage.astro` → `seo={page?.seo ?? null}` ✓; `grep -A 3 "<BaseLayout" AboutPage.astro` → `title=` + `description=` ✓
+
+**Issues:** Initial router had `SINGLETON_TYPES` defined at module level; build failed with "SINGLETON_TYPES is not defined" inside `getStaticPaths`. Fixed by moving the array inside the function. No user corrections.
 
 ---
 

@@ -1,30 +1,93 @@
 ---
 import { sanityClient } from 'sanity:client';
-import { PortableText } from 'astro-portabletext';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Breadcrumb from '../components/ui/Breadcrumb.astro';
-import { PRIVACY_PAGE_QUERY } from '../lib/queries';
-import { webPageSchema } from '../lib/schema';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import SanityImage from '../../components/ui/SanityImage.astro';
+import { ABOUT_PAGE_QUERY } from '../../lib/queries';
+import { webPageSchema } from '../../lib/schema';
 
-const page = await sanityClient.fetch<{
-  title?: string;
-  lastUpdated?: string;
-  body: unknown[];
-  seo?: { metaTitle?: string; metaDescription?: string; robotsDirective?: string };
-}>(PRIVACY_PAGE_QUERY);
+interface CtaLink {
+  label: string;
+  href?: string;
+  variant?: string;
+}
+
+interface ImageWithAlt {
+  asset?: { url: string };
+  alt?: string;
+}
+
+interface PortableTextSpan {
+  _type: string;
+  text?: string;
+}
+
+interface PortableTextBlock {
+  _type: string;
+  children?: PortableTextSpan[];
+}
+
+interface Principle {
+  number?: string;
+  heading?: string;
+  body?: string;
+}
+
+interface PracticePillar {
+  number?: string;
+  label?: string;
+  heading?: string;
+  body?: string;
+}
+
+interface AboutPage {
+  heroHeading?: string;
+  heroSubhead?: string;
+  heroTeamImage?: ImageWithAlt;
+  missionEyebrow?: string;
+  missionQuote?: string;
+  missionBody?: string;
+  storyEyebrow?: string;
+  storyHeading?: string;
+  storyHandsImage?: ImageWithAlt;
+  storyBody?: PortableTextBlock[];
+  founderName?: string;
+  founderCredential?: string;
+  founderPhoto?: ImageWithAlt;
+  principlesEyebrow?: string;
+  principlesHeading?: string;
+  principlesSubhead?: string;
+  principles?: Principle[];
+  practiceEyebrow?: string;
+  practiceHeading?: string;
+  practicePillars?: PracticePillar[];
+  ctaHeading?: string;
+  ctaSubhead?: string;
+  ctaPrimary?: CtaLink;
+  ctaSecondary?: CtaLink;
+  ctaBackgroundImage?: ImageWithAlt;
+  seo?: { metaTitle?: string; metaDescription?: string };
+}
+
+const page = await sanityClient.fetch<AboutPage>(ABOUT_PAGE_QUERY);
+
+const pr = page?.principles ?? [];
+const pp = page?.practicePillars ?? [];
+const sb = page?.storyBody ?? [];
 const pageSchema = webPageSchema({
-  name: 'Privacy Policy | Better You Therapy',
+  name: 'About Us | Better You Therapy',
   description:
-    'Privacy policy for Better You Therapy — how we collect, use, and protect your personal information.',
-  url: 'https://getbetteryou.com/privacy/',
+    "Learn about Better You Therapy — a Florida mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it.",
+  url: 'https://getbetteryou.com/about/',
 });
 ---
 
 <BaseLayout
-  title={page?.seo?.metaTitle ?? 'Privacy Policy | Better You Therapy'}
-  description="Privacy Policy for Better You Therapy — how we collect, use, and protect your information."
-  seo={page?.seo ?? null}
+  title={page?.seo?.metaTitle ?? 'About Us | Better You Therapy'}
+  description={page?.seo?.metaDescription ??
+    "Learn about Better You Therapy — a Florida mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it."}
 >
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -45,9 +108,6 @@ const pageSchema = webPageSchema({
    NAVIGATION
 ════════════════════════════════════════════════ */
     .nav {
-      position: sticky;
-      top: 0;
-      z-index: var(--z-dropdown);
       background: var(--white);
       height: 84px;
       display: flex;
@@ -95,6 +155,7 @@ const pageSchema = webPageSchema({
       align-items: center;
     }
     .nav-cta {
+      border: none;
       background: var(--coral);
       color: #fff;
       padding: 12px 20px;
@@ -102,17 +163,23 @@ const pageSchema = webPageSchema({
       font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.01em;
+      font-family: inherit;
+      cursor: pointer;
       transition: background-color var(--t-hover);
     }
     .nav-cta:hover {
       background: var(--coral-hover);
     }
     .nav-cta-secondary {
+      border: none;
+      background: transparent;
       color: var(--navy-deep);
       font-size: 14px;
       font-weight: 500;
       padding: 12px 20px;
       border-radius: var(--r-btn);
+      font-family: inherit;
+      cursor: pointer;
       transition: color var(--t-hover);
     }
     .nav-cta-secondary:hover {
@@ -1081,9 +1148,19 @@ const pageSchema = webPageSchema({
       display: block;
     }
     .footer-logo img {
-      height: 100px;
+      height: 96px;
       width: auto;
       display: block;
+    }
+    @media (max-width: 1024px) {
+      .footer-logo img {
+        height: 72px;
+      }
+    }
+    @media (max-width: 768px) {
+      .footer-logo img {
+        height: 66px;
+      }
     }
     .footer-tagline {
       font-size: 14px;
@@ -1456,256 +1533,927 @@ const pageSchema = webPageSchema({
       margin: 0;
     }
 
-    /* ── Legal page (Privacy / Terms) ── */
-    .legal-page {
-      background: var(--white);
-      padding: 4rem var(--pad-x) 5rem;
+    /* ════════════════════════════════════════════════
+   ABOUT PAGE
+════════════════════════════════════════════════ */
+
+    /* HERO — split: large statement on cream, image on right */
+    .about-hero {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      min-height: 70vh;
+      max-height: 640px;
+      background: var(--cream);
     }
-    .legal-inner {
-      max-width: 760px;
+    .about-hero-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 4rem;
+    }
+    .about-hero-content .eyebrow {
+      margin-bottom: 1.5rem;
+    }
+    .about-hero-content h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      font-weight: 800;
+      color: var(--navy-deep);
+      margin-bottom: 1.5rem;
+    }
+    .about-hero-content h1 em {
+      font-style: normal;
+      color: var(--coral);
+    }
+    .about-hero-content p {
+      color: var(--slate);
+      font-size: 18px;
+      line-height: 1.6;
+      max-width: 520px;
+    }
+    .about-hero-image {
+      position: relative;
+      overflow: hidden;
+      background: var(--navy);
+    }
+    .about-hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* MISSION RULE — pulled quote band on cream */
+    .mission-band {
+      background: var(--white);
+      padding: var(--pad-s) var(--pad-x);
+      border-bottom: 1px solid var(--border);
+    }
+    .mission-inner {
+      max-width: 880px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .mission-rule {
+      width: 48px;
+      height: 2px;
+      background: var(--coral);
+      margin: 0 auto 1.75rem;
+      border-radius: 2px;
+    }
+    .mission-band .eyebrow {
+      margin-bottom: 1rem;
+    }
+    .mission-band h2 {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 3vw, 2.5rem);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--navy-deep);
+      margin-bottom: 1.25rem;
+    }
+    .mission-band p {
+      color: var(--slate);
+      font-size: 17px;
+      line-height: 1.7;
+      max-width: 700px;
       margin: 0 auto;
     }
-    .legal-inner h1 {
+
+    /* STORY — two column: image + narrative */
+    .story {
+      background: var(--off-white);
+      padding: var(--pad-s) var(--pad-x);
+    }
+    .story-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .story-image {
+      border-radius: var(--r-card);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      background: var(--border);
+      box-shadow: var(--shadow-md);
+    }
+    .story-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .story-content .eyebrow {
+      margin-bottom: 1rem;
+    }
+    .story-content h2 {
       font-family: 'Manrope', sans-serif;
-      font-size: clamp(2rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      font-size: clamp(2rem, 3.2vw, 2.6rem);
       color: var(--navy-deep);
-      margin: 0 0 1.5rem;
+      margin-bottom: 1.5rem;
       letter-spacing: -0.02em;
       line-height: 1.1;
     }
-    .legal-inner h2 {
+    .story-content p {
+      color: var(--slate);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 1.1rem;
+    }
+    .story-content p:last-child {
+      margin-bottom: 0;
+    }
+    .story-signature {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2.25rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .story-signature-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--r-pill);
+      background: var(--coral-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-family: 'Manrope', sans-serif;
-      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--coral);
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .story-signature-text .name {
+      font-family: 'Manrope', sans-serif;
       font-weight: 800;
       color: var(--navy-deep);
-      margin: 2.5rem 0 0.75rem;
+      font-size: 15px;
       letter-spacing: -0.01em;
     }
-    .legal-inner p {
+    .story-signature-text .role {
+      color: var(--slate);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    /* STATS BAND — navy on photo */
+    .stats-band {
+      background: var(--navy-deep);
+      padding: var(--pad-s) var(--pad-x);
+      position: relative;
+      overflow: hidden;
+    }
+    .stats-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.22;
+    }
+    .stats-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(10, 45, 82, 0.92) 0%, rgba(16, 67, 120, 0.85) 100%);
+    }
+    .stats-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      position: relative;
+      z-index: var(--z-base);
+    }
+    .stats-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .stats-header .eyebrow {
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 0.75rem;
+    }
+    .stats-header h2 {
+      color: #fff;
+      font-size: clamp(1.8rem, 2.8vw, 2.3rem);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--r-card);
+      overflow: hidden;
+    }
+    .stat-cell {
+      background: rgba(10, 45, 82, 0.65);
+      padding: 2.25rem 1.5rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.4rem, 4vw, 3.2rem);
+      color: #fff;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.6rem;
+    }
+    .stat-num .stat-suffix {
+      color: var(--coral);
+      font-size: 0.7em;
+      margin-left: 2px;
+    }
+    .stat-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.45;
+    }
+
+    /* VALUES — 3 up cards on white */
+    .values {
+      background: var(--white);
+      padding: var(--pad-s) var(--pad-x);
+    }
+    .values-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .values-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .values-header .eyebrow {
+      margin-bottom: 1rem;
+    }
+    .values-header h2 {
+      color: var(--navy-deep);
+      font-size: clamp(2rem, 3.2vw, 2.6rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .values-header p {
+      color: var(--slate);
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .value-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      padding: 2.25rem 2rem;
+      transition:
+        border-color var(--t-hover),
+        box-shadow var(--t-hover),
+        transform var(--t-hover);
+    }
+    .value-card:hover {
+      border-color: var(--coral);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .value-num {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      color: var(--coral);
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .value-card h3 {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--navy-deep);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .value-card p {
+      color: var(--slate);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* TEAM — 4 portrait cards */
+    .team {
+      background: var(--cream);
+      padding: var(--pad-s) var(--pad-x);
+      border-top: 1px solid var(--border);
+    }
+    .team-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .team-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .team-header .eyebrow {
+      margin-bottom: 1rem;
+    }
+    .team-header h2 {
+      color: var(--navy-deep);
+      font-size: clamp(2rem, 3.2vw, 2.6rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .team-header p {
+      color: var(--slate);
+      font-size: 17px;
+      line-height: 1.6;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .team-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      overflow: hidden;
+      transition:
+        box-shadow var(--t-hover),
+        transform var(--t-hover);
+    }
+    .team-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .team-photo {
+      aspect-ratio: 4/5;
+      background: var(--off-white);
+      position: relative;
+      overflow: hidden;
+    }
+    .team-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .team-photo-placeholder {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(135deg, var(--off-white) 0 14px, #eef2f7 14px 28px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--mist);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .team-info {
+      padding: 1.25rem 1.4rem 1.5rem;
+    }
+    .team-name {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--navy-deep);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.25rem;
+    }
+    .team-credentials {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 0.85rem;
+    }
+    .team-bio {
+      color: var(--slate);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    /* APPROACH STRIP — alternating mini-feature row */
+    .approach {
+      background: var(--white);
+      padding: var(--pad-s) var(--pad-x);
+    }
+    .approach-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .approach-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .approach-header .eyebrow {
+      margin-bottom: 1rem;
+    }
+    .approach-header h2 {
+      color: var(--navy-deep);
+      font-size: clamp(2rem, 3.2vw, 2.6rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .approach-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--border);
+    }
+    .approach-row {
+      display: grid;
+      grid-template-columns: 200px 1fr 1.4fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: baseline;
+    }
+    .approach-num {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      color: var(--coral);
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      white-space: nowrap;
+    }
+    .approach-title {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--navy-deep);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .approach-body {
       color: var(--slate);
       font-size: 16px;
-      line-height: 1.7;
-      margin: 0 0 1rem;
+      line-height: 1.65;
+      max-width: 560px;
     }
-    .legal-inner ul {
-      margin: 0 0 1rem;
-      padding-left: 1.4rem;
-      color: var(--slate);
+
+    /* CTA CLOSER */
+    .about-cta {
+      background: var(--navy-deep);
+      padding: var(--pad-s) var(--pad-x);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .legal-inner li {
-      font-size: 16px;
-      line-height: 1.7;
-      margin-bottom: 0.35rem;
+    .about-cta-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.22;
+    }
+    .about-cta-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(10, 45, 82, 0.9) 0%, rgba(16, 67, 120, 0.84) 100%);
+    }
+    .about-cta-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      position: relative;
+      z-index: var(--z-base);
+    }
+    .about-cta .eyebrow {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1rem;
+    }
+    .about-cta h2 {
+      color: #fff;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .about-cta p {
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 17px;
+      line-height: 1.65;
+      margin-bottom: 2.25rem;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .about-cta-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1024px) {
+      .about-hero {
+        grid-template-columns: 1fr;
+        max-height: none;
+        min-height: 0;
+      }
+      .about-hero-image {
+        height: 360px;
+        order: -1;
+      }
+      .about-hero-content {
+        padding: 3rem 2.5rem;
+      }
+      .story-inner {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .story-image {
+        aspect-ratio: 16/10;
+        max-height: 440px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+      .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .approach-row {
+        grid-template-columns: 200px 1fr;
+        gap: 1.25rem;
+      }
+      .approach-body {
+        grid-column: 2 / -1;
+      }
     }
     @media (max-width: 768px) {
-      .legal-page {
-        padding: 2.5rem var(--pad-x) 3.5rem;
+      .about-hero-image {
+        height: 260px;
+      }
+      .about-hero-content {
+        padding: 2.5rem 1.75rem;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .stat-cell {
+        padding: 1.75rem 1rem;
+      }
+      .team-grid {
+        grid-template-columns: 1fr;
+      }
+      .approach-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1.5rem 0;
+      }
+      .approach-body {
+        grid-column: 1;
+      }
+      .approach-num {
+        font-size: 12px;
       }
     }
   </style>
 
-  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Privacy Policy' }]} />
-  <div class="legal-page" aria-labelledby="privacy-heading">
-    <div class="legal-inner">
-      <h1 id="privacy-heading">{page?.title ?? 'Privacy Policy'}</h1>
-      {page?.lastUpdated && <p>Last updated: {page?.lastUpdated ?? ''}</p>}
-      {
-        page?.body ? (
-          <PortableText value={page?.body ?? []} />
-        ) : (
-          <>
-            <p>
-              Better You Therapy is accessible from
-              https://testv22.demowebsitelinks.com/premier-choice-new/. One of our main priorities
-              is the privacy of our visitors. This Privacy Policy document contains information
-              collected and recorded by Better You Therapy and how we use it.
-            </p>
-
-            <p>
-              If you have additional questions or require more information about our Privacy Policy,
-              do not hesitate to contact us.
-            </p>
-
-            <p>
-              This Privacy Policy applies only to our online activities. It is valid for visitors to
-              our website regarding the information they share and collects in Better You Therapy.
-              This policy does not apply to any information collected offline or via channels other
-              than this website.
-            </p>
-
-            <h2>Consent</h2>
-            <p>
-              By using our website, you hereby consent to our Privacy Policy and agree to its terms.
-            </p>
-
-            <h2>Information we collect</h2>
-            <p>
-              The personal information you are asked to provide and the reasons why you are asked to
-              provide it will be clear to you at the point we ask you to provide your personal
-              information.
-            </p>
-            <p>
-              If you contact us directly, we may receive additional information about you, such as
-              your name, email address, phone number, the contents of the message and attachments
-              you may send us, and any other information you may provide.
-            </p>
-            <p>
-              When you register for an Account, we may ask for your contact information, including
-              items such as name, company name, address, email address, and telephone number.
-            </p>
-
-            <h2>How we use your information</h2>
-            <p>We use the information we collect in various ways, including:</p>
-            <ul>
-              <li>Provide, operate, and maintain our website</li>
-              <li>Improve, personalize, and expand our website</li>
-              <li>Understand and analyze how you use our website</li>
-              <li>Develop new products, services, features, and functionality</li>
-              <li>
-                Communicate with you, either directly or through one of our partners, including for
-                customer service, to provide you with updates and other information relating to the
-                website, and for marketing and promotional purposes
-              </li>
-              <li>Send you emails</li>
-              <li>Find and prevent fraud</li>
-            </ul>
-
-            <h2>Log Files</h2>
-            <p>
-              Better You Therapy follows a standard procedure of using log files. These files log
-              visitors when they visit websites. All hosting companies do this and are a part of
-              hosting services' analytics. The information collected by log files includes internet
-              protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time
-              stamp, referring/exit pages, and possibly the number of clicks. These are not linked
-              to any personally identifiable information. Instead, the information is for analyzing
-              trends, administering the site, tracking users' movement on the website, and gathering
-              demographic information.
-            </p>
-
-            <h2>Cookies and Web Beacons</h2>
-            <p>
-              Like any other website, Better You Therapy uses 'cookies.' These cookies store
-              information, including visitors' preferences and the pages on the website that the
-              visitor accessed or visited. In addition, the information is used to optimize the
-              users' experience by customizing our web page content based on visitor's browser type
-              and other information.
-            </p>
-
-            <h2>Advertising Partners Privacy Policies</h2>
-            <p>
-              You may consult this list to find the Privacy Policy for each of the advertising
-              partners of Better You Therapy.
-            </p>
-            <p>
-              Third-party ad servers or ad networks use technologies like cookies, JavaScript, or
-              Web Beacons in their respective advertisements and links on Better You Therapy, which
-              are sent directly to users' browsers. They automatically receive your IP address when
-              this occurs. These technologies are used to measure the effectiveness of their
-              advertising campaigns and personalize the advertising content you see on websites you
-              visit.
-            </p>
-            <p>
-              Better You Therapy has no access to or control of third-party advertisers' cookies.
-            </p>
-
-            <h2>Third-Party Privacy Policies</h2>
-            <p>
-              Better You Therapy's Privacy Policy does not apply to other advertisers or websites.
-              Thus, we are advising you to consult the respective Privacy Policies of these
-              third-party ad servers for more detailed information. It may include their practices
-              and instructions about opting out of specific options.
-            </p>
-            <p>
-              You can choose to disable cookies through your browser options. It can be found on the
-              browsers' respective websites for more detailed information about cookie management
-              with specific web browsers.
-            </p>
-
-            <h2>CCPA Privacy Rights (Do Not Sell My Personal Information)</h2>
-            <p>Under the CCPA, among other rights, US consumers have the right to:</p>
-            <ul>
-              <li>
-                Request that a business that collects a consumer's data disclose the categories and
-                specific pieces of personal data that a business has collected about consumers.
-              </li>
-              <li>
-                Request that a business delete any personal data about the consumer a business has
-                collected.
-              </li>
-              <li>
-                Request that a business that sells a consumer's data not sell the consumer's data.
-              </li>
-            </ul>
-            <p>
-              If you make a request, we have one month to respond to you. Please contact us if you
-              would like to exercise any of these rights.
-            </p>
-
-            <h2>GDPR Data Protection Rights</h2>
-            <p>
-              We want to ensure you are fully aware of your data protection rights. Every user is
-              entitled to the following:
-            </p>
-            <p>
-              The right to access &mdash; You have the right to request copies of your data. We may
-              charge you a small fee for this service.
-            </p>
-            <p>
-              The right to rectification &mdash; You have the right to request that we correct any
-              information you believe is inaccurate. You also have the right to request that we
-              complete the information you believe is incomplete.
-            </p>
-            <p>
-              The right to erasure &mdash; You have the right to request that we erase your data
-              under certain conditions.
-            </p>
-            <p>
-              The right to restrict processing &mdash; You have the right to request that we
-              restrict processing your data under certain conditions.
-            </p>
-            <p>
-              The right to object to processing &mdash; Under certain conditions, you have the right
-              to object to our processing of your data.
-            </p>
-            <p>
-              The right to data portability &mdash; You have the right to request that we transfer
-              the data that we have collected to another organization or directly to you under
-              certain conditions.
-            </p>
-            <p>
-              If you make a request, we have one month to respond to you. Please contact us if you
-              would like to exercise any of these rights.
-            </p>
-
-            <h2>Children's Information</h2>
-            <p>
-              Another part of our priority is adding protection for children while using the
-              internet. We encourage parents and guardians to observe, participate in, monitor, and
-              guide their online activity.
-            </p>
-            <p>
-              Better You Therapy does not knowingly collect personally identifiable information from
-              children under 13. However, if you think your child provided this information on our
-              website, we strongly encourage you to contact us immediately, and we will do our best
-              to remove such information from our records promptly.
-            </p>
-
-            <h2>SMS and MMS Marketing</h2>
-            <p>
-              Mobile information will not be shared with third parties/affiliates for
-              marketing/promotional purposes. Any other mentions in this policy exclude text
-              messaging originator opt-in data and consent; this information will not be shared with
-              any third parties. If you wish to be removed from receiving future communications, you
-              can opt out by texting STOP.
-            </p>
-          </>
-        )
-      }
+  <!-- ── HERO ── -->
+  <section class="about-hero" aria-labelledby="about-hero-heading">
+    <div class="about-hero-content">
+      <p class="eyebrow">About Better You Therapy</p>
+      <h1
+        id="about-hero-heading"
+        set:html={page?.heroHeading ??
+          'Mental health care should reach <em>everyone</em> — not just the people who can navigate the system.'}
+      />
+      <p>
+        {
+          page?.heroSubhead ??
+            "We're a Florida-based mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it. We bring therapists on-site to senior living facilities, and online to adults and families across the state."
+        }
+      </p>
     </div>
-  </div>
+    <div class="about-hero-image">
+      <SanityImage
+        src={page?.heroTeamImage?.asset?.url ?? '/images/about/about-hero-team.png'}
+        alt={page?.heroTeamImage?.alt ?? 'Better You Therapy clinical team in South Florida'}
+        width={1440}
+        height={640}
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <!-- ── MISSION RULE ── -->
+  <section class="mission-band" aria-labelledby="mission-heading">
+    <div class="mission-inner fade-up">
+      <p class="eyebrow">{page?.missionEyebrow ?? 'Our Mission'}</p>
+      <div class="mission-rule"></div>
+      <h2 id="mission-heading">
+        {page?.missionQuote ?? '”Mental health care belongs to everyone.”'}
+      </h2>
+      <p>
+        {
+          page?.missionBody ??
+            "Mental health care shouldn't depend on where you live, how much you earn, or how well you can navigate the system. We built Better You Therapy to close that gap — for residents in long-term care who fall through the cracks, for adults who can't get on a waitlist, and for therapists who want to do real clinical work without administrative drag."
+        }
+      </p>
+    </div>
+  </section>
+
+  <!-- ── STORY ── -->
+  <section class="story" aria-labelledby="story-heading">
+    <div class="story-inner fade-up">
+      <div class="story-image">
+        <SanityImage
+          src={page?.storyHandsImage?.asset?.url ??
+            'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=900&q=85&auto=format&fit=crop'}
+          alt={page?.storyHandsImage?.alt ??
+            'Therapist meeting with a senior resident in a sunlit room'}
+          width={900}
+          height={1125}
+        />
+      </div>
+      <div class="story-content">
+        <p class="eyebrow">{page?.storyEyebrow ?? 'Our Story'}</p>
+        <h2 id="story-heading">{page?.storyHeading ?? 'We started where the gap was widest.'}</h2>
+        <p>
+          {
+            sb[0]?.children?.[0]?.text ??
+              "Better You Therapy started in 2018 with a single observation: residents in assisted living and skilled nursing facilities were going years without ever speaking to a mental health professional — not because they didn't qualify, but because no one was bringing care to them."
+          }
+        </p>
+        <p>
+          {
+            sb[1]?.children?.[0]?.text ??
+              'Medicare covered it. Therapists wanted to provide it. Facilities wanted residents to have it. But the logistics — credentialing, scheduling, billing, documentation — were standing in the way.'
+          }
+        </p>
+        <p>
+          {
+            sb[2]?.children?.[0]?.text ??
+              'So we built the operating layer. Today, our licensed therapists provide weekly on-site care to residents across Southeast Florida and connect with adults and families statewide through teletherapy. Same clinical standard. Two paths to access.'
+          }
+        </p>
+        <div class="story-signature">
+          <div class="story-signature-avatar">
+            {
+              page?.founderPhoto?.asset?.url ? (
+                <img src={page?.founderPhoto?.asset?.url} alt={page?.founderPhoto?.alt ?? ''} />
+              ) : (
+                'AN'
+              )
+            }
+          </div>
+          <div class="story-signature-text">
+            <div class="name">{page?.founderName ?? 'Alisa Nemets'}</div>
+            <div class="role">{page?.founderCredential ?? 'Founder'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── VALUES ── -->
+  <section class="values" aria-labelledby="values-heading">
+    <div class="values-inner">
+      <div class="values-header fade-up">
+        <p class="eyebrow">{page?.principlesEyebrow ?? 'What We Believe'}</p>
+        <h2 id="values-heading">
+          {page?.principlesHeading ?? 'Three principles that shape how we work.'}
+        </h2>
+        <p>
+          {
+            page?.principlesSubhead ??
+              "They're not aspirational. They're operational — they shape who we hire, how we bill, and how we show up for the people in our care."
+          }
+        </p>
+      </div>
+      <div class="values-grid fade-up">
+        <article class="value-card">
+          <span class="value-num">{pr[0]?.number ?? '01'}</span>
+          <h3>{pr[0]?.heading ?? 'Care belongs in the room.'}</h3>
+          <p>
+            {
+              pr[0]?.body ??
+                "Logistics shouldn't decide who gets help. We handle credentialing, billing, scheduling, and documentation so therapists can focus on therapy and patients can focus on getting better."
+            }
+          </p>
+        </article>
+        <article class="value-card">
+          <span class="value-num">{pr[1]?.number ?? '02'}</span>
+          <h3>{pr[1]?.heading ?? 'Clinical work over throughput.'}</h3>
+          <p>
+            {
+              pr[1]?.body ??
+                "Our therapists carry sustainable caseloads. We don't optimize for session volume — we optimize for outcomes, continuity, and real therapeutic relationships that last."
+            }
+          </p>
+        </article>
+        <article class="value-card">
+          <span class="value-num">{pr[2]?.number ?? '03'}</span>
+          <h3>{pr[2]?.heading ?? 'Transparent, every step.'}</h3>
+          <p>
+            {
+              pr[2]?.body ??
+                'Clear revenue splits with our therapists. Clear billing with insurers. Clear progress reporting back to families and care teams. Trust is built on what we tell you up front, not what you find out later.'
+            }
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── APPROACH STRIP ── -->
+  <section class="approach" aria-labelledby="approach-heading">
+    <div class="approach-inner">
+      <div class="approach-header fade-up">
+        <p class="eyebrow">{page?.practiceEyebrow ?? 'How We Practice'}</p>
+        <h2 id="approach-heading">
+          {page?.practiceHeading ?? 'Evidence-based, age-aware, integrated.'}
+        </h2>
+      </div>
+      <div class="approach-list fade-up">
+        <div class="approach-row">
+          <div class="approach-num">{pp[0]?.number ?? '01'} — {pp[0]?.label ?? 'METHOD'}</div>
+          <div class="approach-title">
+            {pp[0]?.heading ?? 'Evidence-based modalities, calibrated to the person.'}
+          </div>
+          <div class="approach-body">
+            {
+              pp[0]?.body ??
+                "CBT, ACT, trauma-informed care, and supportive therapy — selected based on the individual's needs, cognitive profile, and goals. Not a single method applied to everyone."
+            }
+          </div>
+        </div>
+        <div class="approach-row">
+          <div class="approach-num">{pp[1]?.number ?? '02'} — {pp[1]?.label ?? 'TEAM'}</div>
+          <div class="approach-title">
+            {
+              pp[1]?.heading ??
+                'Licensed clinicians only — Psychologists, LCSWs, LMHCs, LPCs, LMFTs.'
+            }
+          </div>
+          <div class="approach-body">
+            {
+              pp[1]?.body ??
+                'Every therapist on our team is fully licensed in the state of Florida. We credential, we verify, and we maintain ongoing clinical supervision and peer consultation.'
+            }
+          </div>
+        </div>
+        <div class="approach-row">
+          <div class="approach-num">{pp[2]?.number ?? '03'} — {pp[2]?.label ?? 'COORDINATION'}</div>
+          <div class="approach-title">
+            {pp[2]?.heading ?? 'Integrated with the rest of the care team.'}
+          </div>
+          <div class="approach-body">
+            {
+              pp[2]?.body ??
+                'For facility patients, we coordinate with nursing and wellness staff, share progress reporting, and align with treatment plans. For teletherapy clients, we communicate with primary care and psychiatry on request.'
+            }
+          </div>
+        </div>
+        <div class="approach-row">
+          <div class="approach-num">{pp[3]?.number ?? '04'} — {pp[3]?.label ?? 'ACCESS'}</div>
+          <div class="approach-title">
+            {pp[3]?.heading ?? 'No waitlist. First session this week.'}
+          </div>
+          <div class="approach-body">
+            {
+              pp[3]?.body ??
+                "Whether you're an adult booking online or a wellness director making a referral, we operate on real-world timelines — most people are matched and seen within five business days."
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CLOSING CTA ── -->
+  <section class="about-cta" aria-labelledby="cta-heading">
+    <div
+      class="about-cta-bg"
+      style={`background-image:url('${page?.ctaBackgroundImage?.asset?.url ?? '/images/about/about-cta-bg.png'}')`}
+    >
+    </div>
+    <div class="about-cta-overlay"></div>
+    <div class="about-cta-inner fade-up">
+      <p class="eyebrow">Work With Us</p>
+      <h2 id="cta-heading">
+        {page?.ctaHeading ?? "However you found us, we're glad you're here."}
+      </h2>
+      <p>
+        {
+          page?.ctaSubhead ??
+            "Whether you're looking for care, looking to refer, or looking to join our team — we'll meet you where you are."
+        }
+      </p>
+      <div class="about-cta-actions">
+        <button class="btn btn-coral" onclick="openModal('book')"
+          >{page?.ctaPrimary?.label ?? 'Book a Session'} &rarr;</button
+        >
+        <button class="btn btn-outline-white" onclick="openModal('refer')"
+          >{page?.ctaSecondary?.label ?? 'Refer a Facility'} &rarr;</button
+        >
+        <a href="/careers/" class="btn btn-outline-white">Join Our Team &rarr;</a>
+      </div>
+    </div>
+  </section>
 
   <script is:inline>
-    // Mobile menu toggle handlers are inline on the buttons; nothing else needed for a static legal page.
+    // ── BLOCK 2: Router accordion
+    function activateRouterCard(idx) {
+      const isMobile = window.innerWidth <= 768;
+      document.querySelectorAll('.r-card').forEach((c, i) => {
+        c.classList.remove('r-active', 'r-inactive');
+        c.classList.add(i === idx ? 'r-active' : 'r-inactive');
+        const wc = c.querySelector('.r-wide-content');
+        const wi = c.querySelector('.r-wide-image');
+        const nc = c.querySelector('.r-narrow-content');
+        if (isMobile) {
+          // On mobile: all cards show wide-content stacked
+          if (wc) wc.style.display = 'flex';
+          if (wi) wi.style.display = 'none';
+          if (nc) nc.style.display = 'none';
+          c.style.display = 'block';
+          c.style.flexDirection = '';
+        } else if (i === idx) {
+          if (wc) wc.style.display = 'flex';
+          if (wi) wi.style.display = 'block';
+          if (nc) nc.style.display = 'none';
+          c.style.display = 'flex';
+          c.style.flexDirection = 'row';
+        } else {
+          if (wc) wc.style.display = 'none';
+          if (wi) wi.style.display = 'none';
+          if (nc) nc.style.display = 'flex';
+          c.style.display = '';
+          c.style.flexDirection = '';
+        }
+      });
+    }
+    document.querySelectorAll('.r-card').forEach((c, i) => {
+      c.classList.add(i === 0 ? 'r-active' : 'r-inactive');
+    });
+    activateRouterCard(0);
+    window.addEventListener('resize', () =>
+      activateRouterCard(
+        [...document.querySelectorAll('.r-card')].findIndex((c) =>
+          c.classList.contains('r-active'),
+        ) || 0,
+      ),
+    );
+
+    // ── BLOCK 5: sticky scroll image cross-fade
+    const l349Imgs = document.querySelectorAll('[data-img]');
+    function updateConditionImage() {
+      const vh = window.innerHeight;
+      const l349 = document.getElementById('l349');
+      if (!l349) return;
+      const rect = l349.getBoundingClientRect();
+      const scrolledInto = -rect.top;
+      if (scrolledInto < 0) return;
+      const active = Math.min(Math.floor(scrolledInto / vh), l349Imgs.length - 1);
+      l349Imgs.forEach((img, i) => {
+        img.style.opacity = i === active ? '1' : '0';
+        img.classList.toggle('active', i === active);
+      });
+    }
+    l349Imgs.forEach((img, i) => {
+      img.style.transition = 'opacity 0.35s ease';
+      if (i > 0) img.style.opacity = '0';
+    });
+    window.addEventListener('scroll', updateConditionImage, { passive: true });
+    updateConditionImage();
+
+    // ── Scroll fade-up
+    const fadeObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            fadeObs.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+    );
+    document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
   </script>
   <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

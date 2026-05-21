@@ -1,9 +1,9 @@
 ---
 import { sanityClient } from 'sanity:client';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE_SETTINGS_QUERY, RESIDENT_REFERRAL_PAGE_QUERY } from '../lib/queries';
-import Breadcrumb from '../components/ui/Breadcrumb.astro';
-import { webPageSchema } from '../lib/schema';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_SETTINGS_QUERY, RESIDENT_REFERRAL_PAGE_QUERY } from '../../lib/queries';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { webPageSchema } from '../../lib/schema';
 
 interface SiteSettings {
   phone?: string;

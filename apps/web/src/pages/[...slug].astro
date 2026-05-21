@@ -1,0 +1,52 @@
+---
+import HomePage from '../components/pages/HomePage.astro';
+import AboutPage from '../components/pages/AboutPage.astro';
+import PatientsPage from '../components/pages/PatientsPage.astro';
+import CommunitiesPage from '../components/pages/CommunitiesPage.astro';
+import ProvidersPage from '../components/pages/ProvidersPage.astro';
+import CareersPage from '../components/pages/CareersPage.astro';
+import ContactPage from '../components/pages/ContactPage.astro';
+import PrivacyPage from '../components/pages/PrivacyPage.astro';
+import TermsPage from '../components/pages/TermsPage.astro';
+import ResidentReferralPage from '../components/pages/ResidentReferralPage.astro';
+import BlogIndexPage from '../components/pages/BlogIndexPage.astro';
+import { sanityClient } from 'sanity:client';
+
+export async function getStaticPaths() {
+  const SINGLETON_TYPES = [
+    { type: 'homePage', component: '' },
+    { type: 'aboutPage', component: 'about' },
+    { type: 'patientsPage', component: 'patients' },
+    { type: 'communitiesPage', component: 'communities' },
+    { type: 'providersPage', component: 'providers' },
+    { type: 'careersPage', component: 'careers' },
+    { type: 'contactPage', component: 'contact' },
+    { type: 'privacyPage', component: 'privacy' },
+    { type: 'termsPage', component: 'terms' },
+    { type: 'residentReferralPage', component: 'resident-referral' },
+    { type: 'blogIndexPage', component: 'blog' },
+  ];
+  const results = await Promise.all(
+    SINGLETON_TYPES.map(async ({ type, component }) => {
+      const doc = await sanityClient.fetch(`*[_type == "${type}"][0]{ slug }`);
+      const slug = doc?.slug ?? component;
+      return { params: { slug: slug || undefined }, props: { pageType: type } };
+    }),
+  );
+  return results;
+}
+
+const { pageType } = Astro.props;
+---
+
+{pageType === 'homePage' && <HomePage />}
+{pageType === 'aboutPage' && <AboutPage />}
+{pageType === 'patientsPage' && <PatientsPage />}
+{pageType === 'communitiesPage' && <CommunitiesPage />}
+{pageType === 'providersPage' && <ProvidersPage />}
+{pageType === 'careersPage' && <CareersPage />}
+{pageType === 'contactPage' && <ContactPage />}
+{pageType === 'privacyPage' && <PrivacyPage />}
+{pageType === 'termsPage' && <TermsPage />}
+{pageType === 'residentReferralPage' && <ResidentReferralPage />}
+{pageType === 'blogIndexPage' && <BlogIndexPage />}

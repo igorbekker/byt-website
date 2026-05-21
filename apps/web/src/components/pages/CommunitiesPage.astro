@@ -6,15 +6,15 @@
  */
 
 import { sanityClient } from 'sanity:client';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Breadcrumb from '../components/ui/Breadcrumb.astro';
-import SanityImage from '../components/ui/SanityImage.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import SanityImage from '../../components/ui/SanityImage.astro';
 import {
   COMMUNITIES_PAGE_QUERY,
   CONDITIONS_COMMUNITIES_QUERY,
   SITE_SETTINGS_QUERY,
-} from '../lib/queries';
-import { webPageSchema } from '../lib/schema';
+} from '../../lib/queries';
+import { webPageSchema } from '../../lib/schema';
 
 interface CtaLink {
   label: string;
