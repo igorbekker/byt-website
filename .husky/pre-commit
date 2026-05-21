@@ -1,2 +1,7 @@
 pnpm lint-staged
 bash scripts/design-parity-check.sh
+bash scripts/cms-parity-check.sh
+pnpm --filter web build
+bash scripts/seo-schema-check.sh
+bash scripts/a11y-check.sh
+bash scripts/perf-check.sh

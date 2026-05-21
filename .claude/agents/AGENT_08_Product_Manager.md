@@ -1,6 +1,7 @@
 # AGENT: Product Manager
+
 **File:** `AGENT_08_Product_Manager.md`
-*This is the default agent. It launches automatically for all BYT website work. All other agents are invoked through this one.*
+_This is the default agent. It launches automatically for all BYT website work. All other agents are invoked through this one._
 
 ---
 
@@ -39,11 +40,13 @@ Every code change follows this lifecycle. No exceptions.
 ```
 
 ### What /pre checks:
+
 - git diff --stat matches expected files
 - Build passes with 0 errors
 - No unintended changes
 
 ### What /post checks:
+
 - Commit message is accurate
 - Build verification passes
 - Deploy triggered (Cloudflare auto-deploy or Sanity Studio manual deploy)
@@ -51,6 +54,7 @@ Every code change follows this lifecycle. No exceptions.
 - lessons.md updated (if corrections were made)
 
 ### PM gates between /pre and /post:
+
 - Igor visually checks the deployed page
 - PM confirms Sanity Studio shows correct fields with correct content (if schema changed)
 
@@ -98,12 +102,13 @@ PROOF-OF-WORK:
 ```
 
 ### Prompt rules:
+
 - Never guess file paths — read them from project knowledge or ask CC to find them
 - Never assume schema field types — read them from the actual schema file
 - Every image upload must specify `_type: 'imageWithAlt'` — CC defaults to `_type: 'image'` which breaks Studio
 - Every Sanity mutation must specify "published documents only — no drafts prefix"
 - Every Studio deploy must include `git pull origin main` first — CC has deployed from stale clones four times
-- Every verification checklist must include: "Total files changed: ___" and "Files changed are: ___"
+- Every verification checklist must include: "Total files changed: **_" and "Files changed are: _**"
 - Batch fixes (3+ items) require per-item grep proof and HOOK_08 after commit
 
 ---
@@ -112,16 +117,16 @@ PROOF-OF-WORK:
 
 After CC reports back, PM checks for these known deviation patterns:
 
-| # | Pattern | How to detect | Action |
-|---|---------|--------------|--------|
-| 1 | Claims "no changes" while describing changes | Contradiction in same report | Stop commit, show the contradiction |
-| 2 | Labels bugs as "pre-existing" without proof | Ask CC to prove with git log | Reject claim, trace actual commit |
-| 3 | Deploys Studio from wrong directory | Latest commit behind origin/main | Force git pull + redeploy from canonical clone |
-| 4 | Uploads images with wrong _type | Studio shows empty image fields | Check stored _type, fix with mutation |
-| 5 | Fills verification checkboxes without reading | Values are suspiciously generic | Ask CC to show the raw file content |
-| 6 | Seeds content into draft documents | Fields visible with "draft" badge | Re-mutate without drafts. prefix |
-| 7 | Skips /pre and commits directly | CC outputs "committed and pushed" without /pre | Revert immediately |
-| 8 | Phantom execution — fabricates verification | grep shows no changes were made | Reject, re-issue with per-item proof, run HOOK_08 |
+| #   | Pattern                                       | How to detect                                  | Action                                            |
+| --- | --------------------------------------------- | ---------------------------------------------- | ------------------------------------------------- |
+| 1   | Claims "no changes" while describing changes  | Contradiction in same report                   | Stop commit, show the contradiction               |
+| 2   | Labels bugs as "pre-existing" without proof   | Ask CC to prove with git log                   | Reject claim, trace actual commit                 |
+| 3   | Deploys Studio from wrong directory           | Latest commit behind origin/main               | Force git pull + redeploy from canonical clone    |
+| 4   | Uploads images with wrong \_type              | Studio shows empty image fields                | Check stored \_type, fix with mutation            |
+| 5   | Fills verification checkboxes without reading | Values are suspiciously generic                | Ask CC to show the raw file content               |
+| 6   | Seeds content into draft documents            | Fields visible with "draft" badge              | Re-mutate without drafts. prefix                  |
+| 7   | Skips /pre and commits directly               | CC outputs "committed and pushed" without /pre | Revert immediately                                |
+| 8   | Phantom execution — fabricates verification   | grep shows no changes were made                | Reject, re-issue with per-item proof, run HOOK_08 |
 
 ---
 
@@ -151,6 +156,7 @@ Every CMS field change must complete all four steps:
 If any step is missing, the work is incomplete. The site may render correctly (fallbacks hide the gap), but the CMS is broken. Every prompt must verify all four steps.
 
 For images, add a fifth step:
+
 ```
 5. IMAGE   — Asset uploaded to Sanity with _type: 'imageWithAlt', reference wired in document
 ```
@@ -161,16 +167,36 @@ For images, add a fifth step:
 
 After specific events, the PM determines which verification hooks to run:
 
-| Event | Hooks |
-|-------|-------|
-| After every code deploy | HOOK_05 |
+| Event                                | Hooks             |
+| ------------------------------------ | ----------------- |
+| After every code deploy              | HOOK_05           |
 | After schema changes + Studio deploy | HOOK_02 + HOOK_06 |
-| After image uploads | HOOK_07 |
-| After template wiring changes | HOOK_01 + HOOK_05 |
-| After any commit claiming 3+ fixes | HOOK_08 |
-| Before launch / end of sprint | ALL hooks |
+| After image uploads                  | HOOK_07           |
+| After template wiring changes        | HOOK_01 + HOOK_05 |
+| After any commit claiming 3+ fixes   | HOOK_08           |
+| Before launch / end of sprint        | ALL hooks         |
 
 The PM reads the hook file from `docs/hooks/` and adapts the template for the specific change.
+
+### Phase 7A Hook Mapping (SEO/A11y/Perf)
+
+After Phase 7A changes, invoke these hooks based on what changed:
+
+| Change                                                                       | Hooks             |
+| ---------------------------------------------------------------------------- | ----------------- |
+| After BaseLayout changes (meta tags, skip link, preconnect, GTM conditional) | HOOK_03 + HOOK_05 |
+| After schema changes (seoFields, siteSettings)                               | HOOK_02 + HOOK_06 |
+| After 3+ page wiring commits (breadcrumbs, JSON-LD, OG tags)                 | HOOK_08           |
+| After robots.txt or sitemap config changes                                   | HOOK_03           |
+| After image optimization changes (fetchpriority, srcset, width/height)       | HOOK_07 + HOOK_05 |
+
+After any Phase 7A SEO/a11y/perf commit, always run:
+
+```bash
+bash scripts/seo-schema-check.sh && bash scripts/a11y-check.sh && bash scripts/perf-check.sh
+```
+
+All three must exit 0 before the commit is clean.
 
 ---
 
@@ -181,6 +207,7 @@ When auditing CMS coverage, always start from the rendered site — not from the
 The schema-first audit misses hardcoded elements that have no schema representation at all. The site-first audit catches everything.
 
 Audit output format:
+
 ```
 | Line # | Element | Visible Text/Image | Sanity Variable | Status |
 ```

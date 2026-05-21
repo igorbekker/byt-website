@@ -95,6 +95,32 @@ REQUIRED: One bug = one commit. Atomic fixes, clean git history.
 REQUIRED: Run full CLAUDE.md audit on every file touched before committing
 REQUIRED: After `replace_all` — immediately verify the constant declaration was not self-replaced
 REQUIRED: Run `scripts/design-parity-check.sh` before committing any page .astro file
+REQUIRED: Pre-commit hook runs 4 additional scripts automatically — all must pass before commit completes:
+
+- scripts/cms-parity-check.sh — queried fields exist in schemas
+- scripts/seo-schema-check.sh — 19 SEO/schema checks on dist/
+- scripts/a11y-check.sh — 10 accessibility checks on dist/
+- scripts/perf-check.sh — 9 performance checks on dist/
+
+### Image Standards (Every <img>)
+
+- Every content `<img>` MUST have: alt + width + height + loading + decoding
+- Hero (LCP) image: `loading="eager"` + `fetchpriority="high"` + `decoding="async"`
+- Below-fold images: `loading="lazy"` + `decoding="async"`
+- All Sanity CDN images: `srcset` with 400w/800w/1200w + `?fm=webp`
+- Nav/footer logo images: `alt` required; width+height optional (CSS-constrained)
+
+### Page Structure Standards (Every Non-Homepage Page)
+
+- Breadcrumbs REQUIRED: `<Breadcrumb />` component in every non-homepage page
+- JSON-LD REQUIRED: BreadcrumbList in every non-homepage page
+- Homepage additionally requires: MedicalOrganization + LocalBusiness + WebSite schema
+
+### GTM Conditional Pattern
+
+- Never hardcode the GTM container ID in templates
+- GTM must render conditionally: `{siteSettings?.gtmContainerId && <script ...>}`
+- When `gtmContainerId` is empty/null, no GTM script renders (prevents local dev noise)
 
 NEVER mark a task complete without proving it works
 NEVER fix data without fixing the code that wrote it
@@ -118,7 +144,7 @@ Every CMS field change must complete ALL steps. If any step is missing, the site
 2. QUERY — Field fetched in apps/web/src/lib/queries.ts
 3. TEMPLATE — Field wired in apps/web/src/pages/[page].astro with ?? fallback
 4. SEED — Field populated in published Sanity document with real content
-5. IMAGE — (if image field) Asset uploaded with _type: 'imageWithAlt', reference stored
+5. IMAGE — (if image field) Asset uploaded with \_type: 'imageWithAlt', reference stored
 
 After any CMS change, verify all steps are complete before committing.
 
@@ -160,9 +186,9 @@ After deploy: remind Igor to hard-refresh Studio (Cmd+Shift+R).
 
 ## REQUIRED: Content Seeding
 
-- Mutations target published documents ONLY — no "drafts." prefix on _id
+- Mutations target published documents ONLY — no "drafts." prefix on \_id
 - Use patch().set() — not setIfMissing()
-- Images use _type: 'imageWithAlt' (NOT 'image')
+- Images use \_type: 'imageWithAlt' (NOT 'image')
 - Fetch document after mutation — confirm values
 - Hard-refresh Studio — fields show content, not empty
 
@@ -197,6 +223,7 @@ Right: "For every visible element on the rendered page, does a Sanity field exis
 For batch fixes (3+ items): show grep output for EVERY item. No summary. Raw file content only.
 
 For any commit claiming N fixes, also show:
+
 - `git diff --stat` showing actual file changes
 - If lines changed = 0 and items claimed > 0, the report is fabricated
 
@@ -381,16 +408,16 @@ Never resolve a conflict between sources unilaterally. Log an obstacle and wait.
 
 Eight documented patterns. When you detect yourself doing any of these, stop and correct.
 
-| # | Pattern | Detection |
-|---|---------|-----------|
-| 1 | Claims "no changes" while describing changes | Contradiction between checkboxes and explanatory text |
-| 2 | Labels bugs as "pre-existing" without proof | Demand git log evidence |
-| 3 | Deploys Studio from wrong directory | Check pwd matches canonical clone |
-| 4 | Uploads images with wrong _type | Studio shows empty image wells |
-| 5 | Fills verification checkboxes without reading | Ask for raw file content at specific line |
-| 6 | Seeds content into draft documents | Check for "drafts." prefix on _id |
-| 7 | Skips /pre and commits directly | CC outputs "committed" without Igor typing /pre |
-| 8 | Phantom execution — fabricates entire reports | grep shows zero changes were made to any file |
+| #   | Pattern                                       | Detection                                             |
+| --- | --------------------------------------------- | ----------------------------------------------------- |
+| 1   | Claims "no changes" while describing changes  | Contradiction between checkboxes and explanatory text |
+| 2   | Labels bugs as "pre-existing" without proof   | Demand git log evidence                               |
+| 3   | Deploys Studio from wrong directory           | Check pwd matches canonical clone                     |
+| 4   | Uploads images with wrong \_type              | Studio shows empty image wells                        |
+| 5   | Fills verification checkboxes without reading | Ask for raw file content at specific line             |
+| 6   | Seeds content into draft documents            | Check for "drafts." prefix on \_id                    |
+| 7   | Skips /pre and commits directly               | CC outputs "committed" without Igor typing /pre       |
+| 8   | Phantom execution — fabricates entire reports | grep shows zero changes were made to any file         |
 
 Pattern 8 is the most severe. CC reported 15 fixes as complete with specific status markers. A re-audit showed zero changes were made. Defense: proof-of-work grep after every change.
 
@@ -400,22 +427,22 @@ Pattern 8 is the most severe. CC reported 15 fixes as complete with specific sta
 
 Hooks live in `docs/hooks/`. Each is a prompt template for a specific verification task.
 
-| Hook | Trigger | File |
-|------|---------|------|
-| HOOK_01 CMS Parity | After every deploy | docs/hooks/HOOK_01_CMS_Parity.md |
-| HOOK_02 Schema-Data | After schema changes | docs/hooks/HOOK_02_Schema_Data.md |
-| HOOK_03 SEO | After page changes | docs/hooks/HOOK_03_SEO.md |
-| HOOK_04 LLM/GEO | After content changes | docs/hooks/HOOK_04_LLM_GEO.md |
-| HOOK_05 Visual | After template changes | docs/hooks/HOOK_05_Visual.md |
-| HOOK_06 Studio Sync | After Studio deploy | docs/hooks/HOOK_06_Studio_Sync.md |
-| HOOK_07 Image | After image uploads | docs/hooks/HOOK_07_Image.md |
-| HOOK_08 Post-Fix | After any fix commit (3+ items) | docs/hooks/HOOK_08_Post_Fix.md |
+| Hook                | Trigger                         | File                              |
+| ------------------- | ------------------------------- | --------------------------------- |
+| HOOK_01 CMS Parity  | After every deploy              | docs/hooks/HOOK_01_CMS_Parity.md  |
+| HOOK_02 Schema-Data | After schema changes            | docs/hooks/HOOK_02_Schema_Data.md |
+| HOOK_03 SEO         | After page changes              | docs/hooks/HOOK_03_SEO.md         |
+| HOOK_04 LLM/GEO     | After content changes           | docs/hooks/HOOK_04_LLM_GEO.md     |
+| HOOK_05 Visual      | After template changes          | docs/hooks/HOOK_05_Visual.md      |
+| HOOK_06 Studio Sync | After Studio deploy             | docs/hooks/HOOK_06_Studio_Sync.md |
+| HOOK_07 Image       | After image uploads             | docs/hooks/HOOK_07_Image.md       |
+| HOOK_08 Post-Fix    | After any fix commit (3+ items) | docs/hooks/HOOK_08_Post_Fix.md    |
 
-| Event | Run these hooks |
-|-------|----------------|
-| After code deploy | HOOK_05 |
-| After schema + Studio deploy | HOOK_02 + HOOK_06 |
-| After image uploads | HOOK_07 |
-| After template wiring | HOOK_01 + HOOK_05 |
-| After commit claiming 3+ fixes | HOOK_08 |
-| Before launch / end of sprint | ALL |
+| Event                          | Run these hooks   |
+| ------------------------------ | ----------------- |
+| After code deploy              | HOOK_05           |
+| After schema + Studio deploy   | HOOK_02 + HOOK_06 |
+| After image uploads            | HOOK_07           |
+| After template wiring          | HOOK_01 + HOOK_05 |
+| After commit claiming 3+ fixes | HOOK_08           |
+| Before launch / end of sprint  | ALL               |

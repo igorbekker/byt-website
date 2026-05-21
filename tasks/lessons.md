@@ -327,6 +327,19 @@ When a task brief says "register in `sanity.config.ts` singletonTypes and single
 
 **How to apply:** For any step that says "register in X" or "follow pattern Y," read the named file before writing. If the actual file uses a different pattern, follow the actual file and note the discrepancy in pre-flight.
 
+### 30. Documentation without enforcement is decoration — every standard needs a script
+
+`cms-parity-check.sh` was referenced in governance documentation for months but never created. 15 CSS standards items were documented in external skill files but had zero coverage in the codebase or in any automated check. Standards that exist only in markdown are ignored in practice — they get bypassed under deadline pressure, forgotten in new sessions, or simply never read.
+
+**Why:** The lesson from Phase 7A: four governance documents (seo-schema-check, a11y-check, perf-check, cms-parity-check) were the artifact — the skill files and CLAUDE.md entries describing the same standards were just documentation of what those scripts enforce. Writing the docs without the scripts is backwards. Write the script first, then document it.
+
+**How to apply:**
+
+- Every standard in a skill file should have a corresponding automated check in a `scripts/` script
+- If a check can't be automated, add it to the pre-commit hook as a manual reminder comment
+- When reviewing governance docs: for each item, ask "what script enforces this?" If the answer is "nothing," either write the script or remove the item
+- `scripts/design-parity-check.sh` + `scripts/cms-parity-check.sh` + `scripts/seo-schema-check.sh` + `scripts/a11y-check.sh` + `scripts/perf-check.sh` are the enforcement layer; CLAUDE.md and skill files are the explanation layer
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

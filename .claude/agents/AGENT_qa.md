@@ -22,15 +22,28 @@ You are the QA specialist for the BYT website. You test, audit, validate, and re
 
 # What You Test
 
-## 0. Design-Source Parity — Automated (MANDATORY FIRST STEP)
+## 0. Automated Checks (MANDATORY FIRST STEP)
 
-Before any other test, run the automated parity check:
+Before any other test, run all automated scripts in order:
 
 ```bash
 bash scripts/design-parity-check.sh
+bash scripts/cms-parity-check.sh
+pnpm --filter web build
+bash scripts/seo-schema-check.sh
+bash scripts/a11y-check.sh
+bash scripts/perf-check.sh
 ```
 
-If it fails, stop and report. Do not proceed to manual checks until automated checks pass.
+If any script fails, stop and report. Do not proceed to manual checks until all automated checks pass.
+
+After scripts pass, also verify manually:
+
+- JSON-LD validates as valid JSON: `grep -o 'application/ld+json.*</script>' dist/<page>/index.html | sed 's/<[^>]*>//g' | python3 -m json.tool`
+- Microdata breadcrumbs render correctly on non-homepage pages
+- GTM conditional fires only when `siteSettings.gtmContainerId` is populated (check dist/ — `<script async src="...gtm.js?id=GTM-...">` should appear)
+- `sitemap-index.xml` lists all expected page URLs
+- Redirects defined in Studio resolve correctly (spot-check 3 via curl -I)
 
 ## 1. Design-Source Parity — Manual
 

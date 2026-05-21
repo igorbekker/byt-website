@@ -19,9 +19,79 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix blog subnav trail raw slug labels (subLabel helper, 4 display locations)
+- **Last work:** 2026-05-21 — Phase 7A Step 5: governance scripts, pre-commit hook, skill files, doc updates
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Step 5 — Governance scripts, pre-commit, skills, file updates [x] COMPLETE 2026-05-21
+
+- [x] SCRIPT 1 — scripts/cms-parity-check.sh: grep-based check that queried fields exist in schema files (29 checks, all pass)
+- [x] SCRIPT 2 — scripts/seo-schema-check.sh: 19 checks on dist/ (canonical, OG, Twitter, JSON-LD, theme-color, robots, skip-link, main-content, CSS patterns, breadcrumbs, sitemap)
+- [x] SCRIPT 3 — scripts/a11y-check.sh: 10 checks on dist/ (lang, viewport, img alt, img dims WARN, nav aria-label, sr-only, color-scheme, print, z-index tokens, safe-area)
+- [x] SCRIPT 4 — scripts/perf-check.sh: 9 checks on dist/ (fetchpriority, lazy, decoding, no @import, content-visibility, preconnect, no blocking scripts, overflow-wrap, font inherit)
+- [x] PRE-COMMIT — updated .husky/pre-commit to run all 7 scripts + build
+- [x] SKILL 1 — .claude/skills/SKILL_seo-schema-llm.md (MedicalOrganization, OG mapping, GTM conditional, robots CMS-driven, breadcrumbs, sitemap, deprecated plugins)
+- [x] SKILL 2 — .claude/skills/SKILL_accessibility-wcag.md (WCAG 2.2 AA, color contrast, ARIA tab, sr-only, focus-visible, skip link, safe-area)
+- [x] SKILL 3 — .claude/skills/SKILL_performance-cwv.md (CWV, SanityImage pattern, fonts via link, preconnect, content-visibility, font inherit)
+- [x] SKILL 4 — .claude/skills/SKILL_html-css-standards.md (Manrope/Montserrat, z-index tokens, color-scheme, print, overflow-wrap, tokens)
+- [x] UPDATE 1 — SKILL_quality-assurance.md: appended 226-item checklist as new section
+- [x] UPDATE 2 — AGENT_qa.md: added 4 new scripts + manual verification steps to step 0
+- [x] UPDATE 3 — AGENT_08_Product_Manager.md: added Phase 7A hook mapping table
+- [x] UPDATE 4 — CLAUDE.md: added 4 scripts to Quality Gates + image standards + page structure + GTM conditional
+- [x] UPDATE 5 — tasks/lessons.md: added Lesson 30 (documentation without enforcement is decoration)
+- [x] UPDATE 6 — docs/sanity-schema-registry.md: added gtmContainerId + robotsTxt rows to siteSettings; updated seoFields row to include robotsDirective + canonicalUrl note
+- [x] ALL 4 SCRIPTS EXIT 0 — verified on current dist/
+- [x] BUILD PASSES — dist/ confirmed current; all scripts run against it
+
+### Session Review — 2026-05-21 (Phase 7A Step 5 Governance)
+
+**What was built:** Full automated enforcement layer for the SEO/a11y/perf standards added in Phase 7A Steps 1–4. Four shell scripts, four skill files, six document updates, and an updated pre-commit hook.
+
+**Scripts:**
+
+- `scripts/cms-parity-check.sh` — was referenced in governance docs but had never been created. Grep-based; checks that every field named in GROQ queries exists as `name: 'fieldName'` in the corresponding schema .ts file. Also verifies all 8 page document types have query entries in queries.ts. 29 assertions, all pass.
+- `scripts/seo-schema-check.sh` — 19 checks on `apps/web/dist/`: all canonical/OG/Twitter/JSON-LD/robots/theme-color/skip-link/main-content patterns checked per page. CSS scanned for prefers-reduced-motion and focus-visible. Breadcrumbs verified on all non-homepage pages. sitemap-index.xml + robots.txt verified to exist.
+- `scripts/a11y-check.sh` — 10 checks: html[lang], no zoom restrictions, all img have alt, srcset img have width+height (WARN — 12 communities images missing, non-blocking until next sprint), nav aria-label, .sr-only defined, color-scheme, print stylesheet, z-index tokens (--z-base/--z-dropdown/--z-modal), safe-area env(). Fixed grep `--z-base` flag-collision bug during development.
+- `scripts/perf-check.sh` — 9 checks: fetchpriority=high, loading=lazy, decoding=async, no CSS @import fonts, content-visibility, preconnect cdn.sanity.io, no render-blocking external scripts, overflow-wrap, font:inherit.
+
+**Pre-commit hook order:** lint-staged → design-parity → cms-parity → build → seo-schema → a11y → perf.
+
+**Skill files:** 4 new BYT-specific reference files covering the patterns implemented in Phase 7A Steps 1–4.
+
+**Governance doc updates:** QA checklist expanded to 226 items (6 categories + 7 sub-domains). AGENT_qa.md updated to run all 7 scripts as step 0. AGENT_08_Product_Manager.md gets Phase 7A hook mapping. CLAUDE.md Quality Gates section gets script list + image/page/GTM standards.
+
+**Files changed:**
+
+- `scripts/cms-parity-check.sh` (new)
+- `scripts/seo-schema-check.sh` (new)
+- `scripts/a11y-check.sh` (new)
+- `scripts/perf-check.sh` (new)
+- `.husky/pre-commit` (updated — 5 new lines)
+- `.claude/skills/SKILL_seo-schema-llm.md` (new)
+- `.claude/skills/SKILL_accessibility-wcag.md` (new)
+- `.claude/skills/SKILL_performance-cwv.md` (new)
+- `.claude/skills/SKILL_html-css-standards.md` (new)
+- `.claude/skills/SKILL_quality-assurance.md` (appended 226-item checklist)
+- `.claude/agents/AGENT_qa.md` (updated step 0)
+- `.claude/agents/AGENT_08_Product_Manager.md` (added Phase 7A hook mapping)
+- `CLAUDE.md` (updated Quality Gates section)
+- `tasks/lessons.md` (added Lesson 30)
+- `docs/sanity-schema-registry.md` (added 2 siteSettings rows, updated seoFields row)
+- `tasks/todo.md` (this file)
+
+**Verification:**
+
+- `bash scripts/cms-parity-check.sh` → EXIT 0 (29/29) ✓
+- `bash scripts/seo-schema-check.sh` → EXIT 0 (19/19) ✓
+- `bash scripts/a11y-check.sh` → EXIT 0 (9 PASS, 1 WARN — communities images) ✓
+- `bash scripts/perf-check.sh` → EXIT 0 (9/9) ✓
+- `ls scripts/*.sh` → 7 scripts present ✓
+- `ls .claude/skills/` → 11 files (4 new) ✓
+- `cat .husky/pre-commit` → 7 commands ✓
+
+**Issues:** Check 04 (img width+height) is WARN not FAIL because communities.astro has 12 srcset images without explicit dimensions. Flagged for next sprint. No user corrections this session.
 
 ---
 
@@ -53,22 +123,27 @@
 
 ---
 
-### 4-item cleanup — 2026-05-21 [~] In Progress
+### 4-item cleanup — 2026-05-21 [x] COMPLETE 2026-05-21 15:14
 
 - [x] ITEM 1 — Fix Quick Status Summary line in tasks/todo.md (commit chore(tasks): fix Quick Status Summary line)
 - [x] ITEM 2 — Consolidate lessons.md: merge L13+L20, move L17 to #2, renumber all → 29 lessons
-- [ ] ITEM 3 — Run seed script scripts/seed-resident-referral-page.mjs; verify residentReferralPage in Sanity
-- [ ] ITEM 4 — Deploy Studio (git pull, clear cache, npx sanity deploy)
+- [x] ITEM 3 — Seeded residentReferralPage: `node scripts/seed-resident-referral-page.mjs` → operation: create; all 6 fields confirmed via `documents get`
+- [x] ITEM 4 — Studio deployed: git pull (already up to date), cache cleared, `npx sanity deploy` → https://byt-website.sanity.studio/
 
-### Session Review — 2026-05-21 (ITEM 1: Quick Status Summary fix)
+### Session Review — 2026-05-21 (4-item cleanup)
 
-**What was fixed:** Quick Status Summary line pointed to "Fix blog breadcrumbs to 4 levels" instead of the most recent completed task. residentReferralPage (COMPLETE 2026-05-21 14:58) was completed after the breadcrumb fix (14:43) — the line was stale.
+**What was done:**
 
-**Files changed:** `tasks/todo.md` — one-line text correction in Quick Status Summary.
+- ITEM 1: Quick Status Summary corrected to reflect most recent task (residentReferralPage, 14:58 > blog breadcrumb, 14:43). Commit `c0de89f`.
+- ITEM 2: lessons.md consolidated 30 → 29 lessons. Old L17 (/pre rule) moved to position 2 (most-violated). Old L13 + L20 merged into new L14 (verification evidence). All lessons renumbered sequentially. Commit `8d5c5bc`.
+- ITEM 3: `residentReferralPage` document did not exist in Sanity production. Seed script ran successfully (`operation: create`, transactionId `GeRtJZbCqtDRhXP8DyoXw7`). All 6 fields verified: pageTitle, metaDescription, heroHeading, heroDescription, hipaaNotice, sidebarInstructions.
+- ITEM 4: Studio deployed from canonical clone after `git pull`. Cache and dist cleared. Deployed to `https://byt-website.sanity.studio/`.
 
-**Verification:** `git diff tasks/todo.md` confirmed the line changed from blog breadcrumb description to residentReferralPage description. No code files touched.
+**Files changed:** `tasks/todo.md`, `tasks/lessons.md` (code commits). Sanity document created. Studio redeployed.
 
-**Issues:** None.
+**Verification:** Build post-commit → 19 routes, 0 errors ✓. `documents get residentReferralPage` returns all 6 fields ✓. Studio deploy reported success ✓.
+
+**Issues:** None. No user corrections this session.
 
 ---
 

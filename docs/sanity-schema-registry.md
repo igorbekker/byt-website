@@ -28,27 +28,29 @@ One document per type. Managed via Studio sidebar.
 
 Consuming pages: All (Nav, Footer, MobileCTABar, ModalForms). Query: `SITE_SETTINGS_QUERY`.
 
-| Field                  | Type      | Schema | GROQ | Template | Seeded | Notes            |
-| ---------------------- | --------- | ------ | ---- | -------- | ------ | ---------------- |
-| `businessName`         | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `phone`                | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `email`                | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `fax`                  | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `address.street`       | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `address.city`         | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `address.state`        | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `address.zip`          | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `bookingUrl`           | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `referralUrl`          | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `navCtaLabel`          | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `navCtaSecondaryLabel` | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `footerTagline`        | text      | ✅     | ✅   | ✅       | ✅     |                  |
-| `copyrightEntity`      | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `newsletterHeading`    | string    | ✅     | ✅   | ✅       | ✅     |                  |
-| `newsletterBody`       | text      | ✅     | ✅   | ✅       | ✅     |                  |
-| `newsletterEyebrow`    | string    | ✅     | ✅   | ✅       | ✅     | Added 2026-05-18 |
-| `newsletterDisclaimer` | text      | ✅     | ✅   | ✅       | ✅     | Added 2026-05-18 |
-| `seo`                  | seoFields | ✅     | ✅   | ✅       | ✅     |                  |
+| Field                  | Type      | Schema | GROQ | Template | Seeded | Notes                                                                               |
+| ---------------------- | --------- | ------ | ---- | -------- | ------ | ----------------------------------------------------------------------------------- |
+| `businessName`         | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `phone`                | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `email`                | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `fax`                  | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `address.street`       | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `address.city`         | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `address.state`        | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `address.zip`          | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `bookingUrl`           | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `referralUrl`          | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `navCtaLabel`          | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `navCtaSecondaryLabel` | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `footerTagline`        | text      | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `copyrightEntity`      | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `newsletterHeading`    | string    | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `newsletterBody`       | text      | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `newsletterEyebrow`    | string    | ✅     | ✅   | ✅       | ✅     | Added 2026-05-18                                                                    |
+| `newsletterDisclaimer` | text      | ✅     | ✅   | ✅       | ✅     | Added 2026-05-18                                                                    |
+| `seo`                  | seoFields | ✅     | ✅   | ✅       | ✅     |                                                                                     |
+| `gtmContainerId`       | string    | ✅     | ✅   | ✅       | ✅     | Added Phase 7A; drives GTM conditional — never hardcode the container ID            |
+| `robotsTxt`            | string    | ✅     | ✅   | ✅       | ✅     | Added Phase 7A; served by `pages/robots.txt.ts`; default "User-agent: \*\nAllow: /" |
 
 ---
 
@@ -493,14 +495,14 @@ Live documents: **52** across 10 groups. Query: `FORM_OPTIONS_QUERY`. Added 2026
 
 Embedded types — not standalone documents. No GROQ/Template/Seeded columns (resolved via parent).
 
-| Schema         | File                      | Fields                                                    | Used In                                                 |
-| -------------- | ------------------------- | --------------------------------------------------------- | ------------------------------------------------------- |
-| `imageWithAlt` | `objects/imageWithAlt.ts` | asset (image), alt (string, required)                     | Multiple singletons and documents                       |
-| `ctaLink`      | `objects/ctaLink.ts`      | label, href (both required), variant (controlled)         | Multiple page singletons                                |
-| `seoFields`    | `objects/seoFields.ts`    | metaTitle, metaDescription, ogImage                       | All page singletons                                     |
-| `audienceCard` | `objects/audienceCard.ts` | tagline, heading, bodyCollapsed, bodyExpanded, image, cta | `homePage.routerCards`                                  |
-| `serviceTrack` | `objects/serviceTrack.ts` | label, heading, body, cta, image                          | `homePage.twoWaysTracks`, `patientsPage.deliveryTracks` |
-| `processStep`  | `objects/processStep.ts`  | stepNumber, heading, body, image (added 2026-05-18)       | `homePage` step arrays, `communitiesPage.processSteps`  |
+| Schema         | File                      | Fields                                                                                                        | Used In                                                 |
+| -------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `imageWithAlt` | `objects/imageWithAlt.ts` | asset (image), alt (string, required)                                                                         | Multiple singletons and documents                       |
+| `ctaLink`      | `objects/ctaLink.ts`      | label, href (both required), variant (controlled)                                                             | Multiple page singletons                                |
+| `seoFields`    | `objects/seoFields.ts`    | metaTitle, metaDescription, ogImage, robotsDirective — **not** canonicalUrl (computed from URL at build time) | All page singletons                                     |
+| `audienceCard` | `objects/audienceCard.ts` | tagline, heading, bodyCollapsed, bodyExpanded, image, cta                                                     | `homePage.routerCards`                                  |
+| `serviceTrack` | `objects/serviceTrack.ts` | label, heading, body, cta, image                                                                              | `homePage.twoWaysTracks`, `patientsPage.deliveryTracks` |
+| `processStep`  | `objects/processStep.ts`  | stepNumber, heading, body, image (added 2026-05-18)                                                           | `homePage` step arrays, `communitiesPage.processSteps`  |
 
 ---
 
