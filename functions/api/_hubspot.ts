@@ -137,7 +137,7 @@ export async function uploadFileToHubSpot(
   fileName: string,
   folderPath: string,
   apiKey: string,
-): Promise<string> {
+): Promise<{ url: string; id: string }> {
   const match = base64DataUrl.match(/^data:([^;]+);base64,(.+)$/s);
   if (!match) throw new Error('Invalid base64 data URL');
   const binary = Uint8Array.from(atob(match[2]), (c) => c.charCodeAt(0));
@@ -152,8 +152,46 @@ export async function uploadFileToHubSpot(
     body: formData,
   });
   if (!res.ok) throw new Error(`File upload failed (${res.status}): ${await res.text()}`);
-  const data = (await res.json()) as { url?: string; objects?: Array<{ url: string }> }; // safe: HubSpot Files API returns url or objects[0].url
+  const data = (await res.json()) as {
+    id?: string;
+    url?: string;
+    objects?: Array<{ id: string; url: string }>;
+  }; // safe: HubSpot Files API returns url/id or objects[0]
   const url = data.url ?? data.objects?.[0]?.url;
+  const id = data.id ?? data.objects?.[0]?.id;
   if (!url) throw new Error('No URL in file upload response');
-  return url;
+  if (!id) throw new Error('No ID in file upload response');
+  return { url, id };
+}
+
+export async function createNote(
+  fileIds: string,
+  noteBody: string,
+  contactId: string,
+  apiKey: string,
+): Promise<string> {
+  const url = `${HUBSPOT_BASE}/crm/v3/objects/notes`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: hubspotHeaders(apiKey),
+    body: JSON.stringify({
+      properties: {
+        hs_timestamp: new Date().toISOString(),
+        hs_note_body: noteBody,
+        hs_attachment_ids: fileIds,
+      },
+      associations: [
+        {
+          to: { id: contactId },
+          types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }],
+        },
+      ],
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Note create failed (${res.status}): ${err}`);
+  }
+  const data = (await res.json()) as { id: string }; // safe: HubSpot create returns { id }
+  return data.id;
 }

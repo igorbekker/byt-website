@@ -1,4 +1,4 @@
-import { uploadFileToHubSpot } from './_hubspot';
+import { uploadFileToHubSpot, createNote } from './_hubspot';
 
 interface Env {
   HUBSPOT_SERVICE_KEY?: string;
@@ -395,12 +395,32 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
 
   // Step 6 — document uploads (non-fatal)
   const uploadedUrls: string[] = [];
+  const uploadedIds: string[] = [];
+  const uploadedNames: string[] = [];
   const uploadErrors: string[] = [];
   for (const doc of documents ?? []) {
     try {
-      uploadedUrls.push(await uploadFileToHubSpot(doc.file, doc.name, '/referral-documents', key));
+      const { url, id } = await uploadFileToHubSpot(doc.file, doc.name, '/referral-documents', key);
+      uploadedUrls.push(url);
+      uploadedIds.push(id);
+      uploadedNames.push(doc.name);
     } catch (err) {
       uploadErrors.push(String(err));
+    }
+  }
+
+  let referralNoteId: string | undefined;
+  if (uploadedIds.length > 0) {
+    try {
+      referralNoteId = await createNote(
+        uploadedIds.join(';'),
+        `Referral documents uploaded via website: ${uploadedNames.join(', ')}`,
+        referrerContactId,
+        key,
+      );
+      console.log('[referral] note created:', referralNoteId);
+    } catch (err) {
+      uploadErrors.push(`Note create failed: ${String(err)}`);
     }
   }
 
@@ -412,6 +432,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       patientContactId,
       guardianContactId,
       uploadedUrls,
+      referralNoteId,
       uploadErrors,
     },
     200,

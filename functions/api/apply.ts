@@ -6,6 +6,7 @@ import {
   createContact,
   updateContact,
   uploadFileToHubSpot,
+  createNote,
 } from './_hubspot';
 
 interface ApplyBody {
@@ -64,15 +65,29 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   // Step 2 — file upload (non-fatal: contact creation already succeeded)
   let fileUploaded = false;
   let fileUrl: string | undefined;
+  let noteId: string | undefined;
   let fileError: string | undefined;
   console.log('[apply] resumeFile present:', !!resumeFile, '| resumeFileName:', resumeFileName);
   if (resumeFile && resumeFileName) {
     try {
       console.log('[apply] calling uploadFileToHubSpot for:', resumeFileName);
-      fileUrl = await uploadFileToHubSpot(resumeFile, resumeFileName, '/resumes', key);
-      console.log('[apply] upload succeeded, url:', fileUrl);
+      const { url, id: fileId } = await uploadFileToHubSpot(
+        resumeFile,
+        resumeFileName,
+        '/resumes',
+        key,
+      );
+      fileUrl = url;
+      console.log('[apply] upload succeeded, url:', fileUrl, 'id:', fileId);
       await updateContact(contactId, { therapist_resume: fileUrl }, key);
       console.log('[apply] therapist_resume set on contact', contactId);
+      noteId = await createNote(
+        fileId,
+        `Resume uploaded via website: ${resumeFileName}`,
+        contactId,
+        key,
+      );
+      console.log('[apply] note created:', noteId);
       fileUploaded = true;
     } catch (err) {
       fileError = String(err);
@@ -80,7 +95,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     }
   }
 
-  return jsonResponse({ success: true, contactId, fileUploaded, fileUrl, fileError }, 200);
+  return jsonResponse({ success: true, contactId, fileUploaded, fileUrl, noteId, fileError }, 200);
 };
 
 export const onRequestOptions = async (): Promise<Response> => {
