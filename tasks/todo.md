@@ -19,9 +19,42 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A Step 5: governance scripts, pre-commit hook, skill files, doc updates
+- **Last work:** 2026-05-21 — Remove 3 redundant breadcrumb trails from blog post template
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Remove redundant breadcrumb trails from blog post template [x] COMPLETE 2026-05-21 15:48
+
+- [x] Remove `subnav-trail` div (Blog / Category / Subcategory / Post Title secondary breadcrumb) from `[slug].astro`
+- [x] Simplify eyebrow to category-only — remove subcategory pipe + link
+- [x] Remove `article-image-crumbs` div (bottom-of-article Blog / Category / Subcategory / Post trail)
+- [x] `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] Verified dist: BreadcrumbList=1 ✓, secondary trails removed ✓, eyebrow=category only ✓, Back link present ✓
+
+### Session Review — 2026-05-21 (Remove redundant breadcrumb trails)
+
+**What was removed:** Three redundant navigation trails that duplicated the primary `<Breadcrumb>` component on blog post pages.
+
+1. `.subnav-trail` div (lines 1872–1895 pre-edit) — a secondary "Blog / Category / Subcategory / Post Title" trail rendered just below the "Back to…" link in the subnav bar.
+2. `.eyebrow` subcategory portion — removed the `· Subcategory` pipe+link from the article-hero eyebrow, leaving only the category name (e.g. "Couples").
+3. `.article-image-crumbs` div (lines 1942–1966 pre-edit) — an identical "Blog / Category / Subcategory / Post Title" trail rendered above the featured image.
+
+**What was kept:** Primary `<Breadcrumb>` component (Home > Blog > Category > Post), "Back to Relationship Health" link, article content, H1, author info, date.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/[slug].astro` — 3 targeted edits; no CSS, no JS, no other HTML changed
+
+**Verification (dist/blog/toxic-relationship-signs/index.html):**
+
+- `grep -c "BreadcrumbList"` → 1 ✓
+- `grep -c "Blog</a>"` → 0 (Breadcrumb component uses `<span itemprop="name">Blog</span>`, not `Blog</a>`; secondary trails confirmed absent) ✓
+- eyebrow in raw HTML → `<div class="eyebrow"><a href="/blog/couples/">Couples</a></div>` ✓
+- `grep -o "Back to [^<]*"` → `Back to Relationship Health` ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

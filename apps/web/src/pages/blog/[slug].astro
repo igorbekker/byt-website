@@ -1869,30 +1869,6 @@ const articleJsonLd = blogPostingSchema({
         >
         Back to {subLabel || post?.category?.title || 'Blog'}
       </a>
-      <div class="subnav-trail">
-        <a href="/blog/">Blog</a><span class="sep">/</span>
-        {
-          categorySlug && (
-            <>
-              <>
-                <a href={`/blog/${categorySlug}/`}>{post?.category?.title}</a>
-                <span class="sep">/</span>
-              </>
-            </>
-          )
-        }
-        {
-          subSlug && (
-            <>
-              <>
-                <a href={`/blog/${categorySlug}/${subSlug}/`}>{subLabel}</a>
-                <span class="sep">/</span>
-              </>
-            </>
-          )
-        }
-        <strong>{post?.title ?? slug}</strong>
-      </div>
     </div>
   </div>
 
@@ -1900,16 +1876,6 @@ const articleJsonLd = blogPostingSchema({
     <div class="article-hero-inner">
       <div class="eyebrow">
         {categorySlug && <a href={`/blog/${categorySlug}/`}>{post?.category?.title}</a>}
-        {
-          subSlug && (
-            <>
-              <>
-                <span class="pipe">&middot;</span>
-                <a href={`/blog/${categorySlug}/${subSlug}/`}>{subLabel}</a>
-              </>
-            </>
-          )
-        }
       </div>
       <h1 id="article-heading" set:html={post?.title ?? ''} />
       <p class="article-hero-deck">{post?.excerpt ?? ''}</p>
@@ -1939,31 +1905,6 @@ const articleJsonLd = blogPostingSchema({
   </section>
 
   <section class="article-image">
-    <div class="article-image-crumbs">
-      <a href="/blog/">Blog</a>
-      <span class="sep">/</span>
-      {
-        categorySlug && (
-          <>
-            <>
-              <a href={`/blog/${categorySlug}/`}>{post?.category?.title}</a>
-              <span class="sep">/</span>
-            </>
-          </>
-        )
-      }
-      {
-        subSlug && (
-          <>
-            <>
-              <a href={`/blog/${categorySlug}/${subSlug}/`}>{subLabel}</a>
-              <span class="sep">/</span>
-            </>
-          </>
-        )
-      }
-      <strong>{post?.title ?? slug}</strong>
-    </div>
     {
       post?.featuredImage?.asset?.url ? (
         <SanityImage
