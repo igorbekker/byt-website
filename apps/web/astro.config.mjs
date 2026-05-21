@@ -10,6 +10,34 @@ const SANITY_DATASET = 'production';
 const GONE_DESTINATION = '/dev/null';
 const REDIRECTS_HEADER = '# Cloudflare _redirects — generated at build time from Sanity\n';
 
+async function buildRedirectLines(client) {
+  const [redirects, pages] = await Promise.all([
+    client.fetch(
+      `*[_type == "redirect" && isActive == true]{ sourcePath, destinationPath, statusCode }`,
+    ),
+    client.fetch(
+      `*[defined(oldSlugs) && length(oldSlugs) > 0]{ slug, oldSlugs }`,
+    ),
+  ]);
+
+  const lineMap = new Map();
+
+  for (const page of pages) {
+    const dest = page.slug === '' ? '/' : `/${page.slug}`;
+    for (const oldSlug of page.oldSlugs) {
+      const src = `/${oldSlug}`;
+      lineMap.set(src, `${src} ${dest} 301`);
+    }
+  }
+
+  for (const r of redirects) {
+    const dest = r.statusCode === 410 ? GONE_DESTINATION : r.destinationPath;
+    lineMap.set(r.sourcePath, `${r.sourcePath} ${dest} ${r.statusCode}`);
+  }
+
+  return [...lineMap.values()].sort();
+}
+
 function redirectsIntegration() {
   return {
     name: 'byt-redirects',
@@ -21,13 +49,7 @@ function redirectsIntegration() {
           apiVersion: '2024-01-01',
           useCdn: true,
         });
-        const redirects = await client.fetch(
-          `*[_type == "redirect" && isActive == true]{ sourcePath, destinationPath, statusCode } | order(sourcePath asc)`,
-        );
-        const lines = redirects.map((r) => {
-          const dest = r.statusCode === 410 ? GONE_DESTINATION : r.destinationPath;
-          return `${r.sourcePath} ${dest} ${r.statusCode}`;
-        });
+        const lines = await buildRedirectLines(client);
         const body = REDIRECTS_HEADER + (lines.length > 0 ? lines.join('\n') + '\n' : '');
         const outPath = join(new URL(dir).pathname, '_redirects');
         writeFileSync(outPath, body, 'utf-8');

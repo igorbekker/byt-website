@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — preserveOldSlug document action
+- **Last work:** 2026-05-21 — oldSlugs → \_redirects build integration
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1136,3 +1136,36 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - Build: `pnpm --filter web build` → 19 pages, 7.73s, Complete ✓
 
 **Issues:** None.
+
+---
+
+### Add oldSlugs → \_redirects build integration [x] COMPLETE 2026-05-21
+
+- [x] PRE-FLIGHT — confirmed canonical middleware is a static stub; redirect logic lives in astro.config.mjs as redirectsIntegration()
+- [x] Extracted `buildRedirectLines(client)` helper; added second GROQ query `*[defined(oldSlugs) && length(oldSlugs) > 0]{ slug, oldSlugs }`
+- [x] Both queries run in parallel via Promise.all; oldSlugs entries populate Map first (lower priority); manual redirect documents override on collision
+- [x] Homepage special case: `slug === ''` → destination `/`
+- [x] `pnpm --filter web build` → 19 pages, 0 errors, 30 redirect(s) written ✓
+
+### Session Review — 2026-05-21 (oldSlugs redirect integration)
+
+**What was built:** Extended `redirectsIntegration()` in `astro.config.mjs` to also query `oldSlugs` from all page singletons. The build integration now runs two GROQ queries in parallel, merges results into a Map (manual redirect documents override `oldSlugs` on collision), and writes both sources into the Cloudflare `_redirects` file at build time.
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — extracted `buildRedirectLines(client)` helper; added second GROQ query; builds Map with oldSlugs first then manual redirects override; `redirectsIntegration()` simplified to call the helper
+
+**Redirect logic:**
+
+- Each oldSlug entry: `/<oldSlug> /<currentSlug> 301`
+- Homepage special case: if `slug === ''`, destination is `/`
+- Manual redirect documents override oldSlugs for the same sourcePath
+
+**Verification:**
+
+- `grep -n "oldSlugs" apps/web/astro.config.mjs` → lines 19, 27 ✓
+- `grep -n "defined(oldSlugs)" apps/web/astro.config.mjs` → line 19 ✓
+- `pnpm --filter web build` → 19 pages, 0 errors, 30 redirect(s) written ✓
+- All 30 current entries from manual redirect documents (no oldSlugs stored yet — expected, feature just shipped) ✓
+
+**Issues:** None. No user corrections this session.
