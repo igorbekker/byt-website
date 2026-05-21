@@ -92,6 +92,7 @@ function fmtDate(iso: string | undefined): string {
 
 const categorySlug = post.category?.slug?.current ?? '';
 const subSlug = post.subcategoryLabel ?? '';
+const subLabel = subSlug ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '';
 const pageTitle = post.seo?.metaTitle ?? post.title ?? 'Article';
 const pageDesc = post.seo?.metaDescription ?? post.excerpt ?? '';
 
@@ -1866,7 +1867,7 @@ const articleJsonLd = blogPostingSchema({
           stroke-linecap="round"
           stroke-linejoin="round"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg
         >
-        Back to {post?.subcategoryLabel ?? post?.category?.title ?? 'Blog'}
+        Back to {subLabel || post?.category?.title || 'Blog'}
       </a>
       <div class="subnav-trail">
         <a href="/blog/">Blog</a><span class="sep">/</span>
@@ -1884,7 +1885,7 @@ const articleJsonLd = blogPostingSchema({
           subSlug && (
             <>
               <>
-                <a href={`/blog/${categorySlug}/${subSlug}/`}>{subSlug}</a>
+                <a href={`/blog/${categorySlug}/${subSlug}/`}>{subLabel}</a>
                 <span class="sep">/</span>
               </>
             </>
@@ -1904,7 +1905,7 @@ const articleJsonLd = blogPostingSchema({
             <>
               <>
                 <span class="pipe">&middot;</span>
-                <a href={`/blog/${categorySlug}/${subSlug}/`}>{subSlug}</a>
+                <a href={`/blog/${categorySlug}/${subSlug}/`}>{subLabel}</a>
               </>
             </>
           )
@@ -1955,7 +1956,7 @@ const articleJsonLd = blogPostingSchema({
         subSlug && (
           <>
             <>
-              <a href={`/blog/${categorySlug}/${subSlug}/`}>{subSlug}</a>
+              <a href={`/blog/${categorySlug}/${subSlug}/`}>{subLabel}</a>
               <span class="sep">/</span>
             </>
           </>
