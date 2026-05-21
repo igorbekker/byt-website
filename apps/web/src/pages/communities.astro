@@ -7,6 +7,8 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import SanityImage from '../components/ui/SanityImage.astro';
 import {
   COMMUNITIES_PAGE_QUERY,
   CONDITIONS_COMMUNITIES_QUERY,
@@ -1662,13 +1664,17 @@ const [page, conditionsData, siteSettings] = await Promise.all([
     }
   </style>
 
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Communities' }]} />
+
   <!-- ══════════════════════ Header84 ══════════════════════ -->
-  <section id="relume" class="h84">
+  <section id="relume" class="h84" aria-labelledby="hero-heading">
     <div class="container">
       <div class="h84-grid">
         <div class="h84-text">
           <span class="h84-eyebrow">For Wellness Directors</span>
-          <h1>{page?.heroHeading ?? 'Every resident deserves mental health support'}</h1>
+          <h1 id="hero-heading">
+            {page?.heroHeading ?? 'Every resident deserves mental health support'}
+          </h1>
           <p class="lede">
             {
               page?.heroSubhead ??
@@ -1682,11 +1688,11 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
         <div class="h84-image">
-          <img
+          <SanityImage
             src={page?.heroImage?.asset?.url ?? '/images/communities/communities-hero.png'}
             alt={page?.heroImage?.alt ??
               'Wellness Director and therapist walking together in an assisted living facility hallway'}
-            loading="eager"
+            fetchpriority="high"
           />
         </div>
       </div>
@@ -1694,10 +1700,12 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   </section>
 
   <!-- ══════════════════════ Layout521 ══════════════════════ -->
-  <section id="l521-section" class="section">
+  <section id="l521-section" class="section" aria-labelledby="process-heading">
     <div class="container">
       <div class="l521-head">
-        <h2>{page?.processHeading ?? 'How the in-facility therapy program works'}</h2>
+        <h2 id="process-heading">
+          {page?.processHeading ?? 'How the in-facility therapy program works'}
+        </h2>
         <p class="text-md">{page?.processSubhead ?? 'Simple steps from referral to care.'}</p>
       </div>
 
@@ -1705,15 +1713,19 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <!-- Step 1 -->
         <article class="l521-card">
           <div class="l521-card-img">
-            <img
-              src="/images/communities/communities-handoff.png"
-              alt="Professional document handoff between facility administrator and visiting therapist"
+            <SanityImage
+              src={page?.processSteps?.[0]?.image?.asset?.url ??
+                '/images/communities/communities-handoff.png'}
+              alt={page?.processSteps?.[0]?.image?.alt ??
+                'Professional document handoff between facility administrator and visiting therapist'}
             />
           </div>
           <div class="l521-step"><span class="num">1</span> Step</div>
           <div class="l521-card-content">
             <div class="l521-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1735,15 +1747,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <!-- Step 2 -->
         <article class="l521-card">
           <div class="l521-card-img">
-            <img
-              src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=80"
-              alt="Therapist credentialing paperwork"
+            <SanityImage
+              src={page?.processSteps?.[1]?.image?.asset?.url ??
+                'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=80'}
+              alt={page?.processSteps?.[1]?.image?.alt ?? 'Therapist credentialing paperwork'}
             />
           </div>
           <div class="l521-step"><span class="num">2</span> Step</div>
           <div class="l521-card-content">
             <div class="l521-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1767,15 +1782,19 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <!-- Step 3 -->
         <article class="l521-card">
           <div class="l521-card-img">
-            <img
-              src="https://images.unsplash.com/photo-1568377210220-151e1d7f42c7?auto=format&fit=crop&w=900&q=80"
-              alt="Therapist arriving at senior living community"
+            <SanityImage
+              src={page?.processSteps?.[2]?.image?.asset?.url ??
+                'https://images.unsplash.com/photo-1568377210220-151e1d7f42c7?auto=format&fit=crop&w=900&q=80'}
+              alt={page?.processSteps?.[2]?.image?.alt ??
+                'Therapist arriving at senior living community'}
             />
           </div>
           <div class="l521-step"><span class="num">3</span> Step</div>
           <div class="l521-card-content">
             <div class="l521-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1793,15 +1812,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <!-- Step 4 -->
         <article class="l521-card">
           <div class="l521-card-img">
-            <img
-              src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80"
-              alt="Medical billing documentation"
+            <SanityImage
+              src={page?.processSteps?.[3]?.image?.asset?.url ??
+                'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80'}
+              alt={page?.processSteps?.[3]?.image?.alt ?? 'Medical billing documentation'}
             />
           </div>
           <div class="l521-step"><span class="num">4</span> Step</div>
           <div class="l521-card-content">
             <div class="l521-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1828,11 +1850,13 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   </section>
 
   <!-- ══════════════════════ Layout16 ══════════════════════ -->
-  <section class="section l16">
+  <section class="section l16" aria-labelledby="why-heading">
     <div class="container">
       <div class="l16-grid">
         <div>
-          <h2>{page?.handlesHeading ?? "We handle everything your staff shouldn't"}</h2>
+          <h2 id="why-heading">
+            {page?.handlesHeading ?? "We handle everything your staff shouldn't"}
+          </h2>
           <p class="lede text-md">
             {
               page?.handlesSubhead ??
@@ -1843,6 +1867,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             <li>
               <span class="l16-check"
                 ><svg
+                  aria-hidden="true"
+                  focusable="false"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1856,6 +1882,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             <li>
               <span class="l16-check"
                 ><svg
+                  aria-hidden="true"
+                  focusable="false"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1872,6 +1900,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             <li>
               <span class="l16-check"
                 ><svg
+                  aria-hidden="true"
+                  focusable="false"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1885,6 +1915,8 @@ const [page, conditionsData, siteSettings] = await Promise.all([
             <li>
               <span class="l16-check"
                 ><svg
+                  aria-hidden="true"
+                  focusable="false"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1901,9 +1933,11 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </ul>
         </div>
         <div class="l16-image">
-          <img
-            src="/images/communities/communities-therapist-resident.png"
-            alt="Therapist sitting with elderly resident in their own room at an assisted living facility"
+          <SanityImage
+            src={page?.handlesImage?.asset?.url ??
+              '/images/communities/communities-therapist-resident.png'}
+            alt={page?.handlesImage?.alt ??
+              'Therapist sitting with elderly resident in their own room at an assisted living facility'}
           />
         </div>
       </div>
@@ -1911,10 +1945,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   </section>
 
   <!-- ══════════════════════ Layout526 ══════════════════════ -->
-  <section id="l526-section" class="section">
+  <section id="l526-section" class="section" aria-labelledby="nocost-heading">
     <div class="container">
       <div class="l526-head">
-        <h2>No cost to your facility</h2>
+        <h2 id="nocost-heading">No cost to your facility</h2>
         <p class="text-md">We bill Medicare and private insurance directly.</p>
       </div>
 
@@ -1923,9 +1957,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <div class="l526-col">
           <article class="l526-card large">
             <div class="l526-card-img">
-              <img
-                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1100&q=80"
-                alt="Therapist with senior resident"
+              <SanityImage
+                src={page?.noCostCards?.[0]?.image?.asset?.url ??
+                  'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1100&q=80'}
+                alt={page?.noCostCards?.[0]?.image?.alt ?? 'Therapist with senior resident'}
               />
             </div>
             <span class="l526-tag">Sessions</span>
@@ -1934,13 +1969,16 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </article>
           <article class="l526-card">
             <div class="l526-card-img">
-              <img
-                src="https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&w=1100&q=80"
-                alt="Secure EHR documentation"
+              <SanityImage
+                src={page?.noCostCards?.[1]?.image?.asset?.url ??
+                  'https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&w=1100&q=80'}
+                alt={page?.noCostCards?.[1]?.image?.alt ?? 'Secure EHR documentation'}
               />
             </div>
             <div class="l526-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1960,13 +1998,16 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <div class="l526-col">
           <article class="l526-card">
             <div class="l526-card-img">
-              <img
-                src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1100&q=80"
-                alt="Insurance billing paperwork"
+              <SanityImage
+                src={page?.noCostCards?.[2]?.image?.asset?.url ??
+                  'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1100&q=80'}
+                alt={page?.noCostCards?.[2]?.image?.alt ?? 'Insurance billing paperwork'}
               />
             </div>
             <div class="l526-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -1985,9 +2026,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </article>
           <article class="l526-card large">
             <div class="l526-card-img">
-              <img
-                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1100&q=80"
-                alt="Care team coordinating"
+              <SanityImage
+                src={page?.noCostCards?.[3]?.image?.asset?.url ??
+                  'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1100&q=80'}
+                alt={page?.noCostCards?.[3]?.image?.alt ?? 'Care team coordinating'}
               />
             </div>
             <span class="l526-tag">Coordination</span>
@@ -2000,9 +2042,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         <div class="l526-col">
           <article class="l526-card large">
             <div class="l526-card-img">
-              <img
-                src="https://images.unsplash.com/photo-1573497019418-b400bb3ab074?auto=format&fit=crop&w=1100&q=80"
-                alt="Staff in-service training session"
+              <SanityImage
+                src={page?.noCostCards?.[4]?.image?.asset?.url ??
+                  'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?auto=format&fit=crop&w=1100&q=80'}
+                alt={page?.noCostCards?.[4]?.image?.alt ?? 'Staff in-service training session'}
               />
             </div>
             <span class="l526-tag">Education</span>
@@ -2011,13 +2054,16 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </article>
           <article class="l526-card">
             <div class="l526-card-img">
-              <img
-                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1100&q=80"
-                alt="Senior resident smiling"
+              <SanityImage
+                src={page?.noCostCards?.[5]?.image?.asset?.url ??
+                  'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1100&q=80'}
+                alt={page?.noCostCards?.[5]?.image?.alt ?? 'Senior resident smiling'}
               />
             </div>
             <div class="l526-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -2038,11 +2084,13 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   </section>
 
   <!-- ══════════════════════ Layout505 — Conditions We Treat ══════════════════════ -->
-  <section id="l505-section" class="section">
+  <section id="l505-section" class="section" aria-labelledby="conditions-heading">
     <div class="container">
       <div class="l505-head">
         <p class="eyebrow">{page?.conditionsEyebrow ?? 'Conditions we treat'}</p>
-        <h2>{page?.conditionsHeading ?? 'Clinical care for the realities of aging'}</h2>
+        <h2 id="conditions-heading">
+          {page?.conditionsHeading ?? 'Clinical care for the realities of aging'}
+        </h2>
         <p class="text-md">
           {
             page?.conditionsSubhead ??
@@ -2052,46 +2100,121 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       </div>
 
       <div class="l505-tabs" id="l505">
-        <div class="l505-list" role="tablist">
-          <button class="l505-trigger active" data-tab="l505-tab-1"
-            >{conditionsData?.[0]?.tagline ?? 'Depression'}</button
+        <div class="l505-list" role="tablist" aria-label="Conditions we treat">
+          <button
+            class="l505-trigger active"
+            role="tab"
+            id="l505-trigger-1"
+            data-tab="l505-tab-1"
+            aria-selected="true"
+            aria-controls="l505-tab-1"
+            tabindex="0">{conditionsData?.[0]?.tagline ?? 'Depression'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-2"
-            >{conditionsData?.[1]?.tagline ?? 'Anxiety disorders'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-2"
+            data-tab="l505-tab-2"
+            aria-selected="false"
+            aria-controls="l505-tab-2"
+            tabindex="-1">{conditionsData?.[1]?.tagline ?? 'Anxiety disorders'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-3"
-            >{conditionsData?.[2]?.tagline ?? 'Anger management'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-3"
+            data-tab="l505-tab-3"
+            aria-selected="false"
+            aria-controls="l505-tab-3"
+            tabindex="-1">{conditionsData?.[2]?.tagline ?? 'Anger management'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-4"
-            >{conditionsData?.[3]?.tagline ?? 'Behavior problems'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-4"
+            data-tab="l505-tab-4"
+            aria-selected="false"
+            aria-controls="l505-tab-4"
+            tabindex="-1">{conditionsData?.[3]?.tagline ?? 'Behavior problems'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-5"
-            >{conditionsData?.[4]?.tagline ?? 'Grief &amp; loss'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-5"
+            data-tab="l505-tab-5"
+            aria-selected="false"
+            aria-controls="l505-tab-5"
+            tabindex="-1">{conditionsData?.[4]?.tagline ?? 'Grief &amp; loss'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-6"
-            >{conditionsData?.[5]?.tagline ?? 'Memory loss'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-6"
+            data-tab="l505-tab-6"
+            aria-selected="false"
+            aria-controls="l505-tab-6"
+            tabindex="-1">{conditionsData?.[5]?.tagline ?? 'Memory loss'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-7"
-            >{conditionsData?.[6]?.tagline ?? 'Transition &amp; adjustment'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-7"
+            data-tab="l505-tab-7"
+            aria-selected="false"
+            aria-controls="l505-tab-7"
+            tabindex="-1">{conditionsData?.[6]?.tagline ?? 'Transition &amp; adjustment'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-8"
-            >{conditionsData?.[7]?.tagline ?? 'Post-surgical mental health'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-8"
+            data-tab="l505-tab-8"
+            aria-selected="false"
+            aria-controls="l505-tab-8"
+            tabindex="-1">{conditionsData?.[7]?.tagline ?? 'Post-surgical mental health'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-9"
-            >{conditionsData?.[8]?.tagline ?? 'Post-traumatic stress'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-9"
+            data-tab="l505-tab-9"
+            aria-selected="false"
+            aria-controls="l505-tab-9"
+            tabindex="-1">{conditionsData?.[8]?.tagline ?? 'Post-traumatic stress'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-10"
-            >{conditionsData?.[9]?.tagline ?? 'Chronic disease coping'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-10"
+            data-tab="l505-tab-10"
+            aria-selected="false"
+            aria-controls="l505-tab-10"
+            tabindex="-1">{conditionsData?.[9]?.tagline ?? 'Chronic disease coping'}</button
           >
-          <button class="l505-trigger" data-tab="l505-tab-11"
-            >{conditionsData?.[10]?.tagline ?? 'Substance dependency'}</button
+          <button
+            class="l505-trigger"
+            role="tab"
+            id="l505-trigger-11"
+            data-tab="l505-tab-11"
+            aria-selected="false"
+            aria-controls="l505-tab-11"
+            tabindex="-1">{conditionsData?.[10]?.tagline ?? 'Substance dependency'}</button
           >
         </div>
 
-        <div class="l505-panel active" data-panel="l505-tab-1">
+        <div
+          class="l505-panel active"
+          role="tabpanel"
+          id="l505-tab-1"
+          data-panel="l505-tab-1"
+          aria-labelledby="l505-trigger-1"
+          tabindex="0"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2115,10 +2238,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-2">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-2"
+          data-panel="l505-tab-2"
+          aria-labelledby="l505-trigger-2"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2140,10 +2271,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-3">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-3"
+          data-panel="l505-tab-3"
+          aria-labelledby="l505-trigger-3"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2164,10 +2303,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-4">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-4"
+          data-panel="l505-tab-4"
+          aria-labelledby="l505-trigger-4"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2190,10 +2337,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-5">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-5"
+          data-panel="l505-tab-5"
+          aria-labelledby="l505-trigger-5"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2216,10 +2371,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-6">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-6"
+          data-panel="l505-tab-6"
+          aria-labelledby="l505-trigger-6"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2245,10 +2408,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-7">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-7"
+          data-panel="l505-tab-7"
+          aria-labelledby="l505-trigger-7"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2269,10 +2440,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-8">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-8"
+          data-panel="l505-tab-8"
+          aria-labelledby="l505-trigger-8"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2296,10 +2475,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-9">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-9"
+          data-panel="l505-tab-9"
+          aria-labelledby="l505-trigger-9"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2321,10 +2508,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-10">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-10"
+          data-panel="l505-tab-10"
+          aria-labelledby="l505-trigger-10"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2345,10 +2540,18 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
 
-        <div class="l505-panel" data-panel="l505-tab-11">
+        <div
+          class="l505-panel"
+          role="tabpanel"
+          id="l505-tab-11"
+          data-panel="l505-tab-11"
+          aria-labelledby="l505-trigger-11"
+        >
           <div class="l505-panel-inner">
             <div class="l505-icon">
               <svg
+                aria-hidden="true"
+                focusable="false"
                 width="22"
                 height="22"
                 viewBox="0 0 24 24"
@@ -2375,7 +2578,7 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   </section>
 
   <!-- ══════════════════════ Layout192 ══════════════════════ -->
-  <section class="section l192">
+  <section class="section l192" aria-labelledby="service-area-heading">
     <div class="container">
       <div class="l192-grid">
         <div class="l192-image-wrap">
@@ -2604,7 +2807,9 @@ const [page, conditionsData, siteSettings] = await Promise.all([
           </div>
         </div>
         <div class="l192-text">
-          <h2>{page?.serviceAreaHeading ?? 'Facilities we serve in Southeast Florida'}</h2>
+          <h2 id="service-area-heading">
+            {page?.serviceAreaHeading ?? 'Facilities we serve in Southeast Florida'}
+          </h2>
           <p class="lede text-md">
             {
               page?.serviceAreaLede ??
@@ -2628,10 +2833,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   </section>
 
   <!-- ══════════════════════ Cta25 ══════════════════════ -->
-  <section id="cta" class="section cta25-section">
+  <section id="cta" class="section cta25-section" aria-labelledby="cta-heading">
     <div class="container">
       <div class="cta25-inner">
-        <h2>{page?.ctaHeading ?? 'Ready to start'}</h2>
+        <h2 id="cta-heading">{page?.ctaHeading ?? 'Ready to start'}</h2>
         <p>
           {
             page?.ctaSubhead ??
@@ -2661,7 +2866,10 @@ const [page, conditionsData, siteSettings] = await Promise.all([
         btn.addEventListener('click', function () {
           const key = btn.getAttribute('data-tab');
           triggers.forEach(function (b) {
-            b.classList.toggle('active', b === btn);
+            const isActive = b === btn;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            b.setAttribute('tabindex', isActive ? '0' : '-1');
           });
           let activePanel = null;
           panels.forEach(function (p) {

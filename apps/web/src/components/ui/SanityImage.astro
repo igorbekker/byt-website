@@ -1,0 +1,59 @@
+---
+interface Props {
+  src: string | { url: string } | { asset: { url: string } };
+  alt: string;
+  width?: number;
+  height?: number;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'auto';
+  decoding?: 'async' | 'auto';
+  sizes?: string;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  fetchpriority = 'auto',
+  decoding = 'async',
+  sizes,
+  class: className,
+} = Astro.props;
+
+// Hero images must never lazy-load
+const loading = fetchpriority === 'high' ? 'eager' : (Astro.props.loading ?? 'lazy');
+
+function resolveUrl(s: Props['src']): string {
+  if (typeof s === 'string') return s;
+  if ('url' in s) return s.url;
+  return s.asset.url;
+}
+
+const SRCSET_WIDTHS = [400, 800, 1200] as const;
+
+function buildSrcsetEntry(base: string, w: number): string {
+  const sep = base.includes('?') ? '&' : '?';
+  return `${base}${sep}w=${w}&fm=webp&fit=crop ${w}w`;
+}
+
+const baseUrl = resolveUrl(src);
+const srcset = SRCSET_WIDTHS.map((w) => buildSrcsetEntry(baseUrl, w)).join(', ');
+
+const fallbackSep = baseUrl.includes('?') ? '&' : '?';
+const fallbackSrc = `${baseUrl}${fallbackSep}w=1200&fm=webp&fit=crop`;
+---
+
+<img
+  src={fallbackSrc}
+  srcset={srcset}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={loading}
+  fetchpriority={fetchpriority}
+  decoding={decoding}
+  sizes={sizes}
+  class={className}
+/>
