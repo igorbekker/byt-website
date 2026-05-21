@@ -43,11 +43,13 @@ interface PracticePillar {
 interface AboutPage {
   heroHeading?: string;
   heroSubhead?: string;
+  heroTeamImage?: ImageWithAlt;
   missionEyebrow?: string;
   missionQuote?: string;
   missionBody?: string;
   storyEyebrow?: string;
   storyHeading?: string;
+  storyHandsImage?: ImageWithAlt;
   storyBody?: PortableTextBlock[];
   founderName?: string;
   founderCredential?: string;
@@ -106,9 +108,6 @@ const pageSchema = webPageSchema({
    NAVIGATION
 ════════════════════════════════════════════════ */
     .nav {
-      position: sticky;
-      top: 0;
-      z-index: var(--z-dropdown);
       background: var(--white);
       height: 84px;
       display: flex;
@@ -2151,8 +2150,8 @@ const pageSchema = webPageSchema({
     </div>
     <div class="about-hero-image">
       <SanityImage
-        src="/images/about/about-hero-team.png"
-        alt="Better You Therapy clinical team in South Florida"
+        src={page?.heroTeamImage?.asset?.url ?? '/images/about/about-hero-team.png'}
+        alt={page?.heroTeamImage?.alt ?? 'Better You Therapy clinical team in South Florida'}
         width={1440}
         height={640}
         fetchpriority="high"
@@ -2182,8 +2181,10 @@ const pageSchema = webPageSchema({
     <div class="story-inner fade-up">
       <div class="story-image">
         <SanityImage
-          src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=900&q=85&auto=format&fit=crop"
-          alt="Therapist meeting with a senior resident in a sunlit room"
+          src={page?.storyHandsImage?.asset?.url ??
+            'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=900&q=85&auto=format&fit=crop'}
+          alt={page?.storyHandsImage?.alt ??
+            'Therapist meeting with a senior resident in a sunlit room'}
           width={900}
           height={1125}
         />

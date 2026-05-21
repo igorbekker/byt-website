@@ -1693,8 +1693,8 @@ const pageSchema = webPageSchema({
             }
           </p>
           <div class="h84-actions">
-            <a href={page?.heroCta?.href ?? '#cta'} class="btn btn-primary"
-              >{page?.heroCta?.label ?? 'Refer a Facility'}</a
+            <button class="btn btn-primary" onclick="openModal('refer')"
+              >{page?.heroCta?.label ?? 'Refer a Facility'}</button
             >
           </div>
         </div>
