@@ -19,9 +19,36 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix 2 regressions: homepage l349 CTA styling + communities "Ready to start" CTA
+- **Last work:** 2026-05-21 — Add "Forms" footer column; move Resident Referral Form link into it
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Add "Forms" footer column — 2026-05-21 [x] COMPLETE 2026-05-21
+
+- [x] Moved "Resident Referral Form" link from Company column into new Forms column
+- [x] Added `{/* CMS-SKIP: footer forms column */}` above the new column
+- [x] Updated `grid-template-columns` from `1.6fr 1fr 1fr 1fr` to `1.6fr 1fr 1fr 1fr 1fr` to accommodate 5th column
+- [x] Build verified: `pnpm --filter web build` → 0 errors ✓
+
+### Session Review — 2026-05-21 (Add Forms footer column)
+
+**What was built:** New `footer-col` div with heading "Forms" added to Footer.astro. "Resident Referral Form" link (`href="/resident-referral/"`) moved out of the Company column and into the new Forms column. CMS-SKIP comment added above the new column.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Footer.astro` — removed Resident Referral link from Company `<ul>`; added new Forms `footer-col` div after Company with CMS-SKIP comment; updated `grid-template-columns` from `1.6fr 1fr 1fr 1fr` to `1.6fr 1fr 1fr 1fr 1fr`
+
+**Verification:**
+
+- `grep -n "Forms"` → line 55 (`<h4>Forms</h4>`) ✓
+- `grep -n "Resident Referral"` → line 57 only (Forms column, not Company) ✓
+- `grep -n "CMS-SKIP"` → line 53 (`{/* CMS-SKIP: footer forms column */}`) ✓
+- `grep -c "footer-col"` → 6 (4 class uses + 2 CSS selectors) ✓
+- `pnpm --filter web build` → 19 routes, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

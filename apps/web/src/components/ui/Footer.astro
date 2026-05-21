@@ -44,10 +44,17 @@ const currentYear = new Date().getFullYear();
           <li><a href="/about/">About Us</a></li>
           <li><a href="/careers/">Careers</a></li>
           <li><a href="/contact/">Contact</a></li>
-          <li><a href="/resident-referral/">Resident Referral Form</a></li>
           <li>
             <a href="#" onclick="event.preventDefault();openModal('refer')">Refer a Facility</a>
           </li>
+        </ul>
+      </div>
+
+      {/* CMS-SKIP: footer forms column */}
+      <div class="footer-col">
+        <h4>Forms</h4>
+        <ul class="footer-links">
+          <li><a href="/resident-referral/">Resident Referral Form</a></li>
         </ul>
       </div>
 
@@ -95,7 +102,7 @@ const currentYear = new Date().getFullYear();
 
   .footer-grid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
     gap: 4rem;
     margin-bottom: 3rem;
   }
