@@ -335,6 +335,8 @@ NEVER ask the user for the Cloudflare API token.
 `CLOUDFLARE_API_TOKEN` is set in `~/.bashrc` and `~/.profile`.
 NEVER hardcode the token. NEVER print the token value.
 
+If any file under `apps/studio/` was changed in the commit, Studio MUST be deployed during `/post`. Run: `cd apps/studio && rm -rf node_modules/.cache dist && npx sanity deploy`. Do NOT report deploy as complete until Studio deploy URL is confirmed. Cloudflare auto-deploy covers the site only — it does NOT deploy Studio.
+
 ---
 
 ## Tech Stack

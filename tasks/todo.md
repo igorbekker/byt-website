@@ -19,9 +19,31 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Mobile performance optimization (LCP fixes)
+- **Last work:** 2026-05-21 — Add mandatory Studio deploy rule to CLAUDE.md
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add mandatory Studio deploy rule to CLAUDE.md — 2026-05-21 [x] COMPLETE 2026-05-21
+
+- [x] Edited `CLAUDE.md` Deploy section — added Studio deploy requirement for any commit touching `apps/studio/`
+
+### Session Review — 2026-05-21 (Add mandatory Studio deploy rule)
+
+**What was built:** Added one rule to the `## Deploy` section of `CLAUDE.md`:
+
+> If any file under `apps/studio/` was changed in the commit, Studio MUST be deployed during `/post`. Run: `cd apps/studio && rm -rf node_modules/.cache dist && npx sanity deploy`. Do NOT report deploy as complete until Studio deploy URL is confirmed. Cloudflare auto-deploy covers the site only — it does NOT deploy Studio.
+
+**Why:** Studio deploy failed silently after commit `ac45c14` (oldSlugs editable + Redirect Manager auto-redirects) because the deploy step was not enforced. The rule closes that gap: any `apps/studio/` change now requires an explicit Studio deploy as part of `/post`.
+
+**Files changed:**
+
+- `CLAUDE.md` — 1 paragraph added at end of `## Deploy` section (before `---`)
+
+**Verification:** `grep -n "apps/studio" CLAUDE.md` confirms the new rule is present at the correct location.
+
+**Issues:** None. No user corrections this session.
 
 ---
 
