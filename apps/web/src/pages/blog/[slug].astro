@@ -1354,7 +1354,7 @@ const articleJsonLd = blogPostingSchema({
     border-radius: 50%;
     object-fit: cover;
   }
-  .author-card-body h4 {
+  .author-card-body h3 {
     font-family: 'Manrope', sans-serif;
     font-weight: 800;
     font-size: 1.1rem;
@@ -1919,10 +1919,10 @@ const articleJsonLd = blogPostingSchema({
                 )}
               </div>
               <div class="author-card-body">
-                <h4>
+                <h3>
                   {post.author.name}
                   {post.author.credentials ? `, ${post.author.credentials}` : ''}
-                </h4>
+                </h3>
                 <p class="author-role">Author</p>
                 {post.author.bio && <PortableText value={post.author.bio} />}
               </div>

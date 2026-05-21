@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Add slug + oldSlugs fields to all 11 page singletons
+- **Last work:** 2026-05-21 — Fix remaining W3C HTML validation errors (5 patterns)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -928,6 +928,49 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - `wc -l dist/_redirects` → 32 (1 header + 31 rules + trailing newline) ✓
 
 **Issues:** `/pre` was skipped — committed directly from task brief. Violation of Lesson 17 (fourth time). Logged to lessons.md.
+
+---
+
+## Phase W3C Round 2 — Fix Remaining W3C HTML Validation Errors [x] COMPLETE 2026-05-21 17:30
+
+### Tasks
+
+- [x] FIX 1: Footer.astro — h4 → h3 for all 4 footer column headings (heading skip h2→h4)
+- [x] FIX 2: providers.astro — button inside `<a>` in l422-cards → replace `<button>` with `<span>` (4 instances)
+- [x] FIX 3: careers.astro — `<div class="file-drop-text">` inside `<label>` → change to `<span>` (2 instances: g-resume-label, j-resume-label)
+- [x] FIX 4a: privacy.astro — `<main class="legal-page">` → `<div class="legal-page">` (nested main)
+- [x] FIX 4b: terms.astro — `<main class="doc">` → `<div class="doc">` (nested main)
+- [x] FIX 5: resident-referral.astro — add `role="group"` to `rr-drop-zone` div (aria-label on div without role)
+- [x] FIX 6: AuthorCard.astro — h4 → h3 + CSS selector updated (blog + post pages)
+- [x] FIX 7: blog/[slug].astro — inline author h4 → h3 + CSS selector updated
+- [x] Build verify: pnpm --filter web build → 19 pages, 0 errors ✓
+- [x] Proof-of-work grep: all 7 errors confirmed resolved
+
+### Session Review — 2026-05-21 (W3C Round 2 — 5 remaining errors)
+
+**What was fixed:** 5 W3C HTML validation errors across 6 files.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Footer.astro` — changed 4× `<h4>` → `<h3>` for footer column headings (Services, Company, Forms, newsletter heading); fixes heading skip h2→h4 on every page
+- `apps/web/src/pages/providers.astro` — replaced 4× `<button class="btn-link alt">` with `<span class="btn-link alt">` inside `<a class="l422-card">` elements; fixes interactive-element-inside-interactive-element violation
+- `apps/web/src/pages/careers.astro` — changed `<div class="file-drop-text">` → `<span class="file-drop-text">` at 2 locations (g-resume-label line 2292, j-resume-label line 2371); fixes div-inside-label violation
+- `apps/web/src/pages/privacy.astro` — changed `<main class="legal-page">` → `<div class="legal-page">` and `</main>` → `</div>`; removes nested `<main>` conflict with BaseLayout
+- `apps/web/src/pages/terms.astro` — changed `<main class="doc">` → `<div class="doc">` and `</main>` → `</div>`; removes nested `<main>` conflict with BaseLayout
+- `apps/web/src/pages/resident-referral.astro` — added `role="group"` to `rr-drop-zone` div; makes `aria-label` on the div valid
+
+**Verification:**
+
+- FIX 1: `grep -c "<h4" Footer.astro` → 0 ✓; `grep -n "<h3" Footer.astro` → lines 32, 42, 55, 62 ✓
+- FIX 2: `grep -c "<button class=\"btn-link alt\"" providers.astro` → 0 ✓; span count → 4 ✓
+- FIX 3: `grep -n "file-drop-text" careers.astro` (non-CSS) → lines 2292, 2371 both `<span>` ✓
+- FIX 4: `grep -c "<main" privacy.astro` → 0 ✓; `grep -c "<main" terms.astro` → 0 ✓
+- FIX 5: `grep -n 'role="group"' resident-referral.astro` → line 256 ✓
+- FIX 6: `grep -n "<h3\|h3 {" AuthorCard.astro` → lines 28, 63 ✓ (no h4 remaining)
+- FIX 7: `grep -n "author-card-body h3\|<h3" [slug].astro` → lines 1357, 1922 ✓ (no h4 remaining)
+- Build: `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+**Issues:** None.
 
 ---
 

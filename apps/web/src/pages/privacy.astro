@@ -1505,7 +1505,7 @@ const pageSchema = webPageSchema({
   </style>
 
   <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Privacy Policy' }]} />
-  <main class="legal-page" aria-labelledby="privacy-heading">
+  <div class="legal-page" aria-labelledby="privacy-heading">
     <div class="legal-inner">
       <h1 id="privacy-heading">{page?.title ?? 'Privacy Policy'}</h1>
       {page?.lastUpdated && <p>Last updated: {page?.lastUpdated ?? ''}</p>}
@@ -1702,7 +1702,7 @@ const pageSchema = webPageSchema({
         )
       }
     </div>
-  </main>
+  </div>
 
   <script is:inline>
     // Mobile menu toggle handlers are inline on the buttons; nothing else needed for a static legal page.

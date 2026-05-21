@@ -25,7 +25,7 @@ const {
 <div class="author-card">
   <div class="author-card-avatar">{initials}</div>
   <div class="author-card-body">
-    <h4>{name}</h4>
+    <h3>{name}</h3>
     <p class="author-role">{role}</p>
     {bio && <p>{bio}</p>}
     {profileHref && <a href={profileHref}>View full profile &rarr;</a>}
@@ -60,7 +60,7 @@ const {
     letter-spacing: 0.02em;
   }
 
-  .author-card-body h4 {
+  .author-card-body h3 {
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: 1.1rem;
