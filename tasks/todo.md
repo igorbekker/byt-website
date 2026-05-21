@@ -549,6 +549,31 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 
 ---
 
+### Fix blog breadcrumb to 4 levels — 2026-05-21 [x] COMPLETE 2026-05-21 14:43
+
+- [x] Removed subcategory spread from `breadcrumbItems` in `apps/web/src/pages/blog/[slug].astro`
+- [x] Kept `subSlug` variable declaration (still used in subnav/trail sections of template)
+- [x] `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] Verified dist: 4 ListItems, labels = Home / Blog / Family / post title ✓
+
+### Session Review — 2026-05-21 (Fix blog breadcrumb to 4 levels)
+
+**What was fixed:** Blog post pages were rendering 5-item breadcrumbs (Home → Blog → Category → subcategoryLabel slug → Post). The subcategoryLabel value `"family-dynamics"` was used as both a URL path segment and display label, showing a raw slug instead of human-readable text. Task decision: remove the subcategory crumb entirely rather than format the slug, leaving clean 4-level breadcrumbs.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/[slug].astro` — removed one spread line from `breadcrumbItems`: `...(subSlug ? [{ label: post.subcategoryLabel, href: \`/blog/${categorySlug}/${subSlug}/\` }] : [])`. The `subSlug` variable declaration was retained because it is still referenced in the subnav trail and sidebar sections of the template.
+
+**Verification:**
+
+- `pnpm --filter web build` → 19 routes, 0 errors ✓
+- dist `narcissistic-parent-signs/index.html` parsed with Python: 4 ListItems, positions 1–4, names: Home, Blog, Family, post title ✓
+- ListItem count → 4 ✓
+
+**Issues:** Initial edit also removed the `const subSlug = ...` declaration, which caused a build error (`ReferenceError: subSlug is not defined`). Caught from build output and corrected before any commit. No user correction was needed.
+
+---
+
 ## Phase 7A — Re-add \_redirects build step (2026-05-21) [x] COMPLETE 2026-05-21 05:40
 
 ### Tasks

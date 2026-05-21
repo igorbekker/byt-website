@@ -101,7 +101,6 @@ const breadcrumbItems = [
   ...(categorySlug
     ? [{ label: post?.category?.title ?? categorySlug, href: `/blog/${categorySlug}/` }]
     : []),
-  ...(subSlug ? [{ label: post.subcategoryLabel, href: `/blog/${categorySlug}/${subSlug}/` }] : []),
   { label: post?.title ?? slug },
 ];
 
