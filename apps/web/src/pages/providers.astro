@@ -1,6 +1,8 @@
 ---
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import SanityImage from '../components/ui/SanityImage.astro';
 import { PROVIDERS_PAGE_QUERY, TESTIMONIALS_THERAPIST_QUERY } from '../lib/queries';
 
 interface ProvidersPage {
@@ -79,6 +81,7 @@ const renderOrder = [
   description={page?.seo?.metaDescription ??
     'Join Better You Therapy as a licensed therapist. Two role tracks — facility-based in Southeast Florida or statewide teletherapy. Billing, referrals, and EHR handled for you.'}
 >
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Providers' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════════════════════════
    Faithful HTML port of the 8 uploaded Relume components:
@@ -1918,11 +1921,13 @@ const renderOrder = [
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section id="relume" class="h98">
+          <section id="providers-hero" class="h98" aria-labelledby="hero-heading">
             <div class="container h98-card">
               <div class="h98-content">
                 <div class="inner">
-                  <h1>{page?.heroHeading ?? 'You became a therapist to do therapy.'}</h1>
+                  <h1 id="hero-heading">
+                    {page?.heroHeading ?? 'You became a therapist to do therapy.'}
+                  </h1>
                   <p class="h98-subhead">
                     {page?.heroSubhead ??
                       'Not to manage billing, chase referrals, or build a business from scratch.'}
@@ -1936,13 +1941,15 @@ const renderOrder = [
                 </div>
               </div>
               <div class="h98-bg">
-                <img
+                <SanityImage
                   src={page?.heroImage?.asset?.url ?? '/images/providers-hero.jpg'}
                   alt={
                     page?.heroImage?.alt ??
                     'Licensed therapist arriving at a Florida senior community'
                   }
-                  loading="eager"
+                  width={1440}
+                  height={640}
+                  fetchpriority="high"
                 />
               </div>
             </div>
@@ -1950,11 +1957,11 @@ const renderOrder = [
         );
       if (id === 'tracks')
         return (
-          <section id="relume" class="section">
+          <section id="providers-tracks" class="section" aria-labelledby="tracks-heading">
             <div class="container">
               <div class="l422-head">
                 <p class="l422-eyebrow">{page?.tracksEyebrow ?? 'Ways to work with us'}</p>
-                <h2>
+                <h2 id="tracks-heading">
                   {page?.tracksHeading ??
                     'One license. Two role tracks. Pick the one that fits your life.'}
                 </h2>
@@ -1967,11 +1974,13 @@ const renderOrder = [
               <div class="l422-cards">
                 <a href="#" class="l422-card is-default">
                   <div class="l422-card-img">
-                    <img
+                    <SanityImage
                       src={
                         page?.tracks?.[0]?.image?.asset?.url ?? '/images/providers-track-tele.jpg'
                       }
                       alt={page?.tracks?.[0]?.image?.alt ?? 'Therapist working from a home office'}
+                      width={600}
+                      height={450}
                     />
                   </div>
                   <div class="l422-card-content">
@@ -1991,6 +2000,8 @@ const renderOrder = [
                               fill="none"
                               stroke="currentColor"
                               stroke-width="2"
+                              aria-hidden="true"
+                              focusable="false"
                             >
                               <path d="M9 6l6 6-6 6" />
                             </svg>
@@ -2023,7 +2034,7 @@ const renderOrder = [
 
                 <a href="#" class="l422-card">
                   <div class="l422-card-img">
-                    <img
+                    <SanityImage
                       src={
                         page?.tracks?.[1]?.image?.asset?.url ??
                         '/images/providers-track-facility.jpg'
@@ -2031,6 +2042,8 @@ const renderOrder = [
                       alt={
                         page?.tracks?.[1]?.image?.alt ?? 'Therapist working on-site with a resident'
                       }
+                      width={600}
+                      height={450}
                     />
                   </div>
                   <div class="l422-card-content">
@@ -2050,6 +2063,8 @@ const renderOrder = [
                               fill="none"
                               stroke="currentColor"
                               stroke-width="2"
+                              aria-hidden="true"
+                              focusable="false"
                             >
                               <path d="M9 6l6 6-6 6" />
                             </svg>
@@ -2085,12 +2100,14 @@ const renderOrder = [
         );
       if (id === 'why_join')
         return (
-          <section id="l374-section" class="section">
+          <section id="l374-section" class="section" aria-labelledby="why-join-heading">
             <div class="container">
               <div class="l374-head">
                 <div class="l374-head-inner">
                   <p class="l374-eyebrow">{page?.handlesEyebrow ?? 'What we handle'}</p>
-                  <h2>{page?.handlesHeading ?? 'So you can focus on clinical work'}</h2>
+                  <h2 id="why-join-heading">
+                    {page?.handlesHeading ?? 'So you can focus on clinical work'}
+                  </h2>
                   <p class="text-md">
                     {page?.handlesSubhead ??
                       'The operational infrastructure that frees you to do therapy.'}
@@ -2119,7 +2136,12 @@ const renderOrder = [
                     </div>
                   </div>
                   <div class="image">
-                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                    <svg
+                      class="l374-bg-icon"
+                      viewBox="0 0 200 200"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <>
                         <circle
                           cx="100"
@@ -2160,7 +2182,12 @@ const renderOrder = [
                     </div>
                   </div>
                   <div class="image">
-                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                    <svg
+                      class="l374-bg-icon"
+                      viewBox="0 0 200 200"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <>
                         <path
                           d="M50 100h80M115 80l25 20-25 20"
@@ -2195,7 +2222,12 @@ const renderOrder = [
                     </div>
                   </div>
                   <div class="image">
-                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                    <svg
+                      class="l374-bg-icon"
+                      viewBox="0 0 200 200"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <>
                         <rect
                           x="65"
@@ -2232,7 +2264,12 @@ const renderOrder = [
                     </div>
                   </div>
                   <div class="image">
-                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                    <svg
+                      class="l374-bg-icon"
+                      viewBox="0 0 200 200"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <>
                         <path
                           d="M60 145V70l40-20 40 20v75"
@@ -2261,7 +2298,12 @@ const renderOrder = [
                     </div>
                   </div>
                   <div class="image">
-                    <svg class="l374-bg-icon" viewBox="0 0 200 200" aria-hidden="true">
+                    <svg
+                      class="l374-bg-icon"
+                      viewBox="0 0 200 200"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <>
                         <rect
                           x="55"
@@ -2310,11 +2352,11 @@ const renderOrder = [
         );
       if (id === 'qualifications')
         return (
-          <section id="relume" class="section">
+          <section id="providers-qualifications" class="section" aria-labelledby="quals-heading">
             <div class="container">
               <div class="l506-head">
                 <p class="eyebrow">{page?.qualsEyebrow ?? 'Qualifications'}</p>
-                <h1>{page?.qualsHeading ?? 'What you need to apply'}</h1>
+                <h2 id="quals-heading">{page?.qualsHeading ?? 'What you need to apply'}</h2>
               </div>
 
               <div class="l506-tabs" id="l506">
@@ -2328,6 +2370,8 @@ const renderOrder = [
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12l5 5L20 7" />
                       </svg>
@@ -2356,6 +2400,8 @@ const renderOrder = [
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12l5 5L20 7" />
                       </svg>
@@ -2384,6 +2430,8 @@ const renderOrder = [
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12l5 5L20 7" />
                       </svg>
@@ -2412,6 +2460,8 @@ const renderOrder = [
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12l5 5L20 7" />
                       </svg>
@@ -2440,6 +2490,8 @@ const renderOrder = [
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
+                        aria-hidden="true"
+                        focusable="false"
                       >
                         <path d="M5 12l5 5L20 7" />
                       </svg>
@@ -2480,11 +2532,13 @@ const renderOrder = [
         );
       if (id === 'testimonials')
         return (
-          <section class="section t37-section">
+          <section class="section t37-section" aria-labelledby="testimonials-heading">
             <div class="container">
               <div class="t37-head">
                 <div class="t37-head-inner">
-                  <h1>{page?.testimonialsHeading ?? 'What our therapists are saying'}</h1>
+                  <h2 id="testimonials-heading">
+                    {page?.testimonialsHeading ?? 'What our therapists are saying'}
+                  </h2>
                   <p class="text-md">
                     {page?.testimonialsSubhead ??
                       'Peer proof from clinicians already working with BYT.'}
@@ -2502,6 +2556,8 @@ const renderOrder = [
                       stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
                     >
                       <>
                         <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
@@ -2524,6 +2580,8 @@ const renderOrder = [
                       stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
                     >
                       <>
                         <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
@@ -2539,19 +2597,44 @@ const renderOrder = [
                 </div>
                 <div class="t37-cell t37-test order-last">
                   <div class="t37-stars">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
                   </div>
@@ -2561,11 +2644,12 @@ const renderOrder = [
                   </p>
                   <div class="t37-meta">
                     {/* CMS-SKIP: decorative avatar */}
-                    <img
-                      class="t37-avatar"
+                    <SanityImage
                       src="/images/providers-testimonial-avatar.jpg"
                       alt=""
-                      role="presentation"
+                      width={64}
+                      height={64}
+                      class="t37-avatar"
                     />
                     <div>
                       <p class="name">
@@ -2581,19 +2665,44 @@ const renderOrder = [
                 </div>
                 <div class="t37-cell t37-test">
                   <div class="t37-stars">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" />
                     </svg>
                   </div>
@@ -2622,6 +2731,8 @@ const renderOrder = [
                       stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
                     >
                       <>
                         <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
@@ -2644,6 +2755,8 @@ const renderOrder = [
                       stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
                     >
                       <>
                         <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z" />
@@ -2663,7 +2776,7 @@ const renderOrder = [
         );
       if (id === 'cta')
         return (
-          <section class="section cta36-section">
+          <section class="section cta36-section" aria-labelledby="cta-heading">
             <div class="container">
               <div class="cta36-grid">
                 <div class="cta36-cell">
@@ -2675,6 +2788,8 @@ const renderOrder = [
                       stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
+                      aria-hidden="true"
+                      focusable="false"
                     >
                       <>
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -2683,7 +2798,9 @@ const renderOrder = [
                       </>
                     </svg>
                   </div>
-                  <h2>{page?.ctaHeading ?? 'Ready to do the work you were trained for?'}</h2>
+                  <h2 id="cta-heading">
+                    {page?.ctaHeading ?? 'Ready to do the work you were trained for?'}
+                  </h2>
                   <p>{page?.ctaSubhead ?? 'Application only takes 3 minutes.'}</p>
                   <div class="cta36-actions">
                     <a href="/careers/" class="btn btn-primary">

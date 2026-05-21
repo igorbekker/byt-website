@@ -19,9 +19,54 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Full audit + fix: 6 form/backend field mismatches across 3 API files
+- **Last work:** 2026-05-21 — Phase 7A Page Wiring: Providers page — breadcrumbs, SanityImage, aria, fix duplicate IDs and h1 count
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Page Wiring — Providers (/providers/) — 2026-05-21 [x] COMPLETE 2026-05-21 02:10
+
+Wire breadcrumbs, SanityImage, and aria to providers.astro. Fix two known bugs: duplicate `id="relume"` (×3) and 3× `<h1>` tags.
+
+- [x] A. Added imports: `Breadcrumb` and `SanityImage`
+- [x] B. Added `<Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Providers' }]} />` after BaseLayout opens
+- [x] C. Fixed duplicate `id="relume"` → renamed to `providers-hero`, `providers-tracks`, `providers-qualifications`
+- [x] D. Fixed 3× `<h1>` → kept hero `<h1 id="hero-heading">`, demoted quals + testimonials to `<h2 id="quals-heading">` / `<h2 id="testimonials-heading">`
+- [x] E. Added `aria-labelledby` to all 6 sections: hero, tracks, why_join, qualifications, testimonials, cta
+- [x] F. Added matching `id` to all 6 section headings
+- [x] G. Replaced 4 bare `<img>` with `SanityImage`: hero (`fetchpriority="high"`), tracks[0], tracks[1], testimonial avatar
+- [x] H. Added `aria-hidden="true" focusable="false"` to all decorative SVGs (4 arrows, 5 checkmarks, 4 shields, 10 stars, 1 CTA icon, 5 bg-icons updated from aria-hidden-only)
+- [x] I. `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] J. `grep -c 'id="relume"'` → 0 ✓; `grep -c '<h1'` → 1 ✓; `grep "BreadcrumbList"` in built HTML → match ✓; `grep -c 'aria-labelledby'` → 6 ✓
+
+### Session Review — 2026-05-21 (Phase 7A Providers page wiring)
+
+**What was built:** Full Phase 7A wiring pass on `apps/web/src/pages/providers.astro`. Two pre-existing bugs fixed (duplicate IDs, excess h1 tags). Breadcrumbs, SanityImage, and aria landmarks wired. 29 total SVG aria updates.
+
+**Files changed:**
+
+- `apps/web/src/pages/providers.astro` — 24 targeted Edit calls; no CSS, no JS, no HTML structure changed
+
+**Bug fixes:**
+
+- `id="relume"` appeared on 3 sections → renamed to semantic IDs (`providers-hero`, `providers-tracks`, `providers-qualifications`)
+- 3× `<h1>` → hero h1 kept; quals and testimonials headings demoted to h2
+
+**Breadcrumbs:** `[{ label: 'Home', href: '/' }, { label: 'Providers' }]` — renders `BreadcrumbList` JSON-LD via Breadcrumb component
+
+**SanityImage replacements:**
+
+- Hero (`h98-bg`): `width=1440 height=640 fetchpriority="high"` — eager load
+- tracks[0] card: `width=600 height=450` — lazy
+- tracks[1] card: `width=600 height=450` — lazy
+- Testimonial avatar: `width=64 height=64 alt=""` — decorative, lazy
+
+**Aria coverage:** 6 sections all have `aria-labelledby` pointing to heading IDs. 29 SVGs updated (batch replace_all for identical patterns; unique SVGs handled individually).
+
+**Verification:** `id="relume"` → 0; `<h1` → 1; BreadcrumbList in built HTML → confirmed; `aria-labelledby` → 6; build → 19 routes, 0 errors.
+
+**Issues:** None. No user corrections this session.
 
 ---
 
