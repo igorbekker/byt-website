@@ -1,6 +1,8 @@
 ---
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import SanityImage from '../components/ui/SanityImage.astro';
 import { CONTACT_PAGE_QUERY, SITE_SETTINGS_QUERY } from '../lib/queries';
 
 interface ContactPage {
@@ -58,6 +60,7 @@ const renderOrder = [
   description={page?.seo?.metaDescription ??
     'Reach the Better You Therapy team. We respond within one business day.'}
 >
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -804,20 +807,24 @@ const renderOrder = [
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section class="contact-hero">
+          <section class="contact-hero" aria-labelledby="contact-hero-heading">
             <div class="contact-hero-image">
-              <img
+              <SanityImage
                 src={
                   page?.heroImage?.asset?.url ??
                   'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=85&auto=format&fit=crop'
                 }
                 alt={page?.heroImage?.alt ?? 'Two people in conversation across a desk'}
-                onerror="this.style.display='none'"
+                width={1400}
+                height={700}
+                fetchpriority="high"
               />
             </div>
             <div class="contact-hero-content">
               <p class="eyebrow">{page?.heroEyebrow ?? 'Contact Us'}</p>
-              <h1>{page?.heroHeading ?? "We'd love to hear from you."}</h1>
+              <h1 id="contact-hero-heading">
+                {page?.heroHeading ?? "We'd love to hear from you."}
+              </h1>
               <p>
                 {page?.heroSubhead ??
                   "Whether you're a family looking for care, a facility exploring partnership, or a therapist interested in joining our team — send us a note and we'll get back to you within one business day."}
@@ -827,88 +834,96 @@ const renderOrder = [
         );
       if (id === 'contact_form')
         return (
-          <section class="contact-form-section">
+          <section class="contact-form-section" aria-labelledby="contact-form-heading">
             <div class="contact-form-wrap fade-up">
               <div class="contact-info">
                 <p class="eyebrow">{page?.infoEyebrow ?? 'Get in touch'}</p>
-                <h2>{page?.infoHeading ?? 'Reach our team directly.'}</h2>
+                <h2 id="contact-form-heading">{page?.infoHeading ?? 'Reach our team directly.'}</h2>
                 <p>
                   {page?.hoursDescription ??
                     'Prefer to call or email? Our intake team is available Monday through Friday, 9am to 6pm Eastern.'}
                 </p>
 
-                <ul class="contact-info-list">
-                  <li class="contact-info-item">
-                    <div class="contact-info-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                    </div>
-                    <div>
-                      {/* CMS-SKIP: UI channel label */}
-                      <div class="contact-info-label">Phone</div>
-                      <div class="contact-info-value">
-                        <a href={`tel:${phoneDigits}`}>{phone}</a>
+                <address>
+                  <ul class="contact-info-list">
+                    <li class="contact-info-item">
+                      <div class="contact-info-icon">
+                        <svg
+                          aria-hidden="true"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z" />
+                        </svg>
                       </div>
-                    </div>
-                  </li>
-                  <li class="contact-info-item">
-                    <div class="contact-info-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <>
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                          <polyline points="22,6 12,13 2,6" />
-                        </>
-                      </svg>
-                    </div>
-                    <div>
-                      {/* CMS-SKIP: UI channel label */}
-                      <div class="contact-info-label">Email</div>
-                      <div class="contact-info-value">
-                        <a href={`mailto:${email}`}>{email}</a>
+                      <div>
+                        {/* CMS-SKIP: UI channel label */}
+                        <div class="contact-info-label">Phone</div>
+                        <div class="contact-info-value">
+                          <a href={`tel:${phoneDigits}`}>{phone}</a>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                  <li class="contact-info-item">
-                    <div class="contact-info-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <>
-                          <polyline points="6 9 6 2 18 2 18 9" />
-                          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                          <rect x="6" y="14" width="12" height="8" />
-                        </>
-                      </svg>
-                    </div>
-                    <div>
-                      {/* CMS-SKIP: UI channel label */}
-                      <div class="contact-info-label">Fax</div>
-                      <div class="contact-info-value">
-                        <a href={`tel:${faxDigits}`}>{fax}</a>
+                    </li>
+                    <li class="contact-info-item">
+                      <div class="contact-info-icon">
+                        <svg
+                          aria-hidden="true"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <>
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                            <polyline points="22,6 12,13 2,6" />
+                          </>
+                        </svg>
                       </div>
-                    </div>
-                  </li>
-                </ul>
+                      <div>
+                        {/* CMS-SKIP: UI channel label */}
+                        <div class="contact-info-label">Email</div>
+                        <div class="contact-info-value">
+                          <a href={`mailto:${email}`}>{email}</a>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="contact-info-item">
+                      <div class="contact-info-icon">
+                        <svg
+                          aria-hidden="true"
+                          focusable="false"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <>
+                            <polyline points="6 9 6 2 18 2 18 9" />
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <rect x="6" y="14" width="12" height="8" />
+                          </>
+                        </svg>
+                      </div>
+                      <div>
+                        {/* CMS-SKIP: UI channel label */}
+                        <div class="contact-info-label">Fax</div>
+                        <div class="contact-info-value">
+                          <a href={`tel:${faxDigits}`}>{fax}</a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </address>
               </div>
 
               <form class="contact-form" onsubmit="handleContactSubmit(event)">
