@@ -252,7 +252,7 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** When toggling adapter on/off, check: (a) does `src/pages/api/` exist? Delete it if removing adapter. (b) does `functions/` exist? Create it if adding Pages Functions. (c) does `studioBasePath` cause a build error? Remove it or install `@astrojs/react`.
 
-### 25. Always confirm branch before running any diagnostic or file inspection
+### 26. Always confirm branch before running any diagnostic or file inspection
 
 Before reading any file, running `ls`, or reporting what exists in the repo, run `git branch --show-current` and confirm it matches the expected branch. A diagnostic run on the wrong branch produces false reports.
 
