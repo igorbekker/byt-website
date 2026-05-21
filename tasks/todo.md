@@ -19,9 +19,56 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix blog breadcrumbs to 4 levels (Home > Blog > Category > Post)
+- **Last work:** 2026-05-21 — residentReferralPage Sanity singleton + four-step triad wiring
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Fix blog subnav trail raw slug labels — 2026-05-21 [x] COMPLETE 2026-05-21 15:04
+
+- [x] Add `subLabel` helper (kebab→title-case) to `[slug].astro` frontmatter
+- [x] Replace "Back to {post?.subcategoryLabel}" with `{subLabel || post?.category?.title || 'Blog'}`
+- [x] Replace all `{subSlug}` display uses (subnav trail ×1, eyebrow ×1, article-image-crumbs ×1) with `{subLabel}` (4 total locations)
+- [x] `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] Verified dist: "Back to Relationship Health" ✓; all trail links show "Relationship Health" ✓; `relationship-health` only appears in href URL paths (correct) ✓
+
+### Session Review — 2026-05-21 (Fix blog subnav trail raw slug labels)
+
+**What was fixed:** Blog post pages showed raw kebab-case subcategory slugs (e.g. "relationship-health") as visible display text in 4 locations: the "Back to" link label, the subnav trail anchor, the article eyebrow anchor, and the article-image-crumbs anchor.
+
+**Fix:** Added `const subLabel = subSlug ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '';` on line 95 of `[slug].astro`. Replaced all 4 display uses with `{subLabel}`. URL path segments (`href` attributes) continue to use `subSlug` unchanged.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/[slug].astro` — 1 new constant (line 95); "Back to" label; 3 anchor display texts (lines 1888, 1908, 1959)
+
+**Verification:**
+
+- `grep -n ">{subSlug}<\|{subSlug}</\|Back to.*subcategoryLabel"` → 0 matches ✓
+- `pnpm --filter web build` → 19 routes, 0 errors ✓
+- dist `toxic-relationship-signs/index.html`: "Back to Relationship Health" ✓; all `{subLabel}` anchors render "Relationship Health" ✓; `relationship-health` only in href attributes ✓
+
+**Issues:** `replace_all` missed one instance at line 1959 (different indentation). Caught immediately via post-replace verification grep. Fixed with a targeted Edit. No user corrections this session.
+
+---
+
+### 4-item cleanup — 2026-05-21 [~] In Progress
+
+- [x] ITEM 1 — Fix Quick Status Summary line in tasks/todo.md (commit chore(tasks): fix Quick Status Summary line)
+- [ ] ITEM 2 — Consolidate lessons.md: merge L13+L20, move L17 to #2, renumber all
+- [ ] ITEM 3 — Run seed script scripts/seed-resident-referral-page.mjs; verify residentReferralPage in Sanity
+- [ ] ITEM 4 — Deploy Studio (git pull, clear cache, npx sanity deploy)
+
+### Session Review — 2026-05-21 (ITEM 1: Quick Status Summary fix)
+
+**What was fixed:** Quick Status Summary line pointed to "Fix blog breadcrumbs to 4 levels" instead of the most recent completed task. residentReferralPage (COMPLETE 2026-05-21 14:58) was completed after the breadcrumb fix (14:43) — the line was stale.
+
+**Files changed:** `tasks/todo.md` — one-line text correction in Quick Status Summary.
+
+**Verification:** `git diff tasks/todo.md` confirmed the line changed from blog breadcrumb description to residentReferralPage description. No code files touched.
+
+**Issues:** None.
 
 ---
 
