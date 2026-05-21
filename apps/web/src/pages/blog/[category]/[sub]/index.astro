@@ -7,6 +7,7 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../../components/ui/Breadcrumb.astro';
 import {
   BLOG_CATEGORY_QUERY,
   BLOG_SUBCATEGORY_POSTS_QUERY,
@@ -1452,33 +1453,30 @@ function fmtDate(iso: string | undefined): string {
 <BaseLayout
   title={`${currentSub?.title ?? 'Subtopic'} | ${category?.title ?? ''} | Better You Therapy Blog`}
 >
-  <section class="blog-hero subcat-hero">
+  <section class="blog-hero subcat-hero" aria-labelledby="subcat-hero-heading">
     <div class="blog-hero-inner">
       <p class="eyebrow">{category?.title ?? categorySlug} &middot; Subtopic</p>
-      <h1 set:html={currentSub?.title ?? subSlug} />
+      <h1 id="subcat-hero-heading" set:html={currentSub?.title ?? subSlug} />
       <p>{currentSub?.description ?? ''}</p>
     </div>
   </section>
 
-  <!-- ── BREADCRUMB ── -->
-  <nav class="crumb">
-    <div class="crumb-inner">
-      <a href="/">Home</a>
-      <span class="sep">/</span>
-      <a href="/blog/">Blog</a>
-      <span class="sep">/</span>
-      <a href={`/blog/${categorySlug}/`}>{category?.title ?? categorySlug}</a>
-      <span class="sep">/</span>
-      <span class="here">{currentSub?.title ?? subSlug}</span>
-    </div>
-  </nav>
+  <Breadcrumb
+    items={[
+      { label: 'Home', href: '/' },
+      { label: 'Blog', href: '/blog/' },
+      { label: category?.title ?? categorySlug, href: `/blog/${categorySlug}/` },
+      { label: currentSub?.title ?? subSlug },
+    ]}
+  />
 
   <!-- ── ARTICLES IN SUBCATEGORY ── -->
-  <section class="article-list">
+  <section class="article-list" aria-labelledby="article-list-heading">
     <div class="article-list-inner">
       <div class="article-list-header fade-up" style="margin-bottom:1.5rem;">
         <p class="eyebrow" style="margin-bottom:.85rem;">In this subtopic</p>
         <h2
+          id="article-list-heading"
           style="font-family:'Manrope',sans-serif;font-weight:800;font-size:clamp(1.7rem,2.8vw,2.2rem);letter-spacing:-.02em;margin-bottom:.65rem;"
         >
           Cross-cutting articles for the whole subtopic.
@@ -1562,10 +1560,10 @@ function fmtDate(iso: string | undefined): string {
   </section>
 
   <!-- ── NEWSLETTER ── -->
-  <section class="newsletter">
+  <section class="newsletter" aria-labelledby="newsletter-heading">
     <div class="newsletter-inner fade-up">
       <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
-      <h2>One thoughtful email a month.</h2>
+      <h2 id="newsletter-heading">One thoughtful email a month.</h2>
       <p>
         New articles, clinical resources, and the occasional behind-the-scenes note. No fluff, easy
         to unsubscribe.

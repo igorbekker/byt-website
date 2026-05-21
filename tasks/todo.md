@@ -19,9 +19,71 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A page wiring: about.astro + contact.astro (breadcrumbs, SanityImage, aria)
+- **Last work:** 2026-05-21 — Phase 7A page wiring: blog pages (breadcrumbs, SanityImage, aria)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Page Wiring — Blog pages (4 pages) — 2026-05-21 [x] COMPLETE 2026-05-21
+
+Wire breadcrumbs (Breadcrumb component replacing .crumb nav), SanityImage, aria-labelledby to all 4 blog pages.
+
+**blog/index.astro:**
+
+- [x] A. Add Breadcrumb import; replace .crumb nav with `<Breadcrumb items={[Home, Blog]} />`
+- [x] B. aria-labelledby on blog-hero, categories, latest, newsletter + matching ids
+- [x] C. aria-hidden="true" focusable="false" on category tile SVG
+
+**blog/[slug].astro:**
+
+- [x] D. Add Breadcrumb + SanityImage imports; add breadcrumbItems variable
+- [x] E. Add `<Breadcrumb>` as first child of BaseLayout; change article-image-crumbs nav→div
+- [x] F. Replace featured image `<img>` with `<SanityImage fetchpriority="high">`
+- [x] G. Replace author photo `<img>` with `<SanityImage>`; add .author-photo CSS rule
+- [x] H. aria-hidden on back-arrow SVG in subnav
+- [x] I. aria-labelledby on article-hero, related, newsletter + matching ids
+
+**blog/[category]/index.astro:**
+
+- [x] J. Add Breadcrumb import; replace .crumb nav with `<Breadcrumb items={[Home, Blog, cat]}/>`
+- [x] K. aria-labelledby on blog-hero, subcats, article-list, newsletter + matching ids
+
+**blog/[category]/[sub]/index.astro:**
+
+- [x] L. Add Breadcrumb import; replace .crumb nav with `<Breadcrumb items={[Home, Blog, cat, sub]}/>`
+- [x] M. aria-labelledby on blog-hero, article-list, newsletter + matching ids
+
+- [x] N. `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] O. Verify aria-labelledby counts and BreadcrumbList in built HTML ✓
+
+### Session Review — 2026-05-21 (Phase 7A Blog page wiring)
+
+**What was built:** Full Phase 7A wiring pass on all 4 blog pages.
+
+**Files changed:**
+
+- `apps/web/src/pages/blog/index.astro` — Breadcrumb import + replace .crumb nav; `aria-labelledby` on 4 sections (blog-hero, categories, latest, newsletter); heading ids; `aria-hidden` on category tile SVG
+- `apps/web/src/pages/blog/[slug].astro` — Breadcrumb + SanityImage imports; `breadcrumbItems` variable (dynamic, includes conditional category crumb); `<Breadcrumb>` as first BaseLayout child; `.article-image-crumbs` nav→div (prevented duplicate Breadcrumb nav landmark); SanityImage for featured image (`fetchpriority="high"`, 980×551) and author photo (80×80, `class="author-photo"`); `.author-photo` CSS rule + `overflow: hidden` on `.author-card-avatar`; `aria-hidden` on back-arrow SVG; `aria-labelledby` on 3 sections (article-hero, related, newsletter)
+- `apps/web/src/pages/blog/[category]/index.astro` — Breadcrumb import + replace .crumb nav; `aria-labelledby` on 4 sections (blog-hero, subcats, article-list, newsletter)
+- `apps/web/src/pages/blog/[category]/[sub]/index.astro` — Breadcrumb import + replace .crumb nav; `aria-labelledby` on 3 sections (blog-hero, article-list, newsletter)
+
+**Key decisions:**
+
+- Blog listing pages already had a `.crumb` nav in the right position (after hero) — replaced in-place rather than adding a second `<Breadcrumb>` at top to avoid duplicate nav landmarks and visual redundancy.
+- `[slug].astro` had both a sticky `.subnav-trail` and an explicit `.article-image-crumbs nav[aria-label="Breadcrumb"]` — converted the latter to `<div>` so only the new `<Breadcrumb>` component carries the nav landmark.
+- SanityImage does not accept a `style` prop — used `class="author-photo"` + new CSS rule to size the circular avatar.
+- `[category]/[sub]/` routes produced 0 pages at build time (no Sanity subcategory data yet) — templates are correctly wired and will render when data exists.
+
+**Verification:**
+
+- `pnpm --filter web build` → 19 routes, 0 errors ✓
+- `grep -c "BreadcrumbList"` in blog/index.html → confirmed ✓
+- `aria-labelledby` counts: blog index 4, category pages 4, slug pages 3 (+ 2 pre-existing modal ones from BaseLayout = 5 total) ✓
+- Python bytes scan: all `id=` attributes in built HTML are clean ASCII — no U+201D corruption ✓
+- No duplicate `aria-label="Breadcrumb"` nav landmarks in built slug pages ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

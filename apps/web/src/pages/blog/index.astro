@@ -7,6 +7,7 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import {
   BLOG_INDEX_PAGE_QUERY,
   BLOG_CATEGORIES_QUERY,
@@ -1324,10 +1325,11 @@ function fmtDate(iso: string | undefined): string {
 </style>
 
 <BaseLayout title="Blog | Better You Therapy">
-  <section class="blog-hero">
+  <section class="blog-hero" aria-labelledby="blog-hero-heading">
     <div class="blog-hero-inner">
       <p class="eyebrow">The Better You Blog</p>
       <h1
+        id="blog-hero-heading"
         set:html={page?.heroHeading ??
           'Practical guidance for therapists, families, &amp; <em>the people we serve</em>.'}
       />
@@ -1340,14 +1342,7 @@ function fmtDate(iso: string | undefined): string {
     </div>
   </section>
 
-  <!-- ── BREADCRUMB ── -->
-  <nav class="crumb">
-    <div class="crumb-inner">
-      <a href="/">Home</a>
-      <span class="sep">/</span>
-      <span class="here">Blog</span>
-    </div>
-  </nav>
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Blog' }]} />
 
   <!-- ── FEATURED ── -->
   <section class="featured">
@@ -1381,11 +1376,11 @@ function fmtDate(iso: string | undefined): string {
   </section>
 
   <!-- ── CATEGORIES ── -->
-  <section class="categories">
+  <section class="categories" aria-labelledby="categories-heading">
     <div class="categories-inner">
       <div class="categories-header fade-up">
         <p class="eyebrow">Browse by Topic</p>
-        <h2>{page?.browseByTopicHeading ?? 'Find what you came for.'}</h2>
+        <h2 id="categories-heading">{page?.browseByTopicHeading ?? 'Find what you came for.'}</h2>
         <p>
           {
             page?.browseByTopicSubhead ??
@@ -1399,6 +1394,8 @@ function fmtDate(iso: string | undefined): string {
             <a href={`/blog/${cat.slug.current}/`} class="cat-tile fade-up">
               <div class="cat-tile-icon" style="background:var(--coral-light); color:var(--coral)">
                 <svg
+                  aria-hidden="true"
+                  focusable="false"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1426,12 +1423,12 @@ function fmtDate(iso: string | undefined): string {
   </section>
 
   <!-- ── LATEST ARTICLES ── -->
-  <section class="latest">
+  <section class="latest" aria-labelledby="latest-heading">
     <div class="latest-inner">
       <div class="latest-header fade-up">
         <div>
           <p class="eyebrow">Recently Published</p>
-          <h2>{page?.recentlyPublishedHeading ?? 'Latest articles.'}</h2>
+          <h2 id="latest-heading">{page?.recentlyPublishedHeading ?? 'Latest articles.'}</h2>
         </div>
         <a href="/blog/" class="latest-view-all">View all articles &rarr;</a>
       </div>
@@ -1477,10 +1474,10 @@ function fmtDate(iso: string | undefined): string {
   </section>
 
   <!-- ── NEWSLETTER ── -->
-  <section class="newsletter">
+  <section class="newsletter" aria-labelledby="newsletter-heading">
     <div class="newsletter-inner fade-up">
       <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
-      <h2>{page?.newsletterHeading ?? 'One thoughtful email a month.'}</h2>
+      <h2 id="newsletter-heading">{page?.newsletterHeading ?? 'One thoughtful email a month.'}</h2>
       <p>
         {
           page?.newsletterSubhead ??

@@ -8,6 +8,8 @@
 import { sanityClient } from 'sanity:client';
 import { PortableText } from 'astro-portabletext';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import SanityImage from '../../components/ui/SanityImage.astro';
 import {
   BLOG_POST_QUERY,
   BLOG_POST_PATHS_QUERY,
@@ -90,6 +92,15 @@ const categorySlug = post.category?.slug?.current ?? '';
 const subSlug = post.subcategoryLabel ?? '';
 const pageTitle = post.seo?.metaTitle ?? post.title ?? 'Article';
 const pageDesc = post.seo?.metaDescription ?? post.excerpt ?? '';
+
+const breadcrumbItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog/' },
+  ...(categorySlug
+    ? [{ label: post?.category?.title ?? categorySlug, href: `/blog/${categorySlug}/` }]
+    : []),
+  { label: post?.title ?? slug },
+];
 
 const articleJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -1459,6 +1470,13 @@ const articleJsonLd = JSON.stringify({
     font-weight: 800;
     font-size: 22px;
     letter-spacing: 0.02em;
+    overflow: hidden;
+  }
+  .author-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
   }
   .author-card-body h4 {
     font-family: 'Manrope', sans-serif;
@@ -1968,6 +1986,7 @@ const articleJsonLd = JSON.stringify({
 </style>
 
 <BaseLayout title={`${pageTitle} | Better You Therapy Blog`} description={pageDesc}>
+  <Breadcrumb items={breadcrumbItems} />
   <Fragment set:html={`<script type="application/ld+json">${articleJsonLd}</script>`} />
   <div class="progress-bar"><span id="readProgress"></span></div>
 
@@ -1978,6 +1997,8 @@ const articleJsonLd = JSON.stringify({
         class="subnav-back"
       >
         <svg
+          aria-hidden="true"
+          focusable="false"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -2014,7 +2035,7 @@ const articleJsonLd = JSON.stringify({
     </div>
   </div>
 
-  <section class="article-hero">
+  <section class="article-hero" aria-labelledby="article-heading">
     <div class="article-hero-inner">
       <div class="eyebrow">
         {categorySlug && <a href={`/blog/${categorySlug}/`}>{post?.category?.title}</a>}
@@ -2029,7 +2050,7 @@ const articleJsonLd = JSON.stringify({
           )
         }
       </div>
-      <h1 set:html={post?.title ?? ''} />
+      <h1 id="article-heading" set:html={post?.title ?? ''} />
       <p class="article-hero-deck">{post?.excerpt ?? ''}</p>
       <div class="article-byline">
         <div class="byline-meta">
@@ -2057,7 +2078,7 @@ const articleJsonLd = JSON.stringify({
   </section>
 
   <section class="article-image">
-    <nav class="article-image-crumbs" aria-label="Breadcrumb">
+    <div class="article-image-crumbs">
       <a href="/blog/">Blog</a>
       <span class="sep">/</span>
       {
@@ -2081,12 +2102,15 @@ const articleJsonLd = JSON.stringify({
         )
       }
       <strong>{post?.title ?? slug}</strong>
-    </nav>
+    </div>
     {
       post?.featuredImage?.asset?.url ? (
-        <img
+        <SanityImage
           src={post.featuredImage.asset.url}
           alt={post.featuredImage.alt ?? ''}
+          width={980}
+          height={551}
+          fetchpriority="high"
           class="article-image-inner"
         />
       ) : (
@@ -2104,10 +2128,12 @@ const articleJsonLd = JSON.stringify({
             <div class="author-card">
               <div class="author-card-avatar">
                 {post.author.photo?.asset?.url ? (
-                  <img
+                  <SanityImage
                     src={post.author.photo.asset.url}
                     alt={post.author.photo.alt ?? post.author.name}
-                    style="width:80px;height:80px;border-radius:50%;object-fit:cover;"
+                    width={80}
+                    height={80}
+                    class="author-photo"
                   />
                 ) : (
                   (post.author.initials ?? post.author.name.slice(0, 2).toUpperCase())
@@ -2185,7 +2211,7 @@ const articleJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <section class="related">
+  <section class="related" aria-labelledby="related-heading">
     <div class="related-inner">
       <div class="related-header">
         <div>
@@ -2195,7 +2221,7 @@ const articleJsonLd = JSON.stringify({
           >
             Continue reading
           </p>
-          <h2>Related in {post?.category?.title ?? 'this category'}.</h2>
+          <h2 id="related-heading">Related in {post?.category?.title ?? 'this category'}.</h2>
         </div>
         {categorySlug && <a href={`/blog/${categorySlug}/`}>View all &rarr;</a>}
       </div>
@@ -2224,10 +2250,10 @@ const articleJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <section class="newsletter">
+  <section class="newsletter" aria-labelledby="newsletter-heading">
     <div class="newsletter-inner">
       <p class="eyebrow" style="color:var(--coral);">Stay informed</p>
-      <h2>Mental health insights, delivered.</h2>
+      <h2 id="newsletter-heading">Mental health insights, delivered.</h2>
       <p>
         Evidence-based articles and practical guides for your wellbeing journey. No spam,
         unsubscribe anytime.

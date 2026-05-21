@@ -7,6 +7,7 @@
 
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/ui/Breadcrumb.astro';
 import {
   BLOG_CATEGORY_QUERY,
   BLOG_CATEGORY_POSTS_QUERY,
@@ -1450,31 +1451,30 @@ const categoryLevelPosts = posts ?? [];
 </style>
 
 <BaseLayout title={`${category?.title ?? 'Category'} | Better You Therapy Blog`}>
-  <section class="blog-hero cat-hero">
+  <section class="blog-hero cat-hero" aria-labelledby="cat-hero-heading">
     <div class="blog-hero-inner">
       <p class="eyebrow">Category</p>
-      <h1 set:html={category?.title ?? 'Category'} />
+      <h1 id="cat-hero-heading" set:html={category?.title ?? 'Category'} />
       <p>{category?.description ?? ''}</p>
     </div>
   </section>
 
-  <!-- ── BREADCRUMB ── -->
-  <nav class="crumb">
-    <div class="crumb-inner">
-      <a href="/">Home</a>
-      <span class="sep">/</span>
-      <a href="/blog/">Blog</a>
-      <span class="sep">/</span>
-      <span class="here">{category?.title ?? categorySlug}</span>
-    </div>
-  </nav>
+  <Breadcrumb
+    items={[
+      { label: 'Home', href: '/' },
+      { label: 'Blog', href: '/blog/' },
+      { label: category?.title ?? categorySlug },
+    ]}
+  />
 
   <!-- ── SUBCATEGORIES ── -->
-  <section class="subcats">
+  <section class="subcats" aria-labelledby="subcats-heading">
     <div class="subcats-inner">
       <div class="subcats-header fade-up">
         <p class="eyebrow">Browse Subtopics</p>
-        <h2>{category?.subtopicsHeading ?? 'Pick the one that fits your situation.'}</h2>
+        <h2 id="subcats-heading">
+          {category?.subtopicsHeading ?? 'Pick the one that fits your situation.'}
+        </h2>
       </div>
 
       <div class="subcat-blocks">
@@ -1513,11 +1513,13 @@ const categoryLevelPosts = posts ?? [];
   </section>
 
   <!-- ── ARTICLES IN THIS CATEGORY (level-1, parent-attached) ── -->
-  <section class="article-list">
+  <section class="article-list" aria-labelledby="article-list-heading">
     <div class="article-list-inner">
       <div class="article-list-header fade-up">
         <p class="eyebrow">In this category</p>
-        <h2>{category?.categoryPostsHeading ?? 'Articles tagged at the category level.'}</h2>
+        <h2 id="article-list-heading">
+          {category?.categoryPostsHeading ?? 'Articles tagged at the category level.'}
+        </h2>
         <p>
           Cross-cutting pieces that don't belong to one subtopic — frameworks, overviews, and
           editorial essays that apply across the whole category. Browse the subtopics above for
@@ -1582,10 +1584,10 @@ const categoryLevelPosts = posts ?? [];
   </section>
 
   <!-- ── NEWSLETTER ── -->
-  <section class="newsletter">
+  <section class="newsletter" aria-labelledby="newsletter-heading">
     <div class="newsletter-inner fade-up">
       <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
-      <h2>One thoughtful email a month.</h2>
+      <h2 id="newsletter-heading">One thoughtful email a month.</h2>
       <p>
         New articles, clinical resources, and the occasional behind-the-scenes note. No fluff, easy
         to unsubscribe.
