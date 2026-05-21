@@ -19,9 +19,67 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A Step 6 — Create 10 documentation files
+- **Last work:** 2026-05-21 — Add slug + oldSlugs fields to all 11 page singletons
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Add slug + oldSlugs fields to all 11 page singletons [x] COMPLETE 2026-05-21
+
+- [x] PRE-FLIGHT — confirmed 11 page singletons (homePage, aboutPage, patientsPage, communitiesPage, providersPage, careersPage, contactPage, privacyPage, termsPage, residentReferralPage, blogIndexPage); read field pattern from aboutPage.ts
+- [x] STEP 1 — Added slug and oldSlugs as first two fields in all 11 singleton files
+- [x] STEP 2 — Created scripts/seed-slugs.mjs with patch mutations for all 11 documents
+- [x] VERIFY — grep confirmed slug at line 13–14, oldSlugs at line 25–26 in all 11 files
+- [x] BUILD — pnpm --filter studio build → 0 errors ✓
+
+### Session Review — 2026-05-21 (slug + oldSlugs fields)
+
+**What was built:** `slug` (string, required) and `oldSlugs` (array of strings, readOnly) fields added as the first two fields in all 11 page singleton schemas. Seed script created.
+
+**Fields added (identical block in all 11 files):**
+
+- `slug` — type: string, with custom validation: empty string allowed for homePage only; all others require non-empty value matching `^[a-z0-9]+(?:-[a-z0-9]+)*$`
+- `oldSlugs` — type: array of string, readOnly: true, description warns editors not to edit manually
+
+**Seed values:**
+
+| Singleton            | slug                  |
+| -------------------- | --------------------- |
+| homePage             | `""`                  |
+| aboutPage            | `"about"`             |
+| patientsPage         | `"patients"`          |
+| communitiesPage      | `"communities"`       |
+| providersPage        | `"providers"`         |
+| careersPage          | `"careers"`           |
+| contactPage          | `"contact"`           |
+| privacyPage          | `"privacy"`           |
+| termsPage            | `"terms"`             |
+| residentReferralPage | `"resident-referral"` |
+| blogIndexPage        | `"blog"`              |
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/homePage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/aboutPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/patientsPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/communitiesPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/providersPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/careersPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/contactPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/privacyPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/termsPage.ts` — slug at line 14, oldSlugs at line 26
+- `apps/studio/schemas/singletons/residentReferralPage.ts` — slug at line 13, oldSlugs at line 25
+- `apps/studio/schemas/singletons/blogIndexPage.ts` — slug at line 14, oldSlugs at line 26
+- `scripts/seed-slugs.mjs` (new) — patch-only mutations for all 11 documents; reports each result
+
+**Verification:**
+
+- `grep -n "name: 'slug'"` → confirmed in all 11 files ✓
+- `grep -n "name: 'oldSlugs'"` → confirmed in all 11 files ✓
+- `pnpm --filter studio build` → 0 errors ✓
+
+**Issues:** Pre-flight initially ran against `byt-website-work` (stale clone) instead of `byt-website`. `residentReferralPage.ts` appeared missing. User ran diagnostic commands pointing to correct directory; re-ran pre-flight from canonical clone. No corrections during execution. See Lesson 20 addendum.
 
 ---
 

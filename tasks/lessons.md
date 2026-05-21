@@ -217,6 +217,8 @@ The `tasks/` directory that counts is the one in this git repo. Never write to `
 - /home/personal/projects/byt-website-repo/
 - /home/personal/projects/better-you-therapy/
 
+**Edit tool path coupling (2026-05-21):** The Edit tool tracks which absolute paths have been Read. If you read a file from a stale clone path (e.g. `byt-website-work/apps/studio/schemas/singletons/aboutPage.ts`) and then try to edit the canonical path (`byt-website/apps/studio/schemas/singletons/aboutPage.ts`), the edit fails with "File has not been read yet." Reading from the wrong clone poisons the Edit tool's state for that file. Fix: re-read the file from the canonical path before editing. Prevention: cd to `byt-website` before any Read or Edit call.
+
 ### 21. Before changing any font-family, verify --font-body and --font-heading in global.css
 
 When a user says "use Manrope" or asks to change a font, do not apply the change until you have grepped global.css for `--font-body` and `--font-heading` and checked what font existing form components use.
