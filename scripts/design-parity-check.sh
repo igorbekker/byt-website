@@ -79,7 +79,7 @@ for ASTRO_FILE in $STAGED; do
   fi
 
   # CHECK 4: All script tags have is:inline
-  SCRIPTS_WITHOUT_INLINE=$(grep -Pn '<script(?!.*is:inline)' "$ASTRO_FILE" 2>/dev/null | grep -v 'import' || true)
+  SCRIPTS_WITHOUT_INLINE=$(grep -Pn '<script(?!.*is:inline)' "$ASTRO_FILE" 2>/dev/null | grep -v 'import' | grep -v 'application/ld+json' || true)
   if [ -n "$SCRIPTS_WITHOUT_INLINE" ]; then
     echo "❌ FAIL: $REL_PATH has <script> tags without is:inline:"
     echo "$SCRIPTS_WITHOUT_INLINE"

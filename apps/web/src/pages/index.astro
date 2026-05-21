@@ -8,6 +8,8 @@
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { HOME_PAGE_QUERY, CONDITIONS_HOME_QUERY, TESTIMONIALS_HOME_QUERY } from '../lib/queries';
+import { homepageGraphSchema } from '../lib/schema';
+import SanityImage from '../components/ui/SanityImage.astro';
 
 interface CtaLink {
   label: string;
@@ -1592,27 +1594,30 @@ const renderOrder = [
   title={page?.seo?.metaTitle ??
     'Better You Therapy | Licensed Mental Health Care in Southeast Florida'}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(homepageGraphSchema())} />
   {
     renderOrder.map(({ id }) => {
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section class="hero">
+          <section class="hero" aria-labelledby="hero-heading">
             <div class="hero-image">
-              <img
+              <SanityImage
                 src={page?.heroImage?.asset?.url ?? '/images/home-hero.jpg'}
                 alt={
                   page?.heroImage?.alt ??
                   'Licensed therapist in warm conversation with a senior patient'
                 }
-                onerror="this.style.display='none'"
+                width={800}
+                height={760}
+                fetchpriority="high"
               />
             </div>
             <div class="hero-content">
               <div class="hero-eyebrow">
                 {page?.heroEyebrow ?? 'Licensed Mental Health Care · Southeast Florida & Statewide'}
               </div>
-              <h1>
+              <h1 id="hero-heading">
                 {page?.heroHeadline ??
                   'Mental health care should reach people where they are — not just the ones whose families can navigate the system.'}
               </h1>
@@ -1633,10 +1638,10 @@ const renderOrder = [
         );
       if (id === 'router')
         return (
-          <section class="router-section">
+          <section class="router-section" aria-labelledby="router-heading">
             <div class="router-header fade-up">
               <p class="eyebrow">{page?.routerEyebrow ?? 'Your path starts here'}</p>
-              <h2>{page?.routerHeading ?? 'Who are you here to help?'}</h2>
+              <h2 id="router-heading">{page?.routerHeading ?? 'Who are you here to help?'}</h2>
               <p>
                 {page?.routerSubhead ?? 'Everyone deserves care that meets them where they are.'}
               </p>
@@ -1662,6 +1667,8 @@ const renderOrder = [
                   >
                     {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -1680,6 +1687,8 @@ const renderOrder = [
                 <div class="r-narrow-content" style="display:none">
                   <div class="r-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -1714,6 +1723,8 @@ const renderOrder = [
                   >
                     {page?.routerCards?.[0]?.cta?.label ?? 'Refer a Resident'}
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -1752,6 +1763,8 @@ const renderOrder = [
                   >
                     {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -1770,6 +1783,8 @@ const renderOrder = [
                 <div class="r-narrow-content">
                   <div class="r-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -1803,6 +1818,8 @@ const renderOrder = [
                   >
                     {page?.routerCards?.[1]?.cta?.label ?? 'Book a Session'}
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -1839,6 +1856,8 @@ const renderOrder = [
                   >
                     {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -1857,6 +1876,8 @@ const renderOrder = [
                 <div class="r-narrow-content">
                   <div class="r-icon">
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
@@ -1889,6 +1910,8 @@ const renderOrder = [
                   >
                     {page?.routerCards?.[2]?.cta?.label ?? 'Work with Us'}
                     <svg
+                      aria-hidden="true"
+                      focusable="false"
                       width="14"
                       height="14"
                       viewBox="0 0 24 24"
@@ -1906,11 +1929,13 @@ const renderOrder = [
         );
       if (id === 'belief')
         return (
-          <section class="belief">
+          <section class="belief" aria-labelledby="belief-heading">
             <div class="belief-inner fade-up">
               <div class="belief-rule" />
               {/* CMS-SKIP: typographic decoration */}
-              <h2>"{page?.beliefQuote ?? 'Mental health care belongs to everyone.'}"</h2>
+              <h2 id="belief-heading">
+                "{page?.beliefQuote ?? 'Mental health care belongs to everyone.'}"
+              </h2>
               <p>
                 {page?.beliefBody ??
                   "Mental health care shouldn't depend on where you live, how much you earn, or how well you can navigate the system. We built Better You Therapy to close that gap."}
@@ -1920,13 +1945,13 @@ const renderOrder = [
         );
       if (id === 'two_ways')
         return (
-          <section class="twoways">
+          <section class="twoways" aria-labelledby="twoways-heading">
             <div style="max-width:var(--max-w);margin:0 auto;">
               <div class="twoways-header fade-up">
                 <p class="eyebrow" style="margin-bottom:.75rem">
                   {page?.twoWaysEyebrow ?? 'Two Ways We Work'}
                 </p>
-                <h2>
+                <h2 id="twoways-heading">
                   {page?.twoWaysHeading ??
                     'Two Ways to Get Mental Health Care Through Better You Therapy'}
                 </h2>
@@ -1993,13 +2018,13 @@ const renderOrder = [
               <p class="eyebrow" style="margin-bottom:.75rem">
                 {page?.conditionsEyebrow ?? 'What We Treat'}
               </p>
-              <h2>{page?.conditionsHeading ?? 'Conditions We Treat'}</h2>
+              <h2 id="conditions-heading">{page?.conditionsHeading ?? 'Conditions We Treat'}</h2>
               <p>
                 {page?.conditionsSubhead ??
                   'Our licensed therapists work with adults, seniors, couples, and families across a wide range of mental health conditions.'}
               </p>
             </div>
-            <section class="l349" id="l349">
+            <section class="l349" id="l349" aria-labelledby="conditions-heading">
               <div class="l349-left">
                 <div class="l349-section" data-section="0">
                   <p class="l349-tagline">{conditions?.[0]?.tagline ?? 'Depression'}</p>
@@ -2021,6 +2046,8 @@ const renderOrder = [
                     >
                       {conditions?.[0]?.secondaryCta?.label ?? 'Refer a resident'}
                       <svg
+                        aria-hidden="true"
+                        focusable="false"
                         width="15"
                         height="15"
                         viewBox="0 0 24 24"
@@ -2055,6 +2082,8 @@ const renderOrder = [
                     >
                       {conditions?.[1]?.secondaryCta?.label ?? 'Refer a resident'}
                       <svg
+                        aria-hidden="true"
+                        focusable="false"
                         width="15"
                         height="15"
                         viewBox="0 0 24 24"
@@ -2087,6 +2116,8 @@ const renderOrder = [
                     >
                       {conditions?.[2]?.secondaryCta?.label ?? 'Refer a resident'}
                       <svg
+                        aria-hidden="true"
+                        focusable="false"
                         width="15"
                         height="15"
                         viewBox="0 0 24 24"
@@ -2121,6 +2152,8 @@ const renderOrder = [
                     >
                       {conditions?.[3]?.secondaryCta?.label ?? 'Refer a resident'}
                       <svg
+                        aria-hidden="true"
+                        focusable="false"
                         width="15"
                         height="15"
                         viewBox="0 0 24 24"
@@ -2163,13 +2196,15 @@ const renderOrder = [
         );
       if (id === 'how_it_works')
         return (
-          <section class="howitworks">
+          <section class="howitworks" aria-labelledby="howitworks-heading">
             <div style="max-width:var(--max-w);margin:0 auto;">
               <div class="howitworks-header fade-up">
                 <p class="eyebrow" style="margin-bottom:.75rem">
                   {page?.howItWorksEyebrow ?? 'The Process'}
                 </p>
-                <h2>{page?.howItWorksHeading ?? 'Getting Started Is Simple — Either Way'}</h2>
+                <h2 id="howitworks-heading">
+                  {page?.howItWorksHeading ?? 'Getting Started Is Simple — Either Way'}
+                </h2>
               </div>
               <div class="howitworks-grid fade-up">
                 <div class="howitworks-track howitworks-track-tele">
@@ -2283,13 +2318,15 @@ const renderOrder = [
         );
       if (id === 'testimonials')
         return (
-          <section class="testimonials">
+          <section class="testimonials" aria-labelledby="testimonials-heading">
             <div style="max-width:var(--max-w);margin:0 auto;">
               <div class="testimonials-header fade-up">
                 <p class="eyebrow" style="margin-bottom:.75rem">
                   {page?.testimonialsEyebrow ?? 'Real Voices'}
                 </p>
-                <h2>{page?.testimonialsHeading ?? 'What Our Clients and Partners Are Saying'}</h2>
+                <h2 id="testimonials-heading">
+                  {page?.testimonialsHeading ?? 'What Our Clients and Partners Are Saying'}
+                </h2>
                 <p>
                   {page?.testimonialsSubhead ??
                     'From the families and facilities we serve — in their own words.'}
@@ -2352,7 +2389,7 @@ const renderOrder = [
         );
       if (id === 'provider_teaser')
         return (
-          <section class="provider">
+          <section class="provider" aria-labelledby="provider-heading">
             <div
               class="provider-bg"
               style={`background-image:url('${page?.providerTeaserImage?.asset?.url ?? '/images/home-provider-bg.jpg'}');`}
@@ -2362,7 +2399,9 @@ const renderOrder = [
               <p class="eyebrow" style="margin-bottom:1rem;color:rgba(255,255,255,.75)">
                 {page?.providerTeaserEyebrow ?? 'Join the Team'}
               </p>
-              <h2>{page?.providerTeaserHeading ?? 'Are You a Licensed Therapist in Florida?'}</h2>
+              <h2 id="provider-heading">
+                {page?.providerTeaserHeading ?? 'Are You a Licensed Therapist in Florida?'}
+              </h2>
               <p>
                 {page?.providerTeaserBody ??
                   'Facility-based positions in Southeast Florida and teletherapy positions statewide. Transparent revenue split from day one. We source the patients — you deliver the clinical care.'}
