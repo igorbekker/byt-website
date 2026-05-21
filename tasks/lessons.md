@@ -146,43 +146,53 @@ The commit protocol applies to every commit regardless of size. Invoke `/pre` th
 
 **How to apply:** The moment verification passes → the response ends with the `/pre` skill invocation. No prose, no summary, no "here's what I did." Task briefs listing a `git commit` command describe the desired end state, not a bypass. The size of the change is irrelevant.
 
-### 18. Every user-facing field needs the full four-step triad — audits start from the rendered site
+### 18. The Four-Step Triad must be verified complete before any CMS field work — audits start from the rendered site
 
 Every user-facing text string and image must have a Sanity variable with a `??` fallback. The four-step triad must be complete for every field: (1) schema field declared, (2) field in GROQ query, (3) field wired in template, (4) document seeded in Sanity. For images, a fifth step: upload the asset to Sanity CDN with `_type: 'imageWithAlt'`. Studio must be redeployed after every schema change, from the canonical clone with `git pull` first.
 
-**Why:** Parity audits repeatedly found fields present in schema but missing from the query, or in the query but not wired in the template, or wired but never seeded. Each broken link in the triad silently falls back to the hardcoded value — the page appears correct in dev but CMS changes have no effect in production.
+**Why:** Two failure modes share this root — (1) parity audits repeatedly found fields present in schema but missing from the query, or wired but never seeded; each broken link silently falls back to hardcoded values; (2) task briefs that say "all code changes complete — data entry only" cannot be trusted without verification; a field absent from the schema cannot be entered in Studio, and a field absent from the template never reaches the rendered page.
 
-**How to apply:** Audits start from the rendered site (what the user sees), not from the schema file. For every hardcoded string on a page: trace it back through template → query → schema → seeded data. A field that fails any of the four steps is incomplete.
-
-### 19. Unicode curly quotes (U+2018/U+2019) as JS string delimiters fail inside JSX conditionals
-
-Design-source HTML files sometimes contain strings where the outer JS string delimiter is a Unicode curly quote — U+2018 (LEFT SINGLE QUOTATION MARK) or U+2019 (RIGHT SINGLE QUOTATION MARK) — rather than an ASCII single quote (U+0027). These strings exist in template `??` fallbacks.
-
-Astro's template compiler is lenient about these characters when the expression is a bare `{expression}` in the template body. But when the same expression is nested inside a `{sectionEnabled('id') && ( <section>...</section> )}` conditional, esbuild processes the compiled JS more strictly and rejects U+2018 as an invalid string delimiter, producing `Unexpected "'"` at a misleading compiled-output line number.
-
-**Why:** The Astro compiler's top-level template-body JSX pass is permissive. Once the section is wrapped in an outer `{}` conditional, the inner `{}` expressions are compiled as standard JavaScript by the TypeScript/esbuild pipeline, which enforces the ECMAScript spec: only ASCII `'`, `"`, and `` ` `` are valid string delimiters.
-
-**How to apply:** Before wrapping any `<section>` in a `{condition && (...)}` conditional, scan it for U+2018/U+2019 delimiter pairs in `??` fallback strings:
+**How to apply:** Audits start from the rendered site (what the user sees), not from the schema file. For every hardcoded string on a page: trace it back through template → query → schema → seeded data. A field that fails any step is incomplete. Before accepting any "data entry only" claim, run these three greps:
 
 ```bash
-grep -n $'\xe2\x80\x98' apps/web/src/pages/<page>.astro
+grep -n "fieldName" apps/studio/schemas/**/*.ts          # schema field exists?
+grep -n "fieldName" apps/web/src/lib/queries.ts          # field in query?
+grep -n "fieldName" apps/web/src/layouts/BaseLayout.astro apps/web/src/pages/*.astro  # wired in template?
 ```
 
-Any hit that uses U+2018 as the OPENING delimiter must be converted to ASCII `"`. U+2019 apostrophes INSIDE ASCII-quoted strings are fine and must be preserved — only replace the outermost delimiter characters. Internal U+201C/U+201D curly double quotes are also fine inside ASCII `"` delimiters.
+If any grep returns nothing — the triad is broken. Do not proceed to data entry.
 
-### 20. General-purpose agents rewriting large .astro files corrupt HTML attribute quotes
+### 19. Unicode corruption in .astro files — three entry points, one detection method
 
-When a general-purpose agent reads a `.astro` file and rewrites it (e.g. to restructure section guards into a `.map()`), it may replace ASCII double quotes in HTML attributes (`class="..."`, `onerror="..."`) with Unicode curly double quotes U+201C/U+201D. This produces identical-looking output in the terminal but breaks esbuild with `Unexpected """`.
+LLM-generated text introduces Unicode curly quotes into `.astro` files through three distinct triggers. All produce identical-looking output in the terminal but break esbuild at build time.
 
-**Why:** Agents use LLM-generated text output when writing files. The LLM sometimes "typographically corrects" straight ASCII `"` to curly `"` (U+201C) and `"` (U+201D) in HTML contexts, identical to word processors. esbuild rejects U+201C as a JS string delimiter and as an HTML attribute delimiter.
+**Entry point A — JSX conditional wrapping (U+2018/U+2019 single quotes):** Design-source `??` fallback strings sometimes use U+2018/U+2019 as the outer string delimiter. Astro's top-level JSX pass is lenient, but wrapping a section in `{condition && (...)}` forces esbuild to process inner expressions as strict JS — U+2018 is rejected as a string delimiter, producing `Unexpected "'"`.
 
-**How to apply:** Never use a general-purpose agent to rewrite an entire large `.astro` file. Instead:
+**Entry point B — Agent full-rewrite (U+201C/U+201D double quotes in HTML attributes):** A general-purpose agent rewriting an entire `.astro` file "typographically corrects" ASCII `"` in HTML attributes (`class="..."`) to curly `"` (U+201C/U+201D). esbuild rejects these as attribute delimiters, producing `Unexpected """`.
 
-1. Make only the minimal targeted edits needed (type update, helper addition, section guard → map conversion) using the `Edit` tool with exact old/new strings.
-2. If an agent-rewritten file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted `Edit` calls.
-3. After any agent-file-write, run `python3 -c "... if b'\\xe2\\x80\\x9c' in content: print('CORRUPTED')"` to detect Unicode curly double quotes before building.
+**Entry point C — Edit tool near fallback strings (U+201D in id/aria attributes):** When an Edit inserts `id="foo"` adjacent to a line that already contains U+201C/U+201D curly quotes, the LLM may generate the new attribute's quotes as U+201D instead of ASCII U+0022, silently corrupting the id.
 
-### 21. All verification claims require evidence — grep before reporting, no contradictions
+**Why:** All three share the same root cause — LLMs typographically "correct" ASCII punctuation when generating strings in contexts where curly quotes appear nearby. The Edit tool and agent writes output exactly what the LLM generates.
+
+**How to apply:**
+
+- Never use a general-purpose agent to rewrite an entire large `.astro` file — use targeted `Edit` calls only.
+- Before wrapping a `<section>` in a conditional, scan for U+2018/U+2019 delimiters: `grep -n $'\xe2\x80\x98' apps/web/src/pages/<page>.astro`
+- After any Edit that inserts `id=` or `aria-labelledby=` near a Unicode fallback string, run the bytes scan:
+
+```bash
+python3 -c "
+data = open('path/to/file.astro', 'rb').read()
+for line in data.split(b'\n'):
+    if b'id=' in line and b'\xe2\x80' in line:
+        print(repr(line[:120]))
+"
+```
+
+- If a file fails to build with `Unexpected """`, immediately `git checkout HEAD -- <file>` and redo with targeted edits.
+- Fix detected corruption with: `data.replace(b'id=\xe2\x80\x9dfoo\xe2\x80\x9d', b'id="foo"')`
+
+### 20. All verification claims require evidence — grep before reporting, no contradictions
 
 Before writing any "✓ fixed" or marking a checklist item complete, run `grep -n` for the exact string that was supposed to change. Show the raw grep output. Do not write "fixed" or mark [x] until grep confirms the change is in the file.
 
@@ -192,7 +202,7 @@ Checklist items must also match what the diff actually shows — do not mark "No
 
 **How to apply:** After every Edit tool call, run the verification grep immediately. Before writing any checklist item, re-read the actual diff (`git diff`). If a structural element moved or a new element was added, the checklist must say so honestly. Honest disclosures are not failures; false "YES" claims are.
 
-### 22. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
+### 21. Working directory is /home/personal/projects/byt-website — always cd there first, always use absolute paths for subagents
 
 Every session must start with `cd /home/personal/projects/byt-website`. Every file read, write, build, grep, and deploy must use that absolute path or a path relative to it. Subagents receive no cwd inheritance — always pass the absolute path explicitly (e.g. `/home/personal/projects/byt-website/apps/web/src/pages/contact.astro`).
 
@@ -209,7 +219,7 @@ The `tasks/` directory that counts is the one in this git repo. Never write to `
 - /home/personal/projects/byt-website-repo/
 - /home/personal/projects/better-you-therapy/
 
-### 23. Before changing any font-family, verify --font-body and --font-heading in global.css
+### 22. Before changing any font-family, verify --font-body and --font-heading in global.css
 
 When a user says "use Manrope" or asks to change a font, do not apply the change until you have grepped global.css for `--font-body` and `--font-heading` and checked what font existing form components use.
 
@@ -224,7 +234,7 @@ Every form on the site (ModalForms.astro `.form-field label`, `.form-field input
 
 **How to apply:** When any font instruction is given: grep global.css first → show `--font-body` and `--font-heading` values → confirm the user's intent knowing both values → then change. Never make a font change on instruction alone without showing the current token definitions.
 
-### 24. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
+### 23. ESLint strict config rejects `catch (e)` and `catch (_e)` — use ES2019 optional catch binding
 
 This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsIgnorePattern` or `caughtErrorsIgnorePattern` configured. As a result:
 
@@ -236,7 +246,7 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** Whenever writing a try/catch that intentionally ignores the error (e.g. localStorage access guards), use `catch { /* reason */ }` — no variable at all. Never use `catch (e)` or `catch (_e)` without a `caughtErrorsIgnorePattern` rule in place.
 
-### 25. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
+### 24. Cloudflare adapter vs. Pages Functions — mutual exclusion, and the Studio route gotcha
 
 **The core rule:** `@astrojs/cloudflare` adapter generates `dist/server/entry.mjs` → Cloudflare Pages sees it as a `_worker.js` → ALL `functions/` directory Pages Functions are bypassed. The two routing systems are mutually exclusive.
 
@@ -252,7 +262,7 @@ This project's `eslint.config.mjs` uses `tseslint.configs.strict` with no `argsI
 
 **How to apply:** When toggling adapter on/off, check: (a) does `src/pages/api/` exist? Delete it if removing adapter. (b) does `functions/` exist? Create it if adding Pages Functions. (c) does `studioBasePath` cause a build error? Remove it or install `@astrojs/react`.
 
-### 26. Always confirm branch before running any diagnostic or file inspection
+### 25. Always confirm branch before running any diagnostic or file inspection
 
 Before reading any file, running `ls`, or reporting what exists in the repo, run `git branch --show-current` and confirm it matches the expected branch. A diagnostic run on the wrong branch produces false reports.
 
@@ -260,7 +270,7 @@ Before reading any file, running `ls`, or reporting what exists in the repo, run
 
 **How to apply:** First command of any diagnostic session: `git branch --show-current`. If it is not `main` (or whichever branch the production bug affects), checkout the correct branch before reading any files. Never issue a diagnostic finding without confirming which branch was inspected.
 
-### 27. Audit all related endpoints together — never fix one form at a time
+### 26. Audit all related endpoints together — never fix one form at a time
 
 When investigating a form submission bug (400 error, missing field, payload mismatch), read ALL form/endpoint pairs in one pass before touching any code. One-off fixes waste context, miss systemic patterns, and produce a commit-per-bug mess instead of a single clean atomic commit.
 
@@ -268,7 +278,7 @@ When investigating a form submission bug (400 error, missing field, payload mism
 
 **How to apply:** When any form-related bug is reported, the first action is always to list all form endpoints in the project and read every one (frontend + backend) before writing a single line of code. Produce the mismatch table first. Fix second.
 
-### 28. When a form backend "passes required checks" but still fails — the error is HubSpot enum rejection, not required-field validation
+### 27. When a form backend "passes required checks" but still fails — the error is HubSpot enum rejection, not required-field validation
 
 Two distinct failure modes exist for form submissions:
 
@@ -280,45 +290,6 @@ Prior session fixed (1) but left (2) untouched. Forms still failed in the browse
 **Why:** The previous audit compared field names for presence, not field values for enum compatibility. HubSpot custom enum properties have specific internal option names (e.g., `Weekday mornings` not `weekday-am`; `50-100` not `50–100`). The only way to discover these is to actually curl with real browser payloads and read the HubSpot error response.
 
 **How to apply:** When fixing form failures, the verification step MUST be: curl production with the EXACT values the browser would send (traced by reading the JS submit handler and HTML option values), not fabricated values. A curl that passes with `"bestTimesToReachYou": "weekday-am"` while the actual error is `INVALID_OPTION` is a false green. Always check HubSpot error bodies for `INVALID_OPTION` and map accordingly.
-
-### 29. After any Edit adding an id or class attribute near a Unicode fallback string — verify with python bytes scan
-
-When an Edit inserts `id="foo"` or `class="bar"` into a line that already contains Unicode curly-quote characters (U+201C `"` or U+201D `"`), the LLM may generate the attribute value quotes as U+201D instead of ASCII U+0022. The built HTML will render the id as `id=""foo""` or `id=""foo""` (with extra visible curly quotes).
-
-**Why:** The LLM performs typographic "correction" when generating the `new_string` parameter for an Edit call — seeing `"` nearby, it substitutes the same character for the surrounding attribute quotes. The Edit tool writes exactly what the LLM provides, so the corruption lands in the file silently.
-
-**How to apply:** After any Edit that adds a new `id="..."` or `aria-labelledby="..."` attribute to a line that contains a Unicode fallback string, run:
-
-```bash
-python3 -c "
-data = open('path/to/file.astro', 'rb').read()
-for line in data.split(b'\n'):
-    if b'id=' in line and b'\xe2\x80' in line:
-        print(repr(line[:120]))
-"
-```
-
-If the id contains `\xe2\x80\x9c` or `\xe2\x80\x9d`, fix with:
-
-```python
-data = data.replace(b'id=\xe2\x80\x9dfoo\xe2\x80\x9d', b'id="foo"')
-```
-
-Always run this scan before building when editing pages that have `??` fallbacks with curly-quote strings.
-
-### 30. "Data entry only" task briefs require Four-Step Triad verification before skipping code changes
-
-When a task brief says "All code changes complete — this is data entry only," do NOT accept that claim at face value. Before skipping schema/query/template steps, verify each triad step actually exists in the codebase.
-
-**Why:** Step 3.13 brief said "data entry only" and instructed opening Sanity Studio. The `robotsDirective` field was entirely absent from `seoFields.ts`, all GROQ queries, and `BaseLayout.astro`. The `blogIndexPage` Sanity document didn't exist. Jumping to data entry would have silently failed — Sanity has no `robotsDirective` field in its schema, so Studio couldn't show it; even if data was somehow set via mutation, the template had no `<meta name="robots">` tag.
-
-**How to apply:** Before treating any CMS task as "data entry only," run:
-
-1. `grep -n "fieldName" apps/studio/schemas/**/*.ts` — schema field exists?
-2. `grep -n "fieldName" apps/web/src/lib/queries.ts` — field in query?
-3. `grep -n "fieldName" apps/web/src/layouts/BaseLayout.astro apps/web/src/pages/*.astro` — field wired in template?
-
-If any step fails, the Four-Step Triad is incomplete — do NOT skip to data entry.
 
 ## Incident Log
 
