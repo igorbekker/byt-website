@@ -15,35 +15,39 @@ interface Props {
 const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
 ---
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="/" class="nav-logo" aria-label="Better You Therapy">
-      <img src="/assets/logo.png" alt="Better You Therapy" />
-    </a>
-    {/* CMS-SKIP: navigation link labels */}
-    <div class="nav-links">
-      <a href="/communities/">For Facilities</a>
-      <a href="/patients/">For Patients</a>
-      <a href="/providers/">For Therapists</a>
-      <a href="/about/">About</a>
+<header>
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="Better You Therapy">
+        <img src="/assets/logo.png" alt="Better You Therapy" />
+      </a>
+      {/* CMS-SKIP: navigation link labels */}
+      <div class="nav-links">
+        <a href="/communities/">For Facilities</a>
+        <a href="/patients/">For Patients</a>
+        <a href="/providers/">For Therapists</a>
+        <a href="/about/">About</a>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-cta" onclick="openModal('book')">{navCtaLabel}</button>
+        <button class="nav-cta-secondary" onclick="openModal('refer')"
+          >{navCtaSecondaryLabel}</button
+        >
+      </div>
+      <button class="nav-hamburger" aria-label="Open menu" id="navHamburger">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
     </div>
-    <div class="nav-actions">
-      <button class="nav-cta" onclick="openModal('book')">{navCtaLabel}</button>
-      <button class="nav-cta-secondary" onclick="openModal('refer')">{navCtaSecondaryLabel}</button>
-    </div>
-    <button class="nav-hamburger" aria-label="Open menu" id="navHamburger">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.2"
-        stroke-linecap="round"
-      >
-        <path d="M4 7h16M4 12h16M4 17h16"></path>
-      </svg>
-    </button>
-  </div>
-</nav>
+  </nav>
+</header>
 
 <!-- Mobile menu drawer -->
 <div

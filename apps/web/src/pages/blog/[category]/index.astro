@@ -14,6 +14,7 @@ import {
   BLOG_CATEGORY_PATHS_QUERY,
   SITE_SETTINGS_QUERY,
 } from '../../../lib/queries';
+import { webPageSchema } from '../../../lib/schema';
 
 interface SiteSettings {
   newsletterEyebrow?: string;
@@ -1622,4 +1623,17 @@ const categoryLevelPosts = posts ?? [];
     );
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
   </script>
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={webPageSchema({
+      name: `${category?.title ?? 'Category'} | Better You Therapy Blog`,
+      description:
+        category?.description ??
+        `Browse ${category?.title ?? ''} articles from Better You Therapy.`,
+      url: `https://getbetteryou.com/blog/${categorySlug}/`,
+      type: 'CollectionPage',
+      dateModified: categoryLevelPosts[0]?.publishedAt,
+    })}
+  />
 </BaseLayout>

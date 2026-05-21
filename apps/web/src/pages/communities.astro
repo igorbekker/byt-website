@@ -14,6 +14,7 @@ import {
   CONDITIONS_COMMUNITIES_QUERY,
   SITE_SETTINGS_QUERY,
 } from '../lib/queries';
+import { webPageSchema } from '../lib/schema';
 
 interface CtaLink {
   label: string;
@@ -82,6 +83,12 @@ const [page, conditionsData, siteSettings] = await Promise.all([
   sanityClient.fetch<Condition[]>(CONDITIONS_COMMUNITIES_QUERY),
   sanityClient.fetch<SiteSettings>(SITE_SETTINGS_QUERY),
 ]);
+const pageSchema = webPageSchema({
+  name: 'For Facilities | Better You Therapy',
+  description:
+    'Licensed therapists on-site at your facility weekly. Medicare billing, scheduling, and documentation handled. Zero cost to your facility.',
+  url: 'https://getbetteryou.com/communities/',
+});
 ---
 
 <BaseLayout
@@ -2908,4 +2915,5 @@ const [page, conditionsData, siteSettings] = await Promise.all([
       window.addEventListener('resize', syncMobile);
     })();
   </script>
+  <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

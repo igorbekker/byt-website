@@ -15,6 +15,7 @@ import {
   BLOG_FEATURED_POST_QUERY,
   SITE_SETTINGS_QUERY,
 } from '../../lib/queries';
+import { webPageSchema } from '../../lib/schema';
 
 interface SiteSettings {
   newsletterEyebrow?: string;
@@ -1532,4 +1533,15 @@ function fmtDate(iso: string | undefined): string {
       });
     });
   </script>
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={webPageSchema({
+      name: 'Blog | Better You Therapy',
+      description:
+        'Mental health articles, therapy insights, and clinical resources from Better You Therapy.',
+      url: 'https://getbetteryou.com/blog/',
+      type: 'CollectionPage',
+    })}
+  />
 </BaseLayout>

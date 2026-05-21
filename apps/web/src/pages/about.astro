@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import SanityImage from '../components/ui/SanityImage.astro';
 import { ABOUT_PAGE_QUERY } from '../lib/queries';
+import { webPageSchema } from '../lib/schema';
 
 interface CtaLink {
   label: string;
@@ -71,6 +72,12 @@ const page = await sanityClient.fetch<AboutPage>(ABOUT_PAGE_QUERY);
 const pr = page?.principles ?? [];
 const pp = page?.practicePillars ?? [];
 const sb = page?.storyBody ?? [];
+const pageSchema = webPageSchema({
+  name: 'About Us | Better You Therapy',
+  description:
+    "Learn about Better You Therapy — a Florida mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it.",
+  url: 'https://getbetteryou.com/about/',
+});
 ---
 
 <BaseLayout
@@ -2447,4 +2454,5 @@ const sb = page?.storyBody ?? [];
     );
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
   </script>
+  <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

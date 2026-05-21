@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import SanityImage from '../components/ui/SanityImage.astro';
 import { CONTACT_PAGE_QUERY, SITE_SETTINGS_QUERY } from '../lib/queries';
+import { webPageSchema } from '../lib/schema';
 
 interface ContactPage {
   heroHeading?: string;
@@ -53,6 +54,13 @@ const renderOrder = [
   { id: 'hero', order: sectionOrder('hero') },
   { id: 'contact_form', order: sectionOrder('contact_form') },
 ].sort((a, b) => a.order - b.order);
+const pageSchema = webPageSchema({
+  name: 'Contact | Better You Therapy',
+  description:
+    'Contact Better You Therapy — therapist applications, facility partnerships, and patient inquiries.',
+  url: 'https://getbetteryou.com/contact/',
+  type: 'ContactPage',
+});
 ---
 
 <BaseLayout
@@ -1142,4 +1150,5 @@ const renderOrder = [
     );
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
   </script>
+  <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

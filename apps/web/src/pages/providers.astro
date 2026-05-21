@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import SanityImage from '../components/ui/SanityImage.astro';
 import { PROVIDERS_PAGE_QUERY, TESTIMONIALS_THERAPIST_QUERY } from '../lib/queries';
+import { webPageSchema } from '../lib/schema';
 
 interface ProvidersPage {
   heroHeading?: string;
@@ -74,6 +75,12 @@ const renderOrder = [
   { id: 'testimonials', order: sectionOrder('testimonials') },
   { id: 'cta', order: sectionOrder('cta') },
 ].sort((a, b) => a.order - b.order);
+const pageSchema = webPageSchema({
+  name: 'For Therapists | Better You Therapy',
+  description:
+    'Join Better You Therapy as a licensed therapist. Two role tracks — facility-based in Southeast Florida or statewide teletherapy. Billing, referrals, and EHR handled for you.',
+  url: 'https://getbetteryou.com/providers/',
+});
 ---
 
 <BaseLayout
@@ -2646,7 +2653,7 @@ const renderOrder = [
                     {/* CMS-SKIP: decorative avatar */}
                     <SanityImage
                       src="/images/providers-testimonial-avatar.jpg"
-                      alt=""
+                      alt="Testimonial author photo"
                       width={64}
                       height={64}
                       class="t37-avatar"
@@ -2831,4 +2838,5 @@ const renderOrder = [
       });
     });
   </script>
+  <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

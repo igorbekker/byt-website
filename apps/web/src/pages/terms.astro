@@ -4,6 +4,7 @@ import { PortableText } from 'astro-portabletext';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { TERMS_PAGE_QUERY } from '../lib/queries';
+import { webPageSchema } from '../lib/schema';
 
 const page = await sanityClient.fetch<{
   title?: string;
@@ -11,6 +12,11 @@ const page = await sanityClient.fetch<{
   body: unknown[];
   seo?: { metaTitle?: string; metaDescription?: string; robotsDirective?: string };
 }>(TERMS_PAGE_QUERY);
+const pageSchema = webPageSchema({
+  name: 'Terms & Conditions | Better You Therapy',
+  description: 'Terms and conditions governing use of Better You Therapy services and website.',
+  url: 'https://getbetteryou.com/terms/',
+});
 ---
 
 <BaseLayout
@@ -747,4 +753,5 @@ const page = await sanityClient.fetch<{
       )
     }
   </main>
+  <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

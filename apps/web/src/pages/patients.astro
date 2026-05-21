@@ -8,6 +8,8 @@
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { PATIENTS_PAGE_QUERY, CONDITIONS_PATIENTS_QUERY } from '../lib/queries';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { webPageSchema } from '../lib/schema';
 
 interface CtaLink {
   label: string;
@@ -101,6 +103,12 @@ const renderOrder = [
   { id: 'conditions', order: sectionOrder('conditions') },
   { id: 'cta', order: sectionOrder('cta') },
 ].sort((a, b) => a.order - b.order);
+const pageSchema = webPageSchema({
+  name: 'For Patients | Better You Therapy',
+  description:
+    'Licensed therapists at your facility in Southeast Florida or via secure video anywhere in Florida. Medicare, private insurance, and cash-pay options available.',
+  url: 'https://getbetteryou.com/patients/',
+});
 ---
 
 <BaseLayout
@@ -108,6 +116,7 @@ const renderOrder = [
   description={page?.seo?.metaDescription ??
     'Licensed therapists at your facility in Southeast Florida or via secure video anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
 >
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Patients' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -2782,4 +2791,5 @@ const renderOrder = [
       })();
     })();
   </script>
+  <script is:inline type="application/ld+json" set:html={pageSchema} />
 </BaseLayout>

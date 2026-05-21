@@ -114,6 +114,28 @@ export function faqPageSchema(items: FaqItem[]): Record<string, unknown> {
   };
 }
 
+export interface WebPageParams {
+  name: string;
+  description: string;
+  url: string;
+  type?: 'WebPage' | 'ContactPage' | 'CollectionPage';
+  dateModified?: string;
+}
+
+export function webPageSchema(p: WebPageParams): string {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': p.type ?? 'WebPage',
+    name: p.name,
+    description: p.description,
+    url: p.url,
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    about: { '@id': `${SITE_URL}/#organization` },
+  };
+  if (p.dateModified) schema.dateModified = p.dateModified;
+  return JSON.stringify(schema);
+}
+
 interface BlogPostingParams {
   title: string;
   description?: string;

@@ -2,6 +2,8 @@
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_SETTINGS_QUERY } from '../lib/queries';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { webPageSchema } from '../lib/schema';
 
 interface SiteSettings {
   phone?: string;
@@ -20,6 +22,7 @@ const phoneDigits = phone.replace(/\D/g, '');
   title="Resident Referral Form | Better You Therapy"
   description="Submit a resident or patient referral securely. All information is transmitted and stored in full HIPAA compliance."
 >
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Refer a Resident' }]} />
   <section class="rr-hero">
     <div class="rr-hero-inner">
       <h1>Resident Referral Form</h1>
@@ -1035,4 +1038,14 @@ const phoneDigits = phone.replace(/\D/g, '');
       });
     })();
   </script>
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={webPageSchema({
+      name: 'Resident Referral Form | Better You Therapy',
+      description:
+        'Submit a resident or patient referral securely. All information is transmitted and stored in full HIPAA compliance.',
+      url: 'https://getbetteryou.com/resident-referral/',
+    })}
+  />
 </BaseLayout>
