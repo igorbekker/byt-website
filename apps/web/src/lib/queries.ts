@@ -200,7 +200,7 @@ export const CAREERS_PAGE_QUERY = `*[_type == "careersPage"][0]{
 }`;
 
 export const JOB_POSTINGS_QUERY = `*[_type == "jobPosting" && status == "open"] | order(order asc) {
-  _id, title, track, status, location, slug, employmentType,
+  _id, _createdAt, title, track, status, location, slug, employmentType,
   aboutRole, duties, requirements, offers, order
 }`;
 
