@@ -19,9 +19,45 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A Step 3.13: robotsDirective schema/query/template + seed all 10 pages
+- **Last work:** 2026-05-21 — HubSpot data verification bug fixes (3 bugs)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Fix HubSpot data verification bugs — 2026-05-21 [x] COMPLETE 2026-05-21 05:00
+
+**Bug 1 — Company properties null (facility_type, county, approximate_bed_count):**
+
+- [x] A. Add `updateCompany()` to `functions/api/_hubspot.ts`
+- [x] B. In `facility-referral.ts`: call `updateCompany` when existing company found (before, only `createCompany` set these properties)
+- [x] C. `pnpm --filter web build` → 19 routes, 0 errors ✓
+
+**Bug 2 — therapist_resume = null:**
+
+- [x] D. Add console.log at each step of file upload path in `apply.ts`
+- [x] E. Fix `access: 'PRIVATE'` → `'PUBLIC_NOT_INDEXABLE'` in `_hubspot.ts` uploadFileToHubSpot (PRIVATE = signed URL that expires ~1hr; stored URL in contact property breaks)
+- [x] F. `pnpm --filter web build` → 19 routes, 0 errors ✓
+
+**Bug 3 — Guardian company association (report only):**
+
+- [x] G. Confirmed: referral.ts:365 uses HUBSPOT_DEFINED + typeId 279 — expected behavior (no custom label exists)
+
+### Session Review — 2026-05-21 (HubSpot data verification bugs)
+
+**Bug 1 root cause:** `facility-referral.ts` Step 1 found existing companies by name and reused the ID without updating properties. `facility_type`, `county`, `approximate_bed_count` were only written on `createCompany`. Any company created before these fields were added (or on a repeated form submission) retained null values.
+
+**Bug 2 root cause (two issues):** (1) `uploadFileToHubSpot` used `access: 'PRIVATE'` — private files generate signed URLs that expire ~1hr; URL stored in `therapist_resume` contact property would be broken by the time anyone views it. Changed to `PUBLIC_NOT_INDEXABLE`. (2) Upload errors were non-fatal and silently swallowed — added console.logs to surface errors in Cloudflare logs.
+
+**Bug 3:** Expected behavior confirmed. No code change.
+
+**Files changed:**
+
+- `functions/api/_hubspot.ts` — added `updateCompany()` helper; changed file access `PRIVATE` → `PUBLIC_NOT_INDEXABLE`
+- `functions/api/facility-referral.ts` — imported `updateCompany`; refactored Step 1 to extract `companyProps` and call `updateCompany` on existing companies
+- `functions/api/apply.ts` — added 5 console.log statements across the file upload path
+
+**Verification:** `pnpm --filter web build` → 19 routes, 0 errors ✓. grep confirms all changes in place.
 
 ---
 

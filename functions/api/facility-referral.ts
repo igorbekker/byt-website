@@ -9,6 +9,7 @@ import {
   updateContact,
   searchCompanyByName,
   createCompany,
+  updateCompany,
 } from './_hubspot';
 
 const FACILITY_TYPE_MAP: Record<string, string> = {
@@ -84,20 +85,19 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   // ── STEP 1: Find or create Company ───────────────────────────────────────
   let companyId: string;
   try {
+    const companyProps: Record<string, string> = {
+      name: facilityName,
+      phone: facilityPhone ?? '',
+      facility_type: FACILITY_TYPE_MAP[facilityType] ?? facilityType,
+      county,
+      approximate_bed_count: BED_COUNT_MAP[bedCount] ?? bedCount,
+    };
     const existingId = await searchCompanyByName(facilityName, key);
     if (existingId) {
+      await updateCompany(existingId, companyProps, key);
       companyId = existingId;
     } else {
-      companyId = await createCompany(
-        {
-          name: facilityName,
-          phone: facilityPhone ?? '',
-          facility_type: FACILITY_TYPE_MAP[facilityType] ?? facilityType,
-          county,
-          approximate_bed_count: BED_COUNT_MAP[bedCount] ?? bedCount,
-        },
-        key,
-      );
+      companyId = await createCompany(companyProps, key);
     }
   } catch (err) {
     return jsonResponse({ success: false, error: 'Step 1 failed', details: String(err) }, 500);

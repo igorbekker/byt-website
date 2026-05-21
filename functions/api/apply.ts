@@ -65,13 +65,18 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   let fileUploaded = false;
   let fileUrl: string | undefined;
   let fileError: string | undefined;
+  console.log('[apply] resumeFile present:', !!resumeFile, '| resumeFileName:', resumeFileName);
   if (resumeFile && resumeFileName) {
     try {
+      console.log('[apply] calling uploadFileToHubSpot for:', resumeFileName);
       fileUrl = await uploadFileToHubSpot(resumeFile, resumeFileName, '/resumes', key);
+      console.log('[apply] upload succeeded, url:', fileUrl);
       await updateContact(contactId, { therapist_resume: fileUrl }, key);
+      console.log('[apply] therapist_resume set on contact', contactId);
       fileUploaded = true;
     } catch (err) {
       fileError = String(err);
+      console.log('[apply] file upload/update error:', fileError);
     }
   }
 

@@ -115,6 +115,23 @@ export async function createCompany(
   return data.id;
 }
 
+export async function updateCompany(
+  companyId: string,
+  properties: Record<string, string>,
+  apiKey: string,
+): Promise<void> {
+  const url = `${HUBSPOT_BASE}/crm/v3/objects/companies/${companyId}`;
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers: hubspotHeaders(apiKey),
+    body: JSON.stringify({ properties }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Company update failed (${res.status}): ${err}`);
+  }
+}
+
 export async function uploadFileToHubSpot(
   base64DataUrl: string,
   fileName: string,
@@ -126,7 +143,7 @@ export async function uploadFileToHubSpot(
   const binary = Uint8Array.from(atob(match[2]), (c) => c.charCodeAt(0));
   const formData = new FormData();
   formData.append('file', new Blob([binary], { type: match[1] }), fileName);
-  formData.append('options', JSON.stringify({ access: 'PRIVATE', overwrite: false }));
+  formData.append('options', JSON.stringify({ access: 'PUBLIC_NOT_INDEXABLE', overwrite: false }));
   formData.append('folderPath', folderPath);
   // No Content-Type header — fetch sets multipart boundary automatically
   const res = await fetch(`${HUBSPOT_BASE}/filemanager/api/v3/files/upload`, {
