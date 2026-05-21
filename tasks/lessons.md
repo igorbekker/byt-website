@@ -260,6 +260,14 @@ Before reading any file, running `ls`, or reporting what exists in the repo, run
 
 **How to apply:** First command of any diagnostic session: `git branch --show-current`. If it is not `main` (or whichever branch the production bug affects), checkout the correct branch before reading any files. Never issue a diagnostic finding without confirming which branch was inspected.
 
+### 27. Audit all related endpoints together — never fix one form at a time
+
+When investigating a form submission bug (400 error, missing field, payload mismatch), read ALL form/endpoint pairs in one pass before touching any code. One-off fixes waste context, miss systemic patterns, and produce a commit-per-bug mess instead of a single clean atomic commit.
+
+**Why:** Igor corrected: "STOP doing one-off fixes. Audit ALL 5 form endpoints at once." The right workflow is: read all frontend submit handlers + all backend files → build a full mismatch table → fix everything in one commit.
+
+**How to apply:** When any form-related bug is reported, the first action is always to list all form endpoints in the project and read every one (frontend + backend) before writing a single line of code. Produce the mismatch table first. Fix second.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)

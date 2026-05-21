@@ -47,7 +47,6 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     phone,
     whatBringsYouIn,
     howWillYouPay,
-    bestTimesToReachYou,
   };
   for (const [field, val] of Object.entries(required)) {
     if (!val || !val.trim())

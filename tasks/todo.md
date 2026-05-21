@@ -19,9 +19,35 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix optional field validation in 4 HubSpot Pages Functions
+- **Last work:** 2026-05-21 — Full audit + fix: 6 form/backend field mismatches across 3 API files
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Fix form/backend field validation mismatches — 2026-05-21 [x] COMPLETE 2026-05-21
+
+Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatches where backend rejected empty values that the frontend legitimately sends. Fixed by removing fields from required checks in 3 backend files.
+
+- [x] A. Audited all 6 form/endpoint pairs: Newsletter, Book a Session, Facility Referral, Contact Us, Careers, Resident Referral
+- [x] B. `book-session.ts` — removed `bestTimesToReachYou` from required (checkboxes optional in HTML, can send `''`)
+- [x] C. `facility-referral.ts` — removed `bedCount`, `lastName`, `whatSparkedInterest` from required (`beds` select not required; name parsed from single field; checkboxes optional)
+- [x] D. `apply.ts` — removed `lastName`, `phone` from required (name parsed from single field; phone field not required in HTML)
+- [x] E. Build verified: `pnpm --filter web build` → 19 routes, 0 errors
+
+### Session Review — 2026-05-21 (Form/backend field validation mismatches)
+
+**What was built:** Read all 6 frontend form files and all 6 backend Pages Function files. Cross-referenced every field name, value, and required/optional status. Found 6 mismatches — all were backend marking fields as required that the frontend can legitimately send as empty string.
+
+**Files changed:**
+
+- `functions/api/book-session.ts` — removed `bestTimesToReachYou` from required Record
+- `functions/api/facility-referral.ts` — removed `bedCount`, `lastName`, `whatSparkedInterest` from required Record
+- `functions/api/apply.ts` — removed `lastName`, `phone` from required Record (now only `firstName` + `email` required)
+
+**Verification:** grep output confirmed all 3 required blocks updated. `pnpm --filter web build` → 19 routes, 0 errors.
+
+**Issues:** None. No prior-session corrections to note.
 
 ---
 

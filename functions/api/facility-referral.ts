@@ -57,13 +57,9 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     facilityName,
     facilityType,
     county,
-    bedCount,
-    firstName,
-    lastName,
     email,
     phone,
     role,
-    whatSparkedInterest,
   };
   for (const [field, val] of Object.entries(required)) {
     if (!val || !val.trim())
