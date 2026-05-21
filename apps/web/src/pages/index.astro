@@ -761,11 +761,13 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
     font-size: 15px;
     font-weight: 600;
     color: var(--navy-deep);
+    background: none;
     border: 1.5px solid var(--navy-deep);
     padding: 12px 22px;
     border-radius: var(--r-btn);
     text-decoration: none;
     letter-spacing: 0.01em;
+    cursor: pointer;
     transition:
       background-color var(--t-hover),
       color var(--t-hover);
@@ -779,10 +781,14 @@ const page = await sanityClient.fetch<HomePage>(HOME_PAGE_QUERY);
     font-size: 15px;
     font-weight: 600;
     color: var(--coral);
+    background: none;
+    border: none;
+    padding: 0;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    cursor: pointer;
     transition: color var(--t-hover);
   }
   .l349-btn-ghost:hover {

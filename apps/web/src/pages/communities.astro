@@ -2855,8 +2855,8 @@ const pageSchema = webPageSchema({
           }
         </p>
         <div class="cta25-actions">
-          <a href={page?.ctaCta?.href ?? '/'} class="btn btn-primary"
-            >{page?.ctaCta?.label ?? 'Refer a Facility'}</a
+          <button class="btn btn-primary" onclick="openModal('refer')"
+            >{page?.ctaCta?.label ?? 'Refer a Facility'}</button
           >
           <a
             href={`tel:${(siteSettings?.phone ?? '7549990011').replace(/\D/g, '')}`}

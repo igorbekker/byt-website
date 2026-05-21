@@ -19,9 +19,31 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A audit fix: 55 failures resolved (18P→57P)
+- **Last work:** 2026-05-21 — Fix 2 regressions: homepage l349 CTA styling + communities "Ready to start" CTA
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Fix 2 CTA regressions — 2026-05-21 [x] COMPLETE 2026-05-21
+
+- [x] FIX 1 — index.astro: `l349-btn-outline` / `l349-btn-ghost` lost styling after `<a>` → `<button>` swap in 338a0de; added `background: none; cursor: pointer;` to outline, `background: none; border: none; padding: 0; cursor: pointer;` to ghost
+- [x] FIX 2 — communities.astro: `cta25-actions` "Refer a Facility" primary CTA reverted back to `<a href="...">` after commit `8331637` (rename commit `cb47c29`); restored to `<button onclick="openModal('refer')">`
+- [x] Build verified: `pnpm --filter web build` → 0 errors ✓
+
+### Session Review — 2026-05-21 (Fix 2 CTA regressions)
+
+**What was fixed:**
+
+- **Homepage conditions section** (`index.astro` lines 759–796): The `l349-btn-outline` and `l349-btn-ghost` CSS classes were written for `<a>` tags. Commit `338a0de` swapped them to `<button>` elements without adding button resets, causing browser default button styles (gray background, native border) to break the design. Fixed by adding `background: none; cursor: pointer;` to `.l349-btn-outline` and `background: none; border: none; padding: 0; cursor: pointer;` to `.l349-btn-ghost`.
+- **Communities "Ready to start" section** (`communities.astro` line 2858): Commit `8331637` correctly changed the primary CTA to `<button onclick="openModal('refer')">`. A subsequent rename commit (`cb47c29`) reverted it back to `<a href={page?.ctaCta?.href ?? '/'}>`, which navigated to `/` instead of opening the modal. Restored to button form.
+
+**Files changed:**
+
+- `apps/web/src/pages/index.astro` — 4 CSS property additions to `.l349-btn-outline` and `.l349-btn-ghost`
+- `apps/web/src/pages/communities.astro` — 1 element change in `cta25-actions` (a → button)
+
+**Verification:** Build confirmed before commit. No user corrections this session.
 
 ---
 
