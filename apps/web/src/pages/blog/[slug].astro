@@ -10,6 +10,7 @@ import { PortableText } from 'astro-portabletext';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import SanityImage from '../../components/ui/SanityImage.astro';
+import { blogPostingSchema } from '../../lib/schema';
 import {
   BLOG_POST_QUERY,
   BLOG_POST_PATHS_QUERY,
@@ -19,6 +20,7 @@ import {
 
 interface BlogPost {
   _id: string;
+  _updatedAt?: string;
   title: string;
   slug: { current: string };
   publishedAt?: string;
@@ -102,17 +104,15 @@ const breadcrumbItems = [
   { label: post?.title ?? slug },
 ];
 
-const articleJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: post.title,
-  description: post.excerpt ?? '',
-  datePublished: post.publishedAt ?? '',
-  image: post.featuredImage?.asset?.url ?? '',
-  author: post.author
-    ? { '@type': 'Person', name: post.author.name, description: post.author.credentials ?? '' }
-    : undefined,
-  publisher: { '@type': 'Organization', name: 'Better You Therapy' },
+const articleJsonLd = blogPostingSchema({
+  title: post.title,
+  description: post.excerpt,
+  datePublished: post.publishedAt,
+  dateModified: post._updatedAt ?? post.publishedAt,
+  imageUrl: post.featuredImage?.asset?.url,
+  imageAlt: post.featuredImage?.alt,
+  authorName: post.author?.name,
+  slug: slug,
 });
 ---
 
@@ -2061,7 +2061,7 @@ const articleJsonLd = JSON.stringify({
           >
         </div>
         <div class="byline-stats">
-          <span>{fmtDate(post?.publishedAt)}</span>
+          <time datetime={post?.publishedAt?.slice(0, 10) ?? ''}>{fmtDate(post?.publishedAt)}</time>
           {
             post?.readingTimeMinutes && (
               <>

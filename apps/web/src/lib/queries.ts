@@ -291,7 +291,7 @@ export const BLOG_SUBCATEGORY_POSTS_QUERY = `*[_type == "blogPost" && category->
 }`;
 
 export const BLOG_POST_QUERY = `*[_type == "blogPost" && slug.current == $slug][0] {
-  _id, title, slug{ current }, publishedAt, readingTimeMinutes, excerpt,
+  _id, _updatedAt, title, slug{ current }, publishedAt, readingTimeMinutes, excerpt,
   category->{ title, slug{ current } },
   subcategoryLabel,
   featuredImage{ asset->{ url }, alt },

@@ -19,9 +19,44 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Phase 7A page wiring: blog pages (breadcrumbs, SanityImage, aria)
+- **Last work:** 2026-05-21 — Phase 7A BlogPosting schema refactor on blog/[slug].astro
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A — BlogPosting schema + time elements on [slug].astro — 2026-05-21 [x] COMPLETE 2026-05-21
+
+- [x] A. Create `apps/web/src/lib/schema.ts` with `blogPostingSchema()` (BlogPosting type, dateModified, mainEntityOfPage)
+- [x] B. Add `_updatedAt` to `BLOG_POST_QUERY` in queries.ts
+- [x] C. Add `_updatedAt?: string` to `BlogPost` interface in [slug].astro
+- [x] D. Import `blogPostingSchema` and replace inline `articleJsonLd` const
+- [x] E. Add `<time datetime>` wrapper on published date in article byline
+- [x] F. `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] G. Verify dateModified, mainEntityOfPage, BreadcrumbList in built HTML ✓
+
+### Session Review — 2026-05-21 (Phase 7A BlogPosting schema + time)
+
+**What was built:** `blogPostingSchema()` helper created; `BLOG_POST_QUERY` updated; `[slug].astro` refactored to use the schema builder with `dateModified` and `mainEntityOfPage`.
+
+**Files changed:**
+
+- `apps/web/src/lib/schema.ts` (new) — `blogPostingSchema()` function; produces `BlogPosting` JSON-LD with `dateModified`, `mainEntityOfPage` (`@id: https://getbetteryou.com/blog/{slug}/`), `publisher.sameAs`; conditional `image` and `author` fields
+- `apps/web/src/lib/queries.ts` — added `_updatedAt` to `BLOG_POST_QUERY`
+- `apps/web/src/pages/blog/[slug].astro` — added `_updatedAt?: string` to `BlogPost` interface; added `blogPostingSchema` import; replaced 9-line inline `JSON.stringify` object with `blogPostingSchema()` call; wrapped published-date `<span>` with `<time datetime="YYYY-MM-DD">`
+
+**Note:** `blog/index.astro` requirements (breadcrumbs + aria) were already complete in prior session (`ec0cab6`). Only one commit made for this session.
+
+**Verification (built HTML `how-to-choose-a-therapist/index.html`):**
+
+- `"@type":"BlogPosting"` ✓
+- `"dateModified":"2026-05-07T20:36:34Z"` ✓
+- `"mainEntityOfPage":{"@type":"WebPage","@id":"https://getbetteryou.com/blog/how-to-choose-a-therapist/"}` ✓
+- `BreadcrumbList` count → 1 ✓
+- `<article class="article-prose">` ✓
+- `<time datetime="2026-05-07">` ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
