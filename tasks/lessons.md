@@ -281,6 +281,31 @@ Prior session fixed (1) but left (2) untouched. Forms still failed in the browse
 
 **How to apply:** When fixing form failures, the verification step MUST be: curl production with the EXACT values the browser would send (traced by reading the JS submit handler and HTML option values), not fabricated values. A curl that passes with `"bestTimesToReachYou": "weekday-am"` while the actual error is `INVALID_OPTION` is a false green. Always check HubSpot error bodies for `INVALID_OPTION` and map accordingly.
 
+### 29. After any Edit adding an id or class attribute near a Unicode fallback string — verify with python bytes scan
+
+When an Edit inserts `id="foo"` or `class="bar"` into a line that already contains Unicode curly-quote characters (U+201C `"` or U+201D `"`), the LLM may generate the attribute value quotes as U+201D instead of ASCII U+0022. The built HTML will render the id as `id=""foo""` or `id=""foo""` (with extra visible curly quotes).
+
+**Why:** The LLM performs typographic "correction" when generating the `new_string` parameter for an Edit call — seeing `"` nearby, it substitutes the same character for the surrounding attribute quotes. The Edit tool writes exactly what the LLM provides, so the corruption lands in the file silently.
+
+**How to apply:** After any Edit that adds a new `id="..."` or `aria-labelledby="..."` attribute to a line that contains a Unicode fallback string, run:
+
+```bash
+python3 -c "
+data = open('path/to/file.astro', 'rb').read()
+for line in data.split(b'\n'):
+    if b'id=' in line and b'\xe2\x80' in line:
+        print(repr(line[:120]))
+"
+```
+
+If the id contains `\xe2\x80\x9c` or `\xe2\x80\x9d`, fix with:
+
+```python
+data = data.replace(b'id=\xe2\x80\x9dfoo\xe2\x80\x9d', b'id="foo"')
+```
+
+Always run this scan before building when editing pages that have `??` fallbacks with curly-quote strings.
+
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
@@ -297,5 +322,6 @@ Prior session fixed (1) but left (2) untouched. Forms still failed in the browse
 - 2026-05-04: Entire HTML sections replaced with Sanity .map() loops on Patients page. Sections empty when Sanity unpopulated. (OBS-012)
 - 2026-05-04: Modified design-source/pages/Contact.html to update fax number. Violated hard rule: design-source/ is read-only. Reverted immediately. (OBS-013)
 - 2026-05-05: Claimed l505/l506 CSS blocks matched design-source without visual verification. User correction: "They do not match. Stop claiming they do without visual verification." Fixed by deploying static test files and doing CSS diff analysis. Rule: never claim parity without a concrete diff or visual test. (OBS-014)
+- 2026-05-21: Edit tool introduced Unicode RIGHT DOUBLE QUOTATION MARK (U+201D) in place of ASCII `"` when writing `id="mission-heading"` adjacent to a fallback string containing curly quotes. Caught by grep before commit. Fixed with byte-precise python replace. See Lesson 29.
 - 2026-05-18: Skipped /pre twice in one session (patients and about page field-wiring tasks). Committed and pushed directly. Lesson 17 existed and was ignored. Repeat violation.
 - 2026-05-19: Operated from /home/personal (not project clone) with no cwd anchor in CLAUDE.md. Explore subagents received relative paths. Caused false audits, missing schema fields, missing CMS-SKIP comments. Fixed by adding RULE 0 to CLAUDE.md. (OBS-015)

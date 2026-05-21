@@ -1,6 +1,8 @@
 ---
 import { sanityClient } from 'sanity:client';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import SanityImage from '../components/ui/SanityImage.astro';
 import { ABOUT_PAGE_QUERY } from '../lib/queries';
 
 interface CtaLink {
@@ -76,6 +78,7 @@ const sb = page?.storyBody ?? [];
   description={page?.seo?.metaDescription ??
     "Learn about Better You Therapy — a Florida mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it."}
 >
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -2124,10 +2127,11 @@ const sb = page?.storyBody ?? [];
   </style>
 
   <!-- ── HERO ── -->
-  <section class="about-hero">
+  <section class="about-hero" aria-labelledby="about-hero-heading">
     <div class="about-hero-content">
       <p class="eyebrow">About Better You Therapy</p>
       <h1
+        id="about-hero-heading"
         set:html={page?.heroHeading ??
           'Mental health care should reach <em>everyone</em> — not just the people who can navigate the system.'}
       />
@@ -2139,20 +2143,24 @@ const sb = page?.storyBody ?? [];
       </p>
     </div>
     <div class="about-hero-image">
-      <img
+      <SanityImage
         src="/images/about/about-hero-team.png"
         alt="Better You Therapy clinical team in South Florida"
-        onerror="this.style.display='none'"
+        width={1440}
+        height={640}
+        fetchpriority="high"
       />
     </div>
   </section>
 
   <!-- ── MISSION RULE ── -->
-  <section class="mission-band">
+  <section class="mission-band" aria-labelledby="mission-heading">
     <div class="mission-inner fade-up">
       <p class="eyebrow">{page?.missionEyebrow ?? 'Our Mission'}</p>
       <div class="mission-rule"></div>
-      <h2>{page?.missionQuote ?? '“Mental health care belongs to everyone.”'}</h2>
+      <h2 id="mission-heading">
+        {page?.missionQuote ?? '”Mental health care belongs to everyone.”'}
+      </h2>
       <p>
         {
           page?.missionBody ??
@@ -2163,18 +2171,19 @@ const sb = page?.storyBody ?? [];
   </section>
 
   <!-- ── STORY ── -->
-  <section class="story">
+  <section class="story" aria-labelledby="story-heading">
     <div class="story-inner fade-up">
       <div class="story-image">
-        <img
+        <SanityImage
           src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=900&q=85&auto=format&fit=crop"
           alt="Therapist meeting with a senior resident in a sunlit room"
-          onerror="this.parentElement.style.background='linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 100%)'"
+          width={900}
+          height={1125}
         />
       </div>
       <div class="story-content">
         <p class="eyebrow">{page?.storyEyebrow ?? 'Our Story'}</p>
-        <h2>{page?.storyHeading ?? 'We started where the gap was widest.'}</h2>
+        <h2 id="story-heading">{page?.storyHeading ?? 'We started where the gap was widest.'}</h2>
         <p>
           {
             sb[0]?.children?.[0]?.text ??
@@ -2213,11 +2222,13 @@ const sb = page?.storyBody ?? [];
   </section>
 
   <!-- ── VALUES ── -->
-  <section class="values">
+  <section class="values" aria-labelledby="values-heading">
     <div class="values-inner">
       <div class="values-header fade-up">
         <p class="eyebrow">{page?.principlesEyebrow ?? 'What We Believe'}</p>
-        <h2>{page?.principlesHeading ?? 'Three principles that shape how we work.'}</h2>
+        <h2 id="values-heading">
+          {page?.principlesHeading ?? 'Three principles that shape how we work.'}
+        </h2>
         <p>
           {
             page?.principlesSubhead ??
@@ -2261,11 +2272,13 @@ const sb = page?.storyBody ?? [];
   </section>
 
   <!-- ── APPROACH STRIP ── -->
-  <section class="approach">
+  <section class="approach" aria-labelledby="approach-heading">
     <div class="approach-inner">
       <div class="approach-header fade-up">
         <p class="eyebrow">{page?.practiceEyebrow ?? 'How We Practice'}</p>
-        <h2>{page?.practiceHeading ?? 'Evidence-based, age-aware, integrated.'}</h2>
+        <h2 id="approach-heading">
+          {page?.practiceHeading ?? 'Evidence-based, age-aware, integrated.'}
+        </h2>
       </div>
       <div class="approach-list fade-up">
         <div class="approach-row">
@@ -2324,7 +2337,7 @@ const sb = page?.storyBody ?? [];
   </section>
 
   <!-- ── CLOSING CTA ── -->
-  <section class="about-cta">
+  <section class="about-cta" aria-labelledby="cta-heading">
     <div
       class="about-cta-bg"
       style={`background-image:url('${page?.ctaBackgroundImage?.asset?.url ?? '/images/about/about-cta-bg.png'}')`}
@@ -2333,7 +2346,9 @@ const sb = page?.storyBody ?? [];
     <div class="about-cta-overlay"></div>
     <div class="about-cta-inner fade-up">
       <p class="eyebrow">Work With Us</p>
-      <h2>{page?.ctaHeading ?? "However you found us, we're glad you're here."}</h2>
+      <h2 id="cta-heading">
+        {page?.ctaHeading ?? "However you found us, we're glad you're here."}
+      </h2>
       <p>
         {
           page?.ctaSubhead ??

@@ -19,9 +19,61 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix form HubSpot enum value mismatches: book-session (best_times_to_reach_you) + facility-referral (approximate_bed_count)
+- **Last work:** 2026-05-21 — Phase 7A page wiring: about.astro + contact.astro (breadcrumbs, SanityImage, aria)
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+### Phase 7A Page Wiring — About (/about/) + Contact (/contact/) — 2026-05-21 [x] COMPLETE 2026-05-21 02:50
+
+Wire breadcrumbs, SanityImage, and aria to about.astro and contact.astro. Two separate commits.
+
+**about.astro:**
+
+- [x] A. Added imports: `Breadcrumb` and `SanityImage`
+- [x] B. Added `<Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />` after BaseLayout opens
+- [x] C. Added `aria-labelledby` to 6 sections: about-hero, mission-band, story, values, approach, about-cta
+- [x] D. Added matching `id` to all 6 section headings (h1 + 5× h2)
+- [x] E. Replaced hero `<img>` with `SanityImage` (`fetchpriority="high"`, `width=1440 height=640`)
+- [x] F. Replaced story `<img>` with `SanityImage` (`width=900 height=1125`, lazy)
+- [x] G. Fixed Unicode curly-quote corruption in `id="mission-heading"` (LLM typographic correction artifact) using byte-precise python fix
+
+**contact.astro:**
+
+- [x] H. Added imports: `Breadcrumb` and `SanityImage`
+- [x] I. Added `<Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />` after BaseLayout opens
+- [x] J. Added `aria-labelledby` to 2 sections: contact-hero, contact-form-section
+- [x] K. Added matching `id` to both section headings (h1 + h2)
+- [x] L. Replaced hero `<img>` with `SanityImage` (`fetchpriority="high"`, `width=1400 height=700`)
+- [x] M. Added `aria-hidden="true" focusable="false"` to 3 decorative SVG icons (phone, email, fax)
+- [x] N. Wrapped `<ul class="contact-info-list">` in `<address>` element
+- [x] O. `pnpm --filter web build` → 19 routes, 0 errors ✓
+- [x] P. Verification: about 6× `aria-labelledby`, 6 correct heading ids in dist; contact 2× `aria-labelledby`, 2 correct heading ids in dist, 1× `<address>` ✓
+
+### Session Review — 2026-05-21 (Phase 7A About + Contact page wiring)
+
+**What was built:** Full Phase 7A wiring pass on `apps/web/src/pages/about.astro` and `apps/web/src/pages/contact.astro`.
+
+**Files changed:**
+
+- `apps/web/src/pages/about.astro` — 12 targeted edits + 1 byte-precise python fix
+- `apps/web/src/pages/contact.astro` — 10 targeted edits
+
+**About — SanityImage replacements:**
+
+- Hero (`about-hero-image`): `width=1440 height=640 fetchpriority="high"` — eager load
+- Story image: `width=900 height=1125` — lazy
+
+**Contact — SanityImage replacement:**
+
+- Hero (`contact-hero-image`): `width=1400 height=700 fetchpriority="high"` — eager load
+
+**Bug caught mid-session:** The Edit tool introduced Unicode RIGHT DOUBLE QUOTATION MARK (U+201D) in place of ASCII double quotes around `mission-heading` in `id="mission-heading"`. The curly quotes came from the adjacent fallback string `'"Mental health care..."'`. Fixed by byte-precise python replacement before rebuild.
+
+**Verification:** `aria-labelledby` count → 6 (about), 2 (contact). All heading ids clean ASCII in dist. BreadcrumbList in both dist pages. `<address>` in contact.astro. Build → 19 routes, 0 errors.
+
+**Issues:** Unicode curly-quote corruption in id attribute — caught and fixed before commit. Logged to lessons.md.
 
 ---
 
