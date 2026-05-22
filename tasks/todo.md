@@ -19,9 +19,53 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — intake.astro success state: replaced green banner + form-reset with replace-form pattern matching ResidentReferralPage.astro
+- **Last work:** 2026-05-22 — Fix 6 select option value mismatches in ModalForms.astro causing HubSpot INVALID_OPTION 500 errors on book-session and facility-referral endpoints
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Fix 6 select option value mismatches — HubSpot INVALID_OPTION — 2026-05-22 [x] COMPLETE 2026-05-22 18:39
+
+Branch: `main`
+
+- [x] INVESTIGATE — curl both live endpoints; confirmed HTTP 500 with HubSpot 400 INVALID_OPTION on `how_will_you_pay` and `hs_role`
+- [x] AUDIT — extracted all `<select>` option values from ModalForms.astro for both bookForm and referForm; queried HubSpot API for allowed enum values on all 9 relevant properties
+- [x] FIX — added `value=""` attributes to 6 mismatched `<option>` tags in `ModalForms.astro` (display text unchanged)
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+- [x] VERIFY — grep dist/index.html confirmed all 6 corrected values present ✓
+
+### Session Review — 2026-05-22 (Fix select option value mismatches)
+
+**Root cause:** `<option>` tags had no explicit `value=""` attribute. The browser sends the visible text content as the submitted value. HubSpot's enum properties require exact string matches — the display text differed from the stored enum values.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro` — 6 `<option>` tags updated with explicit `value=` attributes
+
+**Fixes applied:**
+
+| Form      | Field              | Old (display text sent)        | New value=""                     |
+| --------- | ------------------ | ------------------------------ | -------------------------------- |
+| bookForm  | `how_will_you_pay` | `Private insurance`            | `Private Insurance`              |
+| bookForm  | `how_will_you_pay` | `Cash-pay / out-of-pocket`     | `Pay Cash / Out of pocket`       |
+| bookForm  | `how_will_you_pay` | `Not sure — please advise`     | `Not sure`                       |
+| bookForm  | `how_will_you_pay` | `Medicare`                     | `Medicare` (added explicit attr) |
+| referForm | `hs_role`          | `Social Worker / Case Manager` | `Social Worker/Case Manager`     |
+| referForm | `county`           | `St. Lucie`                    | `St Lucie`                       |
+| referForm | `county`           | `Other Florida county`         | `Other`                          |
+
+**Properties confirmed as free-text (no enum):** `what_brings_you_in`, `what_sparked_your_interest` — not affected.
+
+**Properties confirmed correct (no change needed):** `best_times_to_reach_you` (mapped via AVAIL_MAP in book-session.ts), `facility_type` (mapped via FACILITY_TYPE_MAP), `approximate_bed_count` (mapped via BED_COUNT_MAP), `county` options except St. Lucie/Other.
+
+**Verification:**
+
+- `grep -n 'value="Private Insurance"\|value="Pay Cash\|value="Not sure"\|value="Medicare"\|value="Social Worker/Case Manager"\|value="St Lucie"\|value="Other">Other Florida'` → lines 837–840, 1004, 1006, 1052 ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+- All 7 value attrs confirmed in `dist/index.html` ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

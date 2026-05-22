@@ -834,10 +834,10 @@ const {
               aria-describedby="bookPayment-error"
             >
               <option value="" disabled selected>Select an option</option>
-              <option>Medicare</option>
-              <option>Private insurance</option>
-              <option>Cash-pay / out-of-pocket</option>
-              <option>Not sure — please advise</option>
+              <option value="Medicare">Medicare</option>
+              <option value="Private Insurance">Private insurance</option>
+              <option value="Pay Cash / Out of pocket">Cash-pay / out-of-pocket</option>
+              <option value="Not sure">Not sure — please advise</option>
             </select>
             <span id="bookPayment-error" role="alert" class="field-error"></span>
           </div>
@@ -1001,9 +1001,9 @@ const {
                   <option>Broward</option>
                   <option>Miami-Dade</option>
                   <option>Martin</option>
-                  <option>St. Lucie</option>
+                  <option value="St Lucie">St. Lucie</option>
                   <option>Okeechobee</option>
-                  <option>Other Florida county</option>
+                  <option value="Other">Other Florida county</option>
                 </select>
               </div>
             </div>
@@ -1049,7 +1049,7 @@ const {
                   <option value="" disabled selected>Select role</option>
                   <option>Wellness Director</option>
                   <option>Executive Director</option>
-                  <option>Social Worker / Case Manager</option>
+                  <option value="Social Worker/Case Manager">Social Worker / Case Manager</option>
                   <option>Director of Nursing</option>
                   <option>Administrator</option>
                   <option>Other</option>
