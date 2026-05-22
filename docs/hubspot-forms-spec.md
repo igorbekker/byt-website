@@ -145,6 +145,7 @@ No other env vars are required for the forms integration. See `docs/env-registry
 | ----------------------- | --------------------- | ------ | ---------------------------------------- | --------------------------- |
 | `name`                  | Company name          | text   | Free text                                | facility-referral, referral |
 | `phone`                 | Phone                 | text   | Free text                                | facility-referral, referral |
+| `facility_email`        | Facility Email        | text   | Free text                                | referral, intake            |
 | `facility_type`         | Facility Type         | select | `ALF`, `SNF`, `CCRC`                     | facility-referral           |
 | `county`                | County                | text   | Free text                                | facility-referral           |
 | `approximate_bed_count` | Approximate Bed Count | select | `Under 50`, `50-100`, `100+`, `Not sure` | facility-referral           |
@@ -788,6 +789,7 @@ Properties set on Guardian contact:
 | ------------------- | ------------------- | ------- | ---------------------- |
 | Facility name       | `facilityName`      | Company | `name`                 |
 | Facility phone      | `facilityPhone`     | Company | `phone`                |
+| Facility email      | `facilityEmail`     | Company | `facility_email`       |
 | Referrer first name | `referrerFirstName` | Contact | `firstname`            |
 | Referrer last name  | `referrerLastName`  | Contact | `lastname`             |
 | Referrer email      | `referrerEmail`     | Contact | `email`                |

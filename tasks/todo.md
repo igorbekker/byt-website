@@ -1748,6 +1748,61 @@ Branch: `main`
 
 ---
 
+## Add facility_email to Resident Referral form — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] HUBSPOT — created `facility_email` Company property via API (201 Created)
+- [x] BACKEND — added `facilityEmail?: string` to `ReferralBody` interface in `functions/api/referral.ts`
+- [x] BACKEND — destructured `facilityEmail` from body; updated `createCompany` signature to accept `facilityEmail` param; passes `facility_email: facilityEmail` in HubSpot company properties
+- [x] FRONTEND — added Facility Email `<input type="email">` field in Facility Information section of `ResidentReferralPage.astro` (new `rr-row rr-row-half` below facilityPhone row)
+- [x] FRONTEND — added `facilityEmail` to draft persistence `PERSIST_IDS`, `data` object, and `payload` sent to `/api/referral`
+- [x] SPEC — added `facility_email` row to Section 4 Company Properties table (`docs/hubspot-forms-spec.md`)
+- [x] SPEC — added Facility email row to Section 7.6H field mapping table
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (facility_email field)
+
+**What was built:** End-to-end `facility_email` field on the Resident Referral form — HubSpot property creation, backend wiring, frontend field, and spec documentation.
+
+**HubSpot property:** Created via `POST /crm/v3/properties/companies` with `name: 'facility_email'`, `type: 'string'`, `fieldType: 'text'`, `groupName: 'companyinformation'`. Response: 201 Created.
+
+**Backend (`functions/api/referral.ts`):**
+
+- `ReferralBody` interface: added `facilityEmail?: string` (optional, no required validation)
+- `createCompany` function: signature changed from `(name, phone, key)` → `(name, phone, facilityEmail, key)`; body now sends `{ name, phone, facility_email: facilityEmail }`
+- Step 1 create call: `createCompany(facilityName, facilityPhone, facilityEmail ?? '', key)`
+- Note: existing-company path does not update properties (matching prior pattern for this endpoint)
+
+**Frontend (`apps/web/src/components/pages/ResidentReferralPage.astro`):**
+
+- New `<div class="rr-row rr-row-half">` row added after facilityName/facilityPhone row in Facility Information section
+- Field: `<input type="email" id="facilityEmail" name="facilityEmail" autocomplete="email">` — no `required` attribute (optional field)
+- `PERSIST_IDS` array: `'facilityEmail'` added after `'facilityPhone'`
+- Submit handler `data` object: `facilityEmail: fd.get('facilityEmail') || ''`
+- Submit handler `payload` object: `facilityEmail: data.facilityEmail`
+
+**Spec (`docs/hubspot-forms-spec.md`):**
+
+- Section 4 table: `facility_email | Facility Email | text | Free text | referral, intake`
+- Section 7.6H table: `Facility email | facilityEmail | Company | facility_email`
+
+**Files changed:**
+
+- `functions/api/referral.ts` — 4 targeted edits
+- `apps/web/src/components/pages/ResidentReferralPage.astro` — 5 targeted edits
+- `docs/hubspot-forms-spec.md` — 2 targeted edits
+
+**Verification:**
+
+- `grep -n "facility_email" functions/api/referral.ts` → line 74: `facility_email: facilityEmail` in company properties ✓
+- `grep -n "facilityEmail" apps/web/src/components/pages/ResidentReferralPage.astro` → lines 110, 113, 114, 878, 1019, 1048 ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
 ## Fix \_redirects trailing-slash coverage — 2026-05-22 [x] COMPLETE 2026-05-22
 
 Branch: `main`

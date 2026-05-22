@@ -7,6 +7,7 @@ interface Env {
 interface ReferralBody {
   facilityName: string;
   facilityPhone: string;
+  facilityEmail?: string;
   referrerFirstName: string;
   referrerLastName: string;
   referrerEmail: string;
@@ -60,12 +61,17 @@ async function searchCompany(name: string, key: string): Promise<string | null> 
   return data.results?.[0]?.id ?? null;
 }
 
-async function createCompany(name: string, phone: string, key: string): Promise<string> {
+async function createCompany(
+  name: string,
+  phone: string,
+  facilityEmail: string,
+  key: string,
+): Promise<string> {
   const url = `${HUBSPOT_BASE}/crm/v3/objects/companies`;
   const res = await fetch(url, {
     method: 'POST',
     headers: hubspotHeaders(key),
-    body: JSON.stringify({ properties: { name, phone } }),
+    body: JSON.stringify({ properties: { name, phone, facility_email: facilityEmail } }),
   });
   console.log(`[Step 1 create] ${url} → ${res.status}`);
   if (!res.ok) {
@@ -210,6 +216,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   const {
     facilityName,
     facilityPhone,
+    facilityEmail,
     referrerFirstName,
     referrerLastName,
     referrerEmail,
@@ -250,7 +257,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       console.log(`[Step 1] Found existing company: ${existing}`);
       companyId = existing;
     } else {
-      companyId = await createCompany(facilityName, facilityPhone, key);
+      companyId = await createCompany(facilityName, facilityPhone, facilityEmail ?? '', key);
       console.log(`[Step 1] Created company: ${companyId}`);
     }
   } catch (err) {

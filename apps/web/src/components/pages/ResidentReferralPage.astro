@@ -104,6 +104,13 @@ const phoneDigits = phone.replace(/\D/g, '');
                 />
               </div>
             </div>
+            <div class="rr-row rr-row-half">
+              <div class="rr-field">
+                {/* CMS-SKIP */}
+                <label for="facilityEmail">Facility Email</label>
+                <input type="email" id="facilityEmail" name="facilityEmail" autocomplete="email" />
+              </div>
+            </div>
           </div>
 
           <!-- ── Referring Person ── -->
@@ -863,6 +870,7 @@ const phoneDigits = phone.replace(/\D/g, '');
       const PERSIST_IDS = [
         'facilityName',
         'facilityPhone',
+        'facilityEmail',
         'referrerFirstName',
         'referrerLastName',
         'referrerEmail',
@@ -1003,6 +1011,7 @@ const phoneDigits = phone.replace(/\D/g, '');
         const data = {
           facilityName: fd.get('facilityName') || '',
           facilityPhone: fd.get('facilityPhone') || '',
+          facilityEmail: fd.get('facilityEmail') || '',
           referrerFirstName: fd.get('referrerFirstName') || '',
           referrerLastName: fd.get('referrerLastName') || '',
           referrerEmail: fd.get('referrerEmail') || '',
@@ -1031,6 +1040,7 @@ const phoneDigits = phone.replace(/\D/g, '');
         const payload = {
           facilityName: data.facilityName,
           facilityPhone: data.facilityPhone,
+          facilityEmail: data.facilityEmail,
           referrerFirstName: data.referrerFirstName,
           referrerLastName: data.referrerLastName,
           referrerEmail: data.referrerEmail,
