@@ -18,10 +18,12 @@
 | OBS-014 | P2       | Resolved | False CSS parity claim made without visual verification              |
 | OBS-015 | P0       | Resolved | Undocumented dual CSS system caused recurring cascade failures       |
 | OBS-016 | P1       | Resolved | Wrong Sanity token used for Studio deploy                            |
+| OBS-017 | P1       | Resolved | Homepage router hover state diverged from design source              |
+| OBS-018 | P1       | Resolved | useCdn: true caused builds to fetch stale CDN data                   |
 
 ## Summary
 
-- Total obstacles: 16
+- Total obstacles: 18
 - P0 (production broken): 5
 - P1 (visible bug): 7
 - P2 (minor): 4
