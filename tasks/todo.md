@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-21 — Fix mobile modal clipped when opened mid-scroll (window.scrollTo)
+- **Last work:** 2026-05-22 — Fix 3 UI bugs: logo halo stripped from PNG, modal scroll, footer heading CSS selector
 - **Current issues:** None open
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1397,6 +1397,47 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - All 30 current entries from manual redirect documents (no oldSlugs stored yet — expected, feature just shipped) ✓
 
 **Issues:** None. No user corrections this session.
+
+---
+
+## Fix 3 UI bugs: logo halo, modal scroll, footer heading selector — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] DIAGNOSE — Footer logo: `logo-white-trans.png` and `logo-white.png` identical MD5; PNG has 7,136 semi-transparent white halo pixels (alpha < 200); `mix-blend-mode: screen` was the prior workaround
+- [x] FIX 1A — Stripped halo: `sharp` script zeroed all pixels where `r>240 && g>240 && b>240 && a<200`; 7,136 stripped → semiWhite now 0
+- [x] FIX 1B — Removed `mix-blend-mode: screen` from `.footer-logo img` in `Footer.astro`
+- [x] DIAGNOSE — Mobile modal scroll: `.modal-panel` has `overflow: hidden` blocking internal scroll on tall content
+- [x] FIX 2 — Changed `.modal-panel` from `overflow: hidden` → `overflow-y: auto; max-height: 90dvh` in `ModalForms.astro`
+- [x] DIAGNOSE — Footer column headers invisible: HTML uses `<h3>` but CSS selector is `.footer-col h4`; selector never matched after W3C Round 2 changed the HTML tags without updating the CSS
+- [x] FIX 3 — Changed `.footer-col h4 {` → `.footer-col h3 {` in `Footer.astro`; no blog page overrides found
+- [x] BUILD — `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Fix 3 UI bugs)
+
+**What was fixed:**
+
+**FIX 1 — Logo halo:** Prior approach (`mix-blend-mode: screen`) masked the halo on dark backgrounds but failed when page-level CSS (blog pages) overrode the rule without `mix-blend-mode`. Root fix: stripped 7,136 semi-transparent white pixels directly from the PNG using `sharp`. Post-fix pixel counts: `{ transparent: 155911, semiWhite: 0, solidWhite: 16289, other: 0 }`. `mix-blend-mode` removed — no longer needed.
+
+**FIX 2 — Modal scroll:** `openModal` already called `window.scrollTo(0, 0)` (added prior session). The remaining issue was `.modal-panel { overflow: hidden }` preventing internal scroll when modal content taller than viewport. Changed to `overflow-y: auto; max-height: 90dvh` so the panel itself scrolls.
+
+**FIX 3 — Footer heading selector:** W3C Round 2 (2026-05-21) changed footer column `<h4>` tags to `<h3>` in the HTML. The CSS rule `.footer-col h4` was never updated to match, leaving the headings unstyled (no white color, no uppercase, no letter-spacing). Changed CSS selector to `.footer-col h3`. No blog page `footer-col h4` overrides found.
+
+**Files changed:**
+
+- `apps/web/public/assets/logo-white-trans.png` — halo pixels stripped (binary, not a code change)
+- `apps/web/src/components/ui/Footer.astro` — removed `mix-blend-mode: screen`; changed `.footer-col h4` → `.footer-col h3`
+- `apps/web/src/components/ui/ModalForms.astro` — changed `.modal-panel` overflow rule
+
+**Verification:**
+
+- `node -e "...pixel scan..."` → `{ semiWhite: 0 }` ✓
+- `grep "mix-blend-mode" Footer.astro` → 0 matches ✓
+- `grep "footer-col h3" Footer.astro` → line 147 ✓
+- `grep "overflow-y: auto\|max-height: 90dvh" ModalForms.astro` → lines 333–334 ✓
+- `pnpm --filter web build` → 19 pages, 0 errors ✓
+
+**Issues:** No user corrections this session.
 
 ---
 
