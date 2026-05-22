@@ -2,7 +2,7 @@
 
 **Project:** Better You Therapy (BYT) Website  
 **Stack:** Astro 6 · Cloudflare Pages Functions · HubSpot CRM  
-**Last updated:** 2026-05-21
+**Last updated:** 2026-05-22
 
 ---
 
@@ -120,22 +120,22 @@ No other env vars are required for the forms integration. See `docs/env-registry
 
 ### Custom Properties
 
-| Internal name                  | Display label                | Type         | Options                                                                                     | Used by forms                                    | Required             |
-| ------------------------------ | ---------------------------- | ------------ | ------------------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------- |
-| `contact_type`                 | Contact Type                 | select/radio | `Patient`, `Facility Employee`, `Provider`, `Guardian/Family`                               | book-session, apply, facility-referral, referral | Set programmatically |
-| `refer_source`                 | Refer Source                 | text         | Always `Website Form`                                                                       | All forms                                        | Always set           |
-| `website_form`                 | Website Form                 | text         | `Newsletter`, `Contact Us`, `Book Session`, `Apply Job`, `Refer Facility`, `Refer Resident` | All forms                                        | Always set           |
-| `message`                      | Message                      | text         | Free text                                                                                   | contact                                          | Yes                  |
-| `reason_for_referral`          | Reason for Referral          | text         | Free text                                                                                   | referral (patient)                               | Yes                  |
-| `skilled_nursing`              | Skilled Nursing              | text         | `Yes`, `No` (title-cased from frontend value)                                               | referral (patient)                               | Yes                  |
-| `what_brings_you_in`           | What Brings You In           | text/select  | Free text or select value                                                                   | book-session                                     | Yes                  |
-| `how_will_you_pay`             | How Will You Pay             | text/select  | Free text or select value                                                                   | book-session                                     | Yes                  |
-| `best_times_to_reach_you`      | Best Times to Reach You      | multi-select | `Weekday mornings`, `Weekday afternoons`, `Evenings`, `Weekends` (semicolon-joined)         | book-session                                     | Yes (multi-select)   |
-| `anything_else_we_should_know` | Anything Else We Should Know | text         | Free text                                                                                   | book-session, facility-referral                  | Optional             |
-| `hs_role`                      | Role                         | text         | Free text (job title at facility)                                                           | facility-referral                                | Yes                  |
-| `what_sparked_your_interest`   | What Sparked Your Interest   | multi-select | Free text values (semicolon-joined)                                                         | facility-referral                                | Yes                  |
-| `resume_cover_note`            | Resume / Cover Note          | text         | Free text                                                                                   | apply                                            | Optional             |
-| `therapist_resume`             | Therapist Resume URL         | text (URL)   | URL to uploaded file in HubSpot Files                                                       | apply                                            | Optional             |
+| Internal name                  | Display label                | Type         | Options                                                                                                       | Used by forms                                    | Required             |
+| ------------------------------ | ---------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------- |
+| `contact_type`                 | Contact Type                 | select/radio | `Patient`, `Facility Employee`, `Provider`, `Guardian/Family`                                                 | book-session, apply, facility-referral, referral | Set programmatically |
+| `refer_source`                 | Refer Source                 | text         | Always `Website Form`                                                                                         | All forms                                        | Always set           |
+| `website_form`                 | Website Form                 | text         | `Newsletter`, `Contact Us`, `Book Session`, `Apply Job`, `Refer Facility`, `Refer Resident`, `Patient Intake` | All forms                                        | Always set           |
+| `message`                      | Message                      | text         | Free text                                                                                                     | contact                                          | Yes                  |
+| `reason_for_referral`          | Reason for Referral          | text         | Free text                                                                                                     | referral (patient)                               | Yes                  |
+| `skilled_nursing`              | Skilled Nursing              | text         | `Yes`, `No` (title-cased from frontend value)                                                                 | referral (patient)                               | Yes                  |
+| `what_brings_you_in`           | What Brings You In           | text/select  | Free text or select value                                                                                     | book-session                                     | Yes                  |
+| `how_will_you_pay`             | How Will You Pay             | text/select  | Free text or select value                                                                                     | book-session                                     | Yes                  |
+| `best_times_to_reach_you`      | Best Times to Reach You      | multi-select | `Weekday mornings`, `Weekday afternoons`, `Evenings`, `Weekends` (semicolon-joined)                           | book-session                                     | Yes (multi-select)   |
+| `anything_else_we_should_know` | Anything Else We Should Know | text         | Free text                                                                                                     | book-session, facility-referral                  | Optional             |
+| `hs_role`                      | Role                         | text         | Free text (job title at facility)                                                                             | facility-referral                                | Yes                  |
+| `what_sparked_your_interest`   | What Sparked Your Interest   | multi-select | Free text values (semicolon-joined)                                                                           | facility-referral                                | Yes                  |
+| `resume_cover_note`            | Resume / Cover Note          | text         | Free text                                                                                                     | apply                                            | Optional             |
+| `therapist_resume`             | Therapist Resume URL         | text (URL)   | URL to uploaded file in HubSpot Files                                                                         | apply                                            | Optional             |
 
 ---
 
@@ -174,12 +174,12 @@ No other env vars are required for the forms integration. See `docs/env-registry
 
 Every contact created through a form has `contact_type` set to one of four values:
 
-| Value               | Meaning                                                         | Set by form(s)                         |
-| ------------------- | --------------------------------------------------------------- | -------------------------------------- |
-| `Patient`           | A person seeking therapy services at BYT                        | book-session, referral (patient)       |
-| `Facility Employee` | Staff at a partner facility who submitted a referral or inquiry | facility-referral, referral (referrer) |
-| `Provider`          | A licensed therapist or clinician applying to work at BYT       | apply                                  |
-| `Guardian/Family`   | A family member or legal guardian of a referred patient         | referral (guardian, if provided)       |
+| Value               | Meaning                                                         | Set by form(s)                                            |
+| ------------------- | --------------------------------------------------------------- | --------------------------------------------------------- |
+| `Patient`           | A person seeking therapy services at BYT                        | book-session, referral (patient), intake (patient)        |
+| `Facility Employee` | Staff at a partner facility who submitted a referral or inquiry | facility-referral, referral (referrer)                    |
+| `Provider`          | A licensed therapist or clinician applying to work at BYT       | apply                                                     |
+| `Guardian/Family`   | A family member or legal guardian of a referred patient         | referral (guardian, if provided), intake (RP, if present) |
 
 **Note:** newsletter and contact forms do **not** set `contact_type` — those contacts are created/updated with only the fields the user submitted.
 
@@ -803,6 +803,226 @@ Properties set on Guardian contact:
 
 ---
 
+### 7.7 Patient Intake
+
+**A. Purpose:** Internal admin form for creating patient records directly in HubSpot. Captures full patient demographics, insurance details, provider references, and an optional Responsible Party (RP). Not surfaced via the public site layout.
+
+**B. Frontend location:**
+
+- `apps/web/src/pages/intake.astro` — standalone page, no site layout
+
+**C. API endpoint:** `POST /api/intake`  
+**Function file:** `functions/api/intake.ts`
+
+**D. Expected JSON payload:**
+
+```json
+{
+  "firstName": "Robert",
+  "lastName": "Chen",
+  "address": "123 Main St",
+  "city": "Orlando",
+  "state": "FL",
+  "zip": "32801",
+  "phone": "555-100-2000",
+  "fax": "555-100-2001",
+  "email": "robert@example.com",
+  "dob": "1955-04-12",
+  "ssn": "123-45-6789",
+  "primaryInsurance": "Blue Cross",
+  "primaryPolicyNumber": "BCB123456",
+  "secondaryInsurance": "Medicare",
+  "secondaryPolicyNumber": "MED789",
+  "referringCompany": "Sunrise Senior Living",
+  "reasonForReferral": "Depression following stroke",
+  "pcpName": "Dr. Jane Smith",
+  "pcpAddress": "456 Oak Ave, Orlando FL",
+  "pcpPhone": "555-200-3000",
+  "pcpFax": "555-200-3001",
+  "otherProviderName": "Dr. Tom Brown",
+  "otherProviderAddress": "789 Pine Rd, Orlando FL",
+  "otherProviderPhone": "555-300-4000",
+  "otherProviderFax": "555-300-4001",
+  "insuranceCardFront": "data:image/jpeg;base64,/9j/4AAQ...",
+  "insuranceCardBack": "data:image/jpeg;base64,/9j/4AAQ...",
+  "rpFirstName": "Linda",
+  "rpLastName": "Chen",
+  "rpAddress": "123 Main St, Orlando FL",
+  "rpPhone": "555-400-5000",
+  "rpFax": "555-400-5001",
+  "rpEmail": "linda@example.com"
+}
+```
+
+| Field                   | Type           | Required | Notes                                                                    |
+| ----------------------- | -------------- | -------- | ------------------------------------------------------------------------ |
+| `firstName`             | string         | Yes      |                                                                          |
+| `lastName`              | string         | Yes      |                                                                          |
+| `address`               | string         | No       |                                                                          |
+| `city`                  | string         | No       |                                                                          |
+| `state`                 | string         | No       |                                                                          |
+| `zip`                   | string         | No       |                                                                          |
+| `phone`                 | string         | Yes      |                                                                          |
+| `fax`                   | string         | No       |                                                                          |
+| `email`                 | string         | No       | If present, used for dedup; if absent, name+company dedup is used        |
+| `dob`                   | string         | Yes      | Date of birth (ISO 8601 or display string)                               |
+| `ssn`                   | string         | No       |                                                                          |
+| `primaryInsurance`      | string         | No       |                                                                          |
+| `primaryPolicyNumber`   | string         | No       |                                                                          |
+| `secondaryInsurance`    | string         | No       |                                                                          |
+| `secondaryPolicyNumber` | string         | No       |                                                                          |
+| `referringCompany`      | string         | No       | Stored as `company` on patient; also used for name dedup if no email     |
+| `reasonForReferral`     | string         | No       |                                                                          |
+| `pcpName`               | string         | No       |                                                                          |
+| `pcpAddress`            | string         | No       |                                                                          |
+| `pcpPhone`              | string         | No       |                                                                          |
+| `pcpFax`                | string         | No       |                                                                          |
+| `otherProviderName`     | string         | No       |                                                                          |
+| `otherProviderAddress`  | string         | No       |                                                                          |
+| `otherProviderPhone`    | string         | No       |                                                                          |
+| `otherProviderFax`      | string         | No       |                                                                          |
+| `insuranceCardFront`    | string \| null | No       | Base64 data URL (image)                                                  |
+| `insuranceCardBack`     | string \| null | No       | Base64 data URL (image)                                                  |
+| `rpFirstName`           | string         | No       | If absent, no RP record is created                                       |
+| `rpLastName`            | string         | No       |                                                                          |
+| `rpAddress`             | string         | No       |                                                                          |
+| `rpPhone`               | string         | No       |                                                                          |
+| `rpFax`                 | string         | No       |                                                                          |
+| `rpEmail`               | string         | No       | If present, used for RP dedup; if absent, always creates a new RP record |
+
+**E. HubSpot operations (in order):**
+
+1. **Step 1 — Patient contact upsert (fatal):**
+   - If `email` is present → `searchContactByEmail`; if found → `PATCH`; if not → `POST` create
+   - If `email` is absent → `searchContactByName(firstName, lastName, referringCompany)`; if found → `PATCH`; if not → `POST` create
+2. **Step 2 — Responsible Party upsert (fatal, only if `rpFirstName` is present):**
+   - If `rpEmail` is present → `searchContactByEmail(rpEmail)`; if found → `PATCH`; if not → `POST` create
+   - If `rpEmail` is absent → always `POST` create new RP record (no dedup)
+3. **Step 3 — Associations (fatal, only if RP was created):**
+   - RP → Patient: `USER_DEFINED` / `8` (Guardian → Patient)
+   - Patient → RP: `USER_DEFINED` / `11` (Patient → Guardian)
+4. **Step 4 — Insurance card uploads (non-fatal):**
+   - If `insuranceCardFront` present → upload to `/intake-documents/`, create note: `"Insurance card insurance-card-front uploaded via intake form"`
+   - If `insuranceCardBack` present → upload to `/intake-documents/`, create note: `"Insurance card insurance-card-back uploaded via intake form"`
+   - Each card is uploaded and noted independently; failure of one does not block the other
+
+Steps 1–3 are **fatal** — any failure returns an error response and halts execution. Step 4 is **non-fatal** — failures are collected in `fileError` but `success: true` is still returned.
+
+Properties set on Patient contact:
+
+| Property                  | Value                                |
+| ------------------------- | ------------------------------------ |
+| `firstname`               | `firstName`                          |
+| `lastname`                | `lastName`                           |
+| `phone`                   | `phone`                              |
+| `date_of_birth`           | `dob`                                |
+| `contact_type`            | `Patient`                            |
+| `refer_source`            | `Website Form`                       |
+| `website_form`            | `Patient Intake`                     |
+| `address`                 | `address` (if present)               |
+| `city`                    | `city` (if present)                  |
+| `state`                   | `state` (if present)                 |
+| `zip`                     | `zip` (if present)                   |
+| `fax`                     | `fax` (if present)                   |
+| `email`                   | `email` (if present)                 |
+| `social_security_number`  | `ssn` (if present)                   |
+| `primary_insurance`       | `primaryInsurance` (if present)      |
+| `primary_policy_number`   | `primaryPolicyNumber` (if present)   |
+| `secondary_insurance`     | `secondaryInsurance` (if present)    |
+| `secondary_policy_number` | `secondaryPolicyNumber` (if present) |
+| `company`                 | `referringCompany` (if present)      |
+| `reason_for_referral`     | `reasonForReferral` (if present)     |
+| `pcp_name`                | `pcpName` (if present)               |
+| `pcp_address`             | `pcpAddress` (if present)            |
+| `pcp_phone`               | `pcpPhone` (if present)              |
+| `pcp_fax`                 | `pcpFax` (if present)                |
+| `other_provider_name`     | `otherProviderName` (if present)     |
+| `other_provider_address`  | `otherProviderAddress` (if present)  |
+| `other_provider_phone`    | `otherProviderPhone` (if present)    |
+| `other_provider_fax`      | `otherProviderFax` (if present)      |
+
+Properties set on RP contact (if created):
+
+| Property       | Value                    |
+| -------------- | ------------------------ |
+| `firstname`    | `rpFirstName`            |
+| `lastname`     | `rpLastName`             |
+| `contact_type` | `Guardian/Family`        |
+| `refer_source` | `Website Form`           |
+| `website_form` | `Patient Intake`         |
+| `address`      | `rpAddress` (if present) |
+| `phone`        | `rpPhone` (if present)   |
+| `fax`          | `rpFax` (if present)     |
+| `email`        | `rpEmail` (if present)   |
+
+**F. Success response:**
+
+```json
+{
+  "success": true,
+  "patientContactId": "12345",
+  "rpContactId": "67890",
+  "fileError": null
+}
+```
+
+`rpContactId` is `null` if no RP was provided. `fileError` is `null` on success, or a string (semicolon-joined if both cards failed) when one or both uploads failed.
+
+**G. Error handling:**
+
+| Scenario                      | HTTP status | Response body                                                         |
+| ----------------------------- | ----------- | --------------------------------------------------------------------- |
+| Missing `firstName`           | 400         | `{ "success": false, "error": "Missing required field: firstName" }`  |
+| Missing `lastName`            | 400         | `{ "success": false, "error": "Missing required field: lastName" }`   |
+| Missing `phone`               | 400         | `{ "success": false, "error": "Missing required field: phone" }`      |
+| Missing `dob`                 | 400         | `{ "success": false, "error": "Missing required field: dob" }`        |
+| Invalid JSON                  | 400         | `{ "success": false, "error": "Invalid JSON body" }`                  |
+| `HUBSPOT_SERVICE_KEY` missing | 500         | `{ "success": false, "error": "HUBSPOT_SERVICE_KEY not configured" }` |
+| Step 1 (patient upsert) fails | 500         | `{ "success": false, "error": "Step 1 failed", "details": "..." }`    |
+| Step 2 (RP upsert) fails      | 500         | `{ "success": false, "error": "Step 2 failed", "details": "..." }`    |
+| Step 3 (association) fails    | 500         | `{ "success": false, "error": "Step 3 failed", "details": "..." }`    |
+| Insurance card upload fails   | 200         | `{ "success": true, ..., "fileError": "Error message" }` (non-fatal)  |
+
+**H. Field mapping:**
+
+| Frontend field          | JSON key                | HubSpot property                                       |
+| ----------------------- | ----------------------- | ------------------------------------------------------ |
+| First name              | `firstName`             | `firstname`                                            |
+| Last name               | `lastName`              | `lastname`                                             |
+| Address                 | `address`               | `address`                                              |
+| City                    | `city`                  | `city`                                                 |
+| State                   | `state`                 | `state`                                                |
+| ZIP                     | `zip`                   | `zip`                                                  |
+| Phone                   | `phone`                 | `phone`                                                |
+| Fax                     | `fax`                   | `fax`                                                  |
+| Email                   | `email`                 | `email`                                                |
+| Date of birth           | `dob`                   | `date_of_birth`                                        |
+| SSN                     | `ssn`                   | `social_security_number`                               |
+| Primary insurance       | `primaryInsurance`      | `primary_insurance`                                    |
+| Primary policy number   | `primaryPolicyNumber`   | `primary_policy_number`                                |
+| Secondary insurance     | `secondaryInsurance`    | `secondary_insurance`                                  |
+| Secondary policy number | `secondaryPolicyNumber` | `secondary_policy_number`                              |
+| Referring company       | `referringCompany`      | `company`                                              |
+| Reason for referral     | `reasonForReferral`     | `reason_for_referral`                                  |
+| PCP name                | `pcpName`               | `pcp_name`                                             |
+| PCP address             | `pcpAddress`            | `pcp_address`                                          |
+| PCP phone               | `pcpPhone`              | `pcp_phone`                                            |
+| PCP fax                 | `pcpFax`                | `pcp_fax`                                              |
+| Other provider name     | `otherProviderName`     | `other_provider_name`                                  |
+| Other provider address  | `otherProviderAddress`  | `other_provider_address`                               |
+| Other provider phone    | `otherProviderPhone`    | `other_provider_phone`                                 |
+| Other provider fax      | `otherProviderFax`      | `other_provider_fax`                                   |
+| Insurance card (front)  | `insuranceCardFront`    | _(uploaded to `/intake-documents/`, noted on contact)_ |
+| Insurance card (back)   | `insuranceCardBack`     | _(uploaded to `/intake-documents/`, noted on contact)_ |
+| RP first name           | `rpFirstName`           | `firstname` (RP contact)                               |
+| RP last name            | `rpLastName`            | `lastname` (RP contact)                                |
+| RP address              | `rpAddress`             | `address` (RP contact)                                 |
+| RP phone                | `rpPhone`               | `phone` (RP contact)                                   |
+| RP fax                  | `rpFax`                 | `fax` (RP contact)                                     |
+| RP email                | `rpEmail`               | `email` (RP contact)                                   |
+
+---
+
 ## 8. File Upload Flow
 
 ### Frontend (Browser)
@@ -980,6 +1200,29 @@ Updates an existing company by ID.
 
 - **Endpoint:** `PATCH /crm/v3/objects/companies/{companyId}`
 - **Error handling:** Throws on non-OK response
+
+---
+
+### `searchContactByName(firstName: string, lastName: string, company: string, apiKey: string): Promise<string | null>`
+
+Searches contacts by exact match on first name, last name, and company. Used when a contact has no email address (e.g. patients in the intake form).
+
+- **Endpoint:** `POST /crm/v3/objects/contacts/search`
+- **Filter:** `firstname EQ + lastname EQ + company EQ` (all three must match)
+- **Returns:** `string` (ID) or `null`
+- **Error handling:** Returns `null` on non-OK response (does not throw)
+- **Reliability note:** Less reliable than email dedup — will miss contacts whose name or company changed, and will create duplicates if two contacts share the same full name and company
+
+---
+
+### `associate(fromType: string, fromId: string, toType: string, toId: string, category: string, typeId: number, apiKey: string): Promise<void>`
+
+Creates an association between two CRM objects using the HubSpot v4 associations API.
+
+- **Endpoint:** `PUT /crm/v4/objects/{fromType}/{fromId}/associations/{toType}/{toId}`
+- **Body:** `[{ associationCategory: category, associationTypeId: typeId }]`
+- **Error handling:** Throws on non-OK response with message including status and body
+- **Usage:** Always called in reciprocal pairs for contact↔contact associations (e.g. Guardian→Patient label 8, then Patient→Guardian label 11)
 
 ---
 
