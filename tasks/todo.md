@@ -19,9 +19,25 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Fix modal-panel overflow breaking both modals on mobile + desktop
+- **Last work:** 2026-05-22 — Favicon, footer logo, Book modal scroll fix
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Three-fix session — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] FIX 1 — favicon: `cp design-source/assets/favicon-transparent.png apps/web/public/favicon.png` (44KB PNG); BaseLayout.astro already points to `/favicon.png` ✓
+- [x] FIX 2 — footer logo: `cp "design-source/assets/white transparent.png" apps/web/public/assets/logo-white-trans.png`; MD5 `2c60a7a0c5f78f394631293c3b9094c5`; PNG RGBA 2530×1211; no `mix-blend-mode` in Footer.astro ✓
+- [x] FIX 3 — Book modal scroll: scoped `CareersPage.astro` `is:global` `.modal-body` rules to `#jobModal .modal-body`; Refer unaffected (uses `.refer-main`); build 20 pages ✓
+
+### Session Review — 2026-05-22 (Three-fix session)
+
+**Root cause (FIX 3):** `CareersPage.astro` uses `is:global` styles with `.modal-body { max-height: 50vh; overflow-y: auto }` (and `40vh` at mobile). On the careers page this bled into the Book modal's `.modal-body`, constraining it to 50/40vh and making it scroll internally rather than via `.modal-overlay`. Refer modal was unaffected because it uses `.refer-main`, not `.modal-body`.
+
+**Fix:** Changed all careers-specific `.modal-body` selectors to `#jobModal .modal-body` in CareersPage.astro lines 2038–2064 and 2131.
 
 ---
 
