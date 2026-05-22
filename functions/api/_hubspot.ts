@@ -195,3 +195,53 @@ export async function createNote(
   const data = (await res.json()) as { id: string }; // safe: HubSpot create returns { id }
   return data.id;
 }
+
+export async function searchContactByName(
+  firstName: string,
+  lastName: string,
+  company: string,
+  apiKey: string,
+): Promise<string | null> {
+  const url = `${HUBSPOT_BASE}/crm/v3/objects/contacts/search`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: hubspotHeaders(apiKey),
+    body: JSON.stringify({
+      filterGroups: [
+        {
+          filters: [
+            { propertyName: 'firstname', operator: 'EQ', value: firstName },
+            { propertyName: 'lastname', operator: 'EQ', value: lastName },
+            { propertyName: 'company', operator: 'EQ', value: company },
+          ],
+        },
+      ],
+      properties: ['firstname', 'lastname', 'company'],
+      limit: 1,
+    }),
+  });
+  if (!res.ok) return null;
+  const data = (await res.json()) as { results: Array<{ id: string }> }; // safe: HubSpot search always returns this shape
+  return data.results?.[0]?.id ?? null;
+}
+
+export async function associate(
+  fromType: string,
+  fromId: string,
+  toType: string,
+  toId: string,
+  category: string,
+  typeId: number,
+  apiKey: string,
+): Promise<void> {
+  const url = `${HUBSPOT_BASE}/crm/v4/objects/${fromType}/${fromId}/associations/${toType}/${toId}`;
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: hubspotHeaders(apiKey),
+    body: JSON.stringify([{ associationCategory: category, associationTypeId: typeId }]),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Association failed (${res.status}): ${err}`);
+  }
+}
