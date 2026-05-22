@@ -360,18 +360,6 @@ Writing a file that contains a sensitive government ID field (e.g. SSN input wit
 
 The same two-step pattern applies to any file write that might be flagged: get the scaffolding in place, then add the sensitive element via `Edit`.
 
-### 32. HubSpot Private App token rotates silently when a new scope is added
-
-Adding a scope to a HubSpot Private App (HubSpot → Settings → Integrations → Private Apps → Scopes → Save) generates a new access token. The old token remains in `.dev.vars` and Cloudflare Pages env vars and continues to return 403 for the newly required scope until updated.
-
-**Why:** After Igor added `crm.schemas.contacts.write`, the `create-intake-properties.mjs` script still returned 403 on all calls because `.dev.vars` still held the pre-rotation token. The script had to be run a second time after Igor updated the token.
-
-**How to apply:** Any time a scope change is made to a HubSpot Private App:
-
-1. Go to the **Auth** tab of the Private App — copy the new token immediately
-2. Update `.dev.vars` (local) and Cloudflare Pages env vars (production) before re-running any script that uses `HUBSPOT_SERVICE_KEY`
-3. The old token is not immediately invalidated but will stop working for new scopes
-
 ## Incident Log
 
 - 2026-05-01: Sanity Editor token deleted by mistake. Blocked seeding. Required new token from Igor. (OBS-001)
