@@ -21,6 +21,10 @@ import { webPageSchema } from '../lib/schema';
   <section class="it-form-section">
     <div class="it-form-wrap">
       <form id="intakeForm" novalidate>
+        <div id="successMsg" class="it-msg it-success" role="status" style="display:none">
+          Patient intake submitted successfully.
+        </div>
+
         <!-- Section 1: Patient Information -->
         <div class="it-section">
           <h2 class="it-section-heading">Patient Information</h2>
@@ -244,9 +248,6 @@ import { webPageSchema } from '../lib/schema';
           <button type="submit" id="submitBtn" class="btn btn-coral it-submit-btn">
             Submit Patient Intake
           </button>
-          <div id="successMsg" class="it-msg it-success" role="status" style="display:none">
-            Patient intake submitted successfully.
-          </div>
           <div id="errorMsg" class="it-msg it-error" role="alert" style="display:none">
             Submission failed. Please try again or contact support.
           </div>
@@ -259,7 +260,7 @@ import { webPageSchema } from '../lib/schema';
     /* ── Hero ── */
     .it-hero {
       background: var(--cream);
-      padding: 5rem var(--pad-x);
+      padding: 2rem var(--pad-x) 1.5rem;
       text-align: center;
       border-bottom: 1px solid var(--border);
     }
@@ -285,12 +286,12 @@ import { webPageSchema } from '../lib/schema';
     /* ── Form section wrapper ── */
     .it-form-section {
       background: var(--white);
-      padding: var(--pad-s) var(--pad-x);
+      padding: 1.5rem var(--pad-x);
     }
     .it-form-wrap {
       max-width: 800px;
       margin: 0 auto;
-      padding: 40px 0;
+      padding: 0;
     }
 
     /* ── Form sections ── */
@@ -452,6 +453,7 @@ import { webPageSchema } from '../lib/schema';
       background: #e8f5e9;
       color: #2e7d32;
       border: 1px solid #a5d6a7;
+      margin-bottom: 1.25rem;
     }
     .it-error {
       background: var(--coral-light);
@@ -462,7 +464,7 @@ import { webPageSchema } from '../lib/schema';
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .it-hero {
-        padding: 3.5rem var(--pad-x);
+        padding: 1rem var(--pad-x) 0.75rem;
       }
       .it-form-section {
         padding-left: var(--pad-x);
@@ -570,6 +572,7 @@ import { webPageSchema } from '../lib/schema';
         });
         const data = await res.json();
         if (data.success) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           successMsg.style.display = 'block';
           document.getElementById('intakeForm').reset();
         } else {

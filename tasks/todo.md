@@ -19,9 +19,37 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Restyle /intake/ to match /referral/ brand (BaseLayout + rr-style CSS)
+- **Last work:** 2026-05-22 — intake.astro: success banner to top + mobile hero gap fix
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## intake.astro: success banner position + mobile gap — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] FIX 1 — Moved #successMsg before first .it-section (line 24); added window.scrollTo({ top: 0, behavior: 'smooth' }) in JS success handler (line 575); added margin-bottom: 1.25rem to .it-success so banner has space below it at top position
+- [x] FIX 2 — Reduced .it-hero mobile padding from 3.5rem var(--pad-x) → 1rem var(--pad-x) 0.75rem (line 467); was ~112px vertical padding, now ~28px
+- [x] BUILD — pnpm --filter web build → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (intake.astro success banner + mobile gap)
+
+**FIX 1:** #successMsg div moved from inside .it-submit-area (bottom of form) to immediately after opening <form> tag, before the first .it-section ("Patient Information"). JS success handler now calls window.scrollTo({ top: 0, behavior: 'smooth' }) before successMsg.style.display = 'block'. Added margin-bottom: 1.25rem to .it-success so banner has breathing room above the first form section.
+
+**FIX 2:** .it-hero mobile media query had padding: 3.5rem var(--pad-x) — 3.5rem on BOTH top and bottom (56px each = 112px total). Desktop has 2rem top / 1.5rem bottom. The extra mobile padding was the source of ~300px empty space between breadcrumb and first form section. Reduced to 1rem var(--pad-x) 0.75rem to match the intent of the form (internal admin tool, no hero emphasis needed on mobile).
+
+**Files changed:**
+
+- apps/web/src/pages/intake.astro — #successMsg moved to line 24; JS scrollTo added line 575; .it-success margin-bottom line 456; mobile .it-hero padding line 467
+
+**Verification:**
+
+- grep -n "successMsg" → line 24 (banner at top), line 505/508/576 (JS) ✓
+- grep -n "scrollTo" → line 575: window.scrollTo({ top: 0, behavior: 'smooth' }); ✓
+- grep -n "padding: 1rem" → line 467: padding: 1rem var(--pad-x) 0.75rem ✓
+- dist check: 7 successMsg/scrollTo hits in built HTML ✓; mobile padding in dist ✓
+- pnpm --filter web build → 20 pages, 0 errors ✓
 
 ---
 
