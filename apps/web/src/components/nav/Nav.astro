@@ -78,6 +78,14 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
     <a href="/patients/" class="mm-link">For Patients</a>
     <a href="/providers/" class="mm-link">For Therapists</a>
     <a href="/about/" class="mm-link">About</a>
+    <div class="mm-separator"></div>
+    <div class="mm-section-label">Forms</div>
+    <a href="/intake/" class="mm-link">Intake Form</a>
+    <a href="/resident-referral/" class="mm-link">Resident Referral Form</a>
+    <div class="mm-separator"></div>
+    <div class="mm-section-label">Company</div>
+    <a href="/contact/" class="mm-link">Contact Us</a>
+    <a href="/careers/" class="mm-link">Careers</a>
     <div class="mobile-menu-actions">
       <button class="btn btn-coral" onclick="openModal('book')">{navCtaLabel}</button>
       <button class="btn btn-outline-ink" onclick="openModal('refer')"
@@ -272,6 +280,21 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
   }
   .mobile-menu a.mm-link:hover {
     color: var(--coral);
+  }
+
+  .mm-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+
+  .mm-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--slate);
+    padding: 0 4px 4px;
   }
 
   .mobile-menu-actions {

@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — intake.astro: "Other Ways to Submit" section + siteSettings fetch
+- **Last work:** 2026-05-22 — Nav.astro mobile menu: expanded with Forms + Company sections (Intake Form, Resident Referral Form, Contact Us, Careers)
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1661,6 +1661,47 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - `grep -n "defined(oldSlugs)" apps/web/astro.config.mjs` → line 19 ✓
 - `pnpm --filter web build` → 19 pages, 0 errors, 30 redirect(s) written ✓
 - All 30 current entries from manual redirect documents (no oldSlugs stored yet — expected, feature just shipped) ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Nav.astro mobile menu — expand links with Forms + Company sections — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] HTML — added 6 new links (Intake Form, Resident Referral Form, Contact Us, Careers) with 2 `mm-separator` divs and 2 `mm-section-label` divs between existing links and `mobile-menu-actions`
+- [x] CSS — added `.mm-separator` (1px border line, 12px vertical margin) and `.mm-section-label` (11px uppercase label, slate color) rules after `.mobile-menu a.mm-link:hover`
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Nav mobile menu expansion)
+
+**What was built:** Mobile menu drawer expanded from 4 links to 8 links, organized into two labeled sections below the existing navigation links.
+
+**HTML added** (between `<a href="/about/">` and `<div class="mobile-menu-actions">`):
+
+- `<div class="mm-separator"></div>` — horizontal rule
+- `<div class="mm-section-label">Forms</div>` — section label
+- `<a href="/intake/" class="mm-link">Intake Form</a>`
+- `<a href="/resident-referral/" class="mm-link">Resident Referral Form</a>`
+- `<div class="mm-separator"></div>` — horizontal rule
+- `<div class="mm-section-label">Company</div>` — section label
+- `<a href="/contact/" class="mm-link">Contact Us</a>`
+- `<a href="/careers/" class="mm-link">Careers</a>`
+
+**CSS added** (after `.mobile-menu a.mm-link:hover`):
+
+- `.mm-separator` — `height: 1px; background: var(--border); margin: 12px 0`
+- `.mm-section-label` — `font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--slate); padding: 0 4px 4px`
+
+**Files changed:**
+
+- `apps/web/src/components/nav/Nav.astro` — 10 HTML lines added (lines 81–90); 14 CSS lines added (after line 275)
+
+**Verification:**
+
+- `grep -n "mm-separator\|mm-section-label\|Forms\|Company\|intake\|careers\|contact" Nav.astro` → lines 81, 82, 83, 85, 86, 87, 88, 285, 291 ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
 
 **Issues:** None. No user corrections this session.
 
