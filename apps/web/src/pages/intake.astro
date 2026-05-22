@@ -28,10 +28,6 @@ const phoneDigits = phone.replace(/\D/g, '');
   <section class="it-form-section">
     <div class="it-form-wrap">
       <form id="intakeForm" novalidate>
-        <div id="successMsg" class="it-msg it-success" role="status" style="display:none">
-          Patient intake submitted successfully.
-        </div>
-
         <!-- Section 1: Patient Information -->
         <div class="it-section">
           <h2 class="it-section-heading">Patient Information</h2>
@@ -290,6 +286,26 @@ const phoneDigits = phone.replace(/\D/g, '');
           </div>
         </div>
       </form>
+
+      <div id="formSuccess" class="it-success-state" hidden>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <h2>Patient intake received.</h2>
+        <p>The record has been created successfully.</p>
+      </div>
     </div>
   </section>
 
@@ -509,16 +525,32 @@ const phoneDigits = phone.replace(/\D/g, '');
       font-weight: 500;
       margin-top: 1rem;
     }
-    .it-success {
-      background: #e8f5e9;
-      color: #2e7d32;
-      border: 1px solid #a5d6a7;
-      margin-bottom: 1.25rem;
-    }
     .it-error {
       background: var(--coral-light);
       color: var(--coral);
       border: 1px solid rgba(224, 85, 85, 0.3);
+    }
+
+    /* ── Success state ── */
+    .it-success-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+    }
+    .it-success-state svg {
+      color: var(--teal);
+      margin: 0 auto 1.25rem;
+      display: block;
+    }
+    .it-success-state h2 {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 0.5rem;
+    }
+    .it-success-state p {
+      font-size: 15px;
+      color: var(--slate);
     }
 
     /* ── Alt / contact section ── */
@@ -610,11 +642,11 @@ const phoneDigits = phone.replace(/\D/g, '');
 
     document.getElementById('intakeForm').addEventListener('submit', async function (e) {
       e.preventDefault();
+      const form = document.getElementById('intakeForm');
       const btn = document.getElementById('submitBtn');
-      const successMsg = document.getElementById('successMsg');
       const errorMsg = document.getElementById('errorMsg');
+      const formSuccess = document.getElementById('formSuccess');
 
-      successMsg.style.display = 'none';
       errorMsg.style.display = 'none';
       btn.disabled = true;
       btn.textContent = 'Submitting…';
@@ -687,9 +719,8 @@ const phoneDigits = phone.replace(/\D/g, '');
         });
         const data = await res.json();
         if (data.success) {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          successMsg.style.display = 'block';
-          document.getElementById('intakeForm').reset();
+          form.hidden = true;
+          formSuccess.hidden = false;
         } else {
           errorMsg.textContent = data.error || 'Submission failed. Please try again.';
           errorMsg.style.display = 'block';

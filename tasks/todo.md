@@ -19,9 +19,43 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — intake.ts restructure: 4-step → 6-step multi-object flow (Company upsert + Referrer contact); intake.astro referral section redesigned; spec 7.7/§4/§6 updated
+- **Last work:** 2026-05-22 — intake.astro success state: replaced green banner + form-reset with replace-form pattern matching ResidentReferralPage.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## intake.astro: replace-form success state — 2026-05-22 [x] COMPLETE 2026-05-22 18:16
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/components/pages/ResidentReferralPage.astro` (referral form success pattern); `apps/web/src/pages/intake.astro` (current success state)
+- [x] HTML — removed `#successMsg` banner from inside `<form>`; added `<div id="formSuccess" class="it-success-state" hidden>` after `</form>` inside `.it-form-wrap` with green checkmark SVG, `<h2>Patient intake received.</h2>`, `<p>The record has been created successfully.</p>`
+- [x] CSS — removed `.it-success` banner styles; added `.it-success-state` mirroring `.rr-success` (centered, `var(--teal)` SVG, heading, body)
+- [x] JS — replaced `window.scrollTo + successMsg.style.display = 'block' + form.reset()` with `form.hidden = true; formSuccess.hidden = false;`; removed `successMsg` variable
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (intake.astro replace-form success state)
+
+**What was built:** Replaced the old green banner + form-reset success pattern on `/intake/` with the same replace-form pattern used in `ResidentReferralPage.astro`. On successful submission, the entire form is hidden and a centered success state (checkmark icon + heading + body copy) takes its place — identical structure and CSS approach to the referral form.
+
+**What changed:**
+
+- Removed `<div id="successMsg" class="it-msg it-success" ...>` from inside the `<form>` element
+- Added `<div id="formSuccess" class="it-success-state" hidden>` after `</form>`, inside `.it-form-wrap`, with the same green checkmark SVG path as the referral form
+- Removed `.it-success` CSS block (banner styles: green bg, green border, green text)
+- Added `.it-success-state` CSS block matching `.rr-success` exactly (text-align center, 3rem padding, teal SVG, Manrope h2, slate p)
+- JS: removed `const successMsg` reference; removed `successMsg.style.display = 'none'` reset at top; replaced `window.scrollTo + successMsg.style.display = 'block' + form.reset()` with `form.hidden = true; formSuccess.hidden = false;`
+
+**Files changed:**
+
+- `apps/web/src/pages/intake.astro` — HTML (removed banner, added success state div), CSS (removed `.it-success`, added `.it-success-state`), JS (updated submit handler)
+
+**Verification:**
+
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
