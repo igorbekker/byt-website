@@ -136,6 +136,12 @@ The sequence is: `/pre` → `git commit` → `/post`
 
 ---
 
+## REQUIRED: HubSpot Forms
+
+Before creating, modifying, or debugging any form that submits to HubSpot, read `docs/hubspot-forms-spec.md` first. This document contains all property internal names, association label IDs, payload formats, file upload flow, and multi-select conventions. Do not rely on memory for HubSpot field names or IDs.
+
+---
+
 ## REQUIRED: Four-Step Triad (Five for Images)
 
 Every CMS field change must complete ALL steps. If any step is missing, the site may render correctly (fallbacks hide the gap) but the CMS is broken.
@@ -448,3 +454,21 @@ Hooks live in `docs/hooks/`. Each is a prompt template for a specific verificati
 | After template wiring          | HOOK_01 + HOOK_05 |
 | After commit claiming 3+ fixes | HOOK_08           |
 | Before launch / end of sprint  | ALL               |
+
+---
+
+## Quick Reference
+
+| Document                         | Purpose                                                                                               |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `docs/hubspot-forms-spec.md`     | HubSpot forms integration spec (properties, associations, payloads, file uploads, new form checklist) |
+| `docs/env-registry.md`           | All environment variables and their purpose                                                           |
+| `docs/deploy-runbook.md`         | Step-by-step deploy instructions including Studio deploy                                              |
+| `docs/css-architecture.md`       | Global vs page-level CSS ownership — which selectors global.css owns                                  |
+| `docs/token-registry.md`         | CSS design token reference                                                                            |
+| `docs/sanity-schema-registry.md` | All Sanity schema types and field names                                                               |
+| `docs/decision-log/`             | Igor-approved architectural decisions (highest source-of-truth)                                       |
+| `docs/obstacle-log/`             | Logged blockers (OBS-XXX files)                                                                       |
+| `docs/hooks/`                    | Verification hook prompt templates (HOOK_01–HOOK_08)                                                  |
+| `tasks/todo.md`                  | Current session task list — read at session start                                                     |
+| `tasks/lessons.md`               | Accumulated correction log — read at session start                                                    |
