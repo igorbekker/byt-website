@@ -1,619 +1,598 @@
 ---
-// Patient Intake — admin-facing form, no site layout
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { webPageSchema } from '../lib/schema';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Patient Intake | Better You Therapy</title>
-    <link rel="canonical" href="https://getbetteryou.com/intake/" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#104378" />
-    <meta property="og:title" content="Patient Intake | Better You Therapy" />
-    <meta property="og:description" content="Patient intake form — internal use only." />
-    <meta property="og:url" content="https://getbetteryou.com/intake/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Better You Therapy" />
-    <meta property="og:locale" content="en_US" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Patient Intake | Better You Therapy" />
-    <meta name="twitter:description" content="Patient intake form — internal use only." />
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://getbetteryou.com/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Patient Intake",
-            "item": "https://getbetteryou.com/intake/"
-          }
-        ]
+<BaseLayout
+  title="Patient Intake | Better You Therapy"
+  description="Patient intake form — internal use only."
+  seo={{ robotsDirective: 'noindex, nofollow' }}
+>
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Patient Intake' }]} />
+
+  <section class="it-hero">
+    <div class="it-hero-inner">
+      <h1>Patient Intake Form</h1>
+      <p>Internal use only. Complete all required fields for each new patient.</p>
+    </div>
+  </section>
+
+  <section class="it-form-section">
+    <div class="it-form-wrap">
+      <form id="intakeForm" novalidate>
+        <!-- Section 1: Patient Information -->
+        <div class="it-section">
+          <h2 class="it-section-heading">Patient Information</h2>
+          <div class="it-section-body">
+            <div class="it-field">
+              <label for="firstName">First Name <span class="it-req">*</span></label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                required
+                autocomplete="given-name"
+              />
+            </div>
+            <div class="it-field">
+              <label for="lastName">Last Name <span class="it-req">*</span></label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                required
+                autocomplete="family-name"
+              />
+            </div>
+            <div class="it-field it-full">
+              <label for="address">Address</label>
+              <input type="text" id="address" name="address" autocomplete="street-address" />
+            </div>
+            <div class="it-field">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" autocomplete="address-level2" />
+            </div>
+            <div class="it-field">
+              <label for="state">State</label>
+              <select id="state" name="state" autocomplete="address-level1">
+                <option value="">— Select —</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+                <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+                <option>DC</option><option>FL</option><option>GA</option><option>HI</option>
+                <option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+                <option>KS</option><option>KY</option><option>LA</option><option>ME</option>
+                <option>MD</option><option>MA</option><option>MI</option><option>MN</option>
+                <option>MS</option><option>MO</option><option>MT</option><option>NE</option>
+                <option>NV</option><option>NH</option><option>NJ</option><option>NM</option>
+                <option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+                <option>OK</option><option>OR</option><option>PA</option><option>RI</option>
+                <option>SC</option><option>SD</option><option>TN</option><option>TX</option>
+                <option>UT</option><option>VT</option><option>VA</option><option>WA</option>
+                <option>WV</option><option>WI</option><option>WY</option>
+              </select>
+            </div>
+            <div class="it-field">
+              <label for="zip">ZIP Code</label>
+              <input type="text" id="zip" name="zip" autocomplete="postal-code" maxlength="10" />
+            </div>
+            <div class="it-field">
+              <label for="phone">Phone <span class="it-req">*</span></label>
+              <input type="tel" id="phone" name="phone" required autocomplete="tel" />
+            </div>
+            <div class="it-field">
+              <label for="fax">Fax</label>
+              <input type="tel" id="fax" name="fax" />
+            </div>
+            <div class="it-field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" />
+            </div>
+            <div class="it-field">
+              <label for="dob">Date of Birth <span class="it-req">*</span></label>
+              <input type="date" id="dob" name="dob" required />
+            </div>
+            <div class="it-field">
+              <label for="ssn">SSN</label>
+              <input type="text" id="ssn" name="ssn" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Billing Information -->
+        <div class="it-section">
+          <h2 class="it-section-heading">Billing Information</h2>
+          <div class="it-section-body">
+            <div class="it-field">
+              <label for="primaryInsurance">Primary Insurance</label>
+              <input type="text" id="primaryInsurance" name="primaryInsurance" />
+            </div>
+            <div class="it-field">
+              <label for="primaryPolicyNumber">Primary Policy #</label>
+              <input type="text" id="primaryPolicyNumber" name="primaryPolicyNumber" />
+            </div>
+            <div class="it-field">
+              <label for="secondaryInsurance">Secondary Insurance</label>
+              <input type="text" id="secondaryInsurance" name="secondaryInsurance" />
+            </div>
+            <div class="it-field">
+              <label for="secondaryPolicyNumber">Secondary Policy #</label>
+              <input type="text" id="secondaryPolicyNumber" name="secondaryPolicyNumber" />
+            </div>
+            <div class="it-field it-file-field">
+              <label for="insuranceCardFrontFile">Insurance Card — Front</label>
+              <input
+                type="file"
+                id="insuranceCardFrontFile"
+                name="insuranceCardFrontFile"
+                accept="image/*,.pdf"
+              />
+              <span class="it-file-hint">JPG, PNG, or PDF</span>
+            </div>
+            <div class="it-field it-file-field">
+              <label for="insuranceCardBackFile">Insurance Card — Back</label>
+              <input
+                type="file"
+                id="insuranceCardBackFile"
+                name="insuranceCardBackFile"
+                accept="image/*,.pdf"
+              />
+              <span class="it-file-hint">JPG, PNG, or PDF</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Referral Information -->
+        <div class="it-section">
+          <h2 class="it-section-heading">Referral Information</h2>
+          <div class="it-section-body">
+            <div class="it-field it-full">
+              <label for="referringCompany">Referring Person / Company</label>
+              <input type="text" id="referringCompany" name="referringCompany" />
+            </div>
+            <div class="it-field it-full">
+              <label for="reasonForReferral">Reason for Referral</label>
+              <textarea id="reasonForReferral" name="reasonForReferral" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Responsible Party -->
+        <div class="it-section it-section-optional">
+          <div class="it-section-heading-row">
+            <h2 class="it-section-heading">Responsible Party</h2>
+            <span class="it-optional-badge">Optional</span>
+          </div>
+          <p class="it-section-helper">
+            Leave blank if the patient is their own responsible party.
+          </p>
+          <div class="it-section-body">
+            <div class="it-field">
+              <label for="rpFirstName">First Name</label>
+              <input type="text" id="rpFirstName" name="rpFirstName" />
+            </div>
+            <div class="it-field">
+              <label for="rpLastName">Last Name</label>
+              <input type="text" id="rpLastName" name="rpLastName" />
+            </div>
+            <div class="it-field it-full">
+              <label for="rpAddress">Address</label>
+              <input type="text" id="rpAddress" name="rpAddress" />
+            </div>
+            <div class="it-field">
+              <label for="rpPhone">Phone</label>
+              <input type="tel" id="rpPhone" name="rpPhone" />
+            </div>
+            <div class="it-field">
+              <label for="rpFax">Fax</label>
+              <input type="tel" id="rpFax" name="rpFax" />
+            </div>
+            <div class="it-field it-full">
+              <label for="rpEmail">Email</label>
+              <input type="email" id="rpEmail" name="rpEmail" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 5: Primary Care Provider -->
+        <div class="it-section">
+          <h2 class="it-section-heading">Primary Care Provider</h2>
+          <div class="it-section-body">
+            <div class="it-field">
+              <label for="pcpName">PCP Name</label>
+              <input type="text" id="pcpName" name="pcpName" />
+            </div>
+            <div class="it-field">
+              <label for="pcpPhone">PCP Phone</label>
+              <input type="tel" id="pcpPhone" name="pcpPhone" />
+            </div>
+            <div class="it-field">
+              <label for="pcpAddress">PCP Address</label>
+              <input type="text" id="pcpAddress" name="pcpAddress" />
+            </div>
+            <div class="it-field">
+              <label for="pcpFax">PCP Fax</label>
+              <input type="tel" id="pcpFax" name="pcpFax" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 6: Other Provider -->
+        <div class="it-section">
+          <h2 class="it-section-heading">Other Provider</h2>
+          <div class="it-section-body">
+            <div class="it-field">
+              <label for="otherProviderName">Provider Name</label>
+              <input type="text" id="otherProviderName" name="otherProviderName" />
+            </div>
+            <div class="it-field">
+              <label for="otherProviderPhone">Provider Phone</label>
+              <input type="tel" id="otherProviderPhone" name="otherProviderPhone" />
+            </div>
+            <div class="it-field">
+              <label for="otherProviderAddress">Provider Address</label>
+              <input type="text" id="otherProviderAddress" name="otherProviderAddress" />
+            </div>
+            <div class="it-field">
+              <label for="otherProviderFax">Provider Fax</label>
+              <input type="tel" id="otherProviderFax" name="otherProviderFax" />
+            </div>
+          </div>
+        </div>
+
+        <div class="it-submit-area">
+          <button type="submit" id="submitBtn" class="btn btn-coral it-submit-btn">
+            Submit Patient Intake
+          </button>
+          <div id="successMsg" class="it-msg it-success" role="status" style="display:none">
+            Patient intake submitted successfully.
+          </div>
+          <div id="errorMsg" class="it-msg it-error" role="alert" style="display:none">
+            Submission failed. Please try again or contact support.
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <style>
+    /* ── Hero ── */
+    .it-hero {
+      background: var(--cream);
+      padding: 5rem var(--pad-x);
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .it-hero-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .it-hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 3.4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--navy-deep);
+      margin-bottom: 1.25rem;
+    }
+    .it-hero p {
+      font-size: 17px;
+      color: var(--slate);
+      line-height: 1.6;
+    }
+
+    /* ── Form section wrapper ── */
+    .it-form-section {
+      background: var(--white);
+      padding: var(--pad-s) var(--pad-x);
+    }
+    .it-form-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+
+    /* ── Form sections ── */
+    .it-section {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.25rem;
+      background: #fff;
+    }
+    .it-section-optional {
+      background: var(--cream);
+    }
+    .it-section-heading {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy-deep);
+      letter-spacing: -0.01em;
+      margin: 0 0 1.25rem;
+    }
+    .it-section-heading-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .it-section-heading-row .it-section-heading {
+      margin: 0;
+    }
+    .it-optional-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slate);
+      background: var(--border);
+      border-radius: 20px;
+      padding: 2px 9px;
+    }
+    .it-section-helper {
+      font-size: 13px;
+      color: var(--slate);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Field grid ── */
+    .it-section-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .it-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .it-full {
+      grid-column: 1 / -1;
+    }
+    .it-field label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy-deep);
+    }
+    .it-req {
+      color: var(--coral);
+      margin-left: 2px;
+    }
+    .it-field input[type='text'],
+    .it-field input[type='tel'],
+    .it-field input[type='email'],
+    .it-field input[type='date'],
+    .it-field select,
+    .it-field textarea {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-btn);
+      background: #fff;
+      color: var(--navy-deep);
+      transition:
+        border-color var(--t-hover),
+        box-shadow var(--t-hover);
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .it-field input::placeholder,
+    .it-field textarea::placeholder {
+      color: var(--mist);
+    }
+    .it-field input:focus,
+    .it-field select:focus,
+    .it-field textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(16, 67, 120, 0.12);
+    }
+    .it-field textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+    .it-field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a7194'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    /* ── File inputs ── */
+    .it-file-field input[type='file'] {
+      padding: 8px;
+      font-size: 13px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--r-btn);
+      background: var(--off-white);
+      cursor: pointer;
+      -webkit-appearance: auto;
+      appearance: auto;
+    }
+    .it-file-field input[type='file']:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+    .it-file-hint {
+      font-size: 12px;
+      color: var(--mist);
+    }
+
+    /* ── Submit area ── */
+    .it-submit-area {
+      margin-top: 0.5rem;
+    }
+    .it-submit-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 15px;
+    }
+    .it-submit-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+    .it-msg {
+      padding: 14px 18px;
+      border-radius: var(--r-btn);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+    .it-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+    .it-error {
+      background: var(--coral-light);
+      color: var(--coral);
+      border: 1px solid rgba(224, 85, 85, 0.3);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .it-hero {
+        padding: 3.5rem var(--pad-x);
       }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+      .it-form-section {
+        padding-left: var(--pad-x);
+        padding-right: var(--pad-x);
       }
-      body {
-        font-family: 'Montserrat', sans-serif;
-        background: #f4f6f9;
-        color: #1a1a2e;
-        font-size: 15px;
-        line-height: 1.5;
+      .it-section {
+        padding: 1.25rem;
       }
-      .skip-link {
-        position: absolute;
-        left: -9999px;
-        top: auto;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      }
-      .skip-link:focus {
-        position: static;
-        width: auto;
-        height: auto;
-        padding: 8px 16px;
-        background: #104378;
-        color: #fff;
-        z-index: 100;
-      }
-      .intake-header {
-        background: #104378;
-        padding: 20px 24px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-      .intake-header img {
-        height: 48px;
-        width: auto;
-      }
-      .intake-header h1 {
-        color: #fff;
-        font-size: 1.25rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-      }
-      .intake-wrapper {
-        max-width: 760px;
-        margin: 32px auto;
-        padding: 0 16px 64px;
-      }
-      .form-section {
-        background: #fff;
-        border-radius: 8px;
-        border: 1px solid #dde2ea;
-        margin-bottom: 24px;
-        overflow: hidden;
-      }
-      .form-section-header {
-        background: #f0f4f9;
-        border-bottom: 1px solid #dde2ea;
-        padding: 14px 20px;
-      }
-      .form-section-header h2 {
-        font-size: 0.9rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #104378;
-      }
-      .form-section-body {
-        padding: 20px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-      .form-section-body.single-col {
+      .it-section-body {
         grid-template-columns: 1fr;
       }
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
+      .it-full {
+        grid-column: 1;
       }
-      .field.full {
-        grid-column: 1 / -1;
-      }
-      label {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #444;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-      }
-      label .req {
-        color: #c0392b;
-        margin-left: 2px;
-      }
-      input[type='text'],
-      input[type='tel'],
-      input[type='email'],
-      input[type='date'],
-      select,
-      textarea {
-        width: 100%;
-        padding: 9px 12px;
-        border: 1px solid #c8d0db;
-        border-radius: 5px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.9rem;
-        color: #1a1a2e;
-        background: #fff;
-        transition: border-color 0.15s;
-      }
-      input:focus,
-      select:focus,
-      textarea:focus {
-        outline: none;
-        border-color: #104378;
-        box-shadow: 0 0 0 3px rgba(16, 67, 120, 0.12);
-      }
-      textarea {
-        resize: vertical;
-        min-height: 80px;
-      }
-      select {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23667'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        padding-right: 32px;
-      }
-      .file-input-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-      .file-input-wrapper input[type='file'] {
-        padding: 7px;
-        font-size: 0.85rem;
-        border: 1px dashed #c8d0db;
-        border-radius: 5px;
-        background: #fafbfc;
-        cursor: pointer;
-      }
-      .file-input-wrapper input[type='file']:focus {
-        outline: none;
-        border-color: #104378;
-      }
-      .file-hint {
-        font-size: 0.75rem;
-        color: #888;
-        margin-top: 2px;
-      }
-      .submit-area {
-        margin-top: 8px;
-      }
-      .btn-submit {
-        width: 100%;
-        padding: 14px 24px;
-        background: #104378;
-        color: #fff;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.95rem;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.15s;
-      }
-      .btn-submit:hover {
-        background: #0d3560;
-      }
-      .btn-submit:disabled {
-        background: #7a9bbf;
-        cursor: not-allowed;
-      }
-      .msg {
-        display: none;
-        padding: 14px 18px;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin-top: 16px;
-      }
-      .msg.success {
-        background: #e8f5e9;
-        color: #2e7d32;
-        border: 1px solid #a5d6a7;
-      }
-      .msg.error {
-        background: #fdecea;
-        color: #c62828;
-        border: 1px solid #ef9a9a;
-      }
-      .section-note {
-        grid-column: 1 / -1;
-        font-size: 0.8rem;
-        color: #666;
-        font-style: italic;
-      }
-      @media (max-width: 560px) {
-        .form-section-body {
-          grid-template-columns: 1fr;
-        }
-        .field.full {
-          grid-column: 1;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <nav aria-label="Breadcrumb" style="display:none">
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li aria-current="page">Patient Intake</li>
-      </ol>
-    </nav>
-    <header class="intake-header">
-      <img
-        src="/assets/logo.png"
-        alt="Better You Therapy"
-        width="100"
-        height="48"
-        loading="eager"
-        decoding="async"
-      />
-      <h1>Patient Intake Form</h1>
-    </header>
-    <main id="main-content">
-      <div class="intake-wrapper">
-        <form id="intakeForm" novalidate>
-          <!-- Section 1: Patient Information -->
-          <div class="form-section">
-            <div class="form-section-header"><h2>Patient Information</h2></div>
-            <div class="form-section-body">
-              <div class="field">
-                <label for="firstName">First Name <span class="req">*</span></label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  required
-                  autocomplete="given-name"
-                />
-              </div>
-              <div class="field">
-                <label for="lastName">Last Name <span class="req">*</span></label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  required
-                  autocomplete="family-name"
-                />
-              </div>
-              <div class="field full">
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" autocomplete="street-address" />
-              </div>
-              <div class="field">
-                <label for="city">City</label>
-                <input type="text" id="city" name="city" autocomplete="address-level2" />
-              </div>
-              <div class="field">
-                <label for="state">State</label>
-                <select id="state" name="state" autocomplete="address-level1">
-                  <option value="">— Select —</option>
-                  <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
-                  <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
-                  <option>DC</option><option>FL</option><option>GA</option><option>HI</option>
-                  <option>ID</option><option>IL</option><option>IN</option><option>IA</option>
-                  <option>KS</option><option>KY</option><option>LA</option><option>ME</option>
-                  <option>MD</option><option>MA</option><option>MI</option><option>MN</option>
-                  <option>MS</option><option>MO</option><option>MT</option><option>NE</option>
-                  <option>NV</option><option>NH</option><option>NJ</option><option>NM</option>
-                  <option>NY</option><option>NC</option><option>ND</option><option>OH</option>
-                  <option>OK</option><option>OR</option><option>PA</option><option>RI</option>
-                  <option>SC</option><option>SD</option><option>TN</option><option>TX</option>
-                  <option>UT</option><option>VT</option><option>VA</option><option>WA</option>
-                  <option>WV</option><option>WI</option><option>WY</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="zip">ZIP Code</label>
-                <input type="text" id="zip" name="zip" autocomplete="postal-code" maxlength="10" />
-              </div>
-              <div class="field">
-                <label for="phone">Phone <span class="req">*</span></label>
-                <input type="tel" id="phone" name="phone" required autocomplete="tel" />
-              </div>
-              <div class="field">
-                <label for="fax">Fax</label>
-                <input type="tel" id="fax" name="fax" />
-              </div>
-              <div class="field">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" autocomplete="email" />
-              </div>
-              <div class="field">
-                <label for="dob">Date of Birth <span class="req">*</span></label>
-                <input type="date" id="dob" name="dob" required />
-              </div>
-              <div class="field">
-                <label for="ssn">SSN</label>
-                <input type="text" id="ssn" name="ssn" />
-              </div>
-            </div>
-          </div>
+    }
+  </style>
 
-          <!-- Section 2: Billing Information -->
-          <div class="form-section">
-            <div class="form-section-header"><h2>Billing Information</h2></div>
-            <div class="form-section-body">
-              <div class="field">
-                <label for="primaryInsurance">Primary Insurance</label>
-                <input type="text" id="primaryInsurance" name="primaryInsurance" />
-              </div>
-              <div class="field">
-                <label for="primaryPolicyNumber">Primary Policy #</label>
-                <input type="text" id="primaryPolicyNumber" name="primaryPolicyNumber" />
-              </div>
-              <div class="field">
-                <label for="secondaryInsurance">Secondary Insurance</label>
-                <input type="text" id="secondaryInsurance" name="secondaryInsurance" />
-              </div>
-              <div class="field">
-                <label for="secondaryPolicyNumber">Secondary Policy #</label>
-                <input type="text" id="secondaryPolicyNumber" name="secondaryPolicyNumber" />
-              </div>
-              <div class="field file-input-wrapper">
-                <label for="insuranceCardFrontFile">Insurance Card — Front</label>
-                <input
-                  type="file"
-                  id="insuranceCardFrontFile"
-                  name="insuranceCardFrontFile"
-                  accept="image/*,.pdf"
-                />
-                <span class="file-hint">JPG, PNG, or PDF</span>
-              </div>
-              <div class="field file-input-wrapper">
-                <label for="insuranceCardBackFile">Insurance Card — Back</label>
-                <input
-                  type="file"
-                  id="insuranceCardBackFile"
-                  name="insuranceCardBackFile"
-                  accept="image/*,.pdf"
-                />
-                <span class="file-hint">JPG, PNG, or PDF</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: Referral Information -->
-          <div class="form-section">
-            <div class="form-section-header"><h2>Referral Information</h2></div>
-            <div class="form-section-body">
-              <div class="field full">
-                <label for="referringCompany">Referring Person / Company</label>
-                <input type="text" id="referringCompany" name="referringCompany" />
-              </div>
-              <div class="field full">
-                <label for="reasonForReferral">Reason for Referral</label>
-                <textarea id="reasonForReferral" name="reasonForReferral" rows="3"></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 4: Responsible Party -->
-          <div class="form-section">
-            <div class="form-section-header"><h2>Responsible Party</h2></div>
-            <div class="form-section-body">
-              <p class="section-note">Leave blank if the patient is their own responsible party.</p>
-              <div class="field">
-                <label for="rpFirstName">First Name</label>
-                <input type="text" id="rpFirstName" name="rpFirstName" />
-              </div>
-              <div class="field">
-                <label for="rpLastName">Last Name</label>
-                <input type="text" id="rpLastName" name="rpLastName" />
-              </div>
-              <div class="field full">
-                <label for="rpAddress">Address</label>
-                <input type="text" id="rpAddress" name="rpAddress" />
-              </div>
-              <div class="field">
-                <label for="rpPhone">Phone</label>
-                <input type="tel" id="rpPhone" name="rpPhone" />
-              </div>
-              <div class="field">
-                <label for="rpFax">Fax</label>
-                <input type="tel" id="rpFax" name="rpFax" />
-              </div>
-              <div class="field full">
-                <label for="rpEmail">Email</label>
-                <input type="email" id="rpEmail" name="rpEmail" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 5: Primary Care Provider -->
-          <div class="form-section">
-            <div class="form-section-header"><h2>Primary Care Provider</h2></div>
-            <div class="form-section-body">
-              <div class="field">
-                <label for="pcpName">PCP Name</label>
-                <input type="text" id="pcpName" name="pcpName" />
-              </div>
-              <div class="field">
-                <label for="pcpPhone">PCP Phone</label>
-                <input type="tel" id="pcpPhone" name="pcpPhone" />
-              </div>
-              <div class="field">
-                <label for="pcpAddress">PCP Address</label>
-                <input type="text" id="pcpAddress" name="pcpAddress" />
-              </div>
-              <div class="field">
-                <label for="pcpFax">PCP Fax</label>
-                <input type="tel" id="pcpFax" name="pcpFax" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 6: Other Provider -->
-          <div class="form-section">
-            <div class="form-section-header"><h2>Other Provider</h2></div>
-            <div class="form-section-body">
-              <div class="field">
-                <label for="otherProviderName">Provider Name</label>
-                <input type="text" id="otherProviderName" name="otherProviderName" />
-              </div>
-              <div class="field">
-                <label for="otherProviderPhone">Provider Phone</label>
-                <input type="tel" id="otherProviderPhone" name="otherProviderPhone" />
-              </div>
-              <div class="field">
-                <label for="otherProviderAddress">Provider Address</label>
-                <input type="text" id="otherProviderAddress" name="otherProviderAddress" />
-              </div>
-              <div class="field">
-                <label for="otherProviderFax">Provider Fax</label>
-                <input type="tel" id="otherProviderFax" name="otherProviderFax" />
-              </div>
-            </div>
-          </div>
-
-          <div class="submit-area">
-            <button type="submit" id="submitBtn" class="btn-submit">Submit Patient Intake</button>
-            <div id="successMsg" class="msg success" role="alert">
-              Patient intake submitted successfully.
-            </div>
-            <div id="errorMsg" class="msg error" role="alert">
-              Submission failed. Please try again or contact support.
-            </div>
-          </div>
-        </form>
-      </div>
-    </main>
-
-    <script is:inline>
-      function fileToBase64(file) {
-        return new Promise(function (resolve, reject) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            resolve(e.target.result);
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      }
-
-      function getVal(id) {
-        const el = document.getElementById(id);
-        return el ? el.value.trim() : '';
-      }
-
-      document.getElementById('intakeForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const successMsg = document.getElementById('successMsg');
-        const errorMsg = document.getElementById('errorMsg');
-
-        successMsg.style.display = 'none';
-        errorMsg.style.display = 'none';
-        btn.disabled = true;
-        btn.textContent = 'Submitting…';
-
-        const payload = {
-          firstName: getVal('firstName'),
-          lastName: getVal('lastName'),
-          address: getVal('address'),
-          city: getVal('city'),
-          state: getVal('state'),
-          zip: getVal('zip'),
-          phone: getVal('phone'),
-          fax: getVal('fax'),
-          email: getVal('email'),
-          dob: getVal('dob'),
-          ssn: getVal('ssn'),
-          primaryInsurance: getVal('primaryInsurance'),
-          primaryPolicyNumber: getVal('primaryPolicyNumber'),
-          secondaryInsurance: getVal('secondaryInsurance'),
-          secondaryPolicyNumber: getVal('secondaryPolicyNumber'),
-          referringCompany: getVal('referringCompany'),
-          reasonForReferral: getVal('reasonForReferral'),
-          rpFirstName: getVal('rpFirstName'),
-          rpLastName: getVal('rpLastName'),
-          rpAddress: getVal('rpAddress'),
-          rpPhone: getVal('rpPhone'),
-          rpFax: getVal('rpFax'),
-          rpEmail: getVal('rpEmail'),
-          pcpName: getVal('pcpName'),
-          pcpAddress: getVal('pcpAddress'),
-          pcpPhone: getVal('pcpPhone'),
-          pcpFax: getVal('pcpFax'),
-          otherProviderName: getVal('otherProviderName'),
-          otherProviderAddress: getVal('otherProviderAddress'),
-          otherProviderPhone: getVal('otherProviderPhone'),
-          otherProviderFax: getVal('otherProviderFax'),
-          insuranceCardFront: null,
-          insuranceCardBack: null,
+  <script is:inline>
+    function fileToBase64(file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          resolve(e.target.result);
         };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
 
-        const frontFile = document.getElementById('insuranceCardFrontFile').files[0];
-        const backFile = document.getElementById('insuranceCardBackFile').files[0];
+    function getVal(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
 
-        try {
-          if (frontFile) {
-            payload.insuranceCardFront = await fileToBase64(frontFile);
-          }
-          if (backFile) {
-            payload.insuranceCardBack = await fileToBase64(backFile);
-          }
-        } catch {
-          errorMsg.textContent = 'Could not read insurance card file. Please try again.';
-          errorMsg.style.display = 'block';
-          btn.disabled = false;
-          btn.textContent = 'Submit Patient Intake';
-          return;
+    document.getElementById('intakeForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      const payload = {
+        firstName: getVal('firstName'),
+        lastName: getVal('lastName'),
+        address: getVal('address'),
+        city: getVal('city'),
+        state: getVal('state'),
+        zip: getVal('zip'),
+        phone: getVal('phone'),
+        fax: getVal('fax'),
+        email: getVal('email'),
+        dob: getVal('dob'),
+        ssn: getVal('ssn'),
+        primaryInsurance: getVal('primaryInsurance'),
+        primaryPolicyNumber: getVal('primaryPolicyNumber'),
+        secondaryInsurance: getVal('secondaryInsurance'),
+        secondaryPolicyNumber: getVal('secondaryPolicyNumber'),
+        referringCompany: getVal('referringCompany'),
+        reasonForReferral: getVal('reasonForReferral'),
+        rpFirstName: getVal('rpFirstName'),
+        rpLastName: getVal('rpLastName'),
+        rpAddress: getVal('rpAddress'),
+        rpPhone: getVal('rpPhone'),
+        rpFax: getVal('rpFax'),
+        rpEmail: getVal('rpEmail'),
+        pcpName: getVal('pcpName'),
+        pcpAddress: getVal('pcpAddress'),
+        pcpPhone: getVal('pcpPhone'),
+        pcpFax: getVal('pcpFax'),
+        otherProviderName: getVal('otherProviderName'),
+        otherProviderAddress: getVal('otherProviderAddress'),
+        otherProviderPhone: getVal('otherProviderPhone'),
+        otherProviderFax: getVal('otherProviderFax'),
+        insuranceCardFront: null,
+        insuranceCardBack: null,
+      };
+
+      const frontFile = document.getElementById('insuranceCardFrontFile').files[0];
+      const backFile = document.getElementById('insuranceCardBackFile').files[0];
+
+      try {
+        if (frontFile) {
+          payload.insuranceCardFront = await fileToBase64(frontFile);
         }
-
-        try {
-          const res = await fetch('/api/intake', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-          if (data.success) {
-            successMsg.style.display = 'block';
-            document.getElementById('intakeForm').reset();
-          } else {
-            errorMsg.textContent = data.error || 'Submission failed. Please try again.';
-            errorMsg.style.display = 'block';
-          }
-        } catch {
-          errorMsg.textContent = 'Network error. Please check your connection and try again.';
-          errorMsg.style.display = 'block';
+        if (backFile) {
+          payload.insuranceCardBack = await fileToBase64(backFile);
         }
-
+      } catch {
+        errorMsg.textContent = 'Could not read insurance card file. Please try again.';
+        errorMsg.style.display = 'block';
         btn.disabled = false;
         btn.textContent = 'Submit Patient Intake';
-      });
-    </script>
-  </body>
-</html>
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/intake', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (data.success) {
+          successMsg.style.display = 'block';
+          document.getElementById('intakeForm').reset();
+        } else {
+          errorMsg.textContent = data.error || 'Submission failed. Please try again.';
+          errorMsg.style.display = 'block';
+        }
+      } catch {
+        errorMsg.textContent = 'Network error. Please check your connection and try again.';
+        errorMsg.style.display = 'block';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Submit Patient Intake';
+    });
+  </script>
+
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={webPageSchema({
+      name: 'Patient Intake | Better You Therapy',
+      description: 'Patient intake form — internal use only.',
+      url: 'https://getbetteryou.com/intake/',
+    })}
+  />
+</BaseLayout>

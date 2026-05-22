@@ -19,9 +19,51 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Obstacle post-mortem: trailing-slash redirect failure
+- **Last work:** 2026-05-22 — Restyle /intake/ to match /referral/ brand (BaseLayout + rr-style CSS)
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Restyle /intake/ to match /referral/ brand — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] READ — `ResidentReferralPage.astro`, `BaseLayout.astro`, `global.css`, `intake.astro`
+- [x] REWRITE — `apps/web/src/pages/intake.astro`: replaced standalone HTML shell with `BaseLayout` wrapper; added `<Breadcrumb>` and `webPageSchema`; rewrote all form styles as `it-*` scoped classes mirroring `rr-*` patterns from referral page; kept all 6 sections, all field names/IDs, and JS logic identical
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+- [x] VERIFY — `dist/intake/index.html`: robots noindex/nofollow ✓, BreadcrumbList ✓, firstName/ssn/insuranceCardFrontFile fields ✓, /api/intake endpoint ✓, nav+footer present ✓
+
+### Session Review — 2026-05-22 (Restyle /intake/)
+
+**What was built:** `apps/web/src/pages/intake.astro` rewritten from a standalone branded page (custom header, inline `<style>` reset, no nav/footer) into a fully on-brand page using `BaseLayout`. The page now inherits the site nav, footer, mobile CTA bar, GTM, fonts, and all global tokens.
+
+**Structure:** Hero section (`.it-hero`) mirrors `.rr-hero` from the referral page — cream background, centered h1, body copy. Form sections use `.it-section` + `.it-section-body` (2-col grid) + `.it-field` patterns that directly mirror the referral page's `.rr-section`/`.rr-row`/`.rr-field` CSS values (same spacing, same border tokens, same label typography, same input focus ring). Responsible Party section uses `.it-section-optional` (cream background) + `.it-optional-badge` matching the referral's Guardian/POA section.
+
+**What was preserved exactly:**
+
+- All 6 form sections with identical section names
+- All 31 field `id` and `name` attributes unchanged
+- Full JS submit handler (`fileToBase64`, `getVal`, `fetch('/api/intake', ...)`)
+- `noindex, nofollow` robots (passed via `seo={{ robotsDirective: 'noindex, nofollow' }}` to BaseLayout)
+- `<Breadcrumb>` outputs BreadcrumbList JSON-LD; `webPageSchema` outputs WebPage JSON-LD
+
+**What was removed:** Standalone `<!doctype html>` shell, custom font `<link>`, 214-line inline `<style>` block (reset, body, intake-header, all form styles), custom `<header class="intake-header">`, hidden breadcrumb `<nav>`, LD+JSON breadcrumb script (now handled by `<Breadcrumb>` component).
+
+**Files changed:**
+
+- `apps/web/src/pages/intake.astro` — full rewrite
+
+**Verification:**
+
+- `grep -c 'name="robots".*noindex' dist/intake/index.html` → 1 ✓
+- `grep -c 'BreadcrumbList' dist/intake/index.html` → 1 ✓
+- `grep -c 'id="firstName"'` → 1 ✓; `id="ssn"` → 1 ✓; `id="insuranceCardFrontFile"` → 1 ✓
+- `grep -c '/api/intake' dist/intake/index.html` → 1 ✓
+- nav+footer class hits → 4 ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session. (`apps/web/src/pages/referral.astro` referenced in the brief does not exist — the referral page lives at `apps/web/src/components/pages/ResidentReferralPage.astro`. Used that as the reference.)
 
 ---
 
