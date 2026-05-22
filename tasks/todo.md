@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Client-side form error reporting (reportFormErrorToMonitor) across all 8 form handlers
+- **Last work:** 2026-05-22 — OBS-018 post-mortem added to docs/obstacle-log/
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -856,6 +856,36 @@ Branch: `main`
 
 ---
 
+## Add OBS-018 post-mortem to obstacle log — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] Created docs/obstacles.md with full post-mortem for Sanity publish not updating live site (useCdn: true root cause)
+- [x] Moved to docs/obstacle-log/OBS-018_sanity_publish_cdn_cache.md
+- [x] Fixed internal header: replaced generic title and OBS-001 label with OBS-018
+- [x] Updated INDEX.md: added OBS-017 (missing from table) and OBS-018 entries; updated summary count 16 → 18
+
+### Session Review — 2026-05-22 (OBS-018 post-mortem)
+
+**What was built:** Post-mortem document for the Sanity publish → live site not updating issue diagnosed and fixed earlier this session. Placed in the established `docs/obstacle-log/` directory as OBS-018.
+
+**Root cause documented:** Both Sanity clients in `apps/web/astro.config.mjs` had `useCdn: true`. Sanity's CDN has ~60s propagation delay. Webhook triggered rebuild immediately after publish, but build fetched stale CDN data.
+
+**Files changed:**
+
+- `docs/obstacle-log/OBS-018_sanity_publish_cdn_cache.md` — new file (post-mortem)
+- `docs/obstacle-log/INDEX.md` — OBS-017 and OBS-018 rows added; summary count updated
+
+**Verification:**
+
+- `grep -n "OBS-018" docs/obstacle-log/OBS-018_sanity_publish_cdn_cache.md` → line 1 (header only, no OBS-001 or generic title) ✓
+- `grep -n "OBS-018" docs/obstacle-log/INDEX.md` → line 22 ✓
+- Docs-only change — build not required
+
+**Issues:** None. No user corrections this session.
+
+---
+
 ## Debug form monitoring — test-monitor env probe — 2026-05-22 [x] COMPLETE 2026-05-22 19:43
 
 Branch: `main`
@@ -878,5 +908,30 @@ Branch: `main`
 - `pnpm --filter web build` → 20 pages, 0 errors ✓
 
 **IMPORTANT — cleanup required:** `functions/api/test-monitor.ts` must be deleted before the next production commit after debugging is complete. It exposes partial env var info.
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Expand test-monitor to diagnose Resend integration — 2026-05-22 [x] COMPLETE 2026-05-22 20:21
+
+Branch: `main`
+
+- [x] READ — `functions/api/test-monitor.ts` — confirmed file contents
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Expand test-monitor for Resend diagnosis)
+
+**What was built:** Expanded `functions/api/test-monitor.ts` from a passive env-var probe into an active Resend integration test. When both `RESEND_API_KEY` and `ALERT_EMAIL` are set, the endpoint now fires a live POST to `https://api.resend.com/emails` and returns the full HTTP status + response body. When either var is missing, it returns which var is absent.
+
+**Response shape:** `{ envKeys, alertEmailRaw, resendKeyPrefix, resendTest }` — `resendTest` is either `"status=200 body=..."` (success), `"fetch_error: ..."` (network failure), or `"missing: RESEND_API_KEY=false/true, ALERT_EMAIL=false/true"` (env not set).
+
+**Files changed:**
+
+- `functions/api/test-monitor.ts` — replaced passive probe with active Resend POST; returns full status+body for diagnosis
+
+**Verification:**
+
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
 
 **Issues:** None. No user corrections this session.
