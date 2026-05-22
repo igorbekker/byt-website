@@ -19,9 +19,91 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — intake.astro: success banner to top + mobile hero gap fix
+- **Last work:** 2026-05-22 — intake.astro: "Other Ways to Submit" section + siteSettings fetch
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## intake.astro: "Other Ways to Submit" section — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] FRONTMATTER — added `sanityClient` import + siteSettings fetch; derived phone/email/fax/phoneDigits with `||` fallbacks
+- [x] HTML — added `<section class="it-alt-section">` after form section, before `<style>`; fax/email/phone list with `it-contact-label` spans
+- [x] CSS — added `.it-alt-section`, `.it-alt-inner h2`, `.it-contact-list`, `.it-contact-label`, `.it-contact-list a/a:hover` rules; mobile responsive rule for `.it-alt-section` padding
+- [x] BUILD — pnpm --filter web build → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (intake.astro Other Ways to Submit)
+
+**What was built:** Added a "Other Ways to Submit" contact section to the bottom of `/intake/`, matching the pattern in `ResidentReferralPage.astro`. Fetches phone/email/fax from Sanity `siteSettings` with `||` fallbacks (not `??` — lesson 32 applied). Section uses `it-` prefixed class names consistent with the rest of intake.astro.
+
+**Frontmatter changes:** `sanityClient` imported from `'sanity:client'`; `siteSettings` fetched via GROQ `'*[_type == "siteSettings"][0]{phone, email, fax}'`; four constants derived: `phone`, `email`, `fax` (all `||` fallbacks), `phoneDigits` (`phone.replace(/\D/g, '')`).
+
+**HTML:** Section placed immediately after `</section>` closing the form, before `<style>`. Three `<li>` items: Fax (plain `<span>`), Email (`<a href="mailto:...">`), Phone (`<a href="tel:+1...">` using `phoneDigits`). `{/* CMS-SKIP: alternate submission methods */}` comment above heading.
+
+**CSS:** Directly mirrors `rr-alt-section` pattern — cream background, `var(--pad-s)` vertical padding, `border-top`, 800px max-width inner, navy heading, slate list text, 56px min-width label column, hover color transition. Mobile breakpoint adds `padding-left/right: var(--pad-x)`.
+
+**Files changed:**
+
+- `apps/web/src/pages/intake.astro` — frontmatter (6 lines added), HTML (12 lines added), CSS (40 lines added + 3-line mobile rule)
+
+**Verification:**
+
+- `grep -n "it-alt-section\|it-contact-list\|754-328-4344\|siteSettings"` → lines 7, 8, 9, 10, 266, 270, 484, 500, 506, 518, 522, 535 ✓
+- `/intake/index.html` built at 140ms (Sanity fetch active) ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Footer + whitespace + siteSettings fallback fixes — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] Add "Intake Form" link to Footer.astro Forms column (above Resident Referral)
+- [x] intake.astro whitespace: .it-hero → 2rem/1.5rem, .it-form-section → 1.5rem, .it-form-wrap → 0
+- [x] ResidentReferralPage.astro whitespace: .rr-hero → 2rem/1.5rem, .rr-form-section → 1.5rem, .rr-form-wrap → 0
+- [x] ResidentReferralPage.astro: phone/email/fax fallbacks ?? → ||
+- [x] ContactPage.astro: phone/email fallbacks ?? → ||
+- [x] CommunitiesPage.astro: phone fallbacks ?? → || (lines 2862–2863)
+- [x] BlogIndexPage.astro: newsletterEyebrow fallback ?? → ||
+- [x] blog/[category]/index.astro: newsletterEyebrow fallback ?? → ||
+- [x] blog/[category]/[sub]/index.astro: newsletterEyebrow fallback ?? → ||
+- [x] BUILD — pnpm --filter web build → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Footer + whitespace + siteSettings fallback fixes)
+
+**What was built/fixed:**
+
+**FIX 1 — Footer "Intake Form" link:** Added `<li><a href="/intake/" class="footer-link">Intake Form</a></li>` to the Forms footer column in `Footer.astro`, above the existing Resident Referral link.
+
+**FIX 2 — Whitespace reduction (intake.astro):** Three CSS padding values tightened: `.it-hero` from `5rem var(--pad-x)` → `2rem var(--pad-x) 1.5rem`; `.it-form-section` from `var(--pad-s) var(--pad-x)` → `1.5rem var(--pad-x)`; `.it-form-wrap` from `40px 0` → `0`. These values are the same as the previous session's mobile gap work but for the desktop padding.
+
+**FIX 3 — Whitespace reduction (ResidentReferralPage.astro):** Identical three padding changes using `rr-*` class names.
+
+**FIX 4 — `??` → `||` fallback bug (7 instances across 5 files):** Root cause: Sanity was returning `fax: ""` (empty string) for `siteSettings.fax`. The `??` (nullish coalescing) operator only falls back on `null` or `undefined` — empty string passes through. `||` treats empty string as falsy and correctly falls back to the hardcoded default. Diagnosed via `npx sanity documents query` from `apps/studio/`. Fixed in all 5 affected files.
+
+**Files changed:**
+
+- `apps/web/src/components/ui/Footer.astro` — Intake Form link added
+- `apps/web/src/pages/intake.astro` — 3 CSS padding values
+- `apps/web/src/components/pages/ResidentReferralPage.astro` — 3 CSS padding + 3 ?? → ||
+- `apps/web/src/components/pages/ContactPage.astro` — 2 ?? → ||
+- `apps/web/src/components/pages/CommunitiesPage.astro` — 2 ?? → ||
+- `apps/web/src/components/pages/BlogIndexPage.astro` — 1 ?? → ||
+- `apps/web/src/pages/blog/[category]/index.astro` — 1 ?? → ||
+- `apps/web/src/pages/blog/[category]/[sub]/index.astro` — 1 ?? → ||
+
+**Verification:**
+
+- `grep -n "intake\|referral\|Forms"` Footer.astro → Intake Form at line 62, Resident Referral at line 63 ✓
+- CSS padding values confirmed via sed output in all 3 target rules ✓
+- `grep -rn "siteSettings?\..*?? "` → 0 results ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

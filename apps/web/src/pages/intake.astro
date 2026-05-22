@@ -2,6 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { webPageSchema } from '../lib/schema';
+import { sanityClient } from 'sanity:client';
+
+const siteSettings = await sanityClient.fetch('*[_type == "siteSettings"][0]{phone, email, fax}');
+const phone = siteSettings?.phone || '754-999-0011';
+const email = siteSettings?.email || 'hello@getbetteryou.com';
+const fax = siteSettings?.fax || '754-328-4344';
+const phoneDigits = phone.replace(/\D/g, '');
 ---
 
 <BaseLayout
@@ -256,6 +263,18 @@ import { webPageSchema } from '../lib/schema';
     </div>
   </section>
 
+  <section class="it-alt-section">
+    <div class="it-alt-inner">
+      {/* CMS-SKIP: alternate submission methods */}
+      <h2>Other Ways to Submit</h2>
+      <ul class="it-contact-list">
+        <li><span class="it-contact-label">Fax</span><span>{fax}</span></li>
+        <li><span class="it-contact-label">Email</span><a href={`mailto:${email}`}>{email}</a></li>
+        <li><span class="it-contact-label">Phone</span><a href={`tel:+1${phoneDigits}`}>{phone}</a></li>
+      </ul>
+    </div>
+  </section>
+
   <style>
     /* ── Hero ── */
     .it-hero {
@@ -461,6 +480,49 @@ import { webPageSchema } from '../lib/schema';
       border: 1px solid rgba(224, 85, 85, 0.3);
     }
 
+    /* ── Alt / contact section ── */
+    .it-alt-section {
+      background: var(--cream);
+      padding: var(--pad-s) var(--pad-x);
+      border-top: 1px solid var(--border);
+    }
+    .it-alt-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .it-alt-inner h2 {
+      font-family: var(--font-heading);
+      font-size: clamp(1.4rem, 2vw, 1.75rem);
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: 1.5rem;
+    }
+    .it-contact-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .it-contact-list li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 15px;
+      color: var(--slate);
+    }
+    .it-contact-label {
+      font-weight: 600;
+      color: var(--navy-deep);
+      min-width: 56px;
+    }
+    .it-contact-list a {
+      color: var(--slate);
+      transition: color var(--t-hover);
+    }
+    .it-contact-list a:hover {
+      color: var(--navy-deep);
+    }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .it-hero {
@@ -470,9 +532,15 @@ import { webPageSchema } from '../lib/schema';
         padding-left: var(--pad-x);
         padding-right: var(--pad-x);
       }
+      .it-alt-section {
+        padding-left: var(--pad-x);
+        padding-right: var(--pad-x);
+      }
       .it-section {
         padding: 1.25rem;
       }
+    }
+    @media (max-width: 600px) {
       .it-section-body {
         grid-template-columns: 1fr;
       }

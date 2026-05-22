@@ -346,6 +346,22 @@ When a task brief says "register in `sanity.config.ts` singletonTypes and single
 - When reviewing governance docs: for each item, ask "what script enforces this?" If the answer is "nothing," either write the script or remove the item
 - `scripts/design-parity-check.sh` + `scripts/cms-parity-check.sh` + `scripts/seo-schema-check.sh` + `scripts/a11y-check.sh` + `scripts/perf-check.sh` are the enforcement layer; CLAUDE.md and skill files are the explanation layer
 
+### 32. Sanity returns "" for unset string fields — use || not ?? for siteSettings fallbacks
+
+`??` (nullish coalescing) only falls back on `null` or `undefined`. Sanity returns `""` (empty string) for string fields that exist in the schema but have no value entered in Studio. This means `siteSettings?.fax ?? '754-328-4344'` renders as blank on the page when Sanity has `fax: ""`.
+
+**Why:** Diagnosed 2026-05-22 via `npx sanity documents query '*[_type == "siteSettings"][0]{fax}'` — returned `{"fax": ""}`. The fallback never fired because `""` is a defined value.
+
+**How to apply:** All `siteSettings` contact/content fallbacks must use `||`, not `??`:
+
+- `const phone = siteSettings?.phone || '754-999-0011'`
+- `const email = siteSettings?.email || 'hello@getbetteryou.com'`
+- `const fax = siteSettings?.fax || '754-328-4344'`
+
+Same rule applies to any inline Sanity fallback where Sanity might return an empty string for an unset field (`siteSettings?.newsletterEyebrow || 'Stay in the loop'`). Use `??` only when you specifically want `null`/`undefined` to fall back but empty string to pass through (rare in this codebase).
+
+When auditing a page for missing content, always query the Sanity document directly (`npx sanity documents query` from `apps/studio/`) — an empty-string value is invisible in the template but renders as blank in the browser.
+
 ### 31. Content filter blocks files containing sensitive PII fields inline — use two-step write
 
 Writing a file that contains a sensitive government ID field (e.g. SSN input with `name="ssn"`) as part of a large HTML block triggers the content filter and blocks the entire Write tool call.

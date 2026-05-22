@@ -2859,8 +2859,8 @@ const pageSchema = webPageSchema({
             >{page?.ctaCta?.label ?? 'Refer a Facility'}</button
           >
           <a
-            href={`tel:${(siteSettings?.phone ?? '7549990011').replace(/\D/g, '')}`}
-            class="btn btn-secondary-alt">Call {siteSettings?.phone ?? '754-999-0011'}</a
+            href={`tel:${(siteSettings?.phone || '7549990011').replace(/\D/g, '')}`}
+            class="btn btn-secondary-alt">Call {siteSettings?.phone || '754-999-0011'}</a
           >
         </div>
       </div>

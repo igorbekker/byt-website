@@ -1562,7 +1562,7 @@ function fmtDate(iso: string | undefined): string {
   <!-- ── NEWSLETTER ── -->
   <section class="newsletter" aria-labelledby="newsletter-heading">
     <div class="newsletter-inner fade-up">
-      <p class="eyebrow">{siteSettings?.newsletterEyebrow ?? 'Stay in the loop'}</p>
+      <p class="eyebrow">{siteSettings?.newsletterEyebrow || 'Stay in the loop'}</p>
       <h2 id="newsletter-heading">One thoughtful email a month.</h2>
       <p>
         New articles, clinical resources, and the occasional behind-the-scenes note. No fluff, easy
