@@ -935,3 +935,26 @@ Branch: `main`
 - `pnpm --filter web build` → 20 pages, 0 errors ✓
 
 **Issues:** None. No user corrections this session.
+
+---
+
+## Restore test-monitor diagnostic endpoint — 2026-05-22 [x] COMPLETE 2026-05-22 20:38
+
+Branch: `main`
+
+- [x] STEP 1 — Created `functions/api/test-monitor.ts` with exact user-specified content: active Resend POST, returns `{ envKeys, alertEmailRaw, resendKeyPrefix, resendTest }`
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Restore test-monitor endpoint)
+
+**What was built:** Recreated `functions/api/test-monitor.ts` as specified. Fires a live POST to `https://api.resend.com/emails` when both `RESEND_API_KEY` and `ALERT_EMAIL` are set, returning full HTTP status + response body for Resend integration diagnosis. Returns missing-var report otherwise.
+
+**Files changed:**
+
+- `functions/api/test-monitor.ts` — created (file was missing/lost)
+
+**Verification:**
+
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
