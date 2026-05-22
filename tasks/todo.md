@@ -1397,3 +1397,36 @@ Full audit of all 6 form→endpoint pairs. Identified 6 required-field mismatche
 - All 30 current entries from manual redirect documents (no oldSlugs stored yet — expected, feature just shipped) ✓
 
 **Issues:** None. No user corrections this session.
+
+---
+
+## Fix \_redirects trailing-slash coverage — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] DIAGNOSE — `/about` (no slash) returned 301 to `/about-us`; stale oldSlugs rule winning over actual route
+- [x] DIAGNOSE — Sanity query for manual `redirect` docs at `/about` + `/resident-referral` → 0 results; source is `oldSlugs`, not deletable records
+- [x] FIX — `buildRedirectLines()`: normalize all source paths to bare (strip trailing slash), emit both `${bare}` and `${bare}/` variants for every rule; 31 rules → 62 lines
+- [x] BUILD — `pnpm --filter web build` → 19 pages, 0 errors, 62 redirect(s) written ✓
+- [x] VERIFY — `/about /about-us 301` + `/about/ /about-us 301` both present in dist/\_redirects ✓
+
+### Session Review — 2026-05-22 (Fix \_redirects trailing-slash coverage)
+
+**What was fixed:** Every redirect rule in `_redirects` now fires for both the slash and no-slash variant of each source path. Previously, stale `oldSlugs`-derived rules (e.g. `/about /about-us 301`) matched the no-slash URL before the static page at `/about/` could respond.
+
+**Root cause:** Integration stored source paths with mixed slash conventions and emitted one line per rule. No trailing-slash variant was generated. First-match semantics in Cloudflare Pages `_redirects` meant `/about` hit the stale rule instead of the real page.
+
+**Sanity check:** Queried Sanity for manual `redirect` documents at `/about` and `/resident-referral` — 0 results. Rules come from `oldSlugs` on page singletons. No Sanity data modified.
+
+**Fix:** `buildRedirectLines()` refactored — all source paths normalized to bare form via `.replace(/\/$/, '')` before keying into `ruleMap`; both `${bare}` and `${bare}/` lines emitted at output time; duplicates collapse via map key normalization.
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — `buildRedirectLines()`: replaced `lineMap` (string values) with `ruleMap` (object values); added slash normalization; expanded each rule to two output lines
+
+**Verification:**
+
+- `grep "about\|referral" dist/_redirects` → `/about /about-us 301`, `/about/ /about-us 301`, `/resident-referral /referral 301`, `/resident-referral/ /referral 301` ✓
+- `pnpm --filter web build` → 19 pages, 0 errors, 62 redirect(s) written ✓
+
+**Issues:** None. No user corrections this session.
