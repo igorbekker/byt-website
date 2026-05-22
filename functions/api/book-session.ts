@@ -2,6 +2,7 @@ import type { Env } from './_hubspot';
 import {
   CORS_HEADERS,
   jsonResponse,
+  reportFormError,
   searchContactByEmail,
   createContact,
   updateContact,
@@ -27,13 +28,30 @@ interface BookSessionBody {
 
 export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
   const key = context.env.HUBSPOT_SERVICE_KEY;
-  if (!key)
+  if (!key) {
+    await reportFormError(
+      'Book a Session',
+      'config_error',
+      'HUBSPOT_SERVICE_KEY not configured',
+      context.env,
+      undefined,
+      500,
+    );
     return jsonResponse({ success: false, error: 'HUBSPOT_SERVICE_KEY not configured' }, 500);
+  }
 
   let body: BookSessionBody;
   try {
     body = (await context.request.json()) as BookSessionBody; // safe: validated below
   } catch {
+    await reportFormError(
+      'Book a Session',
+      'parse_error',
+      'Invalid JSON body',
+      context.env,
+      undefined,
+      400,
+    );
     return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
   }
 
@@ -56,8 +74,17 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     howWillYouPay,
   };
   for (const [field, val] of Object.entries(required)) {
-    if (!val || !val.trim())
+    if (!val || !val.trim()) {
+      await reportFormError(
+        'Book a Session',
+        'validation_error',
+        `Missing required field: ${field}`,
+        context.env,
+        body as Record<string, unknown>,
+        400,
+      );
       return jsonResponse({ success: false, error: `Missing required field: ${field}` }, 400);
+    }
   }
 
   const props: Record<string, string> = {
@@ -88,6 +115,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       contactId = await createContact(props, key);
     }
   } catch (err) {
+    await reportFormError(
+      'Book a Session',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'HubSpot error', details: String(err) }, 500);
   }
 

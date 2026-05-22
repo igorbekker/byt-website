@@ -4,6 +4,7 @@ import {
   CORS_HEADERS,
   hubspotHeaders,
   jsonResponse,
+  reportFormError,
   searchContactByEmail,
   createContact,
   updateContact,
@@ -44,13 +45,30 @@ interface FacilityReferralBody {
 
 export const onRequestPost = async (context: { request: Request; env: Env }): Promise<Response> => {
   const key = context.env.HUBSPOT_SERVICE_KEY;
-  if (!key)
+  if (!key) {
+    await reportFormError(
+      'Facility Referral',
+      'config_error',
+      'HUBSPOT_SERVICE_KEY not configured',
+      context.env,
+      undefined,
+      500,
+    );
     return jsonResponse({ success: false, error: 'HUBSPOT_SERVICE_KEY not configured' }, 500);
+  }
 
   let body: FacilityReferralBody;
   try {
     body = (await context.request.json()) as FacilityReferralBody; // safe: validated below
   } catch {
+    await reportFormError(
+      'Facility Referral',
+      'parse_error',
+      'Invalid JSON body',
+      context.env,
+      undefined,
+      400,
+    );
     return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
   }
 
@@ -78,8 +96,17 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
     role,
   };
   for (const [field, val] of Object.entries(required)) {
-    if (!val || !val.trim())
+    if (!val || !val.trim()) {
+      await reportFormError(
+        'Facility Referral',
+        'validation_error',
+        `Missing required field: ${field}`,
+        context.env,
+        body as Record<string, unknown>,
+        400,
+      );
       return jsonResponse({ success: false, error: `Missing required field: ${field}` }, 400);
+    }
   }
 
   // ── STEP 1: Find or create Company ───────────────────────────────────────
@@ -100,6 +127,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       companyId = await createCompany(companyProps, key);
     }
   } catch (err) {
+    await reportFormError(
+      'Facility Referral',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 1 failed', details: String(err) }, 500);
   }
 
@@ -130,6 +165,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       contactId = await createContact(contactProps, key);
     }
   } catch (err) {
+    await reportFormError(
+      'Facility Referral',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 2 failed', details: String(err) }, 500);
   }
 
@@ -146,6 +189,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       throw new Error(`Association failed (${res.status}): ${err}`);
     }
   } catch (err) {
+    await reportFormError(
+      'Facility Referral',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 3 failed', details: String(err) }, 500);
   }
 

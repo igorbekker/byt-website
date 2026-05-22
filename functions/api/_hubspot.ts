@@ -1,5 +1,7 @@
 export interface Env {
   HUBSPOT_SERVICE_KEY?: string;
+  RESEND_API_KEY?: string;
+  ALERT_EMAIL?: string;
 }
 
 export const HUBSPOT_BASE = 'https://api.hubapi.com';
@@ -243,5 +245,54 @@ export async function associate(
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`Association failed (${res.status}): ${err}`);
+  }
+}
+
+export async function reportFormError(
+  form: string,
+  errorType: string,
+  message: string,
+  env: Env,
+  payload?: Record<string, unknown>,
+  httpStatus?: number,
+): Promise<void> {
+  const resendKey = env.RESEND_API_KEY;
+  const alertEmail = env.ALERT_EMAIL;
+  if (!resendKey || !alertEmail) return;
+
+  const payloadStr = payload
+    ? Object.entries(payload)
+        .map(([k, v]) => `  ${k}: ${String(v)}`)
+        .join('\n')
+    : '  (not captured)';
+
+  const text = [
+    `Form: ${form}`,
+    `Time: ${new Date().toISOString()}`,
+    `Source: server`,
+    `Error Type: ${errorType}`,
+    `HTTP Status: ${httpStatus ?? 'N/A'}`,
+    `Message: ${message}`,
+    '',
+    'Submitted Payload:',
+    payloadStr,
+  ].join('\n');
+
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from: 'BYT Alerts <alerts@getbetteryou.com>',
+        to: [alertEmail],
+        subject: `[BYT FORM ERROR] ${form} — ${errorType}`,
+        text,
+      }),
+    });
+  } catch {
+    // Fire-and-forget — monitor failures must never break form responses
   }
 }

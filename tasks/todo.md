@@ -19,9 +19,46 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Fix 6 select option value mismatches in ModalForms.astro causing HubSpot INVALID_OPTION 500 errors on book-session and facility-referral endpoints
+- **Last work:** 2026-05-22 — Add form error monitoring: reportFormError helper + form-monitor.ts endpoint, wired into all 6 form functions
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add form error monitoring — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] STEP 1 — Extended `Env` interface in `functions/api/_hubspot.ts` with `RESEND_API_KEY?` and `ALERT_EMAIL?`
+- [x] STEP 2 — Added `reportFormError()` helper at bottom of `_hubspot.ts` (fire-and-forget, Resend REST API, no npm packages)
+- [x] STEP 3 — Created `functions/api/form-monitor.ts` — new Pages Function endpoint for client-side error reports
+- [x] STEP 4 — Wired `reportFormError` into all 6 form files: newsletter (4 sites), contact (4), book-session (4), facility-referral (6), referral (8), apply (4)
+- [x] STEP 5 — Verified: grep reportFormError in 7 files ✓, RESEND_API_KEY in \_hubspot.ts only ✓, pnpm build 20 pages 0 errors ✓
+
+### Session Review — 2026-05-22 (Form error monitoring)
+
+**What was built:** Backend-only form error monitoring. Two pieces: (1) a `reportFormError()` helper in `_hubspot.ts` that sends an alert email via Resend REST API when `RESEND_API_KEY` and `ALERT_EMAIL` are set in env — fire-and-forget, failures never break form responses; (2) a new Pages Function at `/api/form-monitor` that receives structured error reports from the browser and forwards them through `reportFormError`.
+
+**Files changed:**
+
+- `functions/api/_hubspot.ts` — `Env` interface extended (2 new optional fields); `reportFormError` function added at end of file
+- `functions/api/form-monitor.ts` — new file (47 lines); handles POST (parse + validate + call reportFormError) and OPTIONS (CORS preflight)
+- `functions/api/newsletter.ts` — import extended; 4 reportFormError calls added (config, parse, validation, hubspot)
+- `functions/api/contact.ts` — import extended; 4 reportFormError calls added (config, parse, validation, hubspot)
+- `functions/api/book-session.ts` — import extended; 4 reportFormError calls added (config, parse, validation, hubspot)
+- `functions/api/facility-referral.ts` — import extended; 6 reportFormError calls added (config, parse, validation, step1, step2, step3)
+- `functions/api/referral.ts` — existing `_hubspot` import extended; 8 reportFormError calls added (config, parse, validation, steps 1–5)
+- `functions/api/apply.ts` — import extended; 4 reportFormError calls added (config, parse, validation, hubspot)
+
+**No existing code was restructured, renamed, or refactored.** All existing error handling, return statements, and response shapes are unchanged.
+
+**Verification:**
+
+- `grep -r "reportFormError" functions/api/` → 7 files ✓ (\_hubspot.ts definition + 6 form files + form-monitor.ts)
+- `grep -r "RESEND_API_KEY" functions/api/` → \_hubspot.ts only ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

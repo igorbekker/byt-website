@@ -1,4 +1,4 @@
-import { uploadFileToHubSpot, createNote } from './_hubspot';
+import { uploadFileToHubSpot, createNote, reportFormError } from './_hubspot';
 
 interface Env {
   HUBSPOT_SERVICE_KEY?: string;
@@ -203,6 +203,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   const key = context.env.HUBSPOT_SERVICE_KEY;
 
   if (!key) {
+    await reportFormError(
+      'Refer a Resident',
+      'config_error',
+      'HUBSPOT_SERVICE_KEY not configured',
+      context.env,
+      undefined,
+      500,
+    );
     return jsonResponse({ success: false, error: 'HUBSPOT_SERVICE_KEY not configured' }, 500);
   }
 
@@ -210,6 +218,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   try {
     body = (await context.request.json()) as ReferralBody;
   } catch {
+    await reportFormError(
+      'Refer a Resident',
+      'parse_error',
+      'Invalid JSON body',
+      context.env,
+      undefined,
+      400,
+    );
     return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
   }
 
@@ -245,6 +261,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
   };
   for (const [field, val] of Object.entries(required)) {
     if (!val || !String(val).trim()) {
+      await reportFormError(
+        'Refer a Resident',
+        'validation_error',
+        `Missing required field: ${field}`,
+        context.env,
+        body as Record<string, unknown>,
+        400,
+      );
       return jsonResponse({ success: false, error: `Missing required field: ${field}` }, 400);
     }
   }
@@ -261,6 +285,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       console.log(`[Step 1] Created company: ${companyId}`);
     }
   } catch (err) {
+    await reportFormError(
+      'Refer a Resident',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 1 failed', details: String(err) }, 500);
   }
 
@@ -287,6 +319,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       console.log(`[Step 2] Created referrer: ${referrerContactId}`);
     }
   } catch (err) {
+    await reportFormError(
+      'Refer a Resident',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 2 failed', details: String(err) }, 500);
   }
 
@@ -318,6 +358,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       console.log(`[Step 3] Created patient: ${patientContactId}`);
     }
   } catch (err) {
+    await reportFormError(
+      'Refer a Resident',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 3 failed', details: String(err) }, 500);
   }
 
@@ -337,6 +385,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       guardianContactId = await createContact(guardianProps, 'Step 4', key);
       console.log(`[Step 4] Created guardian: ${guardianContactId}`);
     } catch (err) {
+      await reportFormError(
+        'Refer a Resident',
+        'hubspot_error',
+        String(err),
+        context.env,
+        body as Record<string, unknown>,
+        500,
+      );
       return jsonResponse({ success: false, error: 'Step 4 failed', details: String(err) }, 500);
     }
   }
@@ -397,6 +453,14 @@ export const onRequestPost = async (context: { request: Request; env: Env }): Pr
       );
     }
   } catch (err) {
+    await reportFormError(
+      'Refer a Resident',
+      'hubspot_error',
+      String(err),
+      context.env,
+      body as Record<string, unknown>,
+      500,
+    );
     return jsonResponse({ success: false, error: 'Step 5 failed', details: String(err) }, 500);
   }
 
