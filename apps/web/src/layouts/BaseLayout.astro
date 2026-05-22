@@ -20,6 +20,17 @@ interface SeoFields {
   robotsDirective?: string;
 }
 
+interface NavLink {
+  label: string;
+  href: string;
+  children?: Array<{ label: string; href: string }>;
+}
+
+interface FooterColumn {
+  heading: string;
+  links: Array<{ label: string; href: string }>;
+}
+
 interface SiteSettings {
   businessName: string;
   phone: string;
@@ -36,6 +47,8 @@ interface SiteSettings {
   newsletterBody?: string;
   gtmContainerId?: string;
   robotsTxt?: string;
+  navLinks?: NavLink[];
+  footerColumns?: FooterColumn[];
   seo?: SeoFields;
 }
 
@@ -151,6 +164,7 @@ const FONT_URL =
       navCtaSecondaryLabel={siteSettings?.navCtaSecondaryLabel ?? 'Refer a Facility'}
       bookingUrl={siteSettings?.bookingUrl ?? '/individual-therapy/'}
       referralUrl={siteSettings?.referralUrl ?? '/referral/'}
+      navLinks={siteSettings?.navLinks ?? []}
     />
     <main id="main-content">
       <slot />
@@ -160,6 +174,7 @@ const FONT_URL =
       copyrightEntity={siteSettings?.copyrightEntity ?? ''}
       newsletterHeading={siteSettings?.newsletterHeading ?? 'Stay in touch'}
       newsletterBody={siteSettings?.newsletterBody ?? ''}
+      footerColumns={siteSettings?.footerColumns ?? []}
     />
     <MobileCTABar
       navCtaLabel={siteSettings?.navCtaLabel ?? 'Book a Session'}

@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Nav.astro mobile menu: expanded with Forms + Company sections (Intake Form, Resident Referral Form, Contact Us, Careers)
+- **Last work:** 2026-05-22 — CMS nav links + footer columns + modal action support: siteSettings schema, GROQ query, Nav/Footer templates, BaseLayout wiring, seed script
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -1831,5 +1831,132 @@ Branch: `main`
 
 - `grep "about\|referral" dist/_redirects` → `/about /about-us 301`, `/about/ /about-us 301`, `/resident-referral /referral 301`, `/resident-referral/ /referral 301` ✓
 - `pnpm --filter web build` → 19 pages, 0 errors, 62 redirect(s) written ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Add CMS-managed nav links and footer columns to siteSettings — 2026-05-22 [x] COMPLETE 2026-05-22 05:11
+
+Branch: `main`
+
+- [x] STEP 1 SCHEMA — added `navLinks` (array of navLink objects with label/href/children) and `footerColumns` (array of footerColumn objects with heading/links[]) to `apps/studio/schemas/singletons/siteSettings.ts` before the `seo` field
+- [x] STEP 2 QUERY — added `navLinks[] { label, href, children[] { label, href } }` and `footerColumns[] { heading, links[] { label, href } }` to `SITE_SETTINGS_QUERY` in `apps/web/src/lib/queries.ts`
+- [x] STEP 3A BASELAYOUT — added `NavLink` and `FooterColumn` interfaces to `BaseLayout.astro`; added fields to `SiteSettings` interface; passed `navLinks` to `<Nav>` and `footerColumns` to `<Footer>`
+- [x] STEP 3B NAV — full file rewrite of `Nav.astro`; replaced hardcoded `.nav-links` `<a>` tags with `navLinks.map()` loop; replaced mobile menu's 4 main `mm-link` items with same loop; kept Forms/Company mobile sections hardcoded
+- [x] STEP 3C FOOTER — full file rewrite of `Footer.astro`; replaced 3 hardcoded link columns (Services, Company, Forms) with `footerColumns.map()` loop; updated CMS comment; kept first column (logo/tagline) and newsletter column intact
+- [x] STEP 4 SEED — created `scripts/seed-nav-footer.mjs` with `patch.set` mutation seeding `navLinks` (4 items) and `footerColumns` (3 columns: Services, Company, Forms) from current hardcoded values
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (CMS nav links + footer columns)
+
+**What was built:** Full four-step CMS migration for nav links and footer link columns. Both were previously hardcoded in Nav.astro and Footer.astro with CMS-SKIP comments.
+
+**Schema (siteSettings.ts):**
+
+- `navLinks` array: each item is a `navLink` object with `label` (required string), `href` (required string), and `children` (array of `navSubLink` objects with label + href) for future dropdown support
+- `footerColumns` array: each item is a `footerColumn` object with `heading` (required string) and `links` (array of `footerLink` objects with label + href)
+- Both placed after existing CTA fields, before `seo` field
+
+**Query (queries.ts):**
+
+- `navLinks[]` projection includes `label`, `href`, `children[] { label, href }`
+- `footerColumns[]` projection includes `heading`, `links[] { label, href }`
+
+**BaseLayout.astro:**
+
+- Added `NavLink` and `FooterColumn` interface declarations
+- `SiteSettings` interface extended with `navLinks?: NavLink[]` and `footerColumns?: FooterColumn[]`
+- Nav receives `navLinks={siteSettings?.navLinks ?? []}`, Footer receives `footerColumns={siteSettings?.footerColumns ?? []}`
+
+**Nav.astro (full rewrite):**
+
+- Desktop `.nav-links`: `{navLinks.map(link => <a href={link.href}>{link.label}</a>)}`
+- Mobile menu main section: same map replacing the 4 mm-link items
+- Forms + Company mobile sections remain hardcoded (they are mobile-only extras, not desktop nav)
+- CMS comment updated to `{/* CMS: navLinks from siteSettings */}`
+
+**Footer.astro (full rewrite):**
+
+- `{footerColumns.map(col => <div class="footer-col"><h3>{col.heading}</h3><ul class="footer-links">{col.links?.map(...)}</ul></div>)}`
+- Grid `grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr` unchanged — CMS data seeds exactly 3 link columns
+- CMS comment updated to `{/* CMS: footerColumns from siteSettings */}`
+
+**Seed script (scripts/seed-nav-footer.mjs):**
+
+- Uses `patch.set` on `_id: 'siteSettings'` — does not overwrite other fields
+- `navLinks`: 4 items (For Facilities /communities/, For Patients /patients/, For Therapists /providers/, About /about/)
+- `footerColumns`: 3 columns — Services (4 links), Company (4 links incl. Refer a Facility with href: '#'), Forms (2 links)
+- Each object has `_type` and `_key: randomUUID()`
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/siteSettings.ts` — navLinks + footerColumns fields added (before seo)
+- `apps/web/src/lib/queries.ts` — navLinks + footerColumns projections added
+- `apps/web/src/layouts/BaseLayout.astro` — interfaces + prop passing added
+- `apps/web/src/components/nav/Nav.astro` — full rewrite
+- `apps/web/src/components/ui/Footer.astro` — full rewrite
+- `scripts/seed-nav-footer.mjs` — new file
+
+**Verification:**
+
+- `grep -n "navLinks|footerColumns" siteSettings.ts` → lines 96, 130 ✓
+- `grep -n "navLinks|footerColumns" queries.ts` → lines 45, 50 ✓
+- `grep -n "navLinks|footerColumns"` across Nav/Footer/BaseLayout → 13 hits ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+- Studio starts clean (no schema errors) ✓
+
+**Issues:** Edit tool returned "2 matches" on first attempt to add footerLink fields — the navSubLink block had an identical field pattern. Resolved by adding `name: 'footerLink'` context to uniquely identify the target block. Self-corrected; no user correction.
+
+---
+
+## Add modal action support to footerLink schema and template — 2026-05-22 [x] COMPLETE 2026-05-22 05:14
+
+Branch: `main`
+
+- [x] STEP 1 SCHEMA — added `action` field (string, list options: book/refer) to `footerLink` object in `siteSettings.ts`; changed `href` validation from `r.required()` to `r.optional()`
+- [x] STEP 2 QUERY — added `action` to `footerColumns[] { heading, links[] { label, href, action } }` projection in `queries.ts`
+- [x] STEP 3 TEMPLATE — full rewrite of `Footer.astro`; updated `FooterLink` interface to add `href?: string` and `action?: string`; replaced `<a href={link.href}>` with conditional: button with `onclick={openModal('...')}` when `link.action` set, else plain `<a>`; added `.footer-action-btn` CSS class matching footer link appearance (same color, font, transition; no border/background; cursor pointer)
+- [x] STEP 4 SEED — updated "Refer a Facility" entry in `scripts/seed-nav-footer.mjs` to add `action: 'refer'`
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Modal action support on footer links)
+
+**What was built:** Restored the "Refer a Facility" modal trigger behavior in the CMS-managed footer link system. Previously the CMS migration left this link as `href="#"` without the `openModal('refer')` call.
+
+**Schema (siteSettings.ts footerLink object):**
+
+- `action` field: type string, options list `[{ title: 'Open Book Modal', value: 'book' }, { title: 'Open Refer Modal', value: 'refer' }]`; description explains it renders a button instead of a link when set
+- `href` validation changed from `r.required()` to `r.optional()` — href is not needed when action is set
+
+**Query (queries.ts):**
+
+- `links[] { label, href, action }` — action now fetched alongside label and href
+
+**Footer.astro (full rewrite):**
+
+- `FooterLink` interface: `href?: string` (now optional), `action?: string` (new)
+- Render conditional: `link.action ? <button class="footer-action-btn" onclick={openModal('...')}> : <a href={link.href}>`
+- `.footer-action-btn` CSS: `background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; color: rgba(255,255,255,0.6); font-size: 14px; transition: color; text-align: left` + hover `color: #fff`
+
+**Seed script (scripts/seed-nav-footer.mjs):**
+
+- "Refer a Facility" entry updated: `{ ..., href: '#', action: 'refer' }`
+
+**Files changed:**
+
+- `apps/studio/schemas/singletons/siteSettings.ts` — action field + href optional on footerLink
+- `apps/web/src/lib/queries.ts` — action added to footerColumns links projection
+- `apps/web/src/components/ui/Footer.astro` — full rewrite with conditional + button CSS
+- `scripts/seed-nav-footer.mjs` — action: 'refer' on Refer a Facility entry
+
+**Verification:**
+
+- `grep -n "action|Modal" siteSettings.ts` → lines 153, 154, 159, 160 ✓
+- `grep -n "action" queries.ts` → line 52 ✓
+- `grep -n "openModal|link.action" Footer.astro` → lines 54, 55 ✓
+- `grep -n "action.*refer" seed-nav-footer.mjs` → line 70 ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+- Studio starts clean ✓
 
 **Issues:** None. No user corrections this session.

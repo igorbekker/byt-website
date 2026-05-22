@@ -5,14 +5,21 @@
  * Source: design-source/partials/nav.html, design-source/styles/base.css (.nav, .nav-inner, .nav-links, .nav-actions, .nav-cta, .nav-cta-secondary, .nav-hamburger, .mobile-menu, .mobile-menu-panel)
  */
 
+interface NavLink {
+  label: string;
+  href: string;
+  children?: Array<{ label: string; href: string }>;
+}
+
 interface Props {
   navCtaLabel: string;
   navCtaSecondaryLabel: string;
   bookingUrl: string;
   referralUrl: string;
+  navLinks?: NavLink[];
 }
 
-const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
+const { navCtaLabel, navCtaSecondaryLabel, navLinks = [] } = Astro.props;
 ---
 
 <header>
@@ -21,12 +28,9 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
       <a href="/" class="nav-logo" aria-label="Better You Therapy">
         <img src="/assets/logo.png" alt="Better You Therapy" width="200" height="96" />
       </a>
-      {/* CMS-SKIP: navigation link labels */}
+      {/* CMS: navLinks from siteSettings */}
       <div class="nav-links">
-        <a href="/communities/">For Facilities</a>
-        <a href="/patients/">For Patients</a>
-        <a href="/providers/">For Therapists</a>
-        <a href="/about/">About</a>
+        {navLinks.map((link) => <a href={link.href}>{link.label}</a>)}
       </div>
       <div class="nav-actions">
         <button class="nav-cta" onclick="openModal('book')">{navCtaLabel}</button>
@@ -74,10 +78,13 @@ const { navCtaLabel, navCtaSecondaryLabel } = Astro.props;
         </svg>
       </button>
     </div>
-    <a href="/communities/" class="mm-link">For Facilities</a>
-    <a href="/patients/" class="mm-link">For Patients</a>
-    <a href="/providers/" class="mm-link">For Therapists</a>
-    <a href="/about/" class="mm-link">About</a>
+    {
+      navLinks.map((link) => (
+        <a href={link.href} class="mm-link">
+          {link.label}
+        </a>
+      ))
+    }
     <div class="mm-separator"></div>
     <div class="mm-section-label">Forms</div>
     <a href="/intake/" class="mm-link">Intake Form</a>

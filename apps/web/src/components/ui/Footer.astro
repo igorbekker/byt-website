@@ -5,14 +5,32 @@
  * Source: design-source/partials/footer.html, design-source/styles/base.css (.footer, .footer-grid, .footer-col, .footer-links, .footer-bottom, .footer-legal, .social-links, .social-link)
  */
 
+interface FooterLink {
+  label: string;
+  href?: string;
+  action?: string;
+}
+
+interface FooterColumn {
+  heading: string;
+  links: FooterLink[];
+}
+
 interface Props {
   footerTagline: string;
   copyrightEntity: string;
   newsletterHeading: string;
   newsletterBody: string;
+  footerColumns?: FooterColumn[];
 }
 
-const { footerTagline, copyrightEntity, newsletterHeading, newsletterBody } = Astro.props;
+const {
+  footerTagline,
+  copyrightEntity,
+  newsletterHeading,
+  newsletterBody,
+  footerColumns = [],
+} = Astro.props;
 
 const currentYear = new Date().getFullYear();
 ---
@@ -32,37 +50,27 @@ const currentYear = new Date().getFullYear();
         {footerTagline && <p class="footer-tagline">{footerTagline}</p>}
       </div>
 
-      {/* CMS-SKIP: footer navigation labels */}
-      <div class="footer-col">
-        <h3>Services</h3>
-        <ul class="footer-links">
-          <li><a href="/patients/">For Seniors &amp; Families</a></li>
-          <li><a href="/patients/">Individual Therapy</a></li>
-          <li><a href="/communities/">For Facilities</a></li>
-          <li><a href="/providers/">For Therapists</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h3>Company</h3>
-        <ul class="footer-links">
-          <li><a href="/about/">About Us</a></li>
-          <li><a href="/careers/">Careers</a></li>
-          <li><a href="/contact/">Contact</a></li>
-          <li>
-            <a href="#" onclick="event.preventDefault();openModal('refer')">Refer a Facility</a>
-          </li>
-        </ul>
-      </div>
-
-      {/* CMS-SKIP: footer forms column */}
-      <div class="footer-col">
-        <h3>Forms</h3>
-        <ul class="footer-links">
-          <li><a href="/intake/" class="footer-link">Intake Form</a></li>
-          <li><a href="/resident-referral/">Resident Referral Form</a></li>
-        </ul>
-      </div>
+      {/* CMS: footerColumns from siteSettings */}
+      {
+        footerColumns.map((col) => (
+          <div class="footer-col">
+            <h3>{col.heading}</h3>
+            <ul class="footer-links">
+              {col.links?.map((link) => (
+                <li>
+                  {link.action ? (
+                    <button class="footer-action-btn" onclick={`openModal('${link.action}')`}>
+                      {link.label}
+                    </button>
+                  ) : (
+                    <a href={link.href}>{link.label}</a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
 
       <div class="footer-col">
         <h3>{newsletterHeading}</h3>
@@ -166,6 +174,22 @@ const currentYear = new Date().getFullYear();
     transition: color var(--t-hover);
   }
   .footer-links a:hover {
+    color: #fff;
+  }
+
+  .footer-action-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-family: inherit;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    transition: color var(--t-hover);
+    text-align: left;
+  }
+  .footer-action-btn:hover {
     color: #fff;
   }
 

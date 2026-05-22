@@ -93,6 +93,121 @@ export const siteSettings = defineType({
         'Custom robots.txt directives appended before the Sitemap line. One directive per line.',
     }),
     defineField({
+      name: 'navLinks',
+      title: 'Navigation Links',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'navLink',
+          title: 'Nav Link',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: 'href',
+              title: 'URL',
+              type: 'string',
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: 'children',
+              title: 'Dropdown Items',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'navSubLink',
+                  title: 'Sub Link',
+                  fields: [
+                    defineField({
+                      name: 'label',
+                      title: 'Label',
+                      type: 'string',
+                      validation: (r) => r.required(),
+                    }),
+                    defineField({
+                      name: 'href',
+                      title: 'URL',
+                      type: 'string',
+                      validation: (r) => r.required(),
+                    }),
+                  ],
+                  preview: { select: { title: 'label', subtitle: 'href' } },
+                },
+              ],
+            }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'href' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'footerColumns',
+      title: 'Footer Link Columns',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'footerColumn',
+          title: 'Footer Column',
+          fields: [
+            defineField({
+              name: 'heading',
+              title: 'Column Heading',
+              type: 'string',
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: 'links',
+              title: 'Links',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'footerLink',
+                  title: 'Link',
+                  fields: [
+                    defineField({
+                      name: 'label',
+                      title: 'Label',
+                      type: 'string',
+                      validation: (r) => r.required(),
+                    }),
+                    defineField({
+                      name: 'href',
+                      title: 'URL',
+                      type: 'string',
+                      validation: (r) => r.optional(),
+                    }),
+                    defineField({
+                      name: 'action',
+                      title: 'Modal Action',
+                      type: 'string',
+                      description:
+                        'If set, renders a button that opens this modal instead of a link. Values: book, refer. Leave empty for normal links.',
+                      options: {
+                        list: [
+                          { title: 'Open Book Modal', value: 'book' },
+                          { title: 'Open Refer Modal', value: 'refer' },
+                        ],
+                      },
+                    }),
+                  ],
+                  preview: { select: { title: 'label', subtitle: 'href' } },
+                },
+              ],
+            }),
+          ],
+          preview: { select: { title: 'heading' } },
+        },
+      ],
+    }),
+    defineField({
       name: 'seo',
       title: 'Default SEO',
       type: 'seoFields',

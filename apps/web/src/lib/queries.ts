@@ -42,6 +42,15 @@ export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
   newsletterDisclaimer,
   gtmContainerId,
   robotsTxt,
+  navLinks[] {
+    label,
+    href,
+    children[] { label, href }
+  },
+  footerColumns[] {
+    heading,
+    links[] { label, href, action }
+  },
   seo {
     metaTitle,
     metaDescription,
