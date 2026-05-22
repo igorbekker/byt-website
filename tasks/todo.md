@@ -19,9 +19,61 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — CMS nav links + footer columns + modal action support: siteSettings schema, GROQ query, Nav/Footer templates, BaseLayout wiring, seed script
+- **Last work:** 2026-05-22 — intake.ts restructure: 4-step → 6-step multi-object flow (Company upsert + Referrer contact); intake.astro referral section redesigned; spec 7.7/§4/§6 updated
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## intake.ts restructure: company + referrer multi-object flow — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] READ — docs/hubspot-forms-spec.md (§6, §7.6, §7.7, §9), functions/api/intake.ts, functions/api/referral.ts, functions/api/\_hubspot.ts, apps/web/src/pages/intake.astro
+- [x] BACKEND — functions/api/intake.ts: replaced referringCompany with facilityName/facilityPhone/facilityEmail + referrerFirstName/referrerLastName/referrerEmail/referrerPhone; added searchCompanyByName, createCompany, updateCompany imports; new 6-step handler; updated response to include companyId + referrerContactId
+- [x] FRONTEND — intake.astro §3 "Referral Information": replaced single referringCompany text field with two subsections (Facility Information + Referring Person); added .it-subsection-heading CSS; updated JS payload
+- [x] SPEC — docs/hubspot-forms-spec.md: §4 Company Properties name+phone now list intake; §6 association labels 1/5/8/11 reference intake; §7.7 fully rewritten (new payload, 6-step ops, referrer contact table, updated field mapping)
+- [x] BUILD — pnpm build → 20 pages, 0 errors ✓
+- [x] VERIFY — all 7 spec grep checks passed (zero referringCompany, zero local helpers)
+
+### Session Review — 2026-05-22 (intake.ts restructure)
+
+**What was built:** Restructured the Patient Intake backend from a 4-step to a 6-step multi-object flow matching the pattern established in `referral.ts`.
+
+**Backend (`functions/api/intake.ts`):**
+
+- Step 1: Company upsert — `searchCompanyByName(facilityName)` → update if found, create if not; stores `name`, `phone`, `facility_email`; skipped entirely if `facilityName` is absent
+- Step 2: Patient upsert — same as before; now uses `facilityName` (not `referringCompany`) for `company` property and name-dedup fallback
+- Step 3: Referrer contact upsert — only if `referrerFirstName` OR `referrerEmail` is non-empty; email-first dedup; sets `contact_type: "Facility Employee"`, `company: facilityName`, `website_form: "Patient Intake"`
+- Step 4: RP upsert — unchanged; only if `rpFirstName` present
+- Step 5: Associations — 5a Patient→Company (`USER_DEFINED`/1), 5b Referrer→Company (`USER_DEFINED`/5), 5c RP↔Patient (`USER_DEFINED`/8+11); all fatal
+- Step 6: Insurance card uploads — unchanged; non-fatal
+- Response now includes `companyId` and `referrerContactId` (both nullable)
+
+**Interface changes:** Removed `referringCompany`; added `facilityName`, `facilityPhone`, `facilityEmail`, `referrerFirstName`, `referrerLastName`, `referrerEmail`, `referrerPhone`. Added constant `REFERRER_TYPE = 'Facility Employee'`.
+
+**Frontend (`apps/web/src/pages/intake.astro`):** Section 3 replaced single-field layout with two subsections headed by `.it-subsection-heading` elements. Facility Information: facilityName (required), facilityPhone, facilityEmail. Referring Person: referrerFirstName, referrerLastName, referrerEmail, referrerPhone, reasonForReferral (moved here). JS payload updated to send all 7 new fields.
+
+**Spec (`docs/hubspot-forms-spec.md`):** §4 name+phone rows updated to include intake. §6 labels 1/5/8/11 updated. §7.7 fully rewritten: new payload JSON, 6-step ops, Company/Referrer/RP property tables, updated response/error/field-mapping tables.
+
+**Files changed:**
+
+- `functions/api/intake.ts` — full rewrite of interface, constants, builder functions, handler
+- `apps/web/src/pages/intake.astro` — §3 HTML, new CSS rule, JS payload
+- `docs/hubspot-forms-spec.md` — §4, §6, §7.7 updated
+
+**Verification:**
+
+- `grep -n "searchCompanyByName|createCompany|updateCompany" intake.ts` → lines 9, 10, 11, 238, 240, 251 ✓
+- `grep -n "contact_type" intake.ts` → PATIENT_TYPE (99), REFERRER_TYPE (131), RP_TYPE (145) ✓
+- `grep -n "associate(" intake.ts` → type IDs 1 (297), 5 (301), 8 (313), 11 (322) ✓
+- `grep -n "facilityName|facilityPhone|facilityEmail" intake.ts` → 15 hits ✓
+- `grep -n "referrerFirstName|referrerEmail" intake.ts` → 8 hits ✓
+- `grep -n "referringCompany" intake.ts` → 0 results ✓
+- `grep -rn "function search|create|update|upload|hubspot" intake.ts` → 0 results ✓
+- `pnpm build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

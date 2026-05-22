@@ -156,10 +156,40 @@ const phoneDigits = phone.replace(/\D/g, '');
         <!-- Section 3: Referral Information -->
         <div class="it-section">
           <h2 class="it-section-heading">Referral Information</h2>
+
+          <h3 class="it-subsection-heading">Facility Information</h3>
           <div class="it-section-body">
             <div class="it-field it-full">
-              <label for="referringCompany">Referring Person / Company</label>
-              <input type="text" id="referringCompany" name="referringCompany" />
+              <label for="facilityName">Facility Name <span class="it-req">*</span></label>
+              <input type="text" id="facilityName" name="facilityName" required />
+            </div>
+            <div class="it-field">
+              <label for="facilityPhone">Facility Phone</label>
+              <input type="tel" id="facilityPhone" name="facilityPhone" />
+            </div>
+            <div class="it-field">
+              <label for="facilityEmail">Facility Email</label>
+              <input type="email" id="facilityEmail" name="facilityEmail" />
+            </div>
+          </div>
+
+          <h3 class="it-subsection-heading">Referring Person</h3>
+          <div class="it-section-body">
+            <div class="it-field">
+              <label for="referrerFirstName">First Name</label>
+              <input type="text" id="referrerFirstName" name="referrerFirstName" />
+            </div>
+            <div class="it-field">
+              <label for="referrerLastName">Last Name</label>
+              <input type="text" id="referrerLastName" name="referrerLastName" />
+            </div>
+            <div class="it-field">
+              <label for="referrerEmail">Email</label>
+              <input type="email" id="referrerEmail" name="referrerEmail" />
+            </div>
+            <div class="it-field">
+              <label for="referrerPhone">Phone</label>
+              <input type="tel" id="referrerPhone" name="referrerPhone" />
             </div>
             <div class="it-field it-full">
               <label for="reasonForReferral">Reason for Referral</label>
@@ -270,7 +300,9 @@ const phoneDigits = phone.replace(/\D/g, '');
       <ul class="it-contact-list">
         <li><span class="it-contact-label">Fax</span><span>{fax}</span></li>
         <li><span class="it-contact-label">Email</span><a href={`mailto:${email}`}>{email}</a></li>
-        <li><span class="it-contact-label">Phone</span><a href={`tel:+1${phoneDigits}`}>{phone}</a></li>
+        <li>
+          <span class="it-contact-label">Phone</span><a href={`tel:+1${phoneDigits}`}>{phone}</a>
+        </li>
       </ul>
     </div>
   </section>
@@ -350,6 +382,15 @@ const phoneDigits = phone.replace(/\D/g, '');
       background: var(--border);
       border-radius: 20px;
       padding: 2px 9px;
+    }
+    .it-subsection-heading {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 1.25rem 0 0.75rem;
     }
     .it-section-helper {
       font-size: 13px;
@@ -594,7 +635,13 @@ const phoneDigits = phone.replace(/\D/g, '');
         primaryPolicyNumber: getVal('primaryPolicyNumber'),
         secondaryInsurance: getVal('secondaryInsurance'),
         secondaryPolicyNumber: getVal('secondaryPolicyNumber'),
-        referringCompany: getVal('referringCompany'),
+        facilityName: getVal('facilityName'),
+        facilityPhone: getVal('facilityPhone'),
+        facilityEmail: getVal('facilityEmail'),
+        referrerFirstName: getVal('referrerFirstName'),
+        referrerLastName: getVal('referrerLastName'),
+        referrerEmail: getVal('referrerEmail'),
+        referrerPhone: getVal('referrerPhone'),
         reasonForReferral: getVal('reasonForReferral'),
         rpFirstName: getVal('rpFirstName'),
         rpLastName: getVal('rpLastName'),
