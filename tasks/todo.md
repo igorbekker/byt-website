@@ -19,9 +19,29 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Favicon, footer logo, Book modal scroll fix
+- **Last work:** 2026-05-22 — Obstacle post-mortem: trailing-slash redirect failure
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add obstacle post-mortem: trailing-slash redirect failure — 2026-05-22 [x] COMPLETE 2026-05-22
+
+Branch: `main`
+
+- [x] Create `docs/obstacles/001-trailing-slash-redirects.md` with full post-mortem
+
+### Session Review — 2026-05-22 (Obstacle post-mortem: trailing-slash redirects)
+
+**What was built:** Post-mortem document covering the ~2hr debugging session that ultimately traced to Cloudflare Pages `_redirects` not matching `/path/` (with trailing slash) — the form browsers actually send. Documents 20 diagnostic tests, root cause, the one-line fix (emit both slash variants per rule), and 3 rules added to prevent recurrence.
+
+**Files created:**
+
+- `docs/obstacles/001-trailing-slash-redirects.md` — new directory `docs/obstacles/` created; document is 97 lines
+
+**Verification:** File confirmed at `/home/personal/projects/byt-website/docs/obstacles/001-trailing-slash-redirects.md`. No code changed — docs-only commit, build not required.
+
+**Issues:** None. No user corrections this session.
 
 ---
 
