@@ -285,12 +285,12 @@ const phoneDigits = phone.replace(/\D/g, '');
                 <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
               </svg>
               <p class="rr-drop-label">Drag files here or click to browse</p>
-              <p class="rr-drop-hint">PDF, Word, JPG, PNG — up to 10MB per file</p>
+              <p class="rr-drop-hint">PDF, Word, or image files — up to 10MB per file</p>
               <input
                 type="file"
                 id="docUpload"
                 name="docUpload"
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic,.heif,.webp,.tiff,.tif,.bmp,.gif"
                 multiple
                 class="rr-file-input"
                 tabindex="-1"
@@ -828,6 +828,30 @@ const phoneDigits = phone.replace(/\D/g, '');
       const fileInput = document.getElementById('docUpload');
       const fileList = document.getElementById('fileList');
       const selectedFiles = [];
+      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+      const ALLOWED_EXTENSIONS = [
+        'pdf',
+        'doc',
+        'docx',
+        'jpg',
+        'jpeg',
+        'png',
+        'heic',
+        'heif',
+        'webp',
+        'tiff',
+        'tif',
+        'bmp',
+        'gif',
+      ];
+
+      function isAllowedFile(file) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!ALLOWED_EXTENSIONS.includes(ext)) return 'File type ".' + ext + '" is not supported.';
+        if (file.size > MAX_FILE_SIZE) return file.name + ' exceeds the 10MB limit.';
+        return null;
+      }
+
       const DRAFT_KEY = 'byt_referral_draft';
       const DRAFT_TTL = 60 * 60 * 1000;
       let debounceTimer;
@@ -857,6 +881,11 @@ const phoneDigits = phone.replace(/\D/g, '');
 
       fileInput.addEventListener('change', function () {
         Array.from(fileInput.files).forEach(function (f) {
+          const err = isAllowedFile(f);
+          if (err) {
+            showError(err);
+            return;
+          }
           selectedFiles.push(f);
         });
         renderFileList();
@@ -874,6 +903,11 @@ const phoneDigits = phone.replace(/\D/g, '');
         e.preventDefault();
         dropZone.classList.remove('drag-over');
         Array.from(e.dataTransfer.files).forEach(function (f) {
+          const err = isAllowedFile(f);
+          if (err) {
+            showError(err);
+            return;
+          }
           selectedFiles.push(f);
         });
         renderFileList();

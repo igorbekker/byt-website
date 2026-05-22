@@ -19,9 +19,71 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — OBS-018 post-mortem added to docs/obstacle-log/
+- **Last work:** 2026-05-22 — File upload validation fixes on referral + intake forms
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## File upload validation fixes — 2026-05-22 [x] COMPLETE 2026-05-22 21:30
+
+Branch: `main`
+
+- [x] CHANGE 1 — ResidentReferralPage.astro: expanded `accept` attribute to include `.heic,.heif,.webp,.tiff,.tif,.bmp,.gif`
+- [x] CHANGE 2 — ResidentReferralPage.astro: updated drop-zone hint text to "PDF, Word, or image files — up to 10MB per file"
+- [x] CHANGE 3 — ResidentReferralPage.astro: added `MAX_FILE_SIZE`, `ALLOWED_EXTENSIONS`, `isAllowedFile()` constant/function; wired into file picker change handler and drag-drop handler
+- [x] CHANGE 4 — intake.astro: updated both `it-file-hint` spans to "Any image or PDF"
+- [x] CHANGE 5 — functions/api/intake.ts: fixed `storeInsuranceCard` MIME extraction — broad regex + explicit `application/pdf` branch so PDFs upload as `.pdf` not `.jpg`
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (File upload validation fixes)
+
+**What was fixed:** Five targeted changes across three files to close gaps in file upload handling identified during an audit.
+
+**CHANGE 1 — Referral form accept attribute** (`ResidentReferralPage.astro` line 293):
+Extended from `.pdf,.doc,.docx,.jpg,.jpeg,.png` to also include `.heic,.heif,.webp,.tiff,.tif,.bmp,.gif`. Matches the ALLOWED_EXTENSIONS list added in Change 3.
+
+**CHANGE 2 — Referral form hint text** (`ResidentReferralPage.astro` line 288):
+"PDF, Word, JPG, PNG — up to 10MB per file" → "PDF, Word, or image files — up to 10MB per file". Reflects the broader image format support without enumerating every extension.
+
+**CHANGE 3 — Referral form JS validation** (`ResidentReferralPage.astro` script block):
+Added three declarations immediately after `const selectedFiles = []`:
+
+- `MAX_FILE_SIZE = 10 * 1024 * 1024` — 10MB threshold
+- `ALLOWED_EXTENSIONS` array — 13 extensions matching the accept attribute
+- `isAllowedFile(file)` — returns an error string on type or size rejection, `null` on pass
+
+Both the file picker change handler and the drag-drop handler now call `isAllowedFile()` and call `showError(err)` + return early on rejection. Previously both pushed files unconditionally. The drag-drop path was entirely unvalidated (the `accept` attribute has no effect on drag-drop events).
+
+**CHANGE 4 — Intake form hint text** (`intake.astro` lines 137, 147):
+"JPG, PNG, or PDF" → "Any image or PDF" on both insurance card file inputs. The `accept="image/*,.pdf"` attribute is already broad enough; the hint text was the only misleading part.
+
+**CHANGE 5 — Intake API MIME extraction** (`functions/api/intake.ts` line 206):
+Old regex: `dataUrl.match(/^data:image\/(\w+);/)` — only matched `data:image/*` MIME types. A PDF uploaded via intake would fail the regex, default to ext `'jpg'`, and upload as `insurance-card-front.jpg` (wrong extension, potentially corrupt in HubSpot).
+
+New logic:
+
+```ts
+const mimeMatch = dataUrl.match(/^data:([^;]+);/);
+const mime = mimeMatch?.[1] ?? 'image/jpeg';
+const ext =
+  mime === 'application/pdf' ? 'pdf' : (mime.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg');
+```
+
+Now handles `application/pdf` explicitly and extracts extension from any MIME subtype.
+
+**Files changed:**
+
+- `apps/web/src/components/pages/ResidentReferralPage.astro` — accept attribute, hint text, validation constants + function, change handler, drop handler
+- `apps/web/src/pages/intake.astro` — two hint spans
+- `functions/api/intake.ts` — `storeInsuranceCard` MIME extraction (3 lines replacing 1)
+
+**Verification:**
+
+- Greps confirmed all 5 changes at expected lines ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

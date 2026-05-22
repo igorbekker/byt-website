@@ -203,7 +203,10 @@ async function storeInsuranceCard(
   patientContactId: string,
   key: string,
 ): Promise<void> {
-  const ext = dataUrl.match(/^data:image\/(\w+);/)?.[1]?.replace('jpeg', 'jpg') ?? 'jpg';
+  const mimeMatch = dataUrl.match(/^data:([^;]+);/);
+  const mime = mimeMatch?.[1] ?? 'image/jpeg';
+  const ext =
+    mime === 'application/pdf' ? 'pdf' : (mime.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg');
   const { id } = await uploadFileToHubSpot(dataUrl, `${label}.${ext}`, FILE_FOLDER, key);
   await createNote(id, `Insurance card ${label} uploaded via intake form`, patientContactId, key);
 }
