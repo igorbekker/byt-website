@@ -19,9 +19,54 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Add form error monitoring: reportFormError helper + form-monitor.ts endpoint, wired into all 6 form functions
+- **Last work:** 2026-05-22 — Deploy hook diagnostic + useCdn: false fix in astro.config.mjs
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Deploy hook diagnostic + useCdn fix — 2026-05-22 [x] COMPLETE 2026-05-22 18:48
+
+Branch: `main`
+
+- [x] STEP 1 — Verified Cloudflare deploy hook 54c10b1f is alive: POST returned deployment ID 2b6d95ec, build triggered
+- [x] STEP 2 — Audited 10 most recent deployments: 5 github:push, 5 deploy_hook; Sanity-triggered hooks confirmed at 17:20:11 and 05:16:11
+- [x] STEP 3 — Changed `useCdn: true` → `useCdn: false` in both Sanity clients in `apps/web/astro.config.mjs` (line 59: redirectsIntegration client; line 80: sanity() integration)
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Deploy hook diagnostic + useCdn fix)
+
+**What was diagnosed:** Confirmed the Cloudflare deploy hook (`54c10b1f-9efe-4cd2-877b-dc0e49f6ea46`) is alive. POST returned `{ id: "2b6d95ec..." }` (200 success). New deployment appeared immediately as `deploy_hook` source. The `/pages/projects/{project}/deploy_hooks` listing endpoint returns 404 (Cloudflare doesn't expose a hook-list API), but the hook itself is functional.
+
+**Deploy history (10 most recent):**
+
+| Timestamp            | Source      | ID                  |
+| -------------------- | ----------- | ------------------- |
+| 2026-05-22T18:46:16Z | github:push | 014a25fe            |
+| 2026-05-22T18:37:54Z | deploy_hook | 2b6d95ec ← our test |
+| 2026-05-22T18:24:14Z | github:push | 3d083c48            |
+| 2026-05-22T17:20:13Z | deploy_hook | f8e3ec5b            |
+| 2026-05-22T17:20:11Z | deploy_hook | 42fecc34            |
+| 2026-05-22T05:17:42Z | github:push | af333d2a            |
+| 2026-05-22T05:16:11Z | deploy_hook | d59a43bf            |
+| 2026-05-22T05:16:07Z | github:push | a438727a            |
+| 2026-05-22T05:03:17Z | github:push | 0bdb94b8            |
+| 2026-05-22T04:58:20Z | github:push | 1a589ded            |
+
+The `17:20:11` and `05:16:11` pairs are Sanity webhook-triggered deploys firing alongside github:push events — the hook is being called.
+
+**What was fixed:** Both Sanity client instances in `apps/web/astro.config.mjs` had `useCdn: true`. CDN caches content up to 60s — content published in Sanity may not appear in the build immediately. Changed both to `useCdn: false` so builds always fetch live data from the Sanity API.
+
+**Files changed:**
+
+- `apps/web/astro.config.mjs` — line 59: `useCdn: false` (redirectsIntegration client); line 80: `useCdn: false` (sanity() integration)
+
+**Verification:**
+
+- `grep -n "useCdn" apps/web/astro.config.mjs` → line 59: false ✓, line 80: false ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

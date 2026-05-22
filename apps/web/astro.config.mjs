@@ -56,7 +56,7 @@ function redirectsIntegration() {
           projectId: SANITY_PROJECT_ID,
           dataset: SANITY_DATASET,
           apiVersion: '2024-01-01',
-          useCdn: true,
+          useCdn: false,
         });
         const lines = await buildRedirectLines(client);
         const body = REDIRECTS_HEADER + (lines.length > 0 ? lines.join('\n') + '\n' : '');
@@ -77,7 +77,7 @@ export default defineConfig({
     sanity({
       projectId: 'bpjtbps6',
       dataset: 'production',
-      useCdn: true,
+      useCdn: false,
     }),
     sitemap({
       serialize(item) {
