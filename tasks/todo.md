@@ -19,7 +19,7 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — Deploy hook diagnostic + useCdn: false fix in astro.config.mjs
+- **Last work:** 2026-05-22 — Client-side form error reporting (reportFormErrorToMonitor) across all 8 form handlers
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
 
@@ -851,5 +851,32 @@ Branch: `main`
 - `grep -n "action.*refer" seed-nav-footer.mjs` → line 70 ✓
 - `pnpm --filter web build` → 20 pages, 0 errors ✓
 - Studio starts clean ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Debug form monitoring — test-monitor env probe — 2026-05-22 [x] COMPLETE 2026-05-22 19:43
+
+Branch: `main`
+
+- [x] STEP 1 — Created `functions/api/test-monitor.ts` — GET endpoint that reads `RESEND_API_KEY` and `ALERT_EMAIL` from Cloudflare env and returns existence + key prefix without exposing full values
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Form monitor env diagnostic)
+
+**What was built:** A temporary diagnostic endpoint at `/api/test-monitor` that checks whether `RESEND_API_KEY` and `ALERT_EMAIL` are visible to Cloudflare Pages Functions. Responds with `{ resendKeyExists, resendKeyPrefix, alertEmailExists, alertEmail }`. The key prefix is truncated to 6 chars to avoid exposing the full secret.
+
+**Why:** Alert emails from the form monitor (`reportFormError` in `_hubspot.ts`) are not arriving. The function silently returns early if either env var is missing (`if (!resendKey || !alertEmail) return`). This endpoint confirms whether env vars are set in Cloudflare without needing a full form submission trace.
+
+**Files changed:**
+
+- `functions/api/test-monitor.ts` — new file (20 lines); GET + OPTIONS handlers; imports `Env`, `CORS_HEADERS`, `jsonResponse` from `./_hubspot`
+
+**Verification:**
+
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**IMPORTANT — cleanup required:** `functions/api/test-monitor.ts` must be deleted before the next production commit after debugging is complete. It exposes partial env var info.
 
 **Issues:** None. No user corrections this session.
