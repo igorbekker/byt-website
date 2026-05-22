@@ -2384,6 +2384,25 @@ const renderOrder = [
 
   <script is:inline define:vars={{ JOBS }}>
     /* eslint-disable @typescript-eslint/no-unused-vars */
+    function reportFormErrorToMonitor(form, errorType, message, payload) {
+      try {
+        fetch('/api/form-monitor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            form: form,
+            errorType: errorType,
+            httpStatus: null,
+            message: message,
+            payload: payload || {},
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      } catch (_) {
+        // fire-and-forget — never block the existing error UI
+      }
+    }
     // ── BLOCK 2: Router accordion
     function activateRouterCard(idx) {
       const isMobile = window.innerWidth <= 768;
@@ -2623,6 +2642,11 @@ const renderOrder = [
       } catch {
         btn.disabled = false;
         btn.textContent = origText;
+        reportFormErrorToMonitor('Apply (Job)', 'submission_error', 'Job application failed', {
+          firstName: firstName,
+          lastName: lastName,
+          email: form.email.value,
+        });
         alert('Something went wrong. Please try again or email us directly.');
       }
     }
@@ -2691,6 +2715,12 @@ const renderOrder = [
       } catch {
         btn.disabled = false;
         btn.textContent = origText;
+        reportFormErrorToMonitor(
+          'Apply (General)',
+          'submission_error',
+          'General application failed',
+          { firstName: firstName, lastName: lastName, email: form.email.value },
+        );
         alert('Something went wrong. Please try again or email us directly.');
       }
     }

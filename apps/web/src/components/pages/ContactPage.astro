@@ -1101,6 +1101,25 @@ const pageSchema = webPageSchema({
 
   <script is:inline>
     /* eslint-disable @typescript-eslint/no-unused-vars */
+    function reportFormErrorToMonitor(form, errorType, message, payload) {
+      try {
+        fetch('/api/form-monitor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            form: form,
+            errorType: errorType,
+            httpStatus: null,
+            message: message,
+            payload: payload || {},
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+          }),
+        });
+      } catch (_) {
+        // fire-and-forget — never block the existing error UI
+      }
+    }
     async function handleContactSubmit(e) {
       e.preventDefault();
       const form = e.target;
@@ -1132,6 +1151,12 @@ const pageSchema = webPageSchema({
       } catch {
         btn.disabled = false;
         btn.innerHTML = origHTML;
+        reportFormErrorToMonitor('Contact Us', 'submission_error', 'Contact form failed', {
+          firstName: form.firstName.value,
+          lastName: form.lastName.value,
+          email: form.email.value,
+          phone: form.phone.value,
+        });
         alert('Something went wrong. Please try again or email us directly.');
       }
     }

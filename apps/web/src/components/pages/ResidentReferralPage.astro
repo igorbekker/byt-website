@@ -801,6 +801,25 @@ const phoneDigits = phone.replace(/\D/g, '');
 
   <script is:inline>
     (function () {
+      function reportFormErrorToMonitor(form, errorType, message, payload) {
+        try {
+          fetch('/api/form-monitor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              form: form,
+              errorType: errorType,
+              httpStatus: null,
+              message: message,
+              payload: payload || {},
+              userAgent: navigator.userAgent,
+              timestamp: new Date().toISOString(),
+            }),
+          });
+        } catch {
+          // fire-and-forget — never block the existing error UI
+        }
+      }
       const form = document.getElementById('referralForm');
       const submitBtn = document.getElementById('submitBtn');
       const formError = document.getElementById('formError');
@@ -1075,6 +1094,12 @@ const phoneDigits = phone.replace(/\D/g, '');
               form.hidden = true;
               formSuccess.hidden = false;
             } else {
+              reportFormErrorToMonitor(
+                'Refer a Resident',
+                'server_error',
+                result.json.error || 'Unknown error',
+                payload,
+              );
               showError(
                 'Submission failed: ' +
                   (result.json.error || 'Unknown error. Please try again or contact us directly.'),
@@ -1084,6 +1109,12 @@ const phoneDigits = phone.replace(/\D/g, '');
             }
           })
           .catch(function () {
+            reportFormErrorToMonitor(
+              'Refer a Resident',
+              'network_error',
+              'Network error on referral form',
+              payload,
+            );
             showError('Network error. Please check your connection and try again.');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Referral';

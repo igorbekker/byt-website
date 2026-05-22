@@ -1224,6 +1224,25 @@ const {
 
 <script is:inline>
   /* eslint-disable @typescript-eslint/no-unused-vars */
+  function reportFormErrorToMonitor(form, errorType, message, payload) {
+    try {
+      fetch('/api/form-monitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          form: form,
+          errorType: errorType,
+          httpStatus: null,
+          message: message,
+          payload: payload || {},
+          userAgent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+    } catch (_) {
+      // fire-and-forget — never block the existing error UI
+    }
+  }
   function openModal(which) {
     const m = document.getElementById('modal-' + which);
     if (!m) return;
@@ -1353,12 +1372,24 @@ const {
       } else {
         btn.disabled = false;
         btn.innerHTML = orig;
+        reportFormErrorToMonitor(
+          which === 'book' ? 'Book a Session' : 'Facility Referral',
+          'server_error',
+          'Server returned ' + res.status,
+          payload,
+        );
         alert('Something went wrong. Please try again or call us directly.');
       }
     } catch (err) {
       void err;
       btn.disabled = false;
       btn.innerHTML = orig;
+      reportFormErrorToMonitor(
+        which === 'book' ? 'Book a Session' : 'Facility Referral',
+        'network_error',
+        String(err),
+        payload,
+      );
       alert('Unable to submit. Please check your connection and try again.');
     }
   }

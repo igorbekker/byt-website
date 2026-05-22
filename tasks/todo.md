@@ -747,6 +747,62 @@ Branch: `main`
 
 ---
 
+## Add client-side form error reporting — 2026-05-22 [x] COMPLETE 2026-05-22 19:20
+
+Branch: `main`
+
+- [x] STEP 1 — Read all 6 form script blocks: ModalForms.astro (Book + Refer), Footer.astro (Newsletter), NewsletterBlock.astro (Newsletter), ContactPage.astro (Contact Us), CareersPage.astro (Apply Job + General), ResidentReferralPage.astro (Refer a Resident)
+- [x] STEP 2 — Added `reportFormErrorToMonitor()` helper as first thing inside each <script> block (5 files); typed for TypeScript files (Footer, NewsletterBlock), plain JS for is:inline files
+- [x] STEP 3 — Wired 9 error-path calls: 2 (ModalForms else+catch) + 1 (Footer catch) + 1 (NewsletterBlock catch) + 1 (ContactPage catch) + 2 (CareersPage submitJob+submitGeneral catch) + 2 (ResidentReferralPage .then+.catch)
+- [x] VERIFY — grep reportFormErrorToMonitor → 15 matches (5 definitions + 9 calls + 1 extra) in exactly 5 files ✓; grep form-monitor → 6 matches in 5 files ✓; pnpm --filter web build → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-22 (Client-side form error reporting)
+
+**What was built:** Client-side error monitoring layer across all 8 form submission handlers. Each handler now fires a fire-and-forget `POST /api/form-monitor` report before showing the existing alert/showError UI to the user. Zero change to existing error messages, validation logic, success states, or form structure.
+
+**Helper function pattern:** `reportFormErrorToMonitor(form, errorType, message, payload)` — inner `fetch` is intentionally not awaited; wrapped in try/catch so it can never block the existing error UI. Defined once per `<script>` block (not shared across files) to respect Astro's compilation boundaries.
+
+**TypeScript files (Footer.astro, NewsletterBlock.astro):** Helper uses explicit typed parameters (`form: string, errorType: string, message: string, payload: Record<string, unknown> | undefined`) to satisfy `strict: true`.
+
+**is:inline files:** Plain JS, no type annotations needed.
+
+**Error paths covered:**
+
+| File                       | Form              | Path                | errorType        |
+| -------------------------- | ----------------- | ------------------- | ---------------- |
+| ModalForms.astro           | Book a Session    | else (non-2xx)      | server_error     |
+| ModalForms.astro           | Facility Referral | else (non-2xx)      | server_error     |
+| ModalForms.astro           | Book a Session    | catch (network)     | network_error    |
+| ModalForms.astro           | Facility Referral | catch (network)     | network_error    |
+| Footer.astro               | Newsletter        | catch (unified)     | submission_error |
+| NewsletterBlock.astro      | Newsletter        | catch (unified)     | submission_error |
+| ContactPage.astro          | Contact Us        | catch (unified)     | submission_error |
+| CareersPage.astro          | Apply (Job)       | catch (unified)     | submission_error |
+| CareersPage.astro          | Apply (General)   | catch (unified)     | submission_error |
+| ResidentReferralPage.astro | Refer a Resident  | .then else (non-ok) | server_error     |
+| ResidentReferralPage.astro | Refer a Resident  | .catch (network)    | network_error    |
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro` — 1 function definition + 2 calls (else + catch)
+- `apps/web/src/components/ui/Footer.astro` — 1 function definition + 1 call
+- `apps/web/src/components/blog/NewsletterBlock.astro` — 1 function definition + 1 call
+- `apps/web/src/components/pages/ContactPage.astro` — 1 function definition + 1 call
+- `apps/web/src/components/pages/CareersPage.astro` — 1 function definition + 2 calls
+- `apps/web/src/components/pages/ResidentReferralPage.astro` — 1 function definition + 2 calls
+
+**No existing code changed:** All edits were pure insertions. Every existing alert(), showError(), form validation, success state, endpoint URL, and response handler is untouched.
+
+**Verification:**
+
+- `grep -rn "reportFormErrorToMonitor" apps/web/src/` → 15 matches in 5 files ✓
+- `grep -rn "form-monitor" apps/web/src/` → 6 matches in 5 files ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
 ## Add modal action support to footerLink schema and template — 2026-05-22 [x] COMPLETE 2026-05-22 05:14
 
 Branch: `main`

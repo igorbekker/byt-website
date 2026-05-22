@@ -302,6 +302,30 @@ const currentYear = new Date().getFullYear();
 </style>
 
 <script>
+  function reportFormErrorToMonitor(
+    form: string,
+    errorType: string,
+    message: string,
+    payload: Record<string, unknown> | undefined,
+  ) {
+    try {
+      fetch('/api/form-monitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          form: form,
+          errorType: errorType,
+          httpStatus: null,
+          message: message,
+          payload: payload || {},
+          userAgent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+    } catch {
+      // fire-and-forget — never block the existing error UI
+    }
+  }
   const form = document.getElementById('footerNewsletterForm') as HTMLFormElement | null;
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -329,6 +353,12 @@ const currentYear = new Date().getFullYear();
         }
       }, 2400);
     } catch {
+      reportFormErrorToMonitor(
+        'Newsletter (Footer)',
+        'submission_error',
+        'Footer newsletter failed',
+        { email: value },
+      );
       alert('Something went wrong — please try again.');
       if (btn) {
         btn.textContent = 'Subscribe';
