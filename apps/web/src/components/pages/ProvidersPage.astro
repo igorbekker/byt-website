@@ -88,7 +88,6 @@ const pageSchema = webPageSchema({
   description={page?.seo?.metaDescription ??
     'Join Better You Therapy as a licensed therapist. Two role tracks — facility-based in Southeast Florida or statewide teletherapy. Billing, referrals, and EHR handled for you.'}
 >
-  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Providers' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════════════════════════
    Faithful HTML port of the 8 uploaded Relume components:
@@ -1928,39 +1927,42 @@ const pageSchema = webPageSchema({
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section id="providers-hero" class="h98" aria-labelledby="hero-heading">
-            <div class="container h98-card">
-              <div class="h98-content">
-                <div class="inner">
-                  <h1 id="hero-heading">
-                    {page?.heroHeading ?? 'You became a therapist to do therapy.'}
-                  </h1>
-                  <p class="h98-subhead">
-                    {page?.heroSubhead ??
-                      'Not to manage billing, chase referrals, or build a business from scratch.'}
-                  </p>
+          <>
+            <section id="providers-hero" class="h98" aria-labelledby="hero-heading">
+              <div class="container h98-card">
+                <div class="h98-content">
+                  <div class="inner">
+                    <h1 id="hero-heading">
+                      {page?.heroHeading ?? 'You became a therapist to do therapy.'}
+                    </h1>
+                    <p class="h98-subhead">
+                      {page?.heroSubhead ??
+                        'Not to manage billing, chase referrals, or build a business from scratch.'}
+                    </p>
+                  </div>
+                  <div class="h98-actions">
+                    {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
+                    <a href="/careers/" class="btn btn-primary">
+                      Apply Now
+                    </a>
+                  </div>
                 </div>
-                <div class="h98-actions">
-                  {/* CMS-SKIP: repeated CTA, parent object has cta.label */}
-                  <a href="/careers/" class="btn btn-primary">
-                    Apply Now
-                  </a>
+                <div class="h98-bg">
+                  <SanityImage
+                    src={page?.heroImage?.asset?.url ?? '/images/providers-hero.jpg'}
+                    alt={
+                      page?.heroImage?.alt ??
+                      'Licensed therapist arriving at a Florida senior community'
+                    }
+                    width={1440}
+                    height={640}
+                    fetchpriority="high"
+                  />
                 </div>
               </div>
-              <div class="h98-bg">
-                <SanityImage
-                  src={page?.heroImage?.asset?.url ?? '/images/providers-hero.jpg'}
-                  alt={
-                    page?.heroImage?.alt ??
-                    'Licensed therapist arriving at a Florida senior community'
-                  }
-                  width={1440}
-                  height={640}
-                  fetchpriority="high"
-                />
-              </div>
-            </div>
-          </section>
+            </section>
+            <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Providers' }]} />
+          </>
         );
       if (id === 'tracks')
         return (

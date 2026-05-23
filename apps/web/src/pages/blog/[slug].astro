@@ -1845,7 +1845,6 @@ const articleJsonLd = blogPostingSchema({
 </style>
 
 <BaseLayout title={`${pageTitle} | Better You Therapy Blog`} description={pageDesc}>
-  <Breadcrumb items={breadcrumbItems} />
   <Fragment set:html={`<script type="application/ld+json">${articleJsonLd}</script>`} />
   <div class="progress-bar"><span id="readProgress"></span></div>
 
@@ -1880,6 +1879,8 @@ const articleJsonLd = blogPostingSchema({
       </div>
     </div>
   </section>
+
+  <Breadcrumb items={breadcrumbItems} />
 
   <section class="article-image">
     {

@@ -19,9 +19,85 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-22 — File upload validation fixes on referral + intake forms
+- **Last work:** 2026-05-23 — Move breadcrumb below hero on all page components (correct repo: byt-website)
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Move breadcrumb below hero — page components — 2026-05-23 [x] COMPLETE 2026-05-23
+
+Branch: `main`
+
+- [x] REPO VERIFY — confirmed `igorbekker/byt-website`, pwd `/home/personal/projects/byt-website`
+- [x] AUDIT — grepped all page components; 7 files had Breadcrumb before hero; 2 files (Privacy, Terms) have no hero section — left as-is; BlogIndexPage already correct
+- [x] FIX AboutPage.astro — removed from line 90 (before style block); inserted at line 2161 (after `</section>` closing `.about-hero`)
+- [x] FIX CareersPage.astro — removed from line 2137 (before Fragment); inserted at line 2164 inside Fragment wrapper after `</section>` closing `.about-hero.careers-hero`
+- [x] FIX CommunitiesPage.astro — removed from line 1678 (before hero); inserted at line 1711 (after `</section>` closing `.h84`)
+- [x] FIX ContactPage.astro — removed from line 71 (before style block); inserted at line 851 inside Fragment wrapper after `</section>` closing `.contact-hero`
+- [x] FIX PatientsPage.astro — removed from line 119 (before style block); inserted at line 2199 inside Fragment wrapper after `</section>` closing `.ph-hero`
+- [x] FIX ProvidersPage.astro — removed from line 91 (before style block); inserted at line 1964 inside Fragment wrapper after `</section>` closing `#providers-hero`
+- [x] FIX ResidentReferralPage.astro — removed from line 38 (before hero section); inserted at line 50 (after `</section>` closing `.rr-hero`)
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-23 (Move breadcrumb below hero — page components)
+
+**What was fixed:** Breadcrumbs were rendering before the hero section on 7 page components, placing them between the nav and the hero visually. Moved all to immediately after the hero `</section>` on each page.
+
+**Pattern used for map-based pages (Contact, Careers, Patients, Providers):** These pages render sections inside `renderOrder.map()`. Moving the breadcrumb to after the hero required wrapping the hero `return()` in a `<>...</>` Fragment so both the `<section>` and the `<Breadcrumb />` could be returned together. No hero HTML was changed.
+
+**Pattern used for simple pages (About, Communities, ResidentReferral):** Straight cut-and-paste — removed from current position, inserted immediately after hero `</section>`.
+
+**Files changed:**
+
+- `apps/web/src/components/pages/AboutPage.astro`
+- `apps/web/src/components/pages/CareersPage.astro`
+- `apps/web/src/components/pages/CommunitiesPage.astro`
+- `apps/web/src/components/pages/ContactPage.astro`
+- `apps/web/src/components/pages/PatientsPage.astro`
+- `apps/web/src/components/pages/ProvidersPage.astro`
+- `apps/web/src/components/pages/ResidentReferralPage.astro`
+
+**Verification:**
+
+- All 7 breadcrumb lines confirmed immediately after hero `</section>` via grep ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Move breadcrumb below hero — 2026-05-22 [x] COMPLETE 2026-05-22 21:35
+
+Branch: `main`
+
+- [x] AUDIT — grep confirmed 4 files with `<Breadcrumb`; 2 already correct (blog/[category]/index.astro, blog/[category]/[sub]/index.astro); 2 needed move (intake.astro, blog/[slug].astro)
+- [x] FIX — intake.astro: removed `<Breadcrumb>` from line 19 (before hero); inserted after `</section>` closing `.it-hero` (line 24)
+- [x] FIX — blog/[slug].astro: removed `<Breadcrumb>` from line 1848 (first child of BaseLayout); inserted after `</section>` closing `.article-hero` (line 1882)
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+- [x] VERIFY — grep confirms all 4 breadcrumbs now appear immediately after a `</section>` tag ✓
+
+### Session Review — 2026-05-22 (Move breadcrumb below hero)
+
+**What was fixed:** `<Breadcrumb>` was the first child inside `<BaseLayout>` on both `intake.astro` and `blog/[slug].astro`, placing it between the nav and the hero section. Moved to immediately after the hero `</section>` on both pages.
+
+**intake.astro:** Hero class is `.it-hero`. Breadcrumb moved from line 19 → after line 24 (`</section>`).
+
+**blog/[slug].astro:** Hero class is `.article-hero`. Breadcrumb moved from line 1848 → after line 1882 (`</section>`).
+
+**Files changed:**
+
+- `apps/web/src/pages/intake.astro` — 2 edits (remove + insert)
+- `apps/web/src/pages/blog/[slug].astro` — 2 edits (remove + insert)
+
+**Verification:**
+
+- `grep -rn -B3 -A3 "<Breadcrumb"` → all 4 instances now appear after `</section>` ✓
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Follow-up flagged:** `about.astro`, `contact.astro`, `providers.astro`, `patients.astro`, `communities.astro`, `services.astro`, `blog/index.astro` have zero `<Breadcrumb>` markup. Phase 7A session notes say they were wired — separate fix required.
+
+**Issues:** None. No user corrections this session.
 
 ---
 

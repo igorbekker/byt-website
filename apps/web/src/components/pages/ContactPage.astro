@@ -68,7 +68,6 @@ const pageSchema = webPageSchema({
   description={page?.seo?.metaDescription ??
     'Reach the Better You Therapy team. We respond within one business day.'}
 >
-  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -824,30 +823,33 @@ const pageSchema = webPageSchema({
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section class="contact-hero" aria-labelledby="contact-hero-heading">
-            <div class="contact-hero-image">
-              <SanityImage
-                src={
-                  page?.heroImage?.asset?.url ??
-                  'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=85&auto=format&fit=crop'
-                }
-                alt={page?.heroImage?.alt ?? 'Two people in conversation across a desk'}
-                width={1400}
-                height={700}
-                fetchpriority="high"
-              />
-            </div>
-            <div class="contact-hero-content">
-              <p class="eyebrow">{page?.heroEyebrow ?? 'Contact Us'}</p>
-              <h1 id="contact-hero-heading">
-                {page?.heroHeading ?? "We'd love to hear from you."}
-              </h1>
-              <p>
-                {page?.heroSubhead ??
-                  "Whether you're a family looking for care, a facility exploring partnership, or a therapist interested in joining our team — send us a note and we'll get back to you within one business day."}
-              </p>
-            </div>
-          </section>
+          <>
+            <section class="contact-hero" aria-labelledby="contact-hero-heading">
+              <div class="contact-hero-image">
+                <SanityImage
+                  src={
+                    page?.heroImage?.asset?.url ??
+                    'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=85&auto=format&fit=crop'
+                  }
+                  alt={page?.heroImage?.alt ?? 'Two people in conversation across a desk'}
+                  width={1400}
+                  height={700}
+                  fetchpriority="high"
+                />
+              </div>
+              <div class="contact-hero-content">
+                <p class="eyebrow">{page?.heroEyebrow ?? 'Contact Us'}</p>
+                <h1 id="contact-hero-heading">
+                  {page?.heroHeading ?? "We'd love to hear from you."}
+                </h1>
+                <p>
+                  {page?.heroSubhead ??
+                    "Whether you're a family looking for care, a facility exploring partnership, or a therapist interested in joining our team — send us a note and we'll get back to you within one business day."}
+                </p>
+              </div>
+            </section>
+            <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
+          </>
         );
       if (id === 'contact_form')
         return (

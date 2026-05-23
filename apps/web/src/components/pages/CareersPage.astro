@@ -2134,7 +2134,6 @@ const renderOrder = [
     }
   </style>
 
-  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Careers' }]} />
   <Fragment set:html={jobPostingsHtml} />
 
   {
@@ -2142,25 +2141,28 @@ const renderOrder = [
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section class="about-hero careers-hero" aria-labelledby="careers-hero-heading">
-            <div class="about-hero-content">
-              <p class="eyebrow" style="font-size: 14px">
-                {page?.heroEyebrow ?? 'Careers at Better You Therapy'}
-              </p>
-              <h1
-                id="careers-hero-heading"
-                style="font-size: 53.2px"
-                set:html={
-                  page?.heroHeading ??
-                  "Do the clinical work you trained for. <em>We'll handle the rest.</em>"
-                }
-              />
-              <p>
-                {page?.heroSubhead ??
-                  "We're hiring licensed therapists across Florida who want sustainable caseloads, transparent revenue splits, and the freedom to focus on therapy."}
-              </p>
-            </div>
-          </section>
+          <>
+            <section class="about-hero careers-hero" aria-labelledby="careers-hero-heading">
+              <div class="about-hero-content">
+                <p class="eyebrow" style="font-size: 14px">
+                  {page?.heroEyebrow ?? 'Careers at Better You Therapy'}
+                </p>
+                <h1
+                  id="careers-hero-heading"
+                  style="font-size: 53.2px"
+                  set:html={
+                    page?.heroHeading ??
+                    "Do the clinical work you trained for. <em>We'll handle the rest.</em>"
+                  }
+                />
+                <p>
+                  {page?.heroSubhead ??
+                    "We're hiring licensed therapists across Florida who want sustainable caseloads, transparent revenue splits, and the freedom to focus on therapy."}
+                </p>
+              </div>
+            </section>
+            <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Careers' }]} />
+          </>
         );
       if (id === 'open_positions')
         return (

@@ -87,7 +87,6 @@ const pageSchema = webPageSchema({
   description={page?.seo?.metaDescription ??
     "Learn about Better You Therapy — a Florida mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it."}
 >
-  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -2158,6 +2157,8 @@ const pageSchema = webPageSchema({
       />
     </div>
   </section>
+
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
 
   <!-- ── MISSION RULE ── -->
   <section class="mission-band" aria-labelledby="mission-heading">

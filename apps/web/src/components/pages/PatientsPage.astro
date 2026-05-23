@@ -116,7 +116,6 @@ const pageSchema = webPageSchema({
   description={page?.seo?.metaDescription ??
     'Licensed therapists at your facility in Southeast Florida or via secure video anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
 >
-  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Patients' }]} />
   <style is:global>
     /* ════════════════════════════════════════════════
    BETTER YOU THERAPY — Homepage
@@ -2174,28 +2173,31 @@ const pageSchema = webPageSchema({
       if (!sectionEnabled(id)) return null;
       if (id === 'hero')
         return (
-          <section class="ph-hero">
-            <div class="ph-hero-bg">
-              <img
-                src={page?.heroImage?.asset?.url ?? '/images/patients-hero-bg.jpg'}
-                alt={page?.heroImage?.alt ?? 'Warm morning light through sheer curtains'}
-                onerror="this.style.display='none'"
-              />
-              <div class="ph-hero-tint" />
-            </div>
-            <div class="ph-hero-content">
-              <h1 set:html={page?.heroHeading ?? 'Care that meets you <em>where you are</em>'} />
-              <p>
-                {page?.heroSubhead ??
-                  'Licensed therapists at your facility in Palm Beach, Martin, St. Lucie, and Okeechobee counties, or secure video sessions from anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
-              </p>
-              <div class="ph-hero-cta">
-                <button class="btn btn-coral" onclick="openModal('book')">
-                  {page?.heroPrimaryCta?.label ?? 'Book a session'}
-                </button>
+          <>
+            <section class="ph-hero">
+              <div class="ph-hero-bg">
+                <img
+                  src={page?.heroImage?.asset?.url ?? '/images/patients-hero-bg.jpg'}
+                  alt={page?.heroImage?.alt ?? 'Warm morning light through sheer curtains'}
+                  onerror="this.style.display='none'"
+                />
+                <div class="ph-hero-tint" />
               </div>
-            </div>
-          </section>
+              <div class="ph-hero-content">
+                <h1 set:html={page?.heroHeading ?? 'Care that meets you <em>where you are</em>'} />
+                <p>
+                  {page?.heroSubhead ??
+                    'Licensed therapists at your facility in Palm Beach, Martin, St. Lucie, and Okeechobee counties, or secure video sessions from anywhere in Florida. Medicare, private insurance, and cash-pay options available.'}
+                </p>
+                <div class="ph-hero-cta">
+                  <button class="btn btn-coral" onclick="openModal('book')">
+                    {page?.heroPrimaryCta?.label ?? 'Book a session'}
+                  </button>
+                </div>
+              </div>
+            </section>
+            <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Patients' }]} />
+          </>
         );
       if (id === 'audience_selector')
         return (
