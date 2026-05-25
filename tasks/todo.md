@@ -19,9 +19,35 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-25 — Remove TEMP GA4 direct test snippet from BaseLayout.astro
+- **Last work:** 2026-05-25 — Add GTM consent defaults script to BaseLayout.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add GTM consent defaults script — 2026-05-25 [x] COMPLETE 2026-05-25
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed GTM block at lines 148–156; charset/viewport at lines 94–95
+- [x] EDIT — inserted `<script is:inline>` consent defaults block immediately after viewport meta (line 95), before all GTM code
+- [x] VERIFY — `grep -n "consent\|dataLayer\|GTM\|gtm" BaseLayout.astro | head -20` → consent at lines 97–99, GTM at line 148 ✓
+
+### Session Review — 2026-05-25 (Add GTM consent defaults script)
+
+**What was built:** Added a `gtag('consent', 'default', {...})` script block to `BaseLayout.astro` immediately after the viewport `<meta>` tag (line 95), before any GTM-related code. This establishes consent defaults (`analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization` all set to `granted`) before the GTM container loads, satisfying Google's Consent Mode v2 requirement that consent defaults fire before GTM initialises.
+
+**Placement:** Lines 96–105 (new `<script is:inline>` block). GTM loader remains at line 148. Order: consent defaults → GTM.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 9 lines inserted after viewport meta
+
+**Verification:**
+
+- `grep -n "consent\|dataLayer\|GTM\|gtm"` → consent at lines 97–99, GTM at line 148 ✓ (consent before GTM)
+
+**Issues:** None. No user corrections this session.
 
 ---
 
