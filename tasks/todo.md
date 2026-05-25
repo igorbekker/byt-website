@@ -19,9 +19,33 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-25 — Remove GTM consent defaults script from BaseLayout.astro
+- **Last work:** 2026-05-25 — Add GA4 direct tag to BaseLayout.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add GA4 direct tag — 2026-05-25 [x] COMPLETE 2026-05-25
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed viewport meta at line 95
+- [x] EDIT — inserted GA4 loader script + inline config script immediately after viewport meta (lines 96–101)
+- [x] VERIFY — `grep -n "gtag\|G-JW2" BaseLayout.astro` → lines 96, 99, 100, 101 ✓
+
+### Session Review — 2026-05-25 (Add GA4 direct tag)
+
+**What was built:** Added direct GA4 tag for `G-JW2XB9Q7B3` to `BaseLayout.astro` immediately after the viewport `<meta>` tag. Two script tags: async gtag.js loader and inline init (`gtag('js', new Date())` + `gtag('config', 'G-JW2XB9Q7B3')`). Placed before all other scripts — before description meta, before GTM block.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 7 lines inserted after viewport meta (lines 96–102)
+
+**Verification:**
+
+- `grep -n "gtag\|G-JW2"` → lines 96, 99, 100, 101 ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

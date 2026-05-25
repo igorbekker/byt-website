@@ -93,6 +93,16 @@ const FONT_URL =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JW2XB9Q7B3" is:inline></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      // eslint-disable-next-line prefer-rest-params
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-JW2XB9Q7B3');
+    </script>
     <meta name="description" content={resolvedDescription} />
     <meta name="robots" content={robotsDirective} />
     <meta name="theme-color" content="#104378" />
