@@ -19,9 +19,64 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-23 — Move breadcrumb below hero on all page components (correct repo: byt-website)
+- **Last work:** 2026-05-25 — GA4 dataLayer.push() event tracking across all forms, CTAs, and key interactions
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add GA4 dataLayer.push() event tracking — 2026-05-25 [x] COMPLETE 2026-05-25
+
+Branch: `main`
+
+- [x] READ — all 8 target files (ModalForms, AudienceRouter, ContactPage, CareersPage, ResidentReferralPage, intake, Footer, NewsletterBlock)
+- [x] ModalForms.astro — added `window.dataLayer = window.dataLayer || []` init; openModal: form_start + modal_open; closeModal: form_start reset + modal_close; handleSubmit success: generate_lead; else: form_error server; catch: form_error network; bottom: CTA click + phone/email click delegated listeners
+- [x] AudienceRouter.astro — audience_route push in click handler (fires only on user click, not resize/init)
+- [x] ContactPage.astro — generate_lead on success, form_error in catch, form_start focusin listener
+- [x] CareersPage.astro — generate_lead + form_error for career_job and career_general; form_start for general form + job modal
+- [x] ResidentReferralPage.astro — generate_lead on success, form_error server in else, form_error network in catch, form_start focusin listener
+- [x] intake.astro — generate_lead on success, form_error in catch, form_start focusin listener
+- [x] Footer.astro — newsletter_subscribe on success, form_error in catch (TypeScript-style casts)
+- [x] NewsletterBlock.astro — newsletter_subscribe on success, form_error in catch (TypeScript-style casts)
+- [x] VERIFY — `grep -rn "dataLayer.push" apps/web/src/ | head -60` → 25 plain + 5 TypeScript-cast = 30 total pushes ✓
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+### Session Review — 2026-05-25 (GA4 dataLayer.push() event tracking)
+
+**What was built:** Added 30 dataLayer.push() calls across 8 files covering all 8 event types from the spec. No HTML structure, CSS, or existing functionality was changed — only push calls added alongside existing code.
+
+**Event types covered:**
+
+| Event                                     | Count      | Files                                                                                         |
+| ----------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `generate_lead`                           | 7          | ModalForms (book+refer), ContactPage, CareersPage (job+general), ResidentReferralPage, intake |
+| `newsletter_subscribe`                    | 2          | Footer, NewsletterBlock                                                                       |
+| `form_error` (server+network)             | 11         | All form files                                                                                |
+| `modal_open` / `modal_close`              | 2          | ModalForms                                                                                    |
+| `cta_click` (delegated)                   | 1 listener | ModalForms (global, runs on every page)                                                       |
+| `phone_click` / `email_click` (delegated) | 1 listener | ModalForms (global)                                                                           |
+| `audience_route`                          | 1          | AudienceRouter                                                                                |
+| `form_start`                              | 6          | All standalone page forms + modals                                                            |
+
+**TypeScript cast pattern** (`(window as any).dataLayer = (window as any).dataLayer || []).push(...)`) used in Footer.astro, NewsletterBlock.astro, and AudienceRouter.astro (TypeScript `<script>` blocks). Plain `window.dataLayer.push()` used in all `is:inline` blocks. Safety init `window.dataLayer = window.dataLayer || [];` added at top of ModalForms.astro script (runs on every page, last in body — safe because all pushes fire on user interaction after full page load).
+
+**Files changed:**
+
+- `apps/web/src/components/ui/ModalForms.astro`
+- `apps/web/src/components/home/AudienceRouter.astro`
+- `apps/web/src/components/pages/ContactPage.astro`
+- `apps/web/src/components/pages/CareersPage.astro`
+- `apps/web/src/components/pages/ResidentReferralPage.astro`
+- `apps/web/src/pages/intake.astro`
+- `apps/web/src/components/ui/Footer.astro`
+- `apps/web/src/components/blog/NewsletterBlock.astro`
+
+**Verification:**
+
+- `grep -rn "dataLayer.push" apps/web/src/ | head -60` → 25 results ✓ (+ 5 TypeScript-cast pushes in TS files)
+- `pnpm --filter web build` → 20 pages, 0 errors ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 

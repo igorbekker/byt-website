@@ -1224,6 +1224,7 @@ const {
 
 <script is:inline>
   /* eslint-disable @typescript-eslint/no-unused-vars */
+  window.dataLayer = window.dataLayer || [];
   function reportFormErrorToMonitor(form, errorType, message, payload) {
     try {
       fetch('/api/form-monitor', {
@@ -1256,12 +1257,33 @@ const {
       );
       if (f) f.focus();
     }, 100);
+    if (!m.dataset.formStartTracked) {
+      const formStartHandler = function () {
+        window.dataLayer.push({
+          event: 'form_start',
+          form_name: which === 'book' ? 'book_session' : 'facility_referral',
+          form_location: 'modal',
+        });
+        m.removeEventListener('focusin', formStartHandler);
+      };
+      m.addEventListener('focusin', formStartHandler);
+      m.dataset.formStartTracked = 'true';
+    }
+    window.dataLayer.push({
+      event: 'modal_open',
+      modal_type: which,
+    });
   }
   function closeModal(which) {
     const m = document.getElementById('modal-' + which);
     if (!m) return;
     m.classList.remove('open');
     document.body.style.overflow = '';
+    delete m.dataset.formStartTracked;
+    window.dataLayer.push({
+      event: 'modal_close',
+      modal_type: which,
+    });
   }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -1369,6 +1391,12 @@ const {
         const steps = document.getElementById('referSteps');
         if (which === 'refer' && steps) steps.style.display = 'none';
         document.getElementById(which + 'Success').style.display = 'flex';
+        window.dataLayer.push({
+          event: 'generate_lead',
+          lead_type: which === 'book' ? 'patient' : 'facility',
+          form_name: which === 'book' ? 'book_session' : 'facility_referral',
+          form_location: 'modal',
+        });
       } else {
         btn.disabled = false;
         btn.innerHTML = orig;
@@ -1378,6 +1406,11 @@ const {
           'Server returned ' + res.status,
           payload,
         );
+        window.dataLayer.push({
+          event: 'form_error',
+          form_name: which === 'book' ? 'book_session' : 'facility_referral',
+          error_type: 'server',
+        });
         alert('Something went wrong. Please try again or call us directly.');
       }
     } catch (err) {
@@ -1390,6 +1423,11 @@ const {
         String(err),
         payload,
       );
+      window.dataLayer.push({
+        event: 'form_error',
+        form_name: which === 'book' ? 'book_session' : 'facility_referral',
+        error_type: 'network',
+      });
       alert('Unable to submit. Please check your connection and try again.');
     }
   }
@@ -1403,4 +1441,63 @@ const {
     if (steps) steps.style.display = 'flex';
     goStep('refer', 1);
   }
+
+  // ── CTA click tracking
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn, .r-cta, .nav-cta, .nav-cta-secondary, .job-link');
+    if (!btn) return;
+    let loc = 'section';
+    if (btn.closest('.nav, header')) loc = 'nav';
+    else if (btn.closest('.hero, .hero-content')) loc = 'hero';
+    else if (btn.closest('.mobile-cta-bar')) loc = 'mobile_bar';
+    else if (btn.closest('.footer')) loc = 'footer';
+    else if (btn.closest('.modal-overlay')) loc = 'modal';
+    const text = (btn.textContent || '').trim().replace(/\s+/g, ' ').replace(/→/g, '').trim();
+    let action = 'other';
+    const lower = text.toLowerCase();
+    if (lower.indexOf('book') > -1) action = 'book';
+    else if (lower.indexOf('refer') > -1) action = 'refer';
+    else if (
+      lower.indexOf('apply') > -1 ||
+      lower.indexOf('work with') > -1 ||
+      lower.indexOf('position') > -1
+    )
+      action = 'apply';
+    else if (lower.indexOf('learn') > -1) action = 'learn_more';
+    else if (lower.indexOf('subscribe') > -1) action = 'subscribe';
+    else if (lower.indexOf('contact') > -1) action = 'contact';
+    window.dataLayer.push({
+      event: 'cta_click',
+      cta_text: text.substring(0, 80),
+      cta_location: loc,
+      cta_action: action,
+    });
+  });
+
+  // ── Phone & email click tracking
+  document.addEventListener('click', function (e) {
+    const link = e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
+    if (!link) return;
+    const href = link.getAttribute('href') || '';
+    if (href.indexOf('tel:') === 0) {
+      window.dataLayer.push({
+        event: 'phone_click',
+        phone_number: href.replace('tel:', ''),
+        click_location: link.closest('.footer')
+          ? 'footer'
+          : link.closest('.modal-overlay')
+            ? 'modal'
+            : 'page',
+      });
+    } else if (href.indexOf('mailto:') === 0) {
+      window.dataLayer.push({
+        event: 'email_click',
+        click_location: link.closest('.footer')
+          ? 'footer'
+          : link.closest('.modal-overlay')
+            ? 'modal'
+            : 'page',
+      });
+    }
+  });
 </script>

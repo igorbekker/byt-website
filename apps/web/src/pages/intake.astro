@@ -721,6 +721,12 @@ const phoneDigits = phone.replace(/\D/g, '');
         if (data.success) {
           form.hidden = true;
           formSuccess.hidden = false;
+          window.dataLayer.push({
+            event: 'generate_lead',
+            lead_type: 'patient',
+            form_name: 'intake',
+            form_location: 'page',
+          });
         } else {
           errorMsg.textContent = data.error || 'Submission failed. Please try again.';
           errorMsg.style.display = 'block';
@@ -728,11 +734,31 @@ const phoneDigits = phone.replace(/\D/g, '');
       } catch {
         errorMsg.textContent = 'Network error. Please check your connection and try again.';
         errorMsg.style.display = 'block';
+        window.dataLayer.push({
+          event: 'form_error',
+          form_name: 'intake',
+          error_type: 'network',
+        });
       }
 
       btn.disabled = false;
       btn.textContent = 'Submit Patient Intake';
     });
+
+    // ── form_start tracking for intake form
+    const intakeFormEl = document.getElementById('intakeForm');
+    if (intakeFormEl && !intakeFormEl.dataset.formStartTracked) {
+      const intakeFormStartHandler = function () {
+        window.dataLayer.push({
+          event: 'form_start',
+          form_name: 'intake',
+          form_location: 'page',
+        });
+        intakeFormEl.removeEventListener('focusin', intakeFormStartHandler);
+      };
+      intakeFormEl.addEventListener('focusin', intakeFormStartHandler);
+      intakeFormEl.dataset.formStartTracked = 'true';
+    }
   </script>
 
   <script

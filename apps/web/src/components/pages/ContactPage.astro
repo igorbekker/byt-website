@@ -1142,6 +1142,12 @@ const pageSchema = webPageSchema({
           headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error('error');
+        window.dataLayer.push({
+          event: 'generate_lead',
+          lead_type: 'general',
+          form_name: 'contact',
+          form_location: 'page',
+        });
         const div = document.createElement('div');
         div.style.cssText = 'padding:2rem;text-align:center';
         div.innerHTML = `
@@ -1159,8 +1165,28 @@ const pageSchema = webPageSchema({
           email: form.email.value,
           phone: form.phone.value,
         });
+        window.dataLayer.push({
+          event: 'form_error',
+          form_name: 'contact',
+          error_type: 'network',
+        });
         alert('Something went wrong. Please try again or email us directly.');
       }
+    }
+
+    // ── form_start tracking for contact form
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm && !contactForm.dataset.formStartTracked) {
+      const contactFormStartHandler = function () {
+        window.dataLayer.push({
+          event: 'form_start',
+          form_name: 'contact',
+          form_location: 'page',
+        });
+        contactForm.removeEventListener('focusin', contactFormStartHandler);
+      };
+      contactForm.addEventListener('focusin', contactFormStartHandler);
+      contactForm.dataset.formStartTracked = 'true';
     }
 
     // ── Scroll fade-up

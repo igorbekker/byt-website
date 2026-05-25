@@ -326,6 +326,10 @@ const currentYear = new Date().getFullYear();
       // fire-and-forget — never block the existing error UI
     }
   }
+  const pushDL = (o: Record<string, unknown>) => {
+    type W = Window & { dataLayer?: Record<string, unknown>[] };
+    ((window as W).dataLayer ??= []).push(o);
+  };
   const form = document.getElementById('footerNewsletterForm') as HTMLFormElement | null;
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -344,6 +348,10 @@ const currentYear = new Date().getFullYear();
         headers: { 'Content-Type': 'application/json' },
       });
       if (!res.ok) throw new Error('error');
+      pushDL({
+        event: 'newsletter_subscribe',
+        subscribe_location: 'footer',
+      });
       if (btn) btn.textContent = 'Subscribed ✓';
       if (input) input.value = '';
       setTimeout(() => {
@@ -359,6 +367,11 @@ const currentYear = new Date().getFullYear();
         'Footer newsletter failed',
         { email: value },
       );
+      pushDL({
+        event: 'form_error',
+        form_name: 'newsletter_footer',
+        error_type: 'network',
+      });
       alert('Something went wrong — please try again.');
       if (btn) {
         btn.textContent = 'Subscribe';

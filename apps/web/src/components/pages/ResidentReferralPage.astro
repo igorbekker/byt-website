@@ -1128,6 +1128,12 @@ const phoneDigits = phone.replace(/\D/g, '');
               clearDraft();
               form.hidden = true;
               formSuccess.hidden = false;
+              window.dataLayer.push({
+                event: 'generate_lead',
+                lead_type: 'facility',
+                form_name: 'resident_referral',
+                form_location: 'page',
+              });
             } else {
               reportFormErrorToMonitor(
                 'Refer a Resident',
@@ -1135,6 +1141,11 @@ const phoneDigits = phone.replace(/\D/g, '');
                 result.json.error || 'Unknown error',
                 payload,
               );
+              window.dataLayer.push({
+                event: 'form_error',
+                form_name: 'resident_referral',
+                error_type: 'server',
+              });
               showError(
                 'Submission failed: ' +
                   (result.json.error || 'Unknown error. Please try again or contact us directly.'),
@@ -1150,11 +1161,31 @@ const phoneDigits = phone.replace(/\D/g, '');
               'Network error on referral form',
               payload,
             );
+            window.dataLayer.push({
+              event: 'form_error',
+              form_name: 'resident_referral',
+              error_type: 'network',
+            });
             showError('Network error. Please check your connection and try again.');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Referral';
           });
       });
+
+      // ── form_start tracking for resident referral form
+      const rrForm = document.getElementById('referralForm');
+      if (rrForm && !rrForm.dataset.formStartTracked) {
+        const rrFormStartHandler = function () {
+          window.dataLayer.push({
+            event: 'form_start',
+            form_name: 'resident_referral',
+            form_location: 'page',
+          });
+          rrForm.removeEventListener('focusin', rrFormStartHandler);
+        };
+        rrForm.addEventListener('focusin', rrFormStartHandler);
+        rrForm.dataset.formStartTracked = 'true';
+      }
     })();
   </script>
   <script

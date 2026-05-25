@@ -139,6 +139,10 @@
       // fire-and-forget — never block the existing error UI
     }
   }
+  const pushDL = (o: Record<string, unknown>) => {
+    type W = Window & { dataLayer?: Record<string, unknown>[] };
+    ((window as W).dataLayer ??= []).push(o);
+  };
   const form = document.getElementById('newsletterForm') as HTMLFormElement | null;
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -157,6 +161,10 @@
         headers: { 'Content-Type': 'application/json' },
       });
       if (!res.ok) throw new Error('error');
+      pushDL({
+        event: 'newsletter_subscribe',
+        subscribe_location: 'blog',
+      });
       if (btn) btn.textContent = 'Subscribed ✓';
       if (input) input.value = '';
       setTimeout(() => {
@@ -168,6 +176,11 @@
     } catch {
       reportFormErrorToMonitor('Newsletter (Blog)', 'submission_error', 'Blog newsletter failed', {
         email: value,
+      });
+      pushDL({
+        event: 'form_error',
+        form_name: 'newsletter_blog',
+        error_type: 'network',
       });
       alert('Something went wrong — please try again.');
       if (btn) {

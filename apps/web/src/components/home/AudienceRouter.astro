@@ -371,6 +371,12 @@ const arrowSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" st
     card.addEventListener('click', (e) => {
       // Don't activate if clicking a link inside
       if ((e.target as HTMLElement).closest('a')) return;
+      const audiences = ['facilities', 'patients', 'providers'];
+      type W = Window & { dataLayer?: Record<string, unknown>[] };
+      ((window as W).dataLayer ??= []).push({
+        event: 'audience_route',
+        audience_type: audiences[i] || 'unknown',
+      });
       activateRouterCard(i);
     });
   });

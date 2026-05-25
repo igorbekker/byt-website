@@ -2631,6 +2631,12 @@ const renderOrder = [
           headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error('error');
+        window.dataLayer.push({
+          event: 'generate_lead',
+          lead_type: 'provider',
+          form_name: 'career_job',
+          form_location: 'modal',
+        });
         const wrap = form.parentElement;
         wrap.innerHTML = `
           <div class="form-success">
@@ -2648,6 +2654,11 @@ const renderOrder = [
           firstName: firstName,
           lastName: lastName,
           email: form.email.value,
+        });
+        window.dataLayer.push({
+          event: 'form_error',
+          form_name: 'career_job',
+          error_type: 'network',
         });
         alert('Something went wrong. Please try again or email us directly.');
       }
@@ -2702,6 +2713,12 @@ const renderOrder = [
           headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error('error');
+        window.dataLayer.push({
+          event: 'generate_lead',
+          lead_type: 'provider',
+          form_name: 'career_general',
+          form_location: 'page',
+        });
         const wrap = form.parentElement;
         form.style.display = 'none';
         const success = document.createElement('div');
@@ -2723,8 +2740,43 @@ const renderOrder = [
           'General application failed',
           { firstName: firstName, lastName: lastName, email: form.email.value },
         );
+        window.dataLayer.push({
+          event: 'form_error',
+          form_name: 'career_general',
+          error_type: 'network',
+        });
         alert('Something went wrong. Please try again or email us directly.');
       }
+    }
+
+    // ── form_start tracking for general form
+    const generalForm = document.getElementById('generalForm');
+    if (generalForm && !generalForm.dataset.formStartTracked) {
+      const generalFormStartHandler = function () {
+        window.dataLayer.push({
+          event: 'form_start',
+          form_name: 'career_general',
+          form_location: 'page',
+        });
+        generalForm.removeEventListener('focusin', generalFormStartHandler);
+      };
+      generalForm.addEventListener('focusin', generalFormStartHandler);
+      generalForm.dataset.formStartTracked = 'true';
+    }
+
+    // ── form_start tracking for job modal form
+    const jobModalEl = document.getElementById('jobModal');
+    if (jobModalEl && !jobModalEl.dataset.formStartTracked) {
+      const jobFormStartHandler = function () {
+        window.dataLayer.push({
+          event: 'form_start',
+          form_name: 'career_job',
+          form_location: 'modal',
+        });
+        jobModalEl.removeEventListener('focusin', jobFormStartHandler);
+      };
+      jobModalEl.addEventListener('focusin', jobFormStartHandler);
+      jobModalEl.dataset.formStartTracked = 'true';
     }
 
     window.openJobModal = openJobModal;
