@@ -19,9 +19,32 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-25 — Add TEMP GA4 direct test snippet to BaseLayout.astro
+- **Last work:** 2026-05-25 — Remove TEMP GA4 direct test snippet from BaseLayout.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Remove TEMP GA4 direct test snippet — 2026-05-25 [x] COMPLETE 2026-05-25
+
+Branch: `main`
+
+- [x] EDIT — removed all 12 lines between and including `<!-- TEMP GA4 DIRECT TEST -->` and `<!-- END TEMP GA4 DIRECT TEST -->` from `BaseLayout.astro`
+- [x] VERIFY — `grep -n "gtag\|GA4 Direct\|TEMP GA4" BaseLayout.astro` → 0 results ✓
+
+### Session Review — 2026-05-25 (Remove TEMP GA4 direct test snippet)
+
+**What was done:** Deleted the temporary GA4 direct tag (`G-JW2XB9Q7B3`) that was injected in the previous commit for data-flow testing. All lines removed including both comment markers.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 12 lines deleted
+
+**Verification:**
+
+- `grep -n "gtag\|GA4 Direct\|TEMP GA4"` → 0 results ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
