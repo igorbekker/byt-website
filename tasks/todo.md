@@ -19,9 +19,35 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-25 — GA4 dataLayer.push() event tracking across all forms, CTAs, and key interactions
+- **Last work:** 2026-05-25 — Add TEMP GA4 direct test snippet to BaseLayout.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add TEMP GA4 direct test snippet — 2026-05-25 [x] COMPLETE 2026-05-25
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed GTM block at lines 138–146
+- [x] EDIT — inserted `<!-- TEMP GA4 DIRECT TEST -->` snippet immediately after GTM block; added `is:inline` to the gtag config script (required for Astro); no existing code removed or modified
+- [x] VERIFY — `grep -n "G-JW2XB9Q7B3" apps/web/src/layouts/*.astro` → lines 149 and 154 ✓
+
+### Session Review — 2026-05-25 (TEMP GA4 direct test snippet)
+
+**What was built:** Injected a direct GA4 tag (`G-JW2XB9Q7B3`) into `BaseLayout.astro` immediately after the existing GTM block, as a temporary test to verify GA4 data flow before GTM is fully configured. Two script tags added: the async gtag.js loader and the inline `gtag('config', ...)` init. The inline script uses `is:inline` per Astro requirements.
+
+**Nothing removed:** All existing GTM code (lines 138–146) is untouched.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 8 lines added after GTM block (lines 148–155)
+
+**Verification:**
+
+- `grep -n "G-JW2XB9Q7B3"` → lines 149 and 154 ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
