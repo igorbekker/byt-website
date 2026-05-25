@@ -19,9 +19,35 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-25 — Add GTM consent defaults script to BaseLayout.astro
+- **Last work:** 2026-05-25 — Remove GTM consent defaults script from BaseLayout.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Remove GTM consent defaults script — 2026-05-25 [x] COMPLETE 2026-05-25
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed consent defaults block at lines 96–107
+- [x] EDIT — deleted entire `<script is:inline>` block containing `gtag('consent', 'default', {...})` with analytics_storage, ad_storage, ad_user_data, ad_personalization
+- [x] VERIFY — `grep -n "consent\|gtag" BaseLayout.astro` → 0 results ✓ (GTM scripts untouched)
+
+### Session Review — 2026-05-25 (Remove GTM consent defaults script)
+
+**What was done:** Deleted the `<script is:inline>` consent defaults block (lines 96–107) from `BaseLayout.astro`. The block initialized `window.dataLayer`, declared `gtag()`, and called `gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' })`.
+
+**GTM scripts untouched:** The conditional GTM block at lines 148–156 (loader + `window.dataLayer` init) remains unchanged.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 11 lines deleted (consent defaults script block)
+
+**Verification:**
+
+- `grep -n "consent\|gtag" BaseLayout.astro` → 0 results ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
