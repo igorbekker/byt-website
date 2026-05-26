@@ -19,9 +19,37 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-26 — Remove duplicate GTM and direct gtag.js from BaseLayout.astro
+- **Last work:** 2026-05-26 — Restore direct gtag.js for GA4 data collection
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Restore direct gtag.js for GA4 data collection — 2026-05-26 [x] COMPLETE 2026-05-26
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed only dataLayer init at lines 137–140, no gtag.js present
+- [x] EDIT — inserted GA4 direct tag block (gtag.js loader + inline gtag function/config) immediately after dataLayer init
+- [x] VERIFY — `grep -n "gtag\|googletagmanager\|G-JW2XB9Q7B3\|dataLayer"` → dataLayer at 139, gtag.js at 142, gtag config at 147–148 ✓
+
+### Session Review — 2026-05-26 (Restore direct gtag.js for GA4)
+
+**What was done:** Restored the direct GA4 tag (`G-JW2XB9Q7B3`) to `BaseLayout.astro`. The Cloudflare Google Tag Gateway proxies the GTM script load via `/03n8/` but does NOT proxy GA4 `collect` requests — this is a known issue being escalated. Direct gtag.js restores GA4 data collection as an immediate fallback.
+
+**Placement:** Immediately after the existing `window.dataLayer = window.dataLayer || [];` init block (line 140). Order: dataLayer init → gtag.js loader → gtag config.
+
+**GTM not touched:** The Google Tag (GA) inside GTM must remain PAUSED to avoid double-counting. This is a GTM-side configuration — no code changes needed here.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 6 lines added (gtag.js loader + inline config block)
+
+**Verification:**
+
+- `grep -n "gtag\|googletagmanager\|G-JW2XB9Q7B3\|dataLayer"` → lines 139, 142, 144, 146, 147, 148 ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
