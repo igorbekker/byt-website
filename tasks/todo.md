@@ -19,9 +19,41 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-26 — Enable set_up_tag on Cloudflare Gateway + remove direct gtag.js
-- **Current issues:** Cloudflare Zone Settings token blocked — set_up_tag not yet confirmed via API (manual dashboard step pending)
+- **Last work:** 2026-05-26 — Restyle Skilled Nursing radio buttons as pill buttons in ResidentReferralPage
+- **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Restyle Skilled Nursing radio buttons as pill buttons — 2026-05-26 [x] COMPLETE 2026-05-26
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/components/pages/ResidentReferralPage.astro` — confirmed radio group HTML at lines 243–254 and CSS at lines 543–593
+- [x] EDIT — replaced `.rr-radio-group` / `.rr-radio` / `.rr-radio-mark` / checked / invalid CSS block with pill button styling
+- [x] VERIFY — `grep -n "rr-radio"` → lines 543–580 confirm pill CSS: border, border-radius, padding, `:has(input:checked)` navy state, `:hover:not(:has(input:checked))` teal border, `.rr-radio-mark { display: none }` ✓
+
+### Session Review — 2026-05-26 (Restyle Skilled Nursing radio pills)
+
+**What was built:** Replaced the subtle circle-dot radio indicator on the "Currently on Skilled Nursing" Yes/No group in `ResidentReferralPage.astro` with unmistakable pill/card buttons. The hidden `<input>` pattern was already in place; only the CSS changed.
+
+**Approach:**
+
+- `.rr-radio` styled as pill: `border: 2px solid #d1d5db`, `border-radius: 8px`, `padding: 10px 24px`, `background: #fff`, `transition: all 0.15s ease`
+- `.rr-radio-mark` set to `display: none` (circle indicator hidden; `<span>` retained in HTML, no structural change)
+- Active state via `:has(input:checked)`: navy fill `#104378`, white text, navy border
+- Hover (inactive only) via `:hover:not(:has(input:checked))`: teal border `#1a9e8f`
+- Validation error state updated: `.rr-radio-group.rr-invalid .rr-radio` targets the pill label instead of `.rr-radio-mark`
+
+**Files changed:**
+
+- `apps/web/src/components/pages/ResidentReferralPage.astro` — CSS block replaced (lines 543–580)
+
+**No HTML changes.** No other form fields touched.
+
+**Verification:**
+
+- `grep -n "rr-radio"` → confirmed pill CSS at lines 543–580 ✓
 
 ---
 
