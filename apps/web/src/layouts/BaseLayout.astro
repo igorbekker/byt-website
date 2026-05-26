@@ -76,7 +76,6 @@ const canonicalUrl = (() => {
 })();
 
 const robotsDirective = resolvedSeo.robotsDirective ?? 'index, follow';
-const gtmId = siteSettings?.gtmContainerId ?? '';
 const ogTitle = resolvedSeo.metaTitle ?? title;
 const ogDescription = resolvedDescription;
 const ogUrl = canonicalUrl;
@@ -93,16 +92,6 @@ const FONT_URL =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JW2XB9Q7B3" is:inline></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      // eslint-disable-next-line prefer-rest-params
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-JW2XB9Q7B3');
-    </script>
     <meta name="description" content={resolvedDescription} />
     <meta name="robots" content={robotsDirective} />
     <meta name="theme-color" content="#104378" />
@@ -145,29 +134,12 @@ const FONT_URL =
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.sanity.io" />
 
-    <!-- GTM -->
-    {
-      gtmId && (
-        <>
-          <script is:inline>window.dataLayer = window.dataLayer || [];</script>
-          <script async src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`} />
-        </>
-      )
-    }
+    <!-- dataLayer init for GTM (injected at CDN level via Cloudflare Tag Gateway) -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+    </script>
   </head>
   <body>
-    {
-      gtmId && (
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-            height="0"
-            width="0"
-            style="display:none;visibility:hidden"
-          />
-        </noscript>
-      )
-    }
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <Nav
       navCtaLabel={siteSettings?.navCtaLabel ?? 'Book a Session'}

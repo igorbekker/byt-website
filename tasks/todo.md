@@ -19,9 +19,43 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-25 — Add GA4 direct tag to BaseLayout.astro
+- **Last work:** 2026-05-26 — Remove duplicate GTM and direct gtag.js from BaseLayout.astro
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Remove duplicate GTM and direct gtag.js from BaseLayout.astro — 2026-05-26 [x] COMPLETE 2026-05-26
+
+Branch: `main`
+
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed direct gtag.js block (lines 96–105) and GTM conditional block (lines 148–156) and GTM noscript iframe (lines 159–170)
+- [x] EDIT — removed direct gtag.js loader + inline gtag function/config (lines 96–105)
+- [x] EDIT — removed GTM conditional block (`gtmId && (...)` with gtm.js loader); replaced with unconditional `window.dataLayer = window.dataLayer || [];` standalone script
+- [x] EDIT — removed GTM noscript iframe block from `<body>`
+- [x] VERIFY — `grep -n "gtag\|googletagmanager\|GTM-\|G-JW2XB9Q7B3\|dataLayer" BaseLayout.astro` → only 2 dataLayer lines remain (lines 138–139) ✓
+
+### Session Review — 2026-05-26 (Remove duplicate GTM and direct gtag.js)
+
+**What was done:** Removed two conflicting analytics injection layers from `BaseLayout.astro` now that Cloudflare Google Tag Gateway injects GTM (GTM-5CVGT32J) at the CDN level via `/03n8/`.
+
+Removed:
+
+1. **Direct gtag.js block** (10 lines): `<script async src="https://www.googletagmanager.com/gtag/js?id=G-JW2XB9Q7B3">` + inline `function gtag(){dataLayer.push(arguments)}` + `gtag('config', 'G-JW2XB9Q7B3')`
+2. **GTM head conditional block** (7 lines): `{gtmId && (<><script is:inline>window.dataLayer...` + `<script async src=".../gtm.js?id=..."/></>`)}
+3. **GTM noscript iframe** (10 lines): `{gtmId && (<noscript><iframe src=".../ns.html?id=..."/></noscript>)}`
+
+Preserved: `window.dataLayer = window.dataLayer || [];` — moved to an unconditional standalone `<script is:inline>` block so all `dataLayer.push()` calls in ModalForms, ContactPage, CareersPage, ResidentReferralPage, intake, Footer, NewsletterBlock, and AudienceRouter continue to work.
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 27 lines removed, 3 lines added (net −24)
+
+**Verification:**
+
+- `grep -n "gtag\|googletagmanager\|GTM-\|G-JW2XB9Q7B3\|dataLayer"` → lines 138–139 only (dataLayer init + comment) ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
