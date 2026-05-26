@@ -19,9 +19,44 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-26 — Restore direct gtag.js for GA4 data collection
-- **Current issues:** None
+- **Last work:** 2026-05-26 — Enable set_up_tag on Cloudflare Gateway + remove direct gtag.js
+- **Current issues:** Cloudflare Zone Settings token blocked — set_up_tag not yet confirmed via API (manual dashboard step pending)
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Enable set_up_tag on Cloudflare Gateway + remove direct gtag.js — 2026-05-26 [x] COMPLETE 2026-05-26
+
+Branch: `main`
+
+- [!] BLOCKED — Cloudflare API PUT/GET for `google-tag-gateway/config` returns auth error; stored token lacks Zone Settings scope. Manual dashboard toggle required.
+- [x] READ — `apps/web/src/layouts/BaseLayout.astro` — confirmed direct gtag.js block at lines 141–151
+- [x] EDIT — removed GA4 direct tag comment + gtag.js loader + inline gtag function/config (10 lines)
+- [x] VERIFY — `grep -n "gtag\|googletagmanager\|G-JW2XB9Q7B3\|dataLayer"` → only dataLayer refs at lines 137–139 ✓
+
+### Session Review — 2026-05-26 (Enable set_up_tag + remove direct gtag.js)
+
+**What was done:** Removed the direct GA4 tag (`G-JW2XB9Q7B3`) from `BaseLayout.astro`. This is the code-side half of a two-part change; the Cloudflare half (enabling `set_up_tag: true` on the Gateway) requires a Zone Settings-scoped API token or manual dashboard action.
+
+**Cloudflare API blocker:** `CLOUDFLARE_API_TOKEN` (`cfut_M2l...`) returned auth error on both GET and PUT to `zones/.../settings/google-tag-gateway/config`. The token has Pages:Edit scope but not Zone Settings scope. Manual step: Cloudflare dashboard → Zone → Speed → Optimization → Google Tag Gateway → enable "Set up tag".
+
+**Code change:** Removed lines 141–151 from `BaseLayout.astro`:
+
+- `<!-- GA4 direct tag ... -->` comment
+- `<script async src="https://www.googletagmanager.com/gtag/js?id=G-JW2XB9Q7B3" is:inline>`
+- Inline `<script is:inline>` with `window.dataLayer`, `function gtag()`, `gtag('js')`, `gtag('config')`
+
+**Preserved:** `window.dataLayer = window.dataLayer || [];` unconditional init block (lines 137–140).
+
+**Files changed:**
+
+- `apps/web/src/layouts/BaseLayout.astro` — 10 lines removed
+
+**Verification:**
+
+- `grep -n "gtag\|googletagmanager\|G-JW2XB9Q7B3\|dataLayer"` → lines 137, 139 only (dataLayer comment + init) ✓
+
+**Issues:** Cloudflare API token scope — Zone Settings token needed for future Gateway API calls.
 
 ---
 
