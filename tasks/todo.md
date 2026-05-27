@@ -19,9 +19,90 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-26 — Restyle Skilled Nursing radio buttons as pill buttons in ResidentReferralPage
+- **Last work:** 2026-05-27 — Add PostToolUse automated hooks for form handlers and schema changes
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add PostToolUse automated hooks — 2026-05-27 [x] COMPLETE 2026-05-27
+
+Branch: `main`
+
+- [x] PRE-FLIGHT — Read project settings.json (did not exist), global settings.json, pre-commit-check.sh
+- [x] CREATE — `.claude/hooks/check-console-log.sh` — blocks Write/Edit to functions/api/\* with console.log
+- [x] CREATE — `.claude/hooks/check-triad.sh` — warns on Write/Edit to apps/studio/schemas/\* with no matching query
+- [x] TEST — Hook 1: temp file with 2 console.log → BLOCKED message, exit 2 ✓
+- [x] TEST — Hook 1 edge cases: \_hubspot.ts skipped, non-api file skipped ✓
+- [x] TEST — Hook 2: audienceCard.ts (no query) → WARNING message, exit 0 ✓; formOption.ts (has query) → silent pass ✓
+- [x] CREATE — `.claude/settings.json` (project-level) with PostToolUse hooks wired for both scripts
+- [x] VERIFY — Global ~/.claude/settings.json unchanged ✓
+- [x] VERIFY — Both scripts executable (-rwxrwxr-x) ✓
+
+### Session Review — 2026-05-27 (PostToolUse automated hooks)
+
+**What was built:** Two PostToolUse shell hooks wired into the project-level `.claude/settings.json`. These fire automatically after every Write or Edit tool call — Claude cannot skip, forget, or reason around them.
+
+**Hook 1 — `check-console-log.sh`:**
+
+- Fires on any Write/Edit to `functions/api/*`
+- Counts `console.log` occurrences in the written file
+- If count > 0: prints `BLOCKED: [filename] contains [N] console.log statement(s). Remove them before committing.` and exits 2
+- Excludes `_hubspot.ts` (shared helper with legitimate logging)
+- Non-api files: silently exit 0
+
+**Hook 2 — `check-triad.sh`:**
+
+- Fires on any Write/Edit to `apps/studio/schemas/*`
+- Extracts schema name from basename, derives project root from file path (portable, no hardcoded paths)
+- Checks for schema name in `apps/web/src/lib/queries.ts` (case-insensitive)
+- If absent: prints WARNING with four-step triad reminder, exits 0 (non-blocking — new schemas legitimately have no query yet)
+
+**Files changed:**
+
+- `.claude/hooks/check-console-log.sh` — new executable script
+- `.claude/hooks/check-triad.sh` — new executable script
+- `.claude/settings.json` — new project-level settings with PostToolUse hook configuration
+
+**Verification:**
+
+- Hook 1 caught temp file with 2 console.log → BLOCKED, exit 2 ✓
+- Hook 1 skipped \_hubspot.ts → exit 0 ✓
+- Hook 1 skipped non-api file → exit 0 ✓
+- Hook 2 warned on audienceCard.ts (not in queries.ts) → WARNING, exit 0 ✓
+- Hook 2 passed formOption.ts (has FORM_OPTIONS_QUERY) → silent exit 0 ✓
+- Global ~/.claude/settings.json: unchanged ✓
+- Both scripts: -rwxrwxr-x ✓
+
+**Side note:** `apply.ts` already has 6 console.log statements in production — the hook will catch these on the next edit. Will need cleanup before that file can be committed.
+
+**Issues:** None. No user corrections this session.
+
+---
+
+## Create .claude/rules/ directory in git — 2026-05-27 [x] COMPLETE 2026-05-27
+
+Branch: `main`
+
+- [x] RUN — `mkdir -p /home/personal/projects/byt-website/.claude/rules`
+- [x] RUN — `touch /home/personal/projects/byt-website/.claude/rules/.gitkeep`
+- [x] RUN — `git add .claude/rules/.gitkeep`
+- [x] VERIFY — `ls -la .claude/rules/` → shows `.gitkeep` ✓
+
+### Session Review — 2026-05-27 (Create .claude/rules/ directory)
+
+**What was built:** Created `.claude/rules/` directory in the byt-website repo with a `.gitkeep` placeholder so the empty directory is tracked by git. This directory will hold path-scoped Claude rules.
+
+**Files changed:**
+
+- `.claude/rules/.gitkeep` — new empty file
+
+**Verification:**
+
+- `ls -la /home/personal/projects/byt-website/.claude/rules/` → `.gitkeep` present ✓
+- `git status` → `new file: .claude/rules/.gitkeep` staged ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
