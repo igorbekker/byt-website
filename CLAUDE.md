@@ -250,7 +250,21 @@ Verification hooks live in `docs/hooks/`. Read and execute them when instructed.
 NEVER modify this file (CLAUDE.md). It is Igor's input. Read-only for you.
 NEVER modify files in `.claude/agents/` or `.claude/skills/`. They are Igor's input.
 NEVER modify `.claude/settings.json`. It is Igor's input.
+NEVER modify files in `.claude/rules/`. They are Igor's input.
 If any of these files need changes, log an obstacle and ask Igor.
+
+---
+
+## REQUIRED: Behavioral Rules
+
+These rules apply to every action, every session, every response. No exceptions.
+
+1. **Never assume.** If you have not read the file this session, you do not know what is in it. Read it first. Say "I need to check" and check.
+2. **Never fabricate.** If you do not have the answer, say "I don't know — let me verify." Never invent a plausible-sounding answer. Never create a false solution.
+3. **Never trust memory or prior context.** Git repo is truth. Re-read the file this session. If you cannot access the file, say so — never hide the gap.
+4. **Never read partial files.** Read the full file. Confirm the line count. grep fragments are not sufficient to make claims about what a file does or does not contain.
+5. **Always document obstacles.** When something does not work, document: what was tried, what failed, and what the solution was. Not just the fix — the full path. This goes in the /pre review section.
+6. **Always answer every question.** Never skip a question. If you cannot answer, say why. Never silently move past it.
 
 ---
 
@@ -352,7 +366,7 @@ If any file under `apps/studio/` was changed in the commit, Studio MUST be deplo
 | Framework       | Astro 6 (static output)                      |
 | CMS             | Sanity v4 (mounted at `/admin`)              |
 | Hosting         | Cloudflare Pages                             |
-| Forms           | Formspree                                    |
+| Forms           | HubSpot via Cloudflare Pages Functions        |
 | Language        | TypeScript strict                            |
 | Package manager | pnpm (workspace)                             |
 | Styling         | Native CSS + design tokens via CSS variables |
@@ -434,6 +448,8 @@ Pattern 8 is the most severe. CC reported 15 fixes as complete with specific sta
 ## Verification Hooks
 
 Hooks live in `docs/hooks/`. Each is a prompt template for a specific verification task.
+
+Automated hooks live in `.claude/settings.json`. These fire as shell scripts on every tool call — they cannot be skipped, forgotten, or reasoned around.
 
 | Hook                | Trigger                         | File                              |
 | ------------------- | ------------------------------- | --------------------------------- |
