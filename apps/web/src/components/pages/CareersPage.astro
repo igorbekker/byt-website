@@ -3,6 +3,7 @@ import { sanityClient } from 'sanity:client';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import { CAREERS_PAGE_QUERY, JOB_POSTINGS_QUERY } from '../../lib/queries';
+import { breadcrumbListSchema } from '../../lib/schema';
 
 interface CareersPage {
   heroEyebrow?: string;
@@ -114,6 +115,10 @@ const renderOrder = [
   { id: 'open_positions', order: sectionOrder('open_positions') },
   { id: 'general_application', order: sectionOrder('general_application') },
 ].sort((a, b) => a.order - b.order);
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Careers' },
+]);
 ---
 
 <BaseLayout
@@ -2135,6 +2140,7 @@ const renderOrder = [
   </style>
 
   <Fragment set:html={jobPostingsHtml} />
+  <Fragment set:html={`${jsonLdOpen}${breadcrumbSchema}${jsonLdClose}`} />
 
   {
     renderOrder.map(({ id }) => {

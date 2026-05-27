@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import SanityImage from '../../components/ui/SanityImage.astro';
 import { CONTACT_PAGE_QUERY, SITE_SETTINGS_QUERY } from '../../lib/queries';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 interface ContactPage {
   heroHeading?: string;
@@ -61,6 +61,10 @@ const pageSchema = webPageSchema({
   url: 'https://getbetteryou.com/contact/',
   type: 'ContactPage',
 });
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Contact' },
+]);
 ---
 
 <BaseLayout
@@ -1204,4 +1208,5 @@ const pageSchema = webPageSchema({
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
   </script>
   <script is:inline type="application/ld+json" set:html={pageSchema} />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

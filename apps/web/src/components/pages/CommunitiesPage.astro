@@ -14,7 +14,7 @@ import {
   CONDITIONS_COMMUNITIES_QUERY,
   SITE_SETTINGS_QUERY,
 } from '../../lib/queries';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 interface CtaLink {
   label: string;
@@ -89,6 +89,10 @@ const pageSchema = webPageSchema({
     'Licensed therapists on-site at your facility weekly. Medicare billing, scheduling, and documentation handled. Zero cost to your facility.',
   url: 'https://getbetteryou.com/communities/',
 });
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Communities' },
+]);
 ---
 
 <BaseLayout
@@ -2916,4 +2920,5 @@ const pageSchema = webPageSchema({
     })();
   </script>
   <script is:inline type="application/ld+json" set:html={pageSchema} />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

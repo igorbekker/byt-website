@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/ui/Breadcrumb.astro';
-import { webPageSchema } from '../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../lib/schema';
 import { sanityClient } from 'sanity:client';
 
 const siteSettings = await sanityClient.fetch('*[_type == "siteSettings"][0]{phone, email, fax}');
@@ -9,6 +9,10 @@ const phone = siteSettings?.phone || '754-999-0011';
 const email = siteSettings?.email || 'hello@getbetteryou.com';
 const fax = siteSettings?.fax || '754-328-4344';
 const phoneDigits = phone.replace(/\D/g, '');
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Patient Intake' },
+]);
 ---
 
 <BaseLayout
@@ -770,4 +774,5 @@ const phoneDigits = phone.replace(/\D/g, '');
       url: 'https://getbetteryou.com/intake/',
     })}
   />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

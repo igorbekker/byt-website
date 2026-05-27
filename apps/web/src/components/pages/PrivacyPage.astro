@@ -4,7 +4,7 @@ import { PortableText } from 'astro-portabletext';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import { PRIVACY_PAGE_QUERY } from '../../lib/queries';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 const page = await sanityClient.fetch<{
   title?: string;
@@ -18,6 +18,10 @@ const pageSchema = webPageSchema({
     'Privacy policy for Better You Therapy — how we collect, use, and protect your personal information.',
   url: 'https://getbetteryou.com/privacy/',
 });
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Privacy Policy' },
+]);
 ---
 
 <BaseLayout
@@ -1708,4 +1712,5 @@ const pageSchema = webPageSchema({
     // Mobile menu toggle handlers are inline on the buttons; nothing else needed for a static legal page.
   </script>
   <script is:inline type="application/ld+json" set:html={pageSchema} />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

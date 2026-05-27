@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import SanityImage from '../../components/ui/SanityImage.astro';
 import { PROVIDERS_PAGE_QUERY, TESTIMONIALS_THERAPIST_QUERY } from '../../lib/queries';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 interface ProvidersPage {
   heroHeading?: string;
@@ -81,6 +81,10 @@ const pageSchema = webPageSchema({
     'Join Better You Therapy as a licensed therapist. Two role tracks — facility-based in Southeast Florida or statewide teletherapy. Billing, referrals, and EHR handled for you.',
   url: 'https://getbetteryou.com/providers/',
 });
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Providers' },
+]);
 ---
 
 <BaseLayout
@@ -2841,4 +2845,5 @@ const pageSchema = webPageSchema({
     });
   </script>
   <script is:inline type="application/ld+json" set:html={pageSchema} />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

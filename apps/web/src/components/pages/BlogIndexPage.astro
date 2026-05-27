@@ -15,7 +15,7 @@ import {
   BLOG_FEATURED_POST_QUERY,
   SITE_SETTINGS_QUERY,
 } from '../../lib/queries';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 interface SiteSettings {
   newsletterEyebrow?: string;
@@ -65,6 +65,10 @@ function fmtDate(iso: string | undefined): string {
   if (!iso) return '';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Blog' },
+]);
 ---
 
 <style is:global>
@@ -1544,4 +1548,5 @@ function fmtDate(iso: string | undefined): string {
       type: 'CollectionPage',
     })}
   />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

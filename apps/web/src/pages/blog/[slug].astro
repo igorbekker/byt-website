@@ -10,7 +10,7 @@ import { PortableText } from 'astro-portabletext';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import SanityImage from '../../components/ui/SanityImage.astro';
-import { blogPostingSchema } from '../../lib/schema';
+import { blogPostingSchema, breadcrumbListSchema } from '../../lib/schema';
 import {
   BLOG_POST_QUERY,
   BLOG_POST_PATHS_QUERY,
@@ -113,6 +113,12 @@ const articleJsonLd = blogPostingSchema({
   authorName: post.author?.name,
   slug: slug,
 });
+const breadcrumbSchema = breadcrumbListSchema(
+  breadcrumbItems.map((item) => ({
+    name: item.label,
+    url: item.href ? `https://getbetteryou.com${item.href}` : undefined,
+  })),
+);
 ---
 
 <style is:global>
@@ -1846,6 +1852,7 @@ const articleJsonLd = blogPostingSchema({
 
 <BaseLayout title={`${pageTitle} | Better You Therapy Blog`} description={pageDesc}>
   <Fragment set:html={`<script type="application/ld+json">${articleJsonLd}</script>`} />
+  <Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema}</script>`} />
   <div class="progress-bar"><span id="readProgress"></span></div>
 
   <section class="article-hero" aria-labelledby="article-heading">

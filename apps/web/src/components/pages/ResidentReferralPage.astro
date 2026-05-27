@@ -3,7 +3,7 @@ import { sanityClient } from 'sanity:client';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE_SETTINGS_QUERY, RESIDENT_REFERRAL_PAGE_QUERY } from '../../lib/queries';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 interface SiteSettings {
   phone?: string;
@@ -28,6 +28,10 @@ const phone = siteSettings?.phone || '754-999-0011';
 const email = siteSettings?.email || 'hello@getbetteryou.com';
 const fax = siteSettings?.fax || '754-328-4344';
 const phoneDigits = phone.replace(/\D/g, '');
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'Refer a Resident' },
+]);
 ---
 
 <BaseLayout
@@ -1185,4 +1189,5 @@ const phoneDigits = phone.replace(/\D/g, '');
       url: 'https://getbetteryou.com/resident-referral/',
     })}
   />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>

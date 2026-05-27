@@ -19,9 +19,87 @@
 
 ## Quick Status Summary
 
-- **Last work:** 2026-05-27 — robots.txt Content-Signal + structured data audit
+- **Last work:** 2026-05-27 — BreadcrumbList JSON-LD across 12 pages (complete)
 - **Current issues:** None
 - **Detailed history:** See `tasks/todo-archive.md`
+
+---
+
+## Add BreadcrumbList JSON-LD to all non-homepage pages — 2026-05-27 [x] COMPLETE 2026-05-27
+
+Branch: `main`
+
+- [x] schema.ts — add `BreadcrumbListItem` interface + `breadcrumbListSchema()` function
+- [x] AboutPage.astro — add BreadcrumbList JSON-LD (lines 2463–2464)
+- [x] ProvidersPage.astro — add BreadcrumbList JSON-LD (lines 2847–2848)
+- [x] CommunitiesPage.astro — add BreadcrumbList JSON-LD (lines 2922–2923)
+- [x] ContactPage.astro — add BreadcrumbList JSON-LD (lines 1210–1211)
+- [x] ResidentReferralPage.astro — add BreadcrumbList JSON-LD (line 1192)
+- [x] CareersPage.astro — add BreadcrumbList JSON-LD (line 2143, Fragment pattern)
+- [x] BlogIndexPage.astro — add BreadcrumbList JSON-LD (line 1551)
+- [x] PrivacyPage.astro — add BreadcrumbList JSON-LD (lines 1714–1715)
+- [x] TermsPage.astro — add BreadcrumbList JSON-LD (lines 760–761)
+- [x] blog/[slug].astro — add BreadcrumbList JSON-LD (line 1855, Fragment pattern)
+- [x] blog/[category]/index.astro — add BreadcrumbList JSON-LD (line 1644)
+- [x] intake.astro — add BreadcrumbList JSON-LD (line 777)
+- [x] BUILD — `pnpm --filter web build` → 20 pages, 0 errors ✓
+- [x] VERIFY — grep application/ld+json on all 12 modified files → 2 hits each (3 on CareersPage) ✓
+- [x] VERIFY — grep itemscope on Breadcrumb.astro → lines 15, 23 (microdata intact) ✓
+
+### Session Review — 2026-05-27 (Add BreadcrumbList JSON-LD)
+
+**What was built:** Added `breadcrumbListSchema()` to `apps/web/src/lib/schema.ts` and wired BreadcrumbList JSON-LD into all 12 non-homepage pages. Pure additive change — zero HTML, component, microdata, or DOM structure changes.
+
+**TASK 2 (FAQPage) — CLOSED:** Audited AboutPage, ProvidersPage, CommunitiesPage. None contain Q&A pairs — tabs/accordions are service descriptions. `faqPageSchema()` remains dead code.
+
+**New function added (schema.ts lines 117–130):**
+
+- `BreadcrumbListItem` interface: `{ name: string; url?: string }`
+- `breadcrumbListSchema(items)` → `string` — matches `webPageSchema`/`blogPostingSchema` return type for use with `set:html`
+- Current page (last item) has no `url` per schema.org recommendations
+
+**Rendering patterns used (matched per-page existing conventions):**
+
+- Standard pages: `<script is:inline type="application/ld+json" set:html={breadcrumbSchema} />`
+- `CareersPage.astro`: `<Fragment set:html={\`${jsonLdOpen}${breadcrumbSchema}${jsonLdClose}\`} />` (existing bare-script avoidance pattern)
+- `blog/[slug].astro`: `<Fragment set:html={\`<script type="application/ld+json">${breadcrumbSchema}</script>\`} />` (same as BlogPosting)
+
+**Files changed (13 total):**
+
+- `apps/web/src/lib/schema.ts` — 176 → 193 lines (+17)
+- `apps/web/src/components/pages/AboutPage.astro`
+- `apps/web/src/components/pages/ProvidersPage.astro`
+- `apps/web/src/components/pages/CommunitiesPage.astro`
+- `apps/web/src/components/pages/ContactPage.astro`
+- `apps/web/src/components/pages/ResidentReferralPage.astro`
+- `apps/web/src/components/pages/CareersPage.astro`
+- `apps/web/src/components/pages/BlogIndexPage.astro`
+- `apps/web/src/components/pages/PrivacyPage.astro`
+- `apps/web/src/components/pages/TermsPage.astro`
+- `apps/web/src/pages/blog/[slug].astro`
+- `apps/web/src/pages/blog/[category]/index.astro`
+- `apps/web/src/pages/intake.astro`
+
+**AboutPage JSON-LD output (verified from dist):**
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://getbetteryou.com/" },
+    { "@type": "ListItem", "position": 2, "name": "About" }
+  ]
+}
+```
+
+**Verification:**
+
+- Build: 20 pages, 0 errors ✓
+- All 12 pages: 2 `application/ld+json` hits each (CareersPage: const def + Fragment) ✓
+- Breadcrumb.astro: `itemscope` at lines 15, 23 (microdata intact, file not modified) ✓
+
+**Issues:** None. No user corrections this session.
 
 ---
 
@@ -85,17 +163,25 @@ Sitemap: https://getbetteryou.com/sitemap-index.xml
 
 ---
 
-## Add Haiku prompt hook for deviation pattern review — 2026-05-27 [~] IN PROGRESS
+## Add Haiku prompt hook for deviation pattern review — 2026-05-27 [!] BLOCKED
 
 Branch: `main`
 
-- [~] PRE-FLIGHT — Read CLAUDE.md deviation patterns, global settings.json, project settings.json
-- [ ] IMPLEMENT — Add prompt hook to .claude/settings.json (scoped to _.astro|_.ts|_.tsx|_.js|\*.css)
-- [ ] VERIFY — cat .claude/settings.json → prompt hook present alongside existing hooks and permissions
-- [ ] VERIFY — grep "ask" .claude/settings.json → 10 permissions.ask rules still present
-- [ ] VERIFY — grep "check-console-log\|check-triad" .claude/settings.json → 2 results
-- [ ] TEST — make small code file edit, confirm Haiku review fires and returns PASS
-- [ ] VERIFY — Global ~/.claude/settings.json UNCHANGED
+- [x] PRE-FLIGHT — Read CLAUDE.md deviation patterns, global settings.json, project settings.json
+- [x] INVESTIGATE — PostToolUse hooks do not fire in Claude Code 2.1.152 (confirmed broken, GitHub issue #6305)
+- [x] INVESTIGATE — prompt-type hooks also not firing; command-type hooks confirmed same problem
+- [x] INVESTIGATE — PreToolUse on Bash works; PostToolUse from both project and global settings does not
+- [x] RESTORE — ~/.claude/settings.json restored to original state (PreToolUse only, valid JSON)
+- [x] KEEP — .claude/settings.json = permissions.ask only (no hooks)
+- [x] KEEP — .claude/hooks/check-console-log.sh, check-triad.sh, check-deviation-patterns.sh (work manually)
+
+**BLOCKED — PostToolUse not supported in 2.1.152.**
+Viable alternatives confirmed:
+
+1. PreToolUse on Bash with `if: "Bash(git commit *)"` — gate all 3 checks before commit
+2. Stop hook — fires once per turn after all tools complete
+
+Awaiting Igor decision on which alternative to implement.
 
 ---
 

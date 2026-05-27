@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/ui/Breadcrumb.astro';
 import SanityImage from '../../components/ui/SanityImage.astro';
 import { ABOUT_PAGE_QUERY } from '../../lib/queries';
-import { webPageSchema } from '../../lib/schema';
+import { webPageSchema, breadcrumbListSchema } from '../../lib/schema';
 
 interface CtaLink {
   label: string;
@@ -80,6 +80,10 @@ const pageSchema = webPageSchema({
     "Learn about Better You Therapy — a Florida mental health practice closing the gap between people who need licensed therapy and the system that's supposed to deliver it.",
   url: 'https://getbetteryou.com/about/',
 });
+const breadcrumbSchema = breadcrumbListSchema([
+  { name: 'Home', url: 'https://getbetteryou.com/' },
+  { name: 'About' },
+]);
 ---
 
 <BaseLayout
@@ -2457,4 +2461,5 @@ const pageSchema = webPageSchema({
     document.querySelectorAll('.fade-up').forEach((el) => fadeObs.observe(el));
   </script>
   <script is:inline type="application/ld+json" set:html={pageSchema} />
+  <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
 </BaseLayout>
